@@ -1,5 +1,7 @@
 # Mastering Diverse Domains through World Models
 
+> Policy_Discrepancy 项目的工作约定、研究记录和实验索引见 [项目文档](docs/README.md)。以下保留原版 DreamerV3 说明。
+
 A reimplementation of [DreamerV3][paper], a scalable and general reinforcement
 learning algorithm that masters a wide range of applications with fixed
 hyperparameters.
