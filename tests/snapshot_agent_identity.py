@@ -80,8 +80,9 @@ def main():
 
   arrays = {}
   def add(prefix, tree):
-    for key, value in tree.items():
-      arrays[prefix + key] = np.asarray(value)
+    with jax._src.config.explicit_device_get_scope():
+      for key, value in tree.items():
+        arrays[prefix + key] = np.asarray(value)
   add('init/', agent.params)
   start = time.perf_counter()
   grad_fn = jax.jit(nj.pure(
@@ -90,7 +91,8 @@ def main():
   grad_state, (loss, _, grads, aux) = grad_fn(
       agent.params, loss_carry, obs, prevact, seed=seed)
   grad_seconds = time.perf_counter() - start
-  arrays['loss'] = np.asarray(loss)
+  with jax._src.config.explicit_device_get_scope():
+    arrays['loss'] = np.asarray(loss)
   add('grad/', grads)
   add('gradstate/', grad_state)
   add('loss/', aux[2]['losses'])
@@ -122,7 +124,7 @@ def main():
       'alpha': args.alpha if args.mode == 'logging' else None,
       'param_count': len(agent.params),
       'init_seconds': init_seconds, 'grad_seconds': grad_seconds,
-      'update_seconds': update_seconds, 'loss': float(loss),
+      'update_seconds': update_seconds, 'loss': float(arrays['loss']),
       'bench_updates': args.bench_updates, 'bench_seconds': bench_seconds,
       'maxrss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
       'diagnostic_keys': sorted(k for k in arrays if k.startswith('diagnostic/')),
