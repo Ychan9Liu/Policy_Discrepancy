@@ -27,7 +27,7 @@ def main():
       if not np.array_equal(x, y):
         max_error = max(max_error, float(np.max(np.abs(x.astype(np.float64) - y))))
         raise AssertionError(f'{name}: {key} differs (max abs {max_error})')
-      assert np.isfinite(y).all(), (name, key)
+      assert np.isfinite(y.astype(np.float32)).all(), (name, key)
     counts[name] = len(base.files)
   logging = runs['logging']
   diagnostics = {key.removeprefix('diagnostic/'): float(logging[key])
