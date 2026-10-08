@@ -30,6 +30,10 @@ def main():
   parser.add_argument('--alpha', type=float, default=0.7)
   parser.add_argument('--c', type=float, default=0.6)
   parser.add_argument('--seed', type=int, default=7)
+  parser.add_argument('--sequence_case', choices=(
+      'first_terminal', 'continuation', 'interior_reset'),
+      default='first_terminal')
+  parser.add_argument('--train_devices', nargs='+', type=int, default=[0])
   parser.add_argument('--bench_updates', type=int, default=0)
   parser.add_argument('--platform', choices=('cpu', 'cuda'), default='cpu')
   parser.add_argument('--dtype', choices=('float32', 'bfloat16'), default='float32')
@@ -41,6 +45,7 @@ def main():
       'batch_size': 2, 'batch_length': 3,
       'replay_context': args.replay_context,
       'jax.platform': args.platform, 'jax.compute_dtype': args.dtype,
+      'jax.train_devices': args.train_devices,
       'jax.precompile': False, 'jax.profiler': False,
       'jax.enable_policy': False,
       'agent.imag_length': 2, 'agent.imag_last': args.imag_last,
@@ -74,9 +79,14 @@ def main():
       2, length, 5) / (10 * length)
   data['reward'][:] = np.linspace(-0.5, 1.0, 2 * length,
       dtype=np.float32).reshape(2, length)
-  data['is_first'][:, 0] = True
-  data['is_last'][0, -1] = True
-  data['is_terminal'][0, -1] = True
+  if args.sequence_case == 'first_terminal':
+    data['is_first'][:, 0] = True
+    data['is_last'][0, -1] = True
+    data['is_terminal'][0, -1] = True
+  elif args.sequence_case == 'interior_reset':
+    data['is_first'][:, length // 2] = True
+    data['is_last'][0, -1] = True
+    data['is_terminal'][0, -1] = True
   data['action'][:] = 0.2
   data = internal.device_put(data, agent.train_sharded)
   carry = agent.init_train(2)
@@ -152,6 +162,8 @@ def main():
       'compute_dtype': str(config.jax.compute_dtype), 'seed': args.seed,
       'batch': [2, 3], 'replay_context': args.replay_context,
       'free_nats': args.free_nats, 'imag_last': args.imag_last,
+      'sequence_case': args.sequence_case,
+      'train_devices': args.train_devices,
       'alpha': args.alpha if args.mode in (
           'logging', 'dt', 'constant', 'shuffle') else None,
       'c': args.c if args.mode == 'constant' else None,

@@ -17,6 +17,14 @@ def main():
   parser.add_argument('--alpha', type=float, default=50000.0)
   parser.add_argument('--c', type=float, default=0.6)
   parser.add_argument('--seed', type=int, default=7)
+  parser.add_argument('--replay_context', type=int, default=1)
+  parser.add_argument('--free_nats', type=float, default=0.1)
+  parser.add_argument('--imag_last', type=int, default=2)
+  parser.add_argument('--sequence_case', choices=(
+      'first_terminal', 'continuation', 'interior_reset'),
+      default='first_terminal')
+  parser.add_argument('--train_devices', nargs='+', type=int, default=[0])
+  parser.add_argument('--bench_updates', type=int, default=0)
   args = parser.parse_args()
   repo = Path(__file__).resolve().parents[1]
   output = Path(args.output_dir).resolve()
@@ -31,8 +39,11 @@ def main():
     path = output / f'{name}-{args.platform}.npz'
     command = [sys.executable, str(script), '--mode', mode,
         '--output', str(path), '--platform', args.platform,
-        '--dtype', args.dtype, '--replay_context', '1',
-        '--free_nats', '0.1', '--imag_last', '2',
+        '--dtype', args.dtype, '--replay_context', str(args.replay_context),
+        '--free_nats', str(args.free_nats), '--imag_last', str(args.imag_last),
+        '--sequence_case', args.sequence_case,
+        '--train_devices', *(str(x) for x in args.train_devices),
+        '--bench_updates', str(args.bench_updates),
         '--alpha', str(alpha), '--c', str(c), '--seed', str(args.seed)]
     print(f'RUN {name}: {path}', flush=True)
     subprocess.run(command, cwd=cwd, env=env, check=True)
