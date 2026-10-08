@@ -1,12 +1,16 @@
 """Small action-grid, matching, and partial-driver boundary fixtures."""
 
 import unittest
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import elements
 import numpy as np
 
 from embodied.core.driver import Driver
 from embodied.run.protocol_v1 import ProtocolState, seed32
+from dreamerv3.freeze_c import freeze
 
 
 class TinyEnv:
@@ -50,6 +54,22 @@ class ProtocolV1Test(unittest.TestCase):
     self.assertGreaterEqual(state.resets, 3)
     self.assertEqual(driver.carry['value'][2], 2)
     self.assertEqual(seen[-1][0], 1)
+    driver.close()
+
+  def test_partial_driver_parallel_workers(self):
+    driver = Driver([TinyEnv] * 3, parallel=True)
+    seen = []
+    driver.on_step(lambda tran, worker: seen.append(
+        (worker, bool(tran['is_first']))))
+    driver.reset(lambda count: {'value': [0] * count})
+    policy = lambda carry, obs: (
+        {'value': [x + 1 for x in carry['value']]},
+        {'action': np.ones((len(obs['reward']), 1), np.float32)}, {})
+    driver.step_selected(policy, [0, 1, 2])
+    driver.step_selected(policy, [1])
+    self.assertEqual(seen, [(0, True), (1, True), (2, True),
+                            (1, False)])
+    self.assertEqual(driver.carry['value'], [1, 2, 1])
     driver.close()
 
   def test_match_window_receipts_and_replay_repeat(self):
@@ -101,6 +121,44 @@ class ProtocolV1Test(unittest.TestCase):
         0, 'dmc_reacher_hard', 'train_env', 3, 7))
     self.assertNotEqual(first, seed32(
         0, 'dmc_reacher_hard', 'eval_env', 3, 8))
+
+  def test_freeze_uses_raw_receipts_and_is_immutable(self):
+    with TemporaryDirectory() as directory:
+      root = Path(directory)
+      config = dict(
+          [('agent.rep_probe.mode', 'logging'),
+           ('agent.rep_probe.alpha', 20.0),
+           ('agent.dyn.rssm.free_nats', 0.1),
+           ('run.action_budget', 12), ('run.eval_every_actions', 3),
+           ('run.eval_eps', 2), ('run.match_start', 3),
+           ('run.match_end', 9), ('run.engineering_fixture', True)])
+      (root / 'protocol_manifest.json').write_text(json.dumps(dict(
+          protocol='M2-v1', task='dummycont_test',
+          git_commit='fixture', config=config)))
+      receipts = [
+          dict(update_id=0, start_action=3, match_sum=0.2,
+               match_count=1, invalid_count=0),
+          dict(update_id=1, start_action=8, match_sum=1.8,
+               match_count=3, invalid_count=0),
+          dict(update_id=2, start_action=9, match_sum=1,
+               match_count=1, invalid_count=0)]
+      (root / 'update_receipts.jsonl').write_text(
+          ''.join(json.dumps(row) + '\n' for row in receipts))
+      (root / 'evaluations.jsonl').write_text(
+          ''.join(json.dumps(dict(action_step=step)) + '\n'
+                  for step in range(0, 13, 3)))
+      output = root / 'c.json'
+      result = freeze(root, output, engineering_fixture=True)
+      self.assertEqual(result['match_count'], 4)
+      self.assertAlmostEqual(result['c'], 0.5)
+      self.assertEqual(result['included_update_ids'], [0, 1])
+      self.assertEqual(freeze(root, output, True), result)
+      self.assertTrue((root / 'c.json.sha256').exists())
+      tampered = json.loads(output.read_text())
+      tampered['c'] = 0.6
+      output.write_text(json.dumps(tampered))
+      with self.assertRaises(ValueError):
+        freeze(root, output, True)
 
 
 if __name__ == '__main__':
