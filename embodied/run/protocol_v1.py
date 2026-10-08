@@ -1,6 +1,7 @@
 """Exact-action M2 v1 runner and auditable active-weight matching."""
 
 import hashlib
+import importlib.metadata
 import json
 import math
 import platform
@@ -22,6 +23,16 @@ def seed32(root, task, namespace, *indices):
   parts = [str(root), task, namespace, *(str(x) for x in indices)]
   digest = hashlib.sha256('\0'.join(parts).encode()).digest()
   return int.from_bytes(digest[:4], 'big')
+
+
+def package_versions(*names):
+  versions = {}
+  for name in names:
+    try:
+      versions[name] = importlib.metadata.version(name)
+    except importlib.metadata.PackageNotFoundError:
+      versions[name] = None
+  return versions
 
 
 class ProtocolState:
@@ -289,6 +300,11 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       git_commit=git_commit, python=sys.version,
       jax=jax.__version__, host=platform.node(),
       devices=[str(x) for x in jax.devices()],
+      device_kinds=[x.device_kind for x in jax.devices()],
+      packages=package_versions('dm-control', 'mujoco', 'numpy', 'jaxlib'),
+      dependency_lock_sha256=hashlib.sha256(
+          (repo / 'env' / 'requirements-dreamer.lock').read_bytes()
+      ).hexdigest(),
       train_env_seeds=[seed32(config.seed, config.task, 'train_env', i)
                        for i in range(args.envs)],
       replay_seed=seed32(config.seed, config.task, 'train_replay'),

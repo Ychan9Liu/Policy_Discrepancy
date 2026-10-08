@@ -42,6 +42,20 @@ def freeze(baseline_dir, output, engineering_fixture=False):
       row['action_step'] for row in evaluations) != list(state.grid):
     raise ValueError('Baseline does not contain the full evaluation grid')
   c = state.frozen_c()
+  final = json.loads((baseline_dir / 'final_state.json').read_text(
+      encoding='utf-8'))
+  matching = json.loads((baseline_dir / 'matching_result.json').read_text(
+      encoding='utf-8'))
+  if (final['git_commit'] != manifest['git_commit'] or
+      final['train_action_steps'] != state.budget or
+      final['updates'] != len(state.records) or
+      final['evaluations'] != len(state.grid) or
+      final['match_sum'] != state.match_sum or
+      final['match_count'] != state.match_count or
+      matching != dict(match_sum=state.match_sum,
+                       match_count=state.match_count, c=c,
+                       start=state.match_start, end=state.match_end)):
+    raise ValueError('Baseline final state disagrees with matching receipts')
   included = [update_id for update_id, row in state.records.items()
               if state.match_start <= row[0] < state.match_end]
   artifact = dict(
@@ -54,9 +68,12 @@ def freeze(baseline_dir, output, engineering_fixture=False):
       root_seed=0, alpha=20,
       raw_rep_threshold=config['agent.dyn.rssm.free_nats'],
       window=[state.match_start, state.match_end],
+      action_step_definition='executed non-reset train environment actions',
+      generator_version='dreamerv3.freeze_c M2-v1',
       engineering_fixture=bool(engineering_fixture),
       included_update_ids=included,
-      match_sum=state.match_sum, match_count=state.match_count, c=c)
+      match_sum=state.match_sum, match_count=state.match_count,
+      invalid_count=0, c=c)
   if output.exists():
     checksum = output.with_suffix(output.suffix + '.sha256')
     if checksum.read_text(encoding='utf-8').strip() != hashlib.sha256(
