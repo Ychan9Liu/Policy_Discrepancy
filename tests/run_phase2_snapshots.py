@@ -21,8 +21,9 @@ def main():
   parser.add_argument('--free_nats', type=float, default=0.1)
   parser.add_argument('--imag_last', type=int, default=2)
   parser.add_argument('--sequence_case', choices=(
-      'first_terminal', 'continuation', 'interior_reset'),
+      'first_terminal', 'continuation', 'interior_reset', 'chunk_chain'),
       default='first_terminal')
+  parser.add_argument('--second_chunk', action='store_true')
   parser.add_argument('--train_devices', nargs='+', type=int, default=[0])
   parser.add_argument('--bench_updates', type=int, default=0)
   args = parser.parse_args()
@@ -45,6 +46,8 @@ def main():
         '--train_devices', *(str(x) for x in args.train_devices),
         '--bench_updates', str(args.bench_updates),
         '--alpha', str(alpha), '--c', str(c), '--seed', str(args.seed)]
+    if args.second_chunk:
+      command.append('--second_chunk')
     print(f'RUN {name}: {path}', flush=True)
     subprocess.run(command, cwd=cwd, env=env, check=True)
     print(f'PASS {name}: {path}', flush=True)

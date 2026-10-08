@@ -31,8 +31,9 @@ def main():
   parser.add_argument('--c', type=float, default=0.6)
   parser.add_argument('--seed', type=int, default=7)
   parser.add_argument('--sequence_case', choices=(
-      'first_terminal', 'continuation', 'interior_reset'),
+      'first_terminal', 'continuation', 'interior_reset', 'chunk_chain'),
       default='first_terminal')
+  parser.add_argument('--second_chunk', action='store_true')
   parser.add_argument('--train_devices', nargs='+', type=int, default=[0])
   parser.add_argument('--bench_updates', type=int, default=0)
   parser.add_argument('--platform', choices=('cpu', 'cuda'), default='cpu')
@@ -87,6 +88,8 @@ def main():
     data['is_first'][:, length // 2] = True
     data['is_last'][0, -1] = True
     data['is_terminal'][0, -1] = True
+  elif args.sequence_case == 'chunk_chain':
+    data['is_first'][:, 0] = True
   data['action'][:] = 0.2
   data = internal.device_put(data, agent.train_sharded)
   carry = agent.init_train(2)
@@ -147,6 +150,17 @@ def main():
   del update_metrics
   update_seconds = time.perf_counter() - start
   add('updated/', agent.params)
+  second_seconds = None
+  if args.second_chunk:
+    next_data = dict(data, is_first=jax.numpy.zeros_like(data['is_first']))
+    next_seed = agent._seeds(1, agent.train_mirrored)
+    start = time.perf_counter()
+    carry, _, _ = agent.train(carry, dict(next_data, seed=next_seed))
+    jax.block_until_ready(next(iter(agent.params.values())))
+    second_seconds = time.perf_counter() - start
+    add('continued/', agent.params)
+    assert all(np.isfinite(v).all() for k, v in arrays.items()
+               if k.startswith('continued/'))
   np.savez_compressed(args.output, **arrays)
   bench_seconds = None
   if args.bench_updates:
@@ -163,6 +177,8 @@ def main():
       'batch': [2, 3], 'replay_context': args.replay_context,
       'free_nats': args.free_nats, 'imag_last': args.imag_last,
       'sequence_case': args.sequence_case,
+      'second_chunk': args.second_chunk,
+      'second_seconds': second_seconds,
       'train_devices': args.train_devices,
       'alpha': args.alpha if args.mode in (
           'logging', 'dt', 'constant', 'shuffle') else None,
