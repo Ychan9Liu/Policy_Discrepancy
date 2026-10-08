@@ -53,6 +53,7 @@ defaults:
     match_end: 0
     report_every_actions: 0
     engineering_fixture: False
+    engineering_stop_after_actions: 0
     frozen_c_file: ''
     duration: 0
     train_ratio: 32.0

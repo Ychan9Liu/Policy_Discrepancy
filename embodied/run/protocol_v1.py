@@ -199,6 +199,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
         abs(frozen['c'] - config.agent.rep_probe.c) > 1e-12):
       raise ValueError('Frozen c artifact does not match this run')
   if not args.engineering_fixture:
+    if args.engineering_stop_after_actions:
+      raise ValueError('Engineering stop is forbidden in formal runs')
     if (int(args.action_budget), int(args.eval_every_actions),
         int(args.eval_eps), int(args.match_start), int(args.match_end)) != (
             1000000, 50000, 10, 100000, 300000):
@@ -414,6 +416,10 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
         evaluate(boundary)
         logger.add(agg.result())
         logger.write()
+        if (args.engineering_fixture and
+            args.engineering_stop_after_actions and
+            state.actions >= args.engineering_stop_after_actions):
+          raise RuntimeError('Intentional fixture stop after checkpoint')
     if config.agent.rep_probe.mode == 'logging':
       c = state.frozen_c()
       (logdir / 'matching_result.json').write_text(
