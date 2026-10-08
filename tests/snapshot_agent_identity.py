@@ -152,7 +152,9 @@ def main():
   add('updated/', agent.params)
   second_seconds = None
   if args.second_chunk:
-    next_data = dict(data, is_first=jax.numpy.zeros_like(data['is_first']))
+    next_first = internal.device_put(
+        np.zeros((2, length), bool), agent.train_sharded)
+    next_data = dict(data, is_first=next_first)
     next_seed = agent._seeds(1, agent.train_mirrored)
     start = time.perf_counter()
     carry, _, _ = agent.train(carry, dict(next_data, seed=next_seed))
