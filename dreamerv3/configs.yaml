@@ -47,6 +47,12 @@ defaults:
 
   run:
     steps: 1e10
+    action_budget: 0
+    eval_every_actions: 0
+    match_start: 0
+    match_end: 0
+    report_every_actions: 0
+    engineering_fixture: False
     duration: 0
     train_ratio: 32.0
     log_every: 120
