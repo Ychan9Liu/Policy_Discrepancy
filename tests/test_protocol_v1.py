@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 
 import elements
 import numpy as np
+import ruamel.yaml as yaml
 
 from embodied.core.driver import Driver
 from embodied.run.protocol_v1 import ProtocolState, seed32
@@ -34,6 +35,23 @@ class TinyEnv:
 
 
 class ProtocolV1Test(unittest.TestCase):
+
+  def test_formal_preset_resolves_clean_visual_dmc(self):
+    source = Path(__file__).resolve().parents[1] / 'dreamerv3' / 'configs.yaml'
+    configs = yaml.YAML(typ='safe').load(source.read_text(encoding='utf-8'))
+    config = elements.Config(configs['defaults']).update(configs['m2_v1'])
+    self.assertEqual(config.script, 'protocol_v1')
+    self.assertEqual(config.seed, 0)
+    self.assertEqual(config.agent.rep_probe.mode, 'logging')
+    self.assertEqual(config.agent.rep_probe.alpha, 20)
+    self.assertEqual(config.run.action_budget, 1000000)
+    self.assertEqual(config.run.eval_every_actions, 50000)
+    self.assertEqual(config.run.eval_eps, 10)
+    self.assertEqual(config.run.train_ratio, 256)
+    self.assertFalse(config.env.dmc.proprio)
+    self.assertTrue(config.env.dmc.image)
+    self.assertTrue(config.env.dmc.use_seed)
+    self.assertEqual(config.env.dmc.repeat, 1)
 
   def test_partial_driver_and_exact_action_budget(self):
     driver = Driver([TinyEnv] * 3, parallel=False)
@@ -147,6 +165,11 @@ class ProtocolV1Test(unittest.TestCase):
       (root / 'evaluations.jsonl').write_text(
           ''.join(json.dumps(dict(action_step=step)) + '\n'
                   for step in range(0, 13, 3)))
+      (root / 'final_state.json').write_text(json.dumps(dict(
+          git_commit='fixture', train_action_steps=12, updates=3,
+          evaluations=5, match_sum=2.0, match_count=4)))
+      (root / 'matching_result.json').write_text(json.dumps(dict(
+          match_sum=2.0, match_count=4, c=0.5, start=3, end=9)))
       output = root / 'c.json'
       result = freeze(root, output, engineering_fixture=True)
       self.assertEqual(result['match_count'], 4)
@@ -154,6 +177,13 @@ class ProtocolV1Test(unittest.TestCase):
       self.assertEqual(result['included_update_ids'], [0, 1])
       self.assertEqual(freeze(root, output, True), result)
       self.assertTrue((root / 'c.json.sha256').exists())
+      final = json.loads((root / 'final_state.json').read_text())
+      final['updates'] = 2
+      (root / 'final_state.json').write_text(json.dumps(final))
+      with self.assertRaisesRegex(ValueError, 'disagrees'):
+        freeze(root, output, True)
+      final['updates'] = 3
+      (root / 'final_state.json').write_text(json.dumps(final))
       tampered = json.loads(output.read_text())
       tampered['c'] = 0.6
       output.write_text(json.dumps(tampered))
