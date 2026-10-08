@@ -62,7 +62,7 @@ def main():
   data['action'][:] = 0.2
   data = internal.device_put(data, agent.train_sharded)
   carry = agent.init_train(2)
-  loss_carry, obs, prevact, _ = agent.model._apply_replay_context(carry, data)
+  loss_carry, obs, prevact, _ = jax.jit(agent.model._apply_replay_context)(carry, data)
   seed = agent._seeds(0, agent.train_mirrored)
 
   arrays = {}
@@ -71,10 +71,11 @@ def main():
       arrays[prefix + key] = np.asarray(value)
   add('init/', agent.params)
   start = time.perf_counter()
-  _, (loss, _, grads, aux) = nj.pure(
+  grad_fn = jax.jit(nj.pure(
       lambda c, o, p: nj.grad(
-          agent.model.loss, agent.model.modules, has_aux=True)(c, o, p, True))(
-              agent.params, loss_carry, obs, prevact, seed=seed)
+          agent.model.loss, agent.model.modules, has_aux=True)(c, o, p, True)))
+  _, (loss, _, grads, aux) = grad_fn(
+      agent.params, loss_carry, obs, prevact, seed=seed)
   grad_seconds = time.perf_counter() - start
   arrays['loss'] = np.asarray(loss)
   add('grad/', grads)
