@@ -23,13 +23,26 @@
 
 ## 协议字段
 
-四个真实 DMC 环境已在三台服务器完成创建与步进烟测；这不等于模型训练/评估可运行。DMC 环境 seed 传递路径已补上，须通过端到端运行验证。先固定可复现 baseline 与 logging-only 校准规则，再冻结评价协议和预算，之后按预定规则计算并冻结 alpha/c。return AUC、活跃位置平均权重匹配和先用三个训练 seed 筛查均为候选方案，尚未成为正式协议。
+四个真实 DMC 环境已在三台服务器完成创建与步进烟测；提交 `58cae2a` 上四者也已完成小模型训练更新和独立评估的工程短跑。环境 seed 在 `make_env` 入口的首次物理状态可重复；`train_eval` 合并运行、完整训练重跑和正式评估协议仍待验证或冻结。先固定可复现 baseline 与 logging-only 校准规则，再冻结评价协议和预算，之后按预定规则计算并冻结 alpha/c。return AUC、活跃位置平均权重匹配和先用三个训练 seed 筛查均为候选方案，尚未成为正式协议。
 
 正式实验前固定：任务及环境版本、baseline、方法配置、训练步数或交互预算、seed 列表、评价频率与指标、GPU 分配、模型规模、停止与续跑规则。对照实验仅改变预先声明的变量。
 
 每次运行保存：运行编号、Git commit、实际 `config.yaml`、环境依赖快照、服务器与 GPU、seed、启动命令、开始与结束时间、退出状态、指标文件和检查点位置。不同运行使用不同 `logdir`；只有明确续跑才复用。
 
 ## 结果索引
+
+### 真实环境工程短跑（非正式 M2 数据）
+
+下列训练均用提交 `58cae2a`、`dmc_vision debug` 小模型、CUDA、训练 seed 7、1200 环境步；独立 `eval_only` 用训练后检查点及 seed 17，均得到一条 1001 步 episode 和 `scores.jsonl`。各训练的 `metrics.jsonl` 均含 `train/loss/*`。这组极小模型的 return 不用于比较任务或判断方法效果。
+
+| 任务 | 服务器 | 训练目录 | 评估目录 |
+| --- | --- | --- | --- |
+| `dmc_hopper_hop` | sv2 | `smoke-dmc-hopper-train-sv2-58cae2a` | `smoke-eval-hopper-sv2-58cae2a` |
+| `dmc_quadruped_run` | sv1 | `smoke-dmc-quad-run-sv1-58cae2a` | `smoke-eval-quad-run-sv1-58cae2a` |
+| `dmc_quadruped_walk` | sv2 | `smoke-dmc-quad-walk-sv2-58cae2a` | `smoke-eval-quad-walk-sv2-58cae2a` |
+| `dmc_reacher_hard` | sv3 | `smoke-dmc-reacher-hard-sv3-58cae2a` | `smoke-eval-reacher-hard-sv3-58cae2a` |
+
+所有目录均位于 `/data/Policy_Discrepancy/runs/`；`quadruped_run` 另有 `smoke-eval-quad-run-repeat-sv1-58cae2a`，同检查点/seed 的 episode return 与首次运行完全一致。正式实验另建目录并先冻结协议。
 
 | 运行编号 | 任务／方法 | seed | 提交 | 服务器／GPU | 结果目录 | 状态与主要观察 |
 | --- | --- | --- | --- | --- | --- | --- |
