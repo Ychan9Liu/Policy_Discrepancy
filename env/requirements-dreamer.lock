@@ -4,6 +4,7 @@ annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.15.1
 asttokens==3.0.2
+attrs==26.1.0
 AutoROM==0.6.1
 AutoROM.accept-rom-license==0.6.1
 av==18.1.0
@@ -18,12 +19,18 @@ contourpy==1.3.3
 cryptography==50.0.1
 cycler==0.12.1
 decorator==5.3.1
+dm-env==1.6
+dm-tree==0.1.10
+dm_control==1.0.48
 einops==0.8.2
 elements==3.22.2
+etils==1.14.0
 executing==2.2.1
 fastapi==0.141.1
 filelock==4.0.4
 fonttools==4.66.0
+fsspec==2026.9.0
+glfw==2.10.2
 google-api-core==2.39.0
 google-auth==2.58.1
 google-cloud-core==2.7.0
@@ -45,11 +52,14 @@ jaxlib==0.4.33
 jaxtyping==0.3.11
 jedi==0.20.0
 kiwisolver==1.5.1
+labmaze==1.0.6
+lxml==6.1.3
 matplotlib==3.11.2
 matplotlib-inline==0.2.2
 mediapy==1.2.7
 ml_dtypes==0.5.4
 msgpack==1.2.2
+mujoco==3.15.0
 ninjax==3.6.3
 numpy==1.26.4
 nvidia-cublas-cu12==12.9.2.10
@@ -84,6 +94,7 @@ pycparser==3.0
 pydantic==2.13.5
 pydantic_core==2.46.5
 Pygments==2.21.0
+PyOpenGL==3.1.10
 pyparsing==3.3.3
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.3
@@ -107,3 +118,5 @@ wadler_lindig==0.1.7
 watchfiles==1.3.0
 wcwidth==0.9.1
 websockets==17.1
+wrapt==2.5.0
+zipp==4.1.1

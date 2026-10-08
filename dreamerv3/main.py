@@ -80,7 +80,7 @@ def main(argv=None):
         bind(make_replay, config, 'replay'),
         bind(make_replay, config, 'eval_replay', 'eval'),
         bind(make_env, config),
-        bind(make_env, config),
+        bind(make_env, config, seed_offset=config.run.envs),
         bind(make_stream, config),
         bind(make_logger, config),
         args)
@@ -209,7 +209,7 @@ def make_replay(config, folder, mode='train'):
   return embodied.replay.Replay(**kwargs)
 
 
-def make_env(config, index, **overrides):
+def make_env(config, index, seed_offset=0, **overrides):
   suite, task = config.task.split('_', 1)
   if suite == 'memmaze':
     from embodied.envs import from_gym
@@ -239,7 +239,7 @@ def make_env(config, index, **overrides):
   kwargs = config.env.get(suite, {})
   kwargs.update(overrides)
   if kwargs.pop('use_seed', False):
-    kwargs['seed'] = hash((config.seed, index)) % (2 ** 32 - 1)
+    kwargs['seed'] = hash((config.seed, index + seed_offset)) % (2 ** 32 - 1)
   if kwargs.pop('use_logdir', False):
     kwargs['logdir'] = elements.Path(config.logdir) / f'env{index}'
   env = ctor(task, **kwargs)

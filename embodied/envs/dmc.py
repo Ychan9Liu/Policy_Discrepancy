@@ -19,7 +19,8 @@ class DMC(embodied.Env):
   )
 
   def __init__(
-      self, env, repeat=1, size=(64, 64), proprio=True, image=True, camera=-1):
+      self, env, repeat=1, size=(64, 64), proprio=True, image=True,
+      camera=-1, seed=None):
     if 'MUJOCO_GL' not in os.environ:
       os.environ['MUJOCO_GL'] = 'egl'
     if isinstance(env, str):
@@ -29,15 +30,22 @@ class DMC(embodied.Env):
       if domain == 'cup':  # Only domain with multiple words.
         domain = 'ball_in_cup'
       if domain == 'manip':
+        if seed is not None:
+          raise NotImplementedError('Seeded manipulation tasks are unsupported.')
         env = manipulation.load(task + '_vision')
       elif domain == 'rodent':
+        if seed is not None:
+          raise NotImplementedError('Seeded rodent tasks are unsupported.')
         # camera 0: topdown map
         # camera 2: shoulder
         # camera 4: topdown tracking
         # camera 5: eyes
         env = getattr(basic_rodent_2020, task)()
       else:
-        env = suite.load(domain, task)
+        task_kwargs = {'random': seed} if seed is not None else None
+        env = suite.load(domain, task, task_kwargs=task_kwargs)
+    elif seed is not None:
+      raise ValueError('Cannot seed an already constructed DMC environment.')
     self._dmenv = env
     self._env = from_dm.FromDM(self._dmenv)
     self._env = embodied.wrappers.ActionRepeat(self._env, repeat)
