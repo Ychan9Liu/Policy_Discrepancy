@@ -16,6 +16,8 @@
 
 实际运行提交：主 CPU/CUDA 八模式快照及比较为 `b8918a7`；shuffle 全 1、replay context、内部 reset 与不活跃 fixture 为 `cadfc59`；连续两块与两卡完整 agent 为 `830fd79`；100 更新开销样本及最后的 9 项 unittest 为 `fac4b70`。各提交均以本机 Git bundle 快进同步到 sv1，运行过程中没有在服务器直接编辑项目代码。最终提交在文档完成后另行快进同步，便于下一次工程试跑从确定 SHA 启动。
 
+GitHub 同步记录：本机 `git push origin main` 在提交 `aa6eb64` 后因 HTTPS connection reset 失败，`origin/main` 仍为 `e935ff7`。本机 `phase2-final.bundle` 包含 `e935ff7..aa6eb64`，SHA-256 为 `fdfda041ca8be384c38bbb5207def8013e8676fb3c372cf6b9f391570b0407e0`；sv1 上同一 bundle 哈希一致、`git bundle verify` 通过，并快进到 `aa6eb64`、工作区干净。推送失败不影响已确定提交的服务器验收；文档后续提交也须以 bundle 快进同步并在交接报告中给出最终 SHA。
+
 未改动基准从 `e935ff7` 单独导出到第一阶段的 `baseline-src`；每模式在全新进程、同输入/carry/seed 下运行。off、logging、Dt alpha=0、constant c=1、shuffle 全 1 对所有共享数组逐位相同（容差 0），包括参数初值、原始梯度、训练状态及一次 optimizer 更新。有效模式要求原采样 rep 特征、初始化、训练状态、dyn/其他独立梯度及非 rep loss 逐位相同；总 loss 和原始梯度按分支重组比较。CPU/float32 数值比较 `atol=2e-6, rtol=2e-5`；CUDA/bfloat16 的总梯度重组 `atol=0.002, rtol=0.04`，只容纳低精度加法/反传舍入，未改动分支仍要求逐位相同。解析 KL float32 fixture 使用 `rtol=1e-6`；相同分布 Dt 与隔离梯度要求精确零。不同后端之间不要求相同。
 
 ## 验收结果与命令
