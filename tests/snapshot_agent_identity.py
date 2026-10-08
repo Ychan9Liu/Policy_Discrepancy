@@ -173,7 +173,7 @@ def main():
       carry, _, _ = agent.train(carry, dict(data, seed=seed))
     jax.block_until_ready(next(iter(agent.params.values())))
     bench_seconds = time.perf_counter() - start
-  print(json.dumps({
+  summary = {
       'mode': args.mode, 'jax': jax.__version__, 'backend': jax.default_backend(),
       'compute_dtype': str(config.jax.compute_dtype), 'seed': args.seed,
       'batch': [2, 3], 'replay_context': args.replay_context,
@@ -191,7 +191,10 @@ def main():
       'bench_updates': args.bench_updates, 'bench_seconds': bench_seconds,
       'maxrss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
       'diagnostic_keys': sorted(k for k in arrays if k.startswith('diagnostic/')),
-  }, indent=2))
+  }
+  with open(args.output + '.json', 'w', encoding='utf-8') as file:
+    json.dump(summary, file, indent=2)
+  print(json.dumps(summary, indent=2))
 
 
 if __name__ == '__main__':
