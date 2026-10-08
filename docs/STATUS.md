@@ -54,3 +54,11 @@
 已在交接基准 `e935ff7` 之上实现可配置的只读 Dt 探针，并在 sv1 的 CPU/float32 与 A100 CUDA/bfloat16 完成未改动源码、off、logging-only 三模式的完整连续动作 agent 比较。各后端 618 个共享数组逐位相同，覆盖初始化、原始梯度、采样特征、分支 loss、训练状态和一次更新；五项解析 KL/配置/梯度 unittest 通过。诊断包含 Dt、候选 w、raw rep KL、free-nats 活跃比例及活跃区权重；训练目标仍为 baseline。代码验收提交 `a8ca727`，详细配置、命令、容差、环境、结果、性能样本和风险见 `docs/CODE_PHASE1.md`。这是极小工程 fixture，没有四个真实任务的正式效果结论；第二阶段 Dt/constant/shuffle 尚未启动。
 
 本机和 sv1 的 `/data/Policy_Discrepancy/repo` 已通过 Git bundle 同步到同一提交；截至本记录，`origin/main` 仍停在 `e935ff7`。本机 GitHub HTTPS 不可达，sv1 的 HTTPS 推送缺少凭据且随后连接超时；远端推送待网络/认证恢复后完成。验收产物仅在 sv1 的 `/data/Policy_Discrepancy/runs/verify-logging-phase1-30bb5a6/`。
+
+## 03 第二阶段 overlay 工程验收（2026-10-08）
+
+用户已验收第一阶段，第二阶段完成 Dt、训练前校准后固定的 constant 配置入口和全局 shuffle；条件 shuffle 未实现，等待更强 M2 协议。算法提交 `9e0fb8e`，后续测试脚本提交和服务器实际运行提交详见 `docs/CODE_PHASE2.md` 与本机 Git 历史。gate 只乘在 free-nats 后、原 reduction 前的 rep KL；probe 与 shuffle 不消耗原 Ninjax 随机流。所有 alpha/c/seed 均为工程 fixture，未定科研协议没有被填为正式决定。
+
+sv1 的 CPU/float32、A100 CUDA/bfloat16 完整连续动作 agent fixture 已验证：off、logging、Dt alpha=0、constant c=1、shuffle 全 1 均与未改动 `e935ff7` 基准的 789 个共享数组逐位相同；有效三模式各有 490 个未改动数组逐位相同，活跃 rep loss 与原始梯度按预期变化。9 项 unittest 通过，包括两卡跨 shard 全局置换；两卡完整 shuffle agent 也完成初始化、loss、梯度和一次更新。补充 replay context 开关、内部 reset、不同 imag_last、连续 chunk，以及 free-nats 全不活跃诊断。测试目录为 `/data/Policy_Discrepancy/runs/verify-overlay-phase2-64459ae/`。此验收只证明工程语义，不提供四个真实 DMC 任务上的性能或 M2 结论。
+
+下一步可在已确认四个 clean 仅视觉任务上做**工程集成试跑**，逐次记录确定提交、完整配置、seed、服务器/GPU、环境版本、独立产物目录及 Dt/权重/活跃性/活跃位置作用；先核查运行路径和资源。正式多 seed 比较仍须冻结模型规模、baseline、校准规则及 c 匹配口径、主指标、训练/评估 seed 列表、预算和效果判据。`origin/main` 的推送状态以最新 Git/网络核验为准。
