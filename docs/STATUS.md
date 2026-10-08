@@ -52,3 +52,5 @@
 ## 03 第一阶段 logging-only 工程验收（2026-10-08）
 
 已在交接基准 `e935ff7` 之上实现可配置的只读 Dt 探针，并在 sv1 的 CPU/float32 与 A100 CUDA/bfloat16 完成未改动源码、off、logging-only 三模式的完整连续动作 agent 比较。各后端 618 个共享数组逐位相同，覆盖初始化、原始梯度、采样特征、分支 loss、训练状态和一次更新；五项解析 KL/配置/梯度 unittest 通过。诊断包含 Dt、候选 w、raw rep KL、free-nats 活跃比例及活跃区权重；训练目标仍为 baseline。代码验收提交 `a8ca727`，详细配置、命令、容差、环境、结果、性能样本和风险见 `docs/CODE_PHASE1.md`。这是极小工程 fixture，没有四个真实任务的正式效果结论；第二阶段 Dt/constant/shuffle 尚未启动。
+
+本机和 sv1 的 `/data/Policy_Discrepancy/repo` 已通过 Git bundle 同步到同一提交；截至本记录，`origin/main` 仍停在 `e935ff7`。本机 GitHub HTTPS 不可达，sv1 的 HTTPS 推送缺少凭据且随后连接超时；远端推送待网络/认证恢复后完成。验收产物仅在 sv1 的 `/data/Policy_Discrepancy/runs/verify-logging-phase1-30bb5a6/`。
