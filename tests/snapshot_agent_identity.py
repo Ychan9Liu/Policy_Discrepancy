@@ -25,15 +25,19 @@ def main():
   with open('dreamerv3/configs.yaml', encoding='utf-8') as file:
     configs = yaml.YAML(typ='safe').load(file)
   config = elements.Config(configs['defaults']).update(configs['debug'])
-  config = config.update({
+  overrides = {
       'batch_size': 2, 'batch_length': 3, 'replay_context': 0,
-      'jax': {'platform': 'cpu', 'compute_dtype': 'float32',
-              'precompile': False, 'profiler': False, 'enable_policy': False},
-      'agent': {'imag_length': 2, 'imag_last': 2},
-  })
+      'jax.platform': 'cpu', 'jax.compute_dtype': 'float32',
+      'jax.precompile': False, 'jax.profiler': False,
+      'jax.enable_policy': False,
+      'agent.imag_length': 2, 'agent.imag_last': 2,
+  }
   if args.mode != 'baseline':
-    config = config.update({'agent': {'rep_probe': {
-        'mode': args.mode, 'alpha': 0.7 if args.mode == 'logging' else None}}})
+    overrides.update({
+        'agent.rep_probe.mode': args.mode,
+        'agent.rep_probe.alpha': 0.7 if args.mode == 'logging' else None,
+    })
+  config = elements.Config({**config.flat, **overrides})
   obs_space = {
       'vector': elements.Space(np.float32, (5,)),
       'reward': elements.Space(np.float32),
