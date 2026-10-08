@@ -168,7 +168,7 @@ class Agent(embodied.jax.Agent):
         enc_carry, obs, reset, training)
     dyn_carry, dyn_entries, los, repfeat, mets, probe = self.dyn.loss(
         dyn_carry, tokens, prevact, reset, training,
-        rep_probe=self.rep_probe_logging)
+        rep_probe=self.rep_probe_logging and training)
     losses.update(los)
     metrics.update(mets)
     dec_carry, dec_entries, recons = self.dec(
@@ -238,7 +238,7 @@ class Agent(embodied.jax.Agent):
       losses.update(los)
       metrics.update(prefix(mets, 'reploss'))
 
-    if self.rep_probe_logging:
+    if self.rep_probe_logging and training:
       metrics.update(rep_probe.metrics(
           self, repfeat, probe['prior_logit'], probe['rep_raw'],
           losses['rep'], self.config.rep_probe.alpha))
