@@ -1,4 +1,4 @@
-"""One-process full-agent snapshot for baseline/off/logging comparisons.
+"""One-process full-agent snapshot for baseline and overlay comparisons.
 
 Run in separate Python processes so JAX and Ninjax initialization are identical.
 The baseline run uses this script with PYTHONPATH pointing at commit e935ff7.
@@ -21,12 +21,15 @@ from dreamerv3.agent import Agent
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('--mode', choices=('baseline', 'off', 'logging'), required=True)
+  parser.add_argument('--mode', choices=(
+      'baseline', 'off', 'logging', 'dt', 'constant', 'shuffle'), required=True)
   parser.add_argument('--output', required=True)
   parser.add_argument('--replay_context', type=int, default=0)
   parser.add_argument('--free_nats', type=float, default=1.0)
   parser.add_argument('--imag_last', type=int, default=2)
   parser.add_argument('--alpha', type=float, default=0.7)
+  parser.add_argument('--c', type=float, default=0.6)
+  parser.add_argument('--seed', type=int, default=7)
   parser.add_argument('--bench_updates', type=int, default=0)
   parser.add_argument('--platform', choices=('cpu', 'cuda'), default='cpu')
   parser.add_argument('--dtype', choices=('float32', 'bfloat16'), default='float32')
@@ -46,7 +49,9 @@ def main():
   if args.mode != 'baseline':
     overrides.update({
         'agent.rep_probe.mode': args.mode,
-        'agent.rep_probe.alpha': args.alpha if args.mode == 'logging' else -1.0,
+        'agent.rep_probe.alpha': (
+            args.alpha if args.mode in ('logging', 'dt', 'constant', 'shuffle') else -1.0),
+        'agent.rep_probe.c': args.c if args.mode == 'constant' else -1.0,
     })
   config = elements.Config({**config.flat, **overrides})
   obs_space = {
@@ -58,7 +63,7 @@ def main():
   }
   act_space = {'action': elements.Space(np.float32, (2,))}
   agent_config = elements.Config(**config.agent, logdir='/tmp/pd-identity',
-      seed=7, jax=config.jax, batch_size=config.batch_size,
+      seed=args.seed, jax=config.jax, batch_size=config.batch_size,
       batch_length=config.batch_length, replay_context=config.replay_context)
   start = time.perf_counter()
   agent = Agent(obs_space, act_space, agent_config)
@@ -96,10 +101,20 @@ def main():
   with jax._src.config.explicit_device_get_scope():
     arrays['loss'] = np.asarray(loss)
   add('grad/', grads)
+  rep_grad_fn = jax.jit(nj.pure(
+      lambda c, o, p: nj.grad(
+          lambda c, o, p: agent.model.loss(c, o, p, True)[1][2][
+              'losses']['rep'].mean() * agent.model.scales['rep'],
+          agent.model.modules)(c, o, p)))
+  _, (_, _, rep_grads) = rep_grad_fn(
+      agent.params, loss_carry, obs, prevact, seed=seed)
+  add('repgrad/', rep_grads)
   add('gradstate/', grad_state)
   add('loss/', aux[2]['losses'])
   add('repfeat/', aux[2]['repfeat'])
-  if args.mode == 'logging':
+  if args.mode in ('logging', 'dt', 'constant', 'shuffle') and not (
+      args.mode == 'dt' and args.alpha == 0) and not (
+      args.mode == 'constant' and args.c == 1):
     add('diagnostic/', {k: v for k, v in aux[3].items() if k.startswith('dt/')})
 
   start = time.perf_counter()
@@ -120,10 +135,12 @@ def main():
     bench_seconds = time.perf_counter() - start
   print(json.dumps({
       'mode': args.mode, 'jax': jax.__version__, 'backend': jax.default_backend(),
-      'compute_dtype': str(config.jax.compute_dtype), 'seed': 7,
+      'compute_dtype': str(config.jax.compute_dtype), 'seed': args.seed,
       'batch': [2, 3], 'replay_context': args.replay_context,
       'free_nats': args.free_nats, 'imag_last': args.imag_last,
-      'alpha': args.alpha if args.mode == 'logging' else None,
+      'alpha': args.alpha if args.mode in (
+          'logging', 'dt', 'constant', 'shuffle') else None,
+      'c': args.c if args.mode == 'constant' else None,
       'param_count': len(agent.params),
       'init_seconds': init_seconds, 'grad_seconds': grad_seconds,
       'update_seconds': update_seconds, 'loss': float(arrays['loss']),
