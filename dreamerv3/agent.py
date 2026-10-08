@@ -36,7 +36,12 @@ class Agent(embodied.jax.Agent):
     self.act_space = act_space
     self.config = config
     rep_probe.validate(config, act_space)
-    self.rep_probe_logging = config.rep_probe.mode == 'logging'
+    mode = config.rep_probe.mode
+    self.rep_probe_mode = mode
+    self.rep_probe_active = (
+        mode != 'off' and
+        not (mode == 'dt' and config.rep_probe.alpha == 0) and
+        not (mode == 'constant' and config.rep_probe.c == 1))
 
     exclude = ('is_first', 'is_last', 'is_terminal', 'reward')
     enc_space = {k: v for k, v in obs_space.items() if k not in exclude}
@@ -168,7 +173,7 @@ class Agent(embodied.jax.Agent):
         enc_carry, obs, reset, training)
     dyn_carry, dyn_entries, los, repfeat, mets, probe = self.dyn.loss(
         dyn_carry, tokens, prevact, reset, training,
-        rep_probe=self.rep_probe_logging and training)
+        rep_probe=self.rep_probe_active and training)
     losses.update(los)
     metrics.update(mets)
     dec_carry, dec_entries, recons = self.dec(
@@ -238,10 +243,15 @@ class Agent(embodied.jax.Agent):
       losses.update(los)
       metrics.update(prefix(mets, 'reploss'))
 
-    if self.rep_probe_logging and training:
-      metrics.update(rep_probe.metrics(
+    if self.rep_probe_active and training:
+      rep_before = losses['rep']
+      weight, probe_metrics = rep_probe.overlay(
           self, repfeat, probe['prior_logit'], probe['rep_raw'],
-          losses['rep'], self.config.rep_probe.alpha))
+          rep_before, self.rep_probe_mode, self.config.rep_probe.alpha,
+          self.config.rep_probe.c, self.config.seed, self.opt.step.read())
+      if self.rep_probe_mode != 'logging':
+        losses['rep'] = weight * rep_before
+      metrics.update(probe_metrics)
 
     assert set(losses.keys()) == set(self.scales.keys()), (
         sorted(losses.keys()), sorted(self.scales.keys()))
