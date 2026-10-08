@@ -9,6 +9,7 @@ import json
 import time
 
 import elements
+import embodied.jax.internal as internal
 import jax
 import ninjax as nj
 import numpy as np
@@ -59,6 +60,7 @@ def main():
   data['is_last'][0, -1] = True
   data['is_terminal'][0, -1] = True
   data['action'][:] = 0.2
+  data = internal.device_put(data, agent.train_sharded)
   carry = agent.init_train(2)
   loss_carry, obs, prevact, _ = agent.model._apply_replay_context(carry, data)
   seed = agent._seeds(0, agent.train_mirrored)
