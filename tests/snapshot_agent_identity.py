@@ -109,6 +109,20 @@ def main():
   _, (_, _, rep_grads) = rep_grad_fn(
       agent.params, loss_carry, obs, prevact, seed=seed)
   add('repgrad/', rep_grads)
+  def branch_gradient(branch):
+    def branch_loss(c, o, p):
+      losses = agent.model.loss(c, o, p, True)[1][2]['losses']
+      if branch == 'other':
+        return sum(v.mean() * agent.model.scales[k]
+                   for k, v in losses.items() if k != 'rep')
+      return losses[branch].mean() * agent.model.scales[branch]
+    fn = jax.jit(nj.pure(lambda c, o, p: nj.grad(
+        branch_loss, agent.model.modules)(c, o, p)))
+    _, (_, _, branch_grads) = fn(
+        agent.params, loss_carry, obs, prevact, seed=seed)
+    add(branch + 'grad/', branch_grads)
+  branch_gradient('dyn')
+  branch_gradient('other')
   add('gradstate/', grad_state)
   add('loss/', aux[2]['losses'])
   add('repfeat/', aux[2]['repfeat'])
