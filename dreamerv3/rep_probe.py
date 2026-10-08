@@ -112,6 +112,13 @@ def overlay(agent, repfeat, prior_logit, rep_raw, rep_before,
   source_active_mean = jnp.where(count > 0, (w * active).sum() / count, jnp.nan)
   mode_diff = jnp.any(qmode != pmode, axis=-1)
   result = {
+      'match_sum': jnp.where(active, w, 0).sum(),
+      'match_count': count,
+      'match_invalid_count': (
+          ~jnp.isfinite(d) | ~jnp.isfinite(w) |
+          ~jnp.isfinite(rep_raw)).sum(),
+      'D_zero_count': (d == 0).sum(),
+      'loss_position_count': jnp.int32(rep_raw.size),
       'D_mean': d.mean(), 'D_p10': jnp.percentile(d, 10),
       'D_p50': jnp.percentile(d, 50), 'D_p90': jnp.percentile(d, 90),
       'w_mean': w.mean(), 'w_p10': jnp.percentile(w, 10),

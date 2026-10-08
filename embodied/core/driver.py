@@ -82,6 +82,50 @@ class Driver:
     episode += obs['is_last'].sum()
     return step, episode
 
+  def step_selected(self, policy, indices):
+    """Step only selected workers, for exact environment-action boundaries."""
+    indices = tuple(indices)
+    if not indices or len(set(indices)) != len(indices) or any(
+        not 0 <= i < self.length for i in indices):
+      raise ValueError(f'Invalid worker selection: {indices}')
+    acts = [{k: v[i] for k, v in self.acts.items()} for i in indices]
+    if self.parallel:
+      for i, act in zip(indices, acts):
+        self.pipes[i].send(('step', act))
+      observations = [self._receive(self.pipes[i]) for i in indices]
+    else:
+      observations = [self.envs[i].step(act) for i, act in zip(indices, acts)]
+    obs = {k: np.stack([x[k] for x in observations])
+           for k in observations[0]}
+    logs = {k: v for k, v in obs.items() if k.startswith('log/')}
+    obs = {k: v for k, v in obs.items() if not k.startswith('log/')}
+    islist = lambda x: isinstance(x, list)
+    carry = (elements.tree.map(
+        lambda xs: [xs[i] for i in indices], self.carry, isleaf=islist)
+        if self.carry is not None else None)
+    carry, next_acts, outs = policy(carry, obs, **self.kwargs)
+    assert all(k not in next_acts for k in outs)
+    if obs['is_last'].any():
+      mask = ~obs['is_last']
+      next_acts = {k: self._mask(v, mask) for k, v in next_acts.items()}
+    def put_carry(old, new):
+      for pos, worker in enumerate(indices):
+        old[worker] = new[pos]
+      return old
+    if self.carry is not None:
+      self.carry = elements.tree.map(
+          put_carry, self.carry, carry, isleaf=islist)
+    for pos, worker in enumerate(indices):
+      for key, value in next_acts.items():
+        self.acts[key][worker] = value[pos]
+      self.acts['reset'][worker] = obs['is_last'][pos]
+    trans = {**obs, **next_acts, **outs, **logs}
+    for pos, worker in enumerate(indices):
+      tran = elements.tree.map(lambda x: x[pos], trans)
+      for callback in self.callbacks:
+        callback(tran, worker, **self.kwargs)
+    return len(indices), int(obs['is_last'].sum())
+
   def _mask(self, value, mask):
     while mask.ndim < value.ndim:
       mask = mask[..., None]

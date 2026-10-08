@@ -85,6 +85,17 @@ def main(argv=None):
         bind(make_logger, config),
         args)
 
+  elif config.script == 'protocol_v1':
+    embodied.run.protocol_v1.run(
+        bind(make_agent, config),
+        bind(make_replay, config, 'replay', seed=(
+            embodied.run.protocol_v1.seed32(
+                config.seed, config.task, 'train_replay'))),
+        bind(make_env, config),
+        bind(make_stream, config),
+        bind(make_logger, config),
+        args, config)
+
   elif config.script == 'eval_only':
     embodied.run.eval_only(
         bind(make_agent, config),
@@ -180,7 +191,7 @@ def make_logger(config):
   return logger
 
 
-def make_replay(config, folder, mode='train'):
+def make_replay(config, folder, mode='train', seed=None):
   batlen = config.batch_length if mode == 'train' else config.report_length
   consec = config.consec_train if mode == 'train' else config.consec_report
   capacity = config.replay.size if mode == 'train' else config.replay.size / 10
@@ -193,6 +204,8 @@ def make_replay(config, folder, mode='train'):
   kwargs = dict(
       length=length, capacity=int(capacity), online=config.replay.online,
       chunksize=config.replay.chunksize, directory=directory)
+  if seed is not None:
+    kwargs['seed'] = int(seed)
 
   if config.replay.fracs.uniform < 1 and mode == 'train':
     assert config.jax.compute_dtype in ('bfloat16', 'float32'), (
@@ -239,7 +252,8 @@ def make_env(config, index, seed_offset=0, **overrides):
   kwargs = config.env.get(suite, {})
   kwargs.update(overrides)
   if kwargs.pop('use_seed', False):
-    kwargs['seed'] = hash((config.seed, index + seed_offset)) % (2 ** 32 - 1)
+    kwargs['seed'] = kwargs.get(
+        'seed', hash((config.seed, index + seed_offset)) % (2 ** 32 - 1))
   if kwargs.pop('use_logdir', False):
     kwargs['logdir'] = elements.Path(config.logdir) / f'env{index}'
   env = ctor(task, **kwargs)

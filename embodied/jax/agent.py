@@ -159,6 +159,8 @@ class Agent(embodied.Agent):
     self.n_updates = elements.Counter()
     self.n_batches = elements.Counter()
     self.n_actions = elements.Counter()
+    self.n_eval_actions = elements.Counter()
+    self.eval_seed = int(self.config.seed)
 
     self.pending_outs = None
     self.pending_mets = None
@@ -228,10 +230,16 @@ class Agent(embodied.Agent):
 
     with self.policy_lock:
       obs = internal.device_put(obs, self.policy_sharded)
-      with self.n_actions.lock:
-        counter = self.n_actions.value
-        self.n_actions.value += 1
-      seed = self._seeds(counter, self.policy_mirrored)
+      if mode == 'eval':
+        with self.n_eval_actions.lock:
+          counter = self.n_eval_actions.value
+          self.n_eval_actions.value += 1
+        seed = self._eval_seeds(counter, self.policy_mirrored)
+      else:
+        with self.n_actions.lock:
+          counter = self.n_actions.value
+          self.n_actions.value += 1
+        seed = self._seeds(counter, self.policy_mirrored)
       carry = internal.to_global(self._stack(carry), self.policy_sharded)
 
     with self.policy_lock:
@@ -312,6 +320,30 @@ class Agent(embodied.Agent):
 
     return carry, return_outs, return_mets
 
+  def take_train_result(self):
+    """Synchronously retrieve this update's delayed outputs and metrics."""
+    outs = self._take_outs(self.pending_outs) if self.pending_outs else {}
+    mets = self._take_outs(self.pending_mets) if self.pending_mets else {}
+    self.pending_outs = None
+    self.pending_mets = None
+    return outs, mets
+
+  def set_eval_seed(self, seed):
+    """Begin one evaluation episode in an independent policy RNG stream."""
+    self.eval_seed = int(seed)
+    with self.n_eval_actions.lock:
+      self.n_eval_actions.value = 0
+
+  def sync_policy(self):
+    """Fix the policy copy to the current optimizer parameters."""
+    with self.train_lock, self.policy_lock:
+      policy_params = {k: self.params[k].copy() for k in self.policy_keys}
+      policy_params = internal.move(policy_params, self.policy_params_sharding)
+      old = self.policy_params
+      self.policy_params = policy_params
+      self.pending_sync = None
+      jax.tree.map(lambda x: x.delete(), old)
+
   @elements.timer.section('jaxagent_report')
   def report(self, carry, data):
     seed = data.pop('seed')
@@ -348,6 +380,8 @@ class Agent(embodied.Agent):
         'updates': int(self.n_updates),
         'batches': int(self.n_batches),
         'actions': int(self.n_actions),
+        'eval_actions': int(self.n_eval_actions),
+        'eval_seed': int(self.eval_seed),
     }
     data = {'params': params, 'counters': counters}
     return data
@@ -369,6 +403,9 @@ class Agent(embodied.Agent):
         self.n_batches.value = int(data['counters']['updates'])
       with self.n_actions.lock:
         self.n_actions.value = int(data['counters']['actions'])
+      with self.n_eval_actions.lock:
+        self.n_eval_actions.value = int(data['counters'].get('eval_actions', 0))
+      self.eval_seed = int(data['counters'].get('eval_seed', self.config.seed))
 
       if regex:
         params = {k: v for k, v in params.items() if re.match(regex, k)}
@@ -404,6 +441,12 @@ class Agent(embodied.Agent):
 
   def _seeds(self, counter, sharding):
     rng = np.random.default_rng(seed=[self.config.seed, int(counter)])
+    seeds = rng.integers(0, np.iinfo(np.uint32).max, (2,), np.uint32)
+    return internal.device_put(seeds, sharding)
+
+  def _eval_seeds(self, counter, sharding):
+    rng = np.random.default_rng(seed=[
+        self.config.seed, 0x4556414C, self.eval_seed, int(counter)])
     seeds = rng.integers(0, np.iinfo(np.uint32).max, (2,), np.uint32)
     return internal.device_put(seeds, sharding)
 
