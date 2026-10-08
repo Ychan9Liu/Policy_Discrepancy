@@ -100,4 +100,4 @@ sv1 的 CPU/float32、A100 CUDA/bfloat16 完整连续动作 agent fixture 已验
 
 sv1 的 17 项算法/协议单元测试通过。缩小预算连续动作完整 agent 中，报告开关、评价 episode 数及并行环境改变后，baseline 最终参数、训练动作/更新计数和匹配收据逐位一致；Dt/constant/shuffle 也完成动作网格与预算。CPU/float32 与 CUDA/bfloat16 八模式对未改动基准的完整 agent 回归均通过；结果与产物索引见工程报告。中途 checkpoint 能保存累计量和计数，但环境/replay 随机内部状态无法完整恢复，runner 明确拒绝不一致的训练续跑。没有执行正式四任务百万步训练，没有正式 c 或方法效果结论。
 
-下一步由 04 在确定提交、干净服务器工作区及独立运行目录上检查四个真实 size50m DMC 任务的显存、吞吐、日志、作用诊断、评价快照和磁盘，再按已冻结 v1 执行正式比较；中途失败不伪装无缝续跑。GitHub 远端访问本轮查询出现 HTTPS connection reset，服务器通过可校验 Git bundle 快进同步，最终提交及 bundle 哈希见本轮交接报告。
+下一步由 04 在确定提交、干净服务器工作区及独立运行目录上检查四个真实 size50m DMC 任务的显存、吞吐、日志、作用诊断、评价快照和磁盘，再按已冻结 v1 执行正式比较；中途失败不伪装无缝续跑。本轮 GitHub 远端初次查询曾出现 HTTPS connection reset，重试后确认 `origin/main` 为交接基准 `e935ff7`，随后成功快进推送；服务器也通过可校验 Git bundle 快进同步。最终提交及 bundle 哈希见本轮交接报告。

@@ -2,6 +2,8 @@
 
 日期：2026-10-09。依据：`docs/EXPERIMENTS.md` 已确认 v1；交接提交 `e4d9b67940f12d1ae67f7b92c500c316b423f2f2`。本报告记录缩小预算工程 fixture，**没有运行四任务的正式百万步比较，也没有 M2 效果结论**。第一、二阶段算法与基准证据继续见 `CODE_PHASE1.md`、`CODE_PHASE2.md`。
 
+同步：代码及测试均先在本机提交，以 Git bundle 快进同步到 sv1 的同一确定提交后才运行；本轮结束时本机 `main` 与 GitHub `origin/main` 已快进一致。最终文档提交再次通过 bundle 同步到 sv1；本机、GitHub、sv1 的最终 SHA 与 bundle SHA-256 以完成报告为准。服务器未直接修改项目源码。
+
 ## 提交与改动
 
 - 主 runner 代码提交 `95fe492`，后续代码修正至 `5df5df5`；最终工程测试提交 `b20ffeda07fe741deb1b9ee285174a3e34bcaaf8`。本报告完成后的文档提交另记为最终 HEAD，不改变已验收代码或测试。
