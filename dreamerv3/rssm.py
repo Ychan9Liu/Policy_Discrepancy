@@ -117,20 +117,21 @@ class RSSM(nj.Module):
       # return carry, entries, feat, action
       return carry, feat, action
 
-  def loss(self, carry, tokens, acts, reset, training):
+  def loss(self, carry, tokens, acts, reset, training, rep_probe=False):
     metrics = {}
     carry, entries, feat = self.observe(carry, tokens, acts, reset, training)
     prior = self._prior(feat['deter'])
     post = feat['logit']
     dyn = self._dist(sg(post)).kl(self._dist(prior))
     rep = self._dist(post).kl(self._dist(sg(prior)))
+    probe = {'prior_logit': prior, 'rep_raw': rep} if rep_probe else {}
     if self.free_nats:
       dyn = jnp.maximum(dyn, self.free_nats)
       rep = jnp.maximum(rep, self.free_nats)
     losses = {'dyn': dyn, 'rep': rep}
     metrics['dyn_ent'] = self._dist(prior).entropy().mean()
     metrics['rep_ent'] = self._dist(post).entropy().mean()
-    return carry, entries, losses, feat, metrics
+    return carry, entries, losses, feat, metrics, probe
 
   def _core(self, deter, stoch, action):
     stoch = stoch.reshape((stoch.shape[0], -1))

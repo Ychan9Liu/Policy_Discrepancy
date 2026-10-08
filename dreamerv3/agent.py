@@ -11,6 +11,7 @@ import numpy as np
 import optax
 
 from . import rssm
+from . import rep_probe
 
 f32 = jnp.float32
 i32 = jnp.int32
@@ -34,6 +35,8 @@ class Agent(embodied.jax.Agent):
     self.obs_space = obs_space
     self.act_space = act_space
     self.config = config
+    rep_probe.validate(config, act_space)
+    self.rep_probe_logging = config.rep_probe.mode == 'logging'
 
     exclude = ('is_first', 'is_last', 'is_terminal', 'reward')
     enc_space = {k: v for k, v in obs_space.items() if k not in exclude}
@@ -163,8 +166,9 @@ class Agent(embodied.jax.Agent):
     # World model
     enc_carry, enc_entries, tokens = self.enc(
         enc_carry, obs, reset, training)
-    dyn_carry, dyn_entries, los, repfeat, mets = self.dyn.loss(
-        dyn_carry, tokens, prevact, reset, training)
+    dyn_carry, dyn_entries, los, repfeat, mets, probe = self.dyn.loss(
+        dyn_carry, tokens, prevact, reset, training,
+        rep_probe=self.rep_probe_logging)
     losses.update(los)
     metrics.update(mets)
     dec_carry, dec_entries, recons = self.dec(
@@ -233,6 +237,11 @@ class Agent(embodied.jax.Agent):
           **self.config.repl_loss)
       losses.update(los)
       metrics.update(prefix(mets, 'reploss'))
+
+    if self.rep_probe_logging:
+      metrics.update(rep_probe.metrics(
+          self, repfeat, probe['prior_logit'], probe['rep_raw'],
+          losses['rep'], self.config.rep_probe.alpha))
 
     assert set(losses.keys()) == set(self.scales.keys()), (
         sorted(losses.keys()), sorted(self.scales.keys()))
