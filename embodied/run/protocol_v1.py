@@ -199,8 +199,6 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
   step = logger.step
   batch_steps = args.batch_size * args.batch_length
   should_train = elements.when.Ratio(args.train_ratio / batch_steps)
-  stream_train = iter(agent.stream(make_stream(replay, 'train')))
-  carry_train = [agent.init_train(args.batch_size)]
   last_batch = [None]
   agg = elements.Agg()
 
@@ -211,17 +209,24 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
   cp.protocol = state
   cp.load_or_save()
   if int(step) != state.actions or int(agent.n_updates) != state.updates:
+    logger.close()
     raise ValueError('Checkpoint counters disagree')
   if state.actions:
     if state.actions < state.budget:
+      logger.close()
       raise RuntimeError(
           'Training continuation refused: environment and replay RNG state '
           'are not completely checkpointed; start a fresh run')
     if len(state.evaluations) == len(state.grid):
       print('Completed protocol run already checkpointed')
+      logger.close()
       return
+    logger.close()
     raise RuntimeError(
         'Terminal evaluation recovery needs the fixed endpoint snapshot')
+
+  stream_train = iter(agent.stream(make_stream(replay, 'train')))
+  carry_train = [agent.init_train(args.batch_size)]
 
   manifest = dict(
       protocol='M2-v1', task=config.task, root_seed=config.seed,
