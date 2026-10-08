@@ -136,12 +136,15 @@ class ProtocolState:
       raise ValueError('Checkpoint update ledger is incomplete')
 
 
-def report_on_batch(agent, batch, report_id, root, task):
+def report_on_batch(agent, batch, report_id, root, task, length):
   """Report from an already sampled batch without touching train replay/RNG."""
   seed = seed32(root, task, 'report', report_id)
   rng = np.random.default_rng(seed=[seed, 0])
   key = rng.integers(0, np.iinfo(np.uint32).max, (2,), np.uint32)
   key = internal.device_put(key, agent.train_mirrored)
+  if batch['is_first'].shape[1] < length:
+    raise ValueError('Training batch is shorter than report length')
+  batch = {k: v[:, :length] for k, v in batch.items() if k != 'seed'}
   carry = agent.init_report(len(batch['is_first']))
   _, metrics = agent.report(carry, dict(batch, seed=key))
   return metrics
@@ -332,7 +335,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       if (args.report_every_actions and last_batch[0] is not None and
           state.actions >= next_report):
         metrics = report_on_batch(
-            agent, last_batch[0], state.reports, config.seed, config.task)
+            agent, last_batch[0], state.reports, config.seed, config.task,
+            config.report_length + config.replay_context)
         state.reports += 1
         logger.add(metrics, prefix='report')
         next_report += int(args.report_every_actions)
