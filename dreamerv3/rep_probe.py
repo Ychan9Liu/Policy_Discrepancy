@@ -77,6 +77,13 @@ def global_shuffle(weight, seed, step):
   return jax.lax.stop_gradient(shuffled), moved, permutation
 
 
+def matching_stats(rep_raw, candidate_weight, threshold):
+  """Global raw S/N over free-nats-active loss positions."""
+  active = (rep_raw > threshold if threshold else
+            jnp.ones_like(rep_raw, bool))
+  return (jnp.where(active, candidate_weight, 0).sum(), active.sum())
+
+
 def overlay(agent, repfeat, prior_logit, rep_raw, rep_before,
             mode, alpha, c=-1.0, seed=0, step=0):
   """Probe the initialized actor; return the actual rep weight and metrics."""
@@ -106,14 +113,16 @@ def overlay(agent, repfeat, prior_logit, rep_raw, rep_before,
     raise ValueError(f'Unsupported active rep_probe mode: {mode!r}')
   active = rep_raw > agent.dyn.free_nats if agent.dyn.free_nats else jnp.ones_like(rep_raw, bool)
   count = active.sum()
+  match_sum, match_count = matching_stats(
+      rep_raw, w, agent.dyn.free_nats)
   tau = agent.dyn.free_nats if agent.dyn.free_nats else 0.0
   excess = jnp.maximum(rep_raw - tau, 0)
   active_mean = jnp.where(count > 0, (weight * active).sum() / count, jnp.nan)
   source_active_mean = jnp.where(count > 0, (w * active).sum() / count, jnp.nan)
   mode_diff = jnp.any(qmode != pmode, axis=-1)
   result = {
-      'match_sum': jnp.where(active, w, 0).sum(),
-      'match_count': count,
+      'match_sum': match_sum,
+      'match_count': match_count,
       'match_invalid_count': (
           ~jnp.isfinite(d) | ~jnp.isfinite(w) |
           ~jnp.isfinite(rep_raw)).sum(),
