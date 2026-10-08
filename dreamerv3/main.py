@@ -229,6 +229,7 @@ def make_env(config, index, seed_offset=0, **overrides):
     import memory_maze  # noqa
   ctor = {
       'dummy': 'embodied.envs.dummy:Dummy',
+      'dummycont': 'embodied.envs.dummy_cont:DummyCont',
       'gym': 'embodied.envs.from_gym:FromGym',
       'dm': 'embodied.envs.from_dmenv:FromDM',
       'crafter': 'embodied.envs.crafter:Crafter',
