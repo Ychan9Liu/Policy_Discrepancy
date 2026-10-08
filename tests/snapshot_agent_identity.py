@@ -82,6 +82,8 @@ def main():
   def add(prefix, tree):
     with jax._src.config.explicit_device_get_scope():
       for key, value in tree.items():
+        if value.dtype == jax.numpy.bfloat16:
+          value = value.astype(jax.numpy.float32)
         arrays[prefix + key] = np.asarray(value)
   add('init/', agent.params)
   start = time.perf_counter()
