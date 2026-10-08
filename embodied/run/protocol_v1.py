@@ -178,9 +178,10 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
     rssm = config.agent.dyn.rssm
     if (rssm.deter, rssm.hidden, rssm.classes) != (4096, 512, 32):
       raise ValueError('M2 v1 requires size50m RSSM')
-  if (config.agent.dyn.rssm.free_nats != 1 or
+  if (not args.engineering_fixture and (
+      config.agent.dyn.rssm.free_nats != 1 or
       config.agent.loss_scales.dyn != 1 or
-      config.agent.loss_scales.rep != 0.1):
+      config.agent.loss_scales.rep != 0.1)):
     raise ValueError('M2 v1 KL settings differ from frozen protocol')
   if (not args.engineering_fixture and (
       config.env.dmc.repeat != 1 or config.env.dmc.proprio or
