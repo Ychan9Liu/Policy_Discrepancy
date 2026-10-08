@@ -6,6 +6,7 @@ The baseline run uses this script with PYTHONPATH pointing at commit e935ff7.
 
 import argparse
 import json
+import resource
 import time
 
 import elements
@@ -26,6 +27,7 @@ def main():
   parser.add_argument('--free_nats', type=float, default=1.0)
   parser.add_argument('--imag_last', type=int, default=2)
   parser.add_argument('--alpha', type=float, default=0.7)
+  parser.add_argument('--bench_updates', type=int, default=0)
   args = parser.parse_args()
   with open('dreamerv3/configs.yaml', encoding='utf-8') as file:
     configs = yaml.YAML(typ='safe').load(file)
@@ -83,22 +85,33 @@ def main():
   grad_fn = jax.jit(nj.pure(
       lambda c, o, p: nj.grad(
           agent.model.loss, agent.model.modules, has_aux=True)(c, o, p, True)))
-  _, (loss, _, grads, aux) = grad_fn(
+  grad_state, (loss, _, grads, aux) = grad_fn(
       agent.params, loss_carry, obs, prevact, seed=seed)
   grad_seconds = time.perf_counter() - start
   arrays['loss'] = np.asarray(loss)
   add('grad/', grads)
+  add('gradstate/', grad_state)
   add('loss/', aux[2]['losses'])
+  add('repfeat/', aux[2]['repfeat'])
   if args.mode == 'logging':
     add('diagnostic/', {k: v for k, v in aux[3].items() if k.startswith('dt/')})
 
   start = time.perf_counter()
-  _, _, update_metrics = agent.train(carry, dict(data, seed=seed))
+  carry, _, update_metrics = agent.train(carry, dict(data, seed=seed))
   # The first call returns delayed metrics; parameters are already updated.
   del update_metrics
   update_seconds = time.perf_counter() - start
   add('updated/', agent.params)
   np.savez_compressed(args.output, **arrays)
+  bench_seconds = None
+  if args.bench_updates:
+    carry, _, _ = agent.train(carry, dict(data, seed=seed))
+    jax.block_until_ready(next(iter(agent.params.values())))
+    start = time.perf_counter()
+    for _ in range(args.bench_updates):
+      carry, _, _ = agent.train(carry, dict(data, seed=seed))
+    jax.block_until_ready(next(iter(agent.params.values())))
+    bench_seconds = time.perf_counter() - start
   print(json.dumps({
       'mode': args.mode, 'jax': jax.__version__, 'backend': jax.default_backend(),
       'compute_dtype': str(config.jax.compute_dtype), 'seed': 7,
@@ -108,6 +121,8 @@ def main():
       'param_count': len(agent.params),
       'init_seconds': init_seconds, 'grad_seconds': grad_seconds,
       'update_seconds': update_seconds, 'loss': float(loss),
+      'bench_updates': args.bench_updates, 'bench_seconds': bench_seconds,
+      'maxrss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
       'diagnostic_keys': sorted(k for k in arrays if k.startswith('diagnostic/')),
   }, indent=2))
 

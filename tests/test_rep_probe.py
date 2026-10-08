@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 import embodied.jax.outs as outs
 import elements
+import jax
 import jax.numpy as jnp
 import numpy as np
 
@@ -55,6 +56,57 @@ class ProbeTest(unittest.TestCase):
       rep_probe.validate(config, {'a': elements.Space(np.int32, (), 0, 3)})
     rep_probe.validate(SimpleNamespace(rep_probe=SimpleNamespace(mode='off')),
         {'a': elements.Space(np.int32, (), 0, 3)})
+
+  def test_probe_mode_and_gradient_isolation(self):
+    space = {'action': elements.Space(np.float32, (2,))}
+    class Dyn:
+      free_nats = 0.1
+      def _dist(self, logits):
+        return outs.Agg(outs.OneHot(logits, 0.01), 1)
+    class FakeAgent:
+      act_space = space
+      dyn = Dyn()
+      def __init__(self, scale):
+        self.scale = scale
+      def feat2tensor(self, feat):
+        z = feat['stoch'].reshape((*feat['stoch'].shape[:2], -1))
+        return jnp.concatenate([feat['deter'], z], -1)
+      def pol(self, x, bdims):
+        assert bdims == 2
+        mean = self.scale * x[..., 1:3]
+        std = 0.5 + 0.1 * jax.nn.sigmoid(x[..., 3:5])
+        return {'action': outs.Agg(outs.Normal(mean, std), 1)}
+    q = jnp.array([[[[3., 0., 0., 0.], [0., 2., 0., 0.]]]])
+    p = jnp.array([[[[0., 3., 0., 0.], [0., 2., 0., 0.]]]])
+    h = jnp.ones((1, 1, 1))
+    def probe(scale, deter, qlogit, plogit):
+      feat = {'deter': deter, 'logit': qlogit}
+      return rep_probe.metrics(FakeAgent(scale), feat, plogit,
+          jnp.array([[1.5]]), jnp.array([[1.5]]), 0.7)
+    values = probe(1., h, q, p)
+    self.assertGreater(float(values['dt/D_mean']), 0)
+    self.assertLess(float(values['dt/w_mean']), 1)
+    for key in ('dt/D_mean', 'dt/w_mean'):
+      grads = jax.grad(lambda *xs: probe(*xs)[key], argnums=(0, 1, 2, 3))(
+          1., h, q, p)
+      for grad in grads:
+        np.testing.assert_array_equal(grad, np.zeros_like(grad))
+    # Different logits with the same mode give the same representative input.
+    same_mode = q.at[..., 0, 0].set(4.)
+    same = probe(1., h, q, same_mode)
+    self.assertEqual(float(same['dt/D_mean']), 0.)
+    self.assertEqual(float(same['dt/w_mean']), 1.)
+
+  def test_rep_gradient_remains_active(self):
+    prior = jnp.zeros((1, 1, 2, 4))
+    post = prior.at[..., 0].set(2.)
+    def rep_loss(logits):
+      q = outs.Agg(outs.OneHot(logits, 0.01), 1)
+      p = outs.Agg(outs.OneHot(prior, 0.01), 1)
+      raw = q.kl(p)
+      return jnp.maximum(raw, 0.1).mean()
+    grad = jax.grad(rep_loss)(post)
+    self.assertGreater(float(jnp.linalg.norm(grad)), 0)
 
 
 if __name__ == '__main__':
