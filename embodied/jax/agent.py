@@ -195,14 +195,16 @@ class Agent(embodied.Agent):
         print(self._format_jit_stats(self._report))
       elements.print('Done compiling!', color='yellow')
 
-  def init_policy(self, batch_size):
+  def init_policy(self, batch_size, mode='train'):
     if not self.jaxcfg.enable_policy:
       raise Exception('Policy not available when enable_policy=False')
     batch_size = batch_size * jax.process_count()
     if self.jaxcfg.use_shardmap:
       batch_size = batch_size // self.policy_mesh.size
+    seed = (self._eval_seeds(0, self.policy_mirrored) if mode == 'eval'
+            else self._seeds(0, self.policy_mirrored))
     return self._split(internal.to_local(self._init_policy(
-        self.policy_params, self._seeds(0, self.policy_mirrored), batch_size)))
+        self.policy_params, seed, batch_size)))
 
   def init_train(self, batch_size):
     batch_size = batch_size * jax.process_count()
@@ -356,17 +358,19 @@ class Agent(embodied.Agent):
     return carry, mets
 
   def stream(self, st):
-    def fn(data):
-      for key, value in data.items():
-        if np.issubdtype(value.dtype, np.floating):
-          assert not np.isnan(value).any(), (key, value)
-      data = internal.device_put(data, self.train_sharded)
-      with self.n_batches.lock:
-        counter = self.n_batches.value
-        self.n_batches.value += 1
-      seed = self._seeds(counter, self.train_mirrored)
-      return {**data, 'seed': seed}
-    return embodied.streams.Prefetch(st, fn)
+    return embodied.streams.Prefetch(st, self.prepare_batch)
+
+  def prepare_batch(self, data):
+    """Device placement and train seed for one consumed replay batch."""
+    for key, value in data.items():
+      if np.issubdtype(value.dtype, np.floating):
+        assert not np.isnan(value).any(), (key, value)
+    data = internal.device_put(data, self.train_sharded)
+    with self.n_batches.lock:
+      counter = self.n_batches.value
+      self.n_batches.value += 1
+    seed = self._seeds(counter, self.train_mirrored)
+    return {**data, 'seed': seed}
 
   @elements.timer.section('jaxagent_save')
   def save(self):

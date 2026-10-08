@@ -3,12 +3,16 @@
 import hashlib
 import json
 import math
+import platform
+import subprocess
+import sys
 from pathlib import Path
 from functools import partial as bind
 
 import elements
 import embodied
 import numpy as np
+import jax
 
 from embodied.jax import internal
 
@@ -150,6 +154,17 @@ def report_on_batch(agent, batch, report_id, root, task, length):
   return metrics
 
 
+def parameter_digest(agent):
+  digest = hashlib.sha256()
+  for key, value in sorted(agent.save()['params'].items()):
+    array = np.asarray(value)
+    digest.update(key.encode())
+    digest.update(str(array.dtype).encode())
+    digest.update(str(array.shape).encode())
+    digest.update(array.tobytes())
+  return digest.hexdigest()
+
+
 def run(make_agent, make_replay, make_env, make_stream, make_logger,
         args, config):
   if config.seed != 0:
@@ -166,6 +181,23 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       config.agent.rep_probe.alpha != 20 or
       not 0 < config.agent.rep_probe.c <= 1):
     raise ValueError('M2 v1 constant requires frozen c and alpha=20')
+  if config.agent.rep_probe.mode == 'constant' and not args.engineering_fixture:
+    if not args.frozen_c_file:
+      raise ValueError('M2 v1 constant requires a frozen c artifact')
+    frozen_path = Path(str(args.frozen_c_file)).expanduser()
+    frozen_bytes = frozen_path.read_bytes()
+    checksum = frozen_path.with_suffix(frozen_path.suffix + '.sha256')
+    if checksum.read_text(encoding='utf-8').strip() != hashlib.sha256(
+        frozen_bytes).hexdigest():
+      raise ValueError('Frozen c artifact checksum mismatch')
+    frozen = json.loads(frozen_bytes)
+    if (frozen['protocol'] != 'M2-v1' or frozen['task'] != config.task or
+        frozen['root_seed'] != 0 or frozen['alpha'] != 20 or
+        frozen['window'] != [100000, 300000] or
+        frozen['raw_rep_threshold'] != 1 or
+        frozen['engineering_fixture'] or
+        abs(frozen['c'] - config.agent.rep_probe.c) > 1e-12):
+      raise ValueError('Frozen c artifact does not match this run')
   if not args.engineering_fixture:
     if (int(args.action_budget), int(args.eval_every_actions),
         int(args.eval_eps), int(args.match_start), int(args.match_end)) != (
@@ -178,6 +210,13 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
     rssm = config.agent.dyn.rssm
     if (rssm.deter, rssm.hidden, rssm.classes) != (4096, 512, 32):
       raise ValueError('M2 v1 requires size50m RSSM')
+    if (config.agent.enc.simple.depth, config.agent.dec.simple.depth,
+        config.agent.policy.units, config.agent.value.units) != (
+            32, 32, 512, 512):
+      raise ValueError('M2 v1 requires size50m head/encoder settings')
+    if (config.agent.ac_grads or not config.agent.reward_grad or
+        not config.agent.repval_grad or not config.agent.repval_loss):
+      raise ValueError('M2 v1 gradient switches differ from protocol')
   if (not args.engineering_fixture and (
       config.agent.dyn.rssm.free_nats != 1 or
       config.agent.loss_scales.dyn != 1 or
@@ -190,6 +229,19 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
 
   logdir = Path(str(args.logdir)).expanduser()
   logdir.mkdir(parents=True, exist_ok=True)
+  repo = Path(__file__).resolve().parents[2]
+  git_commit = subprocess.check_output(
+      ['git', 'rev-parse', 'HEAD'], cwd=repo, text=True).strip()
+  if subprocess.check_output(
+      ['git', 'status', '--porcelain'], cwd=repo, text=True).strip():
+    raise RuntimeError('Protocol runner requires a clean Git checkout')
+  manifest_path = logdir / 'protocol_manifest.json'
+  if manifest_path.exists():
+    previous = json.loads(manifest_path.read_text(encoding='utf-8'))
+    expected_config = json.loads(json.dumps(dict(config.flat), default=str))
+    if (previous.get('config') != expected_config or
+        previous.get('git_commit') != git_commit):
+      raise ValueError('Existing protocol config or Git commit differs')
   state = ProtocolState(
       args.action_budget, args.eval_every_actions, args.eval_eps,
       args.match_start, args.match_end)
@@ -218,6 +270,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
           'Training continuation refused: environment and replay RNG state '
           'are not completely checkpointed; start a fresh run')
     if len(state.evaluations) == len(state.grid):
+      if config.agent.rep_probe.mode == 'logging':
+        state.frozen_c()
       print('Completed protocol run already checkpointed')
       logger.close()
       return
@@ -225,11 +279,14 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
     raise RuntimeError(
         'Terminal evaluation recovery needs the fixed endpoint snapshot')
 
-  stream_train = iter(agent.stream(make_stream(replay, 'train')))
+  stream_train = iter(make_stream(replay, 'train'))
   carry_train = [agent.init_train(args.batch_size)]
 
   manifest = dict(
       protocol='M2-v1', task=config.task, root_seed=config.seed,
+      git_commit=git_commit, python=sys.version,
+      jax=jax.__version__, host=platform.node(),
+      devices=[str(x) for x in jax.devices()],
       train_env_seeds=[seed32(config.seed, config.task, 'train_env', i)
                        for i in range(args.envs)],
       replay_seed=seed32(config.seed, config.task, 'train_replay'),
@@ -240,9 +297,14 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       eval_policy='JAX PCG64(root_seed, EVAL namespace, episode_seed, call)',
       shuffle='JAX PRNGKey(root_seed), fold_in(0x4454), fold_in(opt_step)',
       config=dict(config.flat))
-  (logdir / 'protocol_manifest.json').write_text(
-      json.dumps(manifest, sort_keys=True, indent=2, default=str),
-      encoding='utf-8')
+  manifest_payload = json.dumps(
+      manifest, sort_keys=True, indent=2, default=str)
+  if manifest_path.exists():
+    if manifest_path.read_text(encoding='utf-8') != manifest_payload:
+      raise ValueError('Existing protocol manifest differs from this run')
+  else:
+    manifest_path.write_text(
+        manifest_payload, encoding='utf-8')
 
   def on_transition(tran, worker):
     state.on_train_transition(tran)
@@ -254,7 +316,7 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
     for _ in range(should_train(step)):
       start_action = state.actions
       update_id = state.updates
-      batch = next(stream_train)
+      batch = agent.prepare_batch(next(stream_train))
       last_batch[0] = dict(batch)
       carry_train[0], delayed_outs, delayed_mets = agent.train(
           carry_train[0], dict(batch))
@@ -264,6 +326,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       grad_norm = float(metrics['opt/grad_norm'])
       finite = math.isfinite(grad_norm) and math.isfinite(
           float(metrics['opt/loss']))
+      if int(metrics['opt/updates']) != update_id + 1:
+        raise RuntimeError(f'Optimizer did not commit update {update_id}')
       if config.agent.rep_probe.mode == 'logging':
         match_sum = float(metrics['dt/match_sum'])
         match_count = int(metrics['dt/match_count'])
@@ -313,7 +377,7 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
         score[0] += float(tran['reward'])
       evaluator.on_step(on_eval)
       agent.set_eval_seed(seed)
-      evaluator.reset(agent.init_policy)
+      evaluator.reset(lambda count: agent.init_policy(count, mode='eval'))
       evaluator(lambda *xs: agent.policy(*xs, mode='eval'), episodes=1)
       evaluator.close()
       scores.append(score[0])
@@ -357,6 +421,16 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
                           match_count=state.match_count, c=c,
                           start=state.match_start, end=state.match_end),
                      sort_keys=True, indent=2), encoding='utf-8')
+    (logdir / 'final_state.json').write_text(json.dumps(dict(
+        git_commit=git_commit, train_action_steps=state.actions,
+        train_resets=state.resets, eval_action_steps=state.eval_actions,
+        train_policy_calls=int(agent.n_actions),
+        train_batch_keys=int(agent.n_batches),
+        eval_policy_calls=int(agent.n_eval_actions),
+        updates=state.updates, evaluations=len(state.evaluations),
+        match_sum=state.match_sum, match_count=state.match_count,
+        params_sha256=parameter_digest(agent)),
+        sort_keys=True, indent=2), encoding='utf-8')
     cp.save()
   finally:
     driver.close()
