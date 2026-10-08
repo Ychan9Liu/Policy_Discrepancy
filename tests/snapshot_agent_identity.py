@@ -22,21 +22,27 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--mode', choices=('baseline', 'off', 'logging'), required=True)
   parser.add_argument('--output', required=True)
+  parser.add_argument('--replay_context', type=int, default=0)
+  parser.add_argument('--free_nats', type=float, default=1.0)
+  parser.add_argument('--imag_last', type=int, default=2)
+  parser.add_argument('--alpha', type=float, default=0.7)
   args = parser.parse_args()
   with open('dreamerv3/configs.yaml', encoding='utf-8') as file:
     configs = yaml.YAML(typ='safe').load(file)
   config = elements.Config(configs['defaults']).update(configs['debug'])
   overrides = {
-      'batch_size': 2, 'batch_length': 3, 'replay_context': 0,
+      'batch_size': 2, 'batch_length': 3,
+      'replay_context': args.replay_context,
       'jax.platform': 'cpu', 'jax.compute_dtype': 'float32',
       'jax.precompile': False, 'jax.profiler': False,
       'jax.enable_policy': False,
-      'agent.imag_length': 2, 'agent.imag_last': 2,
+      'agent.imag_length': 2, 'agent.imag_last': args.imag_last,
+      'agent.dyn.rssm.free_nats': args.free_nats,
   }
   if args.mode != 'baseline':
     overrides.update({
         'agent.rep_probe.mode': args.mode,
-        'agent.rep_probe.alpha': 0.7 if args.mode == 'logging' else None,
+        'agent.rep_probe.alpha': args.alpha if args.mode == 'logging' else None,
     })
   config = elements.Config({**config.flat, **overrides})
   obs_space = {
@@ -53,9 +59,12 @@ def main():
   start = time.perf_counter()
   agent = Agent(obs_space, act_space, agent_config)
   init_seconds = time.perf_counter() - start
-  data = agent._zeros(agent.spaces, (2, 3))
-  data['vector'][:] = np.arange(30, dtype=np.float32).reshape(2, 3, 5) / 30
-  data['reward'][:] = np.array([[0., 1., -0.5], [0.2, 0.5, 0.1]], np.float32)
+  length = 3 + args.replay_context
+  data = agent._zeros(agent.spaces, (2, length))
+  data['vector'][:] = np.arange(10 * length, dtype=np.float32).reshape(
+      2, length, 5) / (10 * length)
+  data['reward'][:] = np.linspace(-0.5, 1.0, 2 * length,
+      dtype=np.float32).reshape(2, length)
   data['is_first'][:, 0] = True
   data['is_last'][0, -1] = True
   data['is_terminal'][0, -1] = True
@@ -93,7 +102,10 @@ def main():
   print(json.dumps({
       'mode': args.mode, 'jax': jax.__version__, 'backend': jax.default_backend(),
       'compute_dtype': str(config.jax.compute_dtype), 'seed': 7,
-      'batch': [2, 3], 'param_count': len(agent.params),
+      'batch': [2, 3], 'replay_context': args.replay_context,
+      'free_nats': args.free_nats, 'imag_last': args.imag_last,
+      'alpha': args.alpha if args.mode == 'logging' else None,
+      'param_count': len(agent.params),
       'init_seconds': init_seconds, 'grad_seconds': grad_seconds,
       'update_seconds': update_seconds, 'loss': float(loss),
       'diagnostic_keys': sorted(k for k in arrays if k.startswith('diagnostic/')),
