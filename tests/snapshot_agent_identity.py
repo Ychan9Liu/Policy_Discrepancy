@@ -28,6 +28,8 @@ def main():
   parser.add_argument('--imag_last', type=int, default=2)
   parser.add_argument('--alpha', type=float, default=0.7)
   parser.add_argument('--bench_updates', type=int, default=0)
+  parser.add_argument('--platform', choices=('cpu', 'cuda'), default='cpu')
+  parser.add_argument('--dtype', choices=('float32', 'bfloat16'), default='float32')
   args = parser.parse_args()
   with open('dreamerv3/configs.yaml', encoding='utf-8') as file:
     configs = yaml.YAML(typ='safe').load(file)
@@ -35,7 +37,7 @@ def main():
   overrides = {
       'batch_size': 2, 'batch_length': 3,
       'replay_context': args.replay_context,
-      'jax.platform': 'cpu', 'jax.compute_dtype': 'float32',
+      'jax.platform': args.platform, 'jax.compute_dtype': args.dtype,
       'jax.precompile': False, 'jax.profiler': False,
       'jax.enable_policy': False,
       'agent.imag_length': 2, 'agent.imag_last': args.imag_last,
@@ -44,7 +46,7 @@ def main():
   if args.mode != 'baseline':
     overrides.update({
         'agent.rep_probe.mode': args.mode,
-        'agent.rep_probe.alpha': args.alpha if args.mode == 'logging' else None,
+        'agent.rep_probe.alpha': args.alpha if args.mode == 'logging' else -1.0,
     })
   config = elements.Config({**config.flat, **overrides})
   obs_space = {

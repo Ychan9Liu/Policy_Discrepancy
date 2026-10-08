@@ -86,6 +86,7 @@ def metrics(agent, repfeat, prior_logit, rep_raw, rep_before, alpha):
       'rep_before_mean': rep_before.mean(),
       'rep_after_mean': rep_before.mean(),
       'rep_active_frac': active.mean(),
+      'active_weight_available': (count > 0).astype(jnp.float32),
       'active_weight_mean': active_mean,
       'weighted_excess_mean': excess.mean(),
       'candidate_weighted_excess_mean': (w * excess).mean(),
