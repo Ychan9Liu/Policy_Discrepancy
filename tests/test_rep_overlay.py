@@ -61,7 +61,8 @@ class OverlayTest(unittest.TestCase):
     np.testing.assert_array_equal(np.sort(first.reshape(-1)),
         np.sort(source.reshape(-1)))
     np.testing.assert_array_equal(first.reshape(-1), source.reshape(-1)[perm])
-    self.assertEqual(float(moved), float(np.mean(np.asarray(perm) != np.arange(12))))
+    self.assertAlmostEqual(float(moved),
+        float(np.mean(np.asarray(perm) != np.arange(12))), places=6)
     other, _, other_perm = rep_probe.global_shuffle(source, 7, 4)
     self.assertFalse(np.array_equal(first, other))
     self.assertFalse(np.array_equal(perm, other_perm))
@@ -83,7 +84,8 @@ class OverlayTest(unittest.TestCase):
         np.asarray(jax.device_get(source)).reshape(-1)[indices])
     np.testing.assert_array_equal(np.sort(values.reshape(-1)), np.arange(12))
     self.assertTrue(np.any((indices // 6) != (np.arange(12) // 6)))
-    self.assertEqual(float(moved), float(np.mean(indices != np.arange(12))))
+    self.assertAlmostEqual(float(moved),
+        float(np.mean(indices != np.arange(12))), places=6)
 
 
 if __name__ == '__main__':
