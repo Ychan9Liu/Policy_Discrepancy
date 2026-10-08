@@ -87,6 +87,27 @@ class OverlayTest(unittest.TestCase):
     self.assertAlmostEqual(float(moved),
         float(np.mean(indices != np.arange(12))), places=6)
 
+  def test_matching_stats_strict_threshold_and_global_sum(self):
+    raw = jnp.array([[0.5, 1.0, 1.2], [2.0, 0.9, 1.5]])
+    weight = jnp.array([[0.1, 0.2, 0.5], [0.25, 0.4, 0.8]])
+    total, count = rep_probe.matching_stats(raw, weight, 1.0)
+    self.assertEqual(int(count), 3)
+    self.assertAlmostEqual(float(total), 0.5 + 0.25 + 0.8, places=6)
+    if len(jax.devices()) >= 2:
+      mesh = jax.sharding.Mesh(np.array(jax.devices()[:2]), ('d',))
+      sharded = jax.sharding.NamedSharding(
+          mesh, jax.sharding.PartitionSpec('d'))
+      mirrored = jax.sharding.NamedSharding(
+          mesh, jax.sharding.PartitionSpec())
+      fn = jax.jit(lambda r, w: rep_probe.matching_stats(r, w, 1.0),
+          in_shardings=(sharded, sharded),
+          out_shardings=(mirrored, mirrored))
+      with mesh:
+        result = fn(jax.device_put(raw, sharded),
+                    jax.device_put(weight, sharded))
+      self.assertAlmostEqual(float(result[0]), 1.55, places=6)
+      self.assertEqual(int(result[1]), 3)
+
 
 if __name__ == '__main__':
   unittest.main()

@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+from dreamerv3.freeze_c import freeze
+
 
 def main():
   parser = argparse.ArgumentParser()
@@ -79,6 +81,27 @@ def main():
     assert final['eval_action_steps'] == 5 * episodes * 3
     assert final['match_count'] > 0
     print(name, json.dumps(final, sort_keys=True), flush=True)
+
+  frozen_path = root / 'no-report' / 'c_frozen_fixture.json'
+  frozen = freeze(root / 'no-report', frozen_path, engineering_fixture=True)
+  for mode in ('dt', 'constant', 'shuffle'):
+    directory = root / mode
+    command = common + [
+        '--logdir', str(directory), '--run.eval_eps', '2',
+        '--run.report_every_actions', '0',
+        '--agent.rep_probe.mode', mode,
+        '--agent.rep_probe.c', str(frozen['c'] if mode == 'constant' else -1)]
+    with (root / f'{mode}.log').open('w', encoding='utf-8') as output:
+      subprocess.run(command, cwd=repo, stdout=output,
+                     stderr=subprocess.STDOUT, check=True)
+    evaluations = [json.loads(line) for line in (
+        directory / 'evaluations.jsonl').read_text().splitlines()]
+    assert [x['action_step'] for x in evaluations] == [0, 3, 6, 9, 12]
+    assert all(len(x['scores']) == 2 for x in evaluations)
+    final = json.loads((directory / 'final_state.json').read_text())
+    assert final['train_action_steps'] == 12
+    assert final['match_count'] == 0
+    print(mode, json.dumps(final, sort_keys=True), flush=True)
 
 
 if __name__ == '__main__':
