@@ -66,7 +66,8 @@ def supervise(command, directory, label, gpu):
   log_path = directory / ('stdout-' + label + '.log')
   samples = directory / ('resources-' + label + '.jsonl')
   env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(gpu),
-      MUJOCO_GL='egl', PYOPENGL_PLATFORM='egl', PYTHONUNBUFFERED='1',
+      MUJOCO_GL='egl', MUJOCO_EGL_DEVICE_ID=str(gpu),
+      PYOPENGL_PLATFORM='egl', PYTHONUNBUFFERED='1',
       OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1',
       TMPDIR=str(directory / 'tmp'))
   (directory / 'tmp').mkdir(exist_ok=True)
@@ -75,6 +76,7 @@ def supervise(command, directory, label, gpu):
       git_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'],
           cwd=REPO, text=True).strip(), gpu_index=gpu,
       environment={k: env[k] for k in ('CUDA_VISIBLE_DEVICES', 'MUJOCO_GL',
+          'MUJOCO_EGL_DEVICE_ID',
           'PYOPENGL_PLATFORM', 'OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS',
           'MKL_NUM_THREADS', 'TMPDIR')},
       start_utc=datetime.now(timezone.utc).isoformat(), start_epoch=start,
