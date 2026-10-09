@@ -21,7 +21,7 @@
 | 2 | dmc_quadruped_walk | logging / 0 | GPU-24608f8d-a512-70b2-8578-45945b57bc35 | 2 | 未启动，配置声明缺项 |
 | 3 | dmc_reacher_hard | logging / 0 | GPU-92630efa-be4e-7074-d29a-ccff0ad7f801 | 3 | 未启动，配置声明缺项 |
 
-UTC13:42:38–13:43:06重新做单进程设备核查：GPU0/1/2/3的探针PID分别2774068/2774929/2775797/2776656。CUDA_VISIBLE_DEVICES使用对应UUID，CUDA_DEVICE_ORDER=PCI_BUS_ID，进程内仅cuda:0；MUJOCO_EGL_DEVICE_ID=0/1/2/3、MUJOCO_GL/PYOPENGL_PLATFORM=egl。各探针自身compute PID→UUID及pmon C+G只在对应物理卡，均通过；EGL枚举NV属性受CUDA mask影响，未将logical0误读为物理编号。仅小数组CUDA计算和简单XML模型64×64单帧render，**环境step/训练动作/agent更新均0**，不是baseline或size50m训练；探针自身prealloc=False不构成正式训练配置批准。
+UTC13:42–13:43重新做单进程设备核查（精确起止时间见各gpu*.json）：GPU0/1/2/3的探针PID分别2774068/2774929/2775797/2776656。CUDA_VISIBLE_DEVICES使用对应UUID，CUDA_DEVICE_ORDER=PCI_BUS_ID，进程内仅cuda:0；MUJOCO_EGL_DEVICE_ID=0/1/2/3、MUJOCO_GL/PYOPENGL_PLATFORM=egl。各探针自身compute PID→UUID及pmon C+G只在对应物理卡，均通过；EGL枚举NV属性受CUDA mask影响，未将logical0误读为物理编号。仅小数组CUDA计算和简单XML模型64×64单帧render，**环境step/训练动作/agent更新均0**，不是baseline或size50m训练；探针自身prealloc=False不构成正式训练配置批准。
 
 UTC13:47:52（北京时间21:47:52）再查：全部8卡0MiB、无compute/pmon进程，探针已释放四张指定卡；没有本轮仍运行的项目作业，没有训练目录。该状态是当时快照，不能代替未来启动核查。
 
