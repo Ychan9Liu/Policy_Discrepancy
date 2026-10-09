@@ -16,6 +16,7 @@ import numpy as np
 import jax
 
 from embodied.jax import internal
+from dreamerv3.return_stats import EpisodeReturn, REWARD_SOURCE, RETURN_DEFINITION
 
 
 def seed32(root, task, namespace, *indices):
@@ -160,7 +161,8 @@ class ProtocolState:
       raise ValueError(f'Invalid frozen constant: {c}')
     return c
 
-  def record_evaluation(self, action_step, scores, lengths, seeds):
+  def record_evaluation(self, action_step, scores, lengths, seeds,
+                        episode_details=None, snapshot_id=None):
     action_step = int(action_step)
     if action_step not in self.grid or action_step != self.actions:
       raise ValueError('Evaluation is not on the current action grid point')
@@ -171,12 +173,26 @@ class ProtocolState:
     if len(seeds) != self.episodes or not all(
         math.isfinite(float(x)) for x in scores):
       raise ValueError('Invalid episode result or seed mapping')
+    if episode_details is not None:
+      if (len(episode_details) != self.episodes or any(
+          not item['complete'] or item['length'] != int(length) or
+          item['return_raw'] != float(score)
+          for item, length, score in zip(episode_details, lengths, scores))):
+        raise ValueError('Episode return evidence disagrees with evaluation')
     self.evaluations[action_step] = dict(
         scores=[float(x) for x in scores],
         lengths=[int(x) for x in lengths],
         seeds=[int(x) for x in seeds],
         mean=float(np.mean(scores)),
         update_id=self.updates)
+    if episode_details is not None:
+      self.evaluations[action_step].update(
+          schema_version=2, reward_source=REWARD_SOURCE,
+          return_definition=RETURN_DEFINITION,
+          target_action_step=action_step, snapshot_action_step=self.actions,
+          snapshot_id=snapshot_id, snapshot_update_id=self.updates,
+          returns_raw=[float(x) for x in scores],
+          mean_return_raw=float(np.mean(scores)), episodes=episode_details)
 
   def save(self):
     return dict(
@@ -522,27 +538,37 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
         str(logdir / 'eval_snapshots' / f'{point:07d}')))
     snapshot.agent = agent
     snapshot.save()
-    scores, lengths, seeds = [], [], []
+    snapshot_id = f'eval_snapshots/{point:07d}/' + (
+        logdir / 'eval_snapshots' / f'{point:07d}' / 'latest').read_text().strip()
+    (logdir / 'eval_snapshots' / f'{point:07d}' / 'evaluation_snapshot.json').write_text(
+        json.dumps(dict(snapshot_id=snapshot_id, actual_action_step=state.actions,
+            update_id=state.updates, git_commit=git_commit), sort_keys=True) + '\n',
+        encoding='utf-8')
+    scores, lengths, seeds, episode_details = [], [], [], []
     for episode_id in range(state.episodes):
       seed = seed32(config.seed, config.task, 'eval_env',
                     grid_index, episode_id)
       seeds.append(seed)
       env = make_env(0, seed=seed)
       evaluator = embodied.Driver([lambda env=env: env], parallel=False)
-      score, length = [0.0], [0]
+      episode_return = EpisodeReturn()
       def on_eval(tran, _):
         if not tran['is_first']:
           state.eval_actions += 1
-          length[0] += 1
-        score[0] += float(tran['reward'])
+        episode_return.add(tran)
       evaluator.on_step(on_eval)
       agent.set_eval_seed(seed)
       evaluator.reset(lambda count: agent.init_policy(count, mode='eval'))
       evaluator(lambda *xs: agent.policy(*xs, mode='eval'), episodes=1)
       evaluator.close()
-      scores.append(score[0])
-      lengths.append(length[0])
-    state.record_evaluation(point, scores, lengths, seeds)
+      details = dict(episode_return.result(), episode_id=episode_id,
+          environment_seed=seed,
+          action_rng='PCG64(root_seed, EVAL namespace, environment_seed, call)')
+      episode_details.append(details)
+      scores.append(details['return_raw'])
+      lengths.append(details['length'])
+    state.record_evaluation(point, scores, lengths, seeds,
+        episode_details=episode_details, snapshot_id=snapshot_id)
     (logdir / 'evaluations.jsonl').open('a', encoding='utf-8').write(
         json.dumps(dict(action_step=point, **state.evaluations[point]),
                    sort_keys=True) + '\n')
