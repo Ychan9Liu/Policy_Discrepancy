@@ -2,6 +2,12 @@
 
 更新日期：2026-10-09。
 
+## 04 当前执行：baseline + Dt（2026-10-09）
+
+- 用户已声明prealloc=False、JSONL+W&B PD_1、无scope，已启动sv2 GPU0–3四任务正式logging baseline；22:40:19均有成功更新及0点评价10完整episode，累计收据ID连续/invalid0，尚未完成。
+- 用户追加授权四条Dt在sv2 GPU4–7并行直接启动，冻结科学参数不变、从头训练、不依赖正式c；22:43:41指定4–7无作业，启动准备中。constant/shuffle仍未授权。
+- 正式训练源固定 `48d71f1541721208322442f5a1d5977124f3e888`；监督进程故障仅外部修复/接管，无已有训练重跑。详见 `docs/FORMAL_BASELINES.md` 最新段及独立outputs证据。baseline的正式c/最终指标、Dt最终指标/比较均待完整运行后审计，不能把启动验收写成全程通过。
+
 ## 04 正式baseline执行设置已明确（2026-10-09，当前）
 
 - 用户声明prealloc=False、JSONL+W&B、暂不使用scope；新建project PD_1并纳入本次四条正式logging baseline。sv2物理GPU0–3已有分配与启动授权，冻结科学协议不变；前轮配置缺项已解除，准备验证日志并启动，不重复请求批准。

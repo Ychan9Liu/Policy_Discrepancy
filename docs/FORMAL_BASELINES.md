@@ -2,6 +2,12 @@
 
 日期：2026-10-09（Asia/Shanghai）。用户本轮明确授权使用 **sv2物理GPU0–3** 执行四任务正式baseline，生成逐任务正式c及所需原始return指标。本轮范围为四条logging-only，不包含Dt/constant/shuffle；不新增seed、校准训练或改变冻结协议。
 
+## 当前授权补充：Dt并行（2026-10-09）
+
+用户追加直接启动四条正式Dt，资源为sv2物理GPU4–7；按任务顺序4=hopper_hop、5=quadruped_run、6=quadruped_walk、7=reacher_hard，基线GPU0–3继续运行。沿用用户已声明prealloc=False、JSONL+W&B PD_1、无scope及冻结科学协议，从头创建各自训练状态，不等待/使用baseline c。constant/shuffle仍未授权。Dt目标新目录为 `/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-dt-seed0-20261009/<task>/dt-attempt01`。
+
+22:43:41（北京时间）GPU0–3已有本项目baseline，4–7各显示1MiB且进程/pmon无作业；/data可用2144209166336 bytes。启动前另做完整XML作业检查和CUDA/EGL映射核查；不换卡/共享。外部监督脚本新增仅允许logging/0或dt/4的明确模式/分配，从Git确定对象导出到独立runs目录执行；服务器训练HEAD仍保持48d71f1，八条训练的agent/runner/logger来源一致。
+
 ## 当前执行声明（2026-10-09，替代下方历史缺项）
 
 用户已明确 `prealloc=False`、`JSONL + W&B`、暂不使用scope，并授权新建W&B project `PD_1`，将本次任务四条正式logging baseline挂入该project。沿用用户已指定的sv2物理GPU0–3与冻结科学协议，不再请求配置/启动批准。此前仅JSONL/默认scope的备选保留为历史，不作为此次启动配置。

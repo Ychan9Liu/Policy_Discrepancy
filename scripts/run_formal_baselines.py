@@ -1,4 +1,4 @@
-"""Explicit sv2 GPU0--3 baseline campaign; preparation never trains.
+"""Explicit sv2 logging GPU0--3 or Dt GPU4--7; preparation never trains.
 
 Run only under the user's allocation. No resume, other modes, seed changes,
 resource substitution or retries. Raw failures and successful sources remain.
@@ -23,7 +23,11 @@ UUIDS = (
     'GPU-76344ce3-10a1-952d-68f5-7720a3cda667',
     'GPU-1e27fd5e-4231-926a-754f-e7d4c37d41ab',
     'GPU-24608f8d-a512-70b2-8578-45945b57bc35',
-    'GPU-92630efa-be4e-7074-d29a-ccff0ad7f801')
+    'GPU-92630efa-be4e-7074-d29a-ccff0ad7f801',
+    'GPU-7bf636ec-fa03-aa3f-7314-dd803c1658be',
+    'GPU-ac733835-08ee-7a17-a2fa-1e49d62d385b',
+    'GPU-548be1c8-86f0-b7a2-de92-5c455b12221b',
+    'GPU-4cbf5b69-adb3-5210-2396-ca5d4e400f26')
 
 def now():
   return datetime.now(timezone.utc).isoformat()
@@ -99,7 +103,7 @@ class Adopted:
     # Exit code is unavailable for an orphan; final outputs are audited below.
     return 0 if (self.directory / 'final_state.json').exists() else 1
 
-def prepare(output, campaign, entity):
+def prepare(output, campaign, entity, mode='logging', gpu_start=0):
   commit = clean_sha()
   output = Path(output)
   if output.exists():
@@ -109,12 +113,14 @@ def prepare(output, campaign, entity):
     raise ValueError('A new formal campaign directory is required')
   if platform.node() != 'lyg0360':
     raise RuntimeError('Only the user-assigned sv2 is allowed')
+  if (mode, gpu_start) not in (('logging', 0), ('dt', 4)):
+    raise ValueError('Only user-assigned logging GPU0-3 or Dt GPU4-7')
   output.mkdir(parents=True)
   rows = []
-  for gpu, task in enumerate(TASKS):
+  for gpu, task in enumerate(TASKS, start=gpu_start):
     argv = ['--configs', 'm2_v1', '--task', task,
-            '--logdir', str(root / task / 'logging-attempt01'),
-            '--agent.rep_probe.mode', 'logging', '--jax.prealloc', 'False',
+            '--logdir', str(root / task / (mode + '-attempt01')),
+            '--agent.rep_probe.mode', mode, '--jax.prealloc', 'False',
             '--logger.outputs', 'jsonl', 'wandb']
     config = resolve(argv)
     # Reuse the frozen scientific checker; only the approved logger differs.
@@ -122,20 +128,21 @@ def prepare(output, campaign, entity):
     assert tuple(config.logger.outputs) == ('jsonl', 'wandb')
     config.save(str(output / (task + '.yaml')))
     dump(output / (task + '.json'), dict(config.flat))
-    rows.append(dict(run_id=campaign + ':' + task + ':logging:attempt01',
-        task=task, group='baseline', seed=0, state='not_started',
+    rows.append(dict(run_id=campaign + ':' + task + ':' + mode + ':attempt01',
+        task=task, group='baseline' if mode == 'logging' else mode,
+        seed=0, state='not_started',
         server='sv2', physical_gpu=gpu, uuid=UUIDS[gpu], cuda_logical_device=0,
         egl_device_id=gpu, directory=config.logdir,
         source_directory=config.logdir, config=dict(config.flat),
         command=[sys.executable, '-u', '-m', 'dreamerv3.main', *argv],
-        wandb_id=campaign + '-' + task + '-logging-01',
+        wandb_id=campaign + '-' + task + '-' + mode + '-01',
         wandb_project='PD_1', wandb_entity=entity,
         config_sha256=sha(output / (task + '.yaml'))))
   dump(output / 'RUN_INDEX.json', dict(runs=rows))
   dump(output / 'plan.json', dict(campaign=campaign, code_sha=commit,
       created_utc=now(), host=platform.node(), root=str(root), runs=rows,
       output=str(output.resolve()), training_started=False,
-      authorization='User: sv2 physical GPU0-3; four formal logging baselines; '
+      authorization=f'User: sv2 physical GPU{gpu_start}-{gpu_start+3}; four formal {mode}; '
         'prealloc=False, JSONL+W&B PD_1, no scope'))
   print(json.dumps(dict(plan=str(output / 'plan.json'), code_sha=commit)))
 
@@ -179,7 +186,7 @@ def run(plan_path, adopt=False):
   if root.exists() and not adopt:
     raise FileExistsError('No continuation or overwrite: ' + str(root))
   if not adopt:
-    checks = [require_free(i) for i in range(4)]
+    checks = [require_free(r['physical_gpu']) for r in plan['runs']]
     root.mkdir(parents=True)
     dump(root / 'prelaunch.json', dict(utc=now(), checks=checks,
         code_sha=plan['code_sha'], supervisor_pid=os.getpid()))
@@ -213,8 +220,8 @@ def run(plan_path, adopt=False):
         MKL_NUM_THREADS='1', PYTHONUNBUFFERED='1', TMPDIR=str(directory / 'tmp'),
         WANDB_PROJECT='PD_1', WANDB_ENTITY=row['wandb_entity'],
         WANDB_MODE='online', WANDB_RESUME='never', WANDB_RUN_ID=row['wandb_id'],
-        WANDB_RUN_GROUP=plan['campaign'], WANDB_JOB_TYPE='formal-baseline',
-        WANDB_TAGS='M2-v1,formal,logging,seed0,' + row['task'],
+        WANDB_RUN_GROUP=plan['campaign'], WANDB_JOB_TYPE='formal-' + row['group'],
+        WANDB_TAGS='M2-v1,formal,' + row['group'] + ',seed0,' + row['task'],
         WANDB_DIR=str(directory))
     record_env = {k: env[k] for k in ('CUDA_VISIBLE_DEVICES', 'CUDA_DEVICE_ORDER',
         'MUJOCO_GL', 'MUJOCO_EGL_DEVICE_ID', 'PYOPENGL_PLATFORM',
@@ -226,6 +233,7 @@ def run(plan_path, adopt=False):
         stdout=log, stderr=subprocess.STDOUT)
     row.update(state='running', pid=process.pid, start_utc=now(),
         start_epoch=time.time(), code_sha=plan['code_sha'], environment=record_env,
+        supervisor_source_sha=os.environ.get('PD_SUPERVISOR_SHA', plan['code_sha']),
         prelaunch_check=check, exit_code_available=True,
         wandb_url=f'https://wandb.ai/{row["wandb_entity"]}/PD_1/runs/{row["wandb_id"]}')
     dump(directory / 'execution-initial.json', row)
@@ -250,7 +258,7 @@ def run(plan_path, adopt=False):
                  end_utc=now(), elapsed_seconds=time.time()-row['start_epoch'],
                  state='training_finished_pending_audit' if rc == 0 else 'failed')
       dump(directory / 'execution-initial.json', row)
-      if rc == 0:
+      if rc == 0 and row['group'] == 'baseline':
         try:
           from dreamerv3.freeze_c import freeze
           frozen = freeze(directory, directory / 'c_frozen.json')
@@ -279,9 +287,11 @@ if __name__ == '__main__':
   parser.add_argument('--campaign')
   parser.add_argument('--entity')
   parser.add_argument('--plan')
+  parser.add_argument('--mode', choices=['logging', 'dt'], default='logging')
+  parser.add_argument('--gpu-start', type=int, default=0)
   args = parser.parse_args()
   if args.action == 'prepare':
-    prepare(args.output, args.campaign, args.entity)
+    prepare(args.output, args.campaign, args.entity, args.mode, args.gpu_start)
   elif args.action == 'smoke':
     smoke(args.output)
   else:
