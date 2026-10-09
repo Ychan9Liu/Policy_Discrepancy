@@ -13,6 +13,7 @@ import platform
 import subprocess
 import sys
 import time
+import xml.etree.ElementTree as ET
 
 REPO = Path(os.environ.get('PD_REPO', Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(REPO))
@@ -50,20 +51,24 @@ def gpu_state():
           for x in [[s.strip() for s in line.split(',')]]}
 
 def require_free(gpu):
-  import pynvml
   uuid, memory = gpu_state()[gpu]
-  pynvml.nvmlInit()
-  try:
-    handle = pynvml.nvmlDeviceGetHandleByUUID(uuid)
-    compute = [p.pid for p in pynvml.nvmlDeviceGetComputeRunningProcesses(handle)]
-    graphics = [p.pid for p in pynvml.nvmlDeviceGetGraphicsRunningProcesses(handle)]
-  finally:
-    pynvml.nvmlShutdown()
+  xml = subprocess.check_output(['nvidia-smi', '-i', str(gpu), '-q', '-x'], text=True)
+  device = ET.fromstring(xml).find('gpu')
+  if device is None or device.findtext('uuid') != uuid:
+    raise RuntimeError('GPU XML identity differs')
+  section = device.find('processes')
+  if section is None or (section.find('process_info') is None and
+      (section.text or '').strip() not in ('', 'None')):
+    raise RuntimeError('GPU process inventory unavailable')
+  processes = [dict(pid=int(p.findtext('pid')), type=p.findtext('type'))
+               for p in section.findall('process_info')]
+  compute = [p['pid'] for p in processes if 'C' in p['type']]
+  graphics = [p['pid'] for p in processes if 'G' in p['type']]
   pmon = subprocess.check_output(['nvidia-smi', 'pmon', '-c', '1'], text=True)
   jobs = [line for line in pmon.splitlines() if line.strip()
           and not line.startswith('#') and line.split()[0] == str(gpu)
           and line.split()[1] != '-']
-  if uuid != UUIDS[gpu] or compute or graphics or jobs:
+  if uuid != UUIDS[gpu] or processes or jobs:
     raise RuntimeError(f'Assigned physical GPU{gpu} unavailable; '
         f'compute={compute}, graphics={graphics}, memory={memory}, '
         f'pmon={jobs}; no substitution')

@@ -16,7 +16,7 @@ GPU0/1/2/3分别执行hopper_hop/quadruped_run/quadruped_walk/reacher_hard，独
 
 正式训练源SHA为 `48d71f1541721208322442f5a1d5977124f3e888`。22:20:25/26/29（北京时间）GPU0/1/2启动三个baseline，manifest均记录该SHA；PID2783723/2783734/2783748。W&B生产logger已全部接入PD_1。首次supervisor PID2783619在启动GPU3前退出，日志完整保留；三个训练进程独立存活，无训练重启。
 
-现场排查：GPU3显示1MiB，但NVML compute/graphics列表、nvidia-smi进程表和pmon均无PID（原始字节数/时间/UUID保存在setup目录gpu3-empty-process-evidence.json）。旧包装器以memory.used必须为0替代作业检查，因这项无进程显存读数拒绝启动；不能据此认定共享/未知作业。修复以UUID、NVML两类进程与pmon共同判断占用，显存原值照实记录，不修改科学协议或数值验收容差；新增测试覆盖0MiB但存在计算/图形/pmon作业均拒绝。
+现场排查：GPU3显示1MiB，但nvidia-smi XML计算/图形进程列表、nvidia-smi进程表和pmon均无PID（原始字节数/时间/UUID保存在setup目录gpu3-empty-process-evidence.json）。旧包装器以memory.used必须为0替代作业检查，因这项无进程显存读数拒绝启动；不能据此认定共享/未知作业。修复以UUID、nvidia-smi XML所有类型进程与pmon共同判断占用，显存原值照实记录，不修改科学协议或数值验收容差；新增测试覆盖0MiB但存在计算/图形/pmon作业均拒绝。
 
 本机提交外部supervisor修复，通过Git bundle传入确定提交对象；运行中的服务器HEAD保持48d71f1，不改变已启动训练源码。从该修复对象导出独立监督文件至runs证据目录，按原完整plan接管已有PID（核对命令与进程创建时间），仅为缺失且现场确认无作业的GPU3启动reacher。这不是runner/checkpoint恢复。监督修复SHA与训练SHA分别记录；孤儿训练PID无法回收原始退出码，必须明确留null并以final/checkpoint、收据、评价、W&B完成状态独立验收，不能伪造exit0。
 
