@@ -2,6 +2,8 @@
 
 更新日期：2026-10-09。
 
+**2026-10-09 正式准备索引（未启动）**：`docs/M2_V1_FORMAL_PREPARATION.md` 固定完整共同执行配置、sv2四任务CUDA UUID/EGL映射、16条新独立目录及baseline→正式c→其余组依赖。最终计划索引在 `analysis/outputs/formal-m2-v1-preparation-final/planned-run-index.json`，不是结果索引；全未授权/未启动，四份constant的c未绑定，正式指标为空。此次只有CPU配置解析和无训练单帧设备探针；不增加正式训练授权，不改变下述冻结科学协议或旧证据。
+
 **2026-10-09 04执行核验索引**：旧16条真实size50m工程产物/统计已独立复核，新增四任务schema v2 CUDA报告与状态隔离、固定输入/恢复/去重补验见 `docs/SERVER_RETURN_CUDA_AUDIT.md` 和 STATUS当前段。工程表的正式AUC/tail仍为空，原始return冻结口径未变；新增工程c不得正式复用。CUDA与EGL设备须同时绑定、现场核查。此次有限工程完成不新增正式百万步运行授权。
 
 **2026-10-09 指标口径补充（已确认，当前）**：继续沿用已冻结的原始 return 指标协议，不重新确认全部 v1，也不引入归一化 score。episode return、评价点均值、按 seed 独立 AUC、任务等权汇总、指定末段五点和缺失标记按下文 C 节执行。score 讨论不作为工程验收或正式实验准备的阻塞项；本次只澄清指标，不表示工程验收已通过、不新增正式实验启动授权。已有四任务 size50m 的16个缩小预算工程主运行及后续修复证据分别见 `docs/SERVER_INTEGRATION_SIZE50M.md`、`docs/CODE_SIZE50M_REPAIR.md`、`docs/STATUS.md`；工程 c/return 不混入正式实验，正式百万步比较未启动。

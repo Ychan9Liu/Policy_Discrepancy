@@ -2,6 +2,13 @@
 
 更新日期：2026-10-09。
 
+## 04 正式配置与资源准备（2026-10-09，当前）
+
+- 从干净的 `12e2c7051af561394009fcec075d69ca62f00251` 接手，未回退。新增只生成文件的 `scripts/prepare_m2_v1.py`，最后工具CPU配置解析/独立验收 `9b1c5bc9ee39c058c89ce46e49017753ec6ec64b`；agent/runner/模型预设/统计/依赖/科学协议未变。最终文档提交后新目录重生成的SHA以最终索引和交付回复为准，不算新增训练实测。
+- 最终审阅包 `analysis/outputs/formal-m2-v1-preparation-final/`：16条新ID/目录计划，全not_started/未授权；12份完整配置、4份正式c未绑定且不可执行的constant模板、840个评价seed及完整随机流/命令/恢复依赖。统一prealloc=False/jsonl，四组仅声明字段不同；工程c不复用，正式指标仍空。
+- 当前首选sv2四任务GPU0–3，同任务四组顺序共用卡；12e2c705上的单帧CUDA/EGL设备探针逐PID验证实际UUID与EGL枚举映射，训练动作/agent更新为0。sv1全卡已有作业，sv3 GPU0–2已有作业，未干扰；仅实际执行准备的sv2同步，其他两台只读。资源是快照，启动前须复查，4并行/百万步资源仍未长程实测。
+- 详见 `docs/M2_V1_FORMAL_PREPARATION.md`、最终独立审计和delivery索引。当前准备任务完成，**未启动任何正式训练**；首选用户审阅后另行授权并继续现有04，先四正式logging完整完成及逐任务c冻结，再Dt/constant/global shuffle从头训练。无需02重选原始return，不自动创建chat或发送消息。
+
 ## 04 原始return复核与size50m CUDA补验（2026-10-09，当前）
 
 - 接手/主要实测 SHA `27261bf6df875939195879ab23e1dc161507fe5c`，工作区干净。旧统计六张CSV及JSON表独立复算逐字节相同；102个输入/6项摘要产物哈希正确，三台实时96个源小文件与48个实际快照参数/counter重新核对一致。旧工程96episode/48点评价保留，正式AUC/tail/总体/差值仍null，require-complete生成审计后退出2。
