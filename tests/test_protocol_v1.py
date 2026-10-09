@@ -16,6 +16,7 @@ from embodied.run.protocol_v1 import (
     ProtocolState, array_hashes, audit_complete_outputs, audit_persisted_history,
     report_fingerprint, report_on_batch, seed32, training_fingerprint)
 from dreamerv3.freeze_c import freeze
+from dreamerv3.return_stats import EpisodeReturn
 
 
 class TinyEnv:
@@ -39,6 +40,38 @@ class TinyEnv:
 
 
 class ProtocolV1Test(unittest.TestCase):
+
+  def test_interface_repeat_rewards_are_counted_once_in_complete_episode(self):
+    from embodied.core.wrappers import ActionRepeat
+    class RewardEnv:
+      def __init__(self):
+        self.count = 0
+      def step(self, action):
+        self.count = 0 if action['reset'] else self.count + 1
+        return dict(reward=np.float32(self.count),
+            is_first=self.count == 0, is_last=self.count == 3,
+            is_terminal=self.count == 3)
+    env = ActionRepeat(RewardEnv(), repeat=2)
+    total = EpisodeReturn()
+    total.add(env.step(dict(reset=True)))
+    total.add(env.step(dict(reset=False)))  # 1+2 already summed by interface.
+    total.add(env.step(dict(reset=False)))  # Terminal reward 3, repeat stops.
+    self.assertEqual(total.result()['return_raw'], 6)
+    self.assertEqual(total.result()['length'], 2)
+
+  def test_evaluation_schema_preserves_legacy_fields_and_explicit_raw_returns(self):
+    state = ProtocolState(12, 3, 2, 3, 9)
+    details = [dict(return_raw=score, length=length, complete=True)
+               for score, length in ((3, 1), (9, 3))]
+    state.record_evaluation(0, [3, 9], [1, 3], [7, 8],
+        episode_details=details, snapshot_id='eval_snapshots/0000000/test')
+    row = state.evaluations[0]
+    self.assertEqual(row['scores'], row['returns_raw'])
+    self.assertEqual(row['mean'], 6)
+    self.assertEqual(row['mean_return_raw'], 6)
+    self.assertEqual(row['snapshot_action_step'], 0)
+    self.assertEqual(row['snapshot_update_id'], 0)
+    self.assertEqual(row['schema_version'], 2)
 
   def test_report_slices_consumed_host_batch_under_transfer_guard(self):
     mesh = Mesh(np.array(jax.devices()[:1]), ('d',))
