@@ -6,11 +6,15 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import elements
+import jax
 import numpy as np
 import ruamel.yaml as yaml
+from jax.sharding import Mesh, NamedSharding, PartitionSpec as P
 
 from embodied.core.driver import Driver
-from embodied.run.protocol_v1 import ProtocolState, seed32
+from embodied.run.protocol_v1 import (
+    ProtocolState, audit_complete_outputs, audit_persisted_history,
+    report_on_batch, seed32)
 from dreamerv3.freeze_c import freeze
 
 
@@ -35,6 +39,51 @@ class TinyEnv:
 
 
 class ProtocolV1Test(unittest.TestCase):
+
+  def test_report_slices_consumed_host_batch_under_transfer_guard(self):
+    mesh = Mesh(np.array(jax.devices()[:1]), ('d',))
+    class FakeAgent:
+      train_sharded = NamedSharding(mesh, P('d', None))
+      train_mirrored = NamedSharding(mesh, P())
+      def init_report(self, batch_size):
+        self.batch_size = batch_size
+        return None
+      def report(self, carry, batch):
+        self.seen = batch
+        return carry, {'reported': True}
+    agent = FakeAgent()
+    raw = dict(is_first=np.zeros((2, 4), bool),
+               image=np.arange(24, dtype=np.uint8).reshape((2, 4, 3)))
+    with jax.transfer_guard('disallow'):
+      result = report_on_batch(agent, raw, 0, 0, 'dummycont_test', 3)
+    self.assertEqual(result, {'reported': True})
+    self.assertEqual(agent.batch_size, 2)
+    self.assertEqual(agent.seen['image'].shape, (2, 3, 3))
+    self.assertEqual(agent.seen['seed'].shape, (2,))
+    np.testing.assert_array_equal(raw['image'], np.arange(
+        24, dtype=np.uint8).reshape((2, 4, 3)))
+    with self.assertRaisesRegex(TypeError, 'host replay batch'):
+      report_on_batch(agent, agent.seen, 0, 0, 'dummycont_test', 3)
+
+  def test_checkpoint_receipts_and_completed_outputs_must_agree(self):
+    with TemporaryDirectory() as directory:
+      root = Path(directory)
+      state = ProtocolState(12, 3, 1, 3, 9)
+      state.record_evaluation(0, [1], [2], [7])
+      (root / 'evaluations.jsonl').write_text(json.dumps(dict(
+          action_step=0, **state.evaluations[0])) + '\n')
+      audit_persisted_history(root, state)
+      orphan = dict(update_id=0, start_action=3, match_sum=0.5,
+                    match_count=1, invalid_count=0)
+      receipt_path = root / 'update_receipts.jsonl'
+      receipt_path.write_text(json.dumps(orphan) + '\n')
+      with self.assertRaisesRegex(RuntimeError, 'extra=\\[0\\]'):
+        audit_persisted_history(root, state)
+      self.assertEqual(len(receipt_path.read_text().splitlines()), 1)
+      state.record_update(0, 3, 0.5, 1)
+      audit_persisted_history(root, state)
+      with self.assertRaisesRegex(RuntimeError, 'lacks final_state'):
+        audit_complete_outputs(root, state, 'logging', 'fixture')
 
   def test_formal_preset_resolves_clean_visual_dmc(self):
     source = Path(__file__).resolve().parents[1] / 'dreamerv3' / 'configs.yaml'
