@@ -20,7 +20,7 @@ class DMC(embodied.Env):
 
   def __init__(
       self, env, repeat=1, size=(64, 64), proprio=True, image=True,
-      camera=-1, seed=None):
+      camera=-1, seed=None, engineering_trace_physics=False):
     if 'MUJOCO_GL' not in os.environ:
       os.environ['MUJOCO_GL'] = 'egl'
     if isinstance(env, str):
@@ -53,6 +53,7 @@ class DMC(embodied.Env):
     self._proprio = proprio
     self._image = image
     self._camera = camera
+    self._engineering_trace_physics = engineering_trace_physics
 
   @functools.cached_property
   def obs_space(self):
@@ -62,6 +63,9 @@ class DMC(embodied.Env):
       spaces = {k: spaces[k] for k in basic}
     key = 'image' if self._image else 'log/image'
     spaces[key] = elements.Space(np.uint8, self._size + (3,))
+    if self._engineering_trace_physics:
+      state = self._dmenv.physics.get_state()
+      spaces['log/physics_state'] = elements.Space(state.dtype, state.shape)
     return spaces
 
   @functools.cached_property
@@ -78,6 +82,8 @@ class DMC(embodied.Env):
       obs = {k: obs[k] for k in basic}
     key = 'image' if self._image else 'log/image'
     obs[key] = self._dmenv.physics.render(*self._size, camera_id=self._camera)
+    if self._engineering_trace_physics:
+      obs['log/physics_state'] = self._dmenv.physics.get_state().copy()
     for key, space in self.obs_space.items():
       if np.issubdtype(space.dtype, np.floating):
         assert np.isfinite(obs[key]).all(), (key, obs[key])

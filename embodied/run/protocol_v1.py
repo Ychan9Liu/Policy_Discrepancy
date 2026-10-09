@@ -35,11 +35,11 @@ def package_versions(*names):
   return versions
 
 
-def array_hashes(values, skip=()):
+def array_hashes(values, skip=(), include_logs=False):
   """Hash consumed host data without volatile replay UUIDs."""
   result = {}
   for key, value in sorted(values.items()):
-    if key in skip or key.startswith('log/'):
+    if key in skip or (not include_logs and key.startswith('log/')):
       continue
     array = np.asarray(value)
     digest = hashlib.sha256()
@@ -317,7 +317,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       raise ValueError('Frozen c artifact does not match this run')
   if not args.engineering_fixture:
     if (args.engineering_stop_after_actions or
-        args.engineering_trace_actions or args.engineering_trace_updates):
+        args.engineering_trace_actions or args.engineering_trace_updates or
+        config.env.dmc.engineering_trace_physics):
       raise ValueError('Engineering stop/trace is forbidden in formal runs')
     if (int(args.action_budget), int(args.eval_every_actions),
         int(args.eval_eps), int(args.match_start), int(args.match_end)) != (
@@ -441,7 +442,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       with (logdir / 'engineering_action_trace.jsonl').open(
           'a', encoding='utf-8') as file:
         file.write(json.dumps(dict(action_step=state.actions, worker=worker,
-            hashes=array_hashes(tran)), sort_keys=True) + '\n')
+            hashes=array_hashes(tran, include_logs=True)),
+            sort_keys=True) + '\n')
     if not tran['is_first']:
       step.increment()
     replay.add(tran, worker)

@@ -116,6 +116,15 @@ class ProtocolV1Test(unittest.TestCase):
     self.assertNotEqual(array_hashes(first, skip=('stepid',))['image'],
                         array_hashes(second, skip=('stepid',))['image'])
 
+  def test_physics_trace_is_opt_in_and_excluded_from_training_batch_hash(self):
+    batch = {'image': np.zeros((1, 1, 3), np.uint8),
+             'log/physics_state': np.array([1.0, 2.0], np.float64)}
+    changed = {key: value.copy() for key, value in batch.items()}
+    changed['log/physics_state'][0] = 3.0
+    self.assertEqual(array_hashes(batch), array_hashes(changed))
+    self.assertNotEqual(array_hashes(batch, include_logs=True),
+                        array_hashes(changed, include_logs=True))
+
   def test_report_fingerprint_detects_state_and_batch_changes(self):
     class Agent:
       def __init__(self):
