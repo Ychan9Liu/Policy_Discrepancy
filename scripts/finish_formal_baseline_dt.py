@@ -53,6 +53,11 @@ def main(args):
   difference = [r for r in tables['dt_differences'] if r['comparison'] == 'dt-baseline']
   if len(difference) != 5 or any(not r['auc_complete'] or not r['tail_complete'] for r in difference):
     raise RuntimeError('Four task and overall Dt-baseline differences incomplete')
+  # Avoid concurrent summary writes with the baseline c publisher.
+  while not (args.baseline_root / 'baseline-completion-audit.json').exists():
+    if (args.baseline_root / 'baseline-completion-audit-failed.json').exists():
+      raise RuntimeError('Baseline c/upload audit failed; comparison tables retained')
+    time.sleep(30)
   import wandb
   published = []
   for row in entries:
