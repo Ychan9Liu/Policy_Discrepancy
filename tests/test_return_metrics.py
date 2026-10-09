@@ -273,12 +273,20 @@ class ReturnMetricsTest(unittest.TestCase):
       root=Path(temp)
       evaluation=root/'evaluations.jsonl'
       evaluation.write_text(json.dumps(point(0)))
-      item=dict(action_step=0,counters={'updates':0},params_sha256='first')
+      item=dict(action_step=0,actual_action_step=0,
+          snapshot_id='eval_snapshots/0000000/fixture',
+          counters={'updates':0},params_sha256='first')
       audit=root/'snapshot-audit.json'
-      audit.write_text(json.dumps(dict(runs=[dict(directory='source-run',
+      payload=dict(runs=[dict(directory='source-run',
           git_commit='fixture-commit',artifact_sha256={'evaluations.jsonl':
           hashlib.sha256(evaluation.read_bytes()).hexdigest()},
-          snapshots=[item,dict(item,params_sha256='different')])])) )
+          snapshots=[item,item])])
+      audit.write_text(json.dumps(payload))
+      evidence,_=snapshot_evidence(root,{0},dict(snapshot_audit_file=str(audit),
+          source_directory='source-run'),dict(git_commit='fixture-commit'))
+      self.assertEqual(evidence[0]['snapshot_id'],item['snapshot_id'])
+      payload['runs'][0]['snapshots'][1]=dict(item,params_sha256='different')
+      audit.write_text(json.dumps(payload))
       with self.assertRaisesRegex(ValueError,'Conflicting snapshot'):
         snapshot_evidence(root,{0},dict(snapshot_audit_file=str(audit),
             source_directory='source-run'),dict(git_commit='fixture-commit'))

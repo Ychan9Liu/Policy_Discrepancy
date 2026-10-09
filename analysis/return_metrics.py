@@ -97,8 +97,9 @@ def snapshot_evidence(directory, targets, entry, manifest):
       raise ValueError('Snapshot audit/evaluation file hash disagreement')
     for item in run['snapshots']:
       candidate = dict(
-          actual_step=item['action_step'], update_id=item['counters']['updates'],
-          snapshot_id=f"eval_snapshots/{item['action_step']:07d}",
+          actual_step=item.get('actual_action_step', item['action_step']),
+          update_id=item['counters']['updates'],
+          snapshot_id=item.get('snapshot_id', f"eval_snapshots/{item['action_step']:07d}"),
           params_sha256=item['params_sha256'], basis='04-checkpoint-read-audit')
       if item['action_step'] in evidence and evidence[item['action_step']] != candidate:
         raise ValueError('Conflicting snapshot audit records')
