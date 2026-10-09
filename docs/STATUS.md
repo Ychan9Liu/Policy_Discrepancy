@@ -2,6 +2,15 @@
 
 更新日期：2026-10-09。
 
+## 04 原始return复核与size50m CUDA补验（2026-10-09，当前）
+
+- 接手/主要实测 SHA `27261bf6df875939195879ab23e1dc161507fe5c`，工作区干净。旧统计六张CSV及JSON表独立复算逐字节相同；102个输入/6项摘要产物哈希正确，三台实时96个源小文件与48个实际快照参数/counter重新核对一致。旧工程96episode/48点评价保留，正式AUC/tail/总体/差值仍null，require-complete生成审计后退出2。
+- sv2四任务新增logging真实size50m CUDA：4098动作/517成功更新，report2049、3点评价×2完整episode。24条新schema v2记录/12个实际快照、8次报告和12次评价fingerprint交叉审计、四条完成重开通过；均独立目录，不合并旧baseline择优。工程c从本轮各自收据冻结并校验，正式freeze拒绝工程来源；未新跑constant或启动正式比较。
+- 同提交冻结视觉输入的size50m CUDA两进程4次更新完全一致（容差0）；2049动作工程中断后拒绝续跑，关键checkpoint/日志哈希不变；真实收据的同ID幂等/冲突、重复持久化ID和零ledger偏离拒绝通过。零ledger项为小fixture，不伪装成原零动作故障目录续跑。独立CPU两逻辑设备39项回归通过。旧图像非逐位确定性、旧return无逐transition轨迹、真实长期训练边界保留。
+- 资源核查发现EGL需单独绑定，执行包装器本机提交 `51ca42803e5c211d1be26cc164b9012f3388839d`，只新增MUJOCO_EGL_DEVICE_ID设置/记录，未改agent/runner/统计/协议。独立2048动作CUDA绑定补验正常完成，pmon主PID计算/图形和观察到的16个G进程均在sv2 GPU1。全卡断言因其他卡新计算进程失败的原始证据保留，按执行PID/图形归属核查；未放宽数值容差。其他服务器/卡映射仍须启动前确认。
+- 详细报告/限制/可复制prompt见 `docs/SERVER_RETURN_CUDA_AUDIT.md`，原报告已加当前索引。新R为 `/data/Policy_Discrepancy/runs/engineering-return-cuda-20261009-27261bf/`；新增CUDA只在sv2，sv1/sv3只读审计未同步新提交、不触碰已有作业。表格/审计在analysis/outputs新目录，参数/replay留服务器，最终完整SHA及同步范围见完成回复。
+- 本次有限工程补验完成，没有新agent/runner/统计故障或方法效果结论。原始return已确认，score不再阻塞；首选继续现有04准备正式完整配置、计算/EGL落卡和资源/新目录索引，正式百万步训练须用户另行授权。不复用工程c、不新增训练seed、不自动创建chat或发送消息。
+
 ## 03 原始 return 统计与结果表验收（2026-10-09，当前）
 
 - 从干净的 `22fe4b3bf712bb43019f6e88001e4df6353cf324` 接手，按已冻结C/C.1实现原始return累加器、兼容评价schema v2及离线分层结果表；不改变算法或科研协议。代码首次提交 `6eef3696dbdfff74a6f9ede61c28186ecd0d93f7`，统计与相关回归最后实测 `1f5b5a385346da01e1108c90114fed721c8bbaf2`；完整CPU agent fixture实际 `c4de170928e9314559be793634209320d97fe0b4`，后续仅离线审计/测试/使用说明变化。详情与命令见 `docs/CODE_PROTOCOL_V1.md` 最新节、`analysis/README.md`。
