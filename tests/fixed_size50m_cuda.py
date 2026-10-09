@@ -25,9 +25,9 @@ def main():
   source = Path(__file__).resolve().parents[1] / 'dreamerv3' / 'configs.yaml'
   configs = yaml.YAML(typ='safe').load(source.read_text(encoding='utf-8'))
   config = elements.Config(configs['defaults']).update(configs['m2_v1'])
-  config = config.update(dict(task='dmc_hopper_hop',
-      logdir=str(output.parent), **{'jax.prealloc': False,
-      'jax.profiler': False}))
+  config = elements.Config({**config.flat, 'task': 'dmc_hopper_hop',
+      'logdir': str(output.parent), 'jax.prealloc': False,
+      'jax.profiler': False, 'jax.precompile': False})
   agent = make_agent(config)
   batch_size = config.batch_size
   length = config.batch_length + config.replay_context
