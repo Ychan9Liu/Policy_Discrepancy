@@ -35,6 +35,49 @@ def package_versions(*names):
   return versions
 
 
+def array_hashes(values, skip=()):
+  """Hash consumed host data without volatile replay UUIDs."""
+  result = {}
+  for key, value in sorted(values.items()):
+    if key in skip or key.startswith('log/'):
+      continue
+    array = np.asarray(value)
+    digest = hashlib.sha256()
+    digest.update(str(array.dtype).encode())
+    digest.update(str(array.shape).encode())
+    digest.update(array.tobytes())
+    result[key] = digest.hexdigest()
+  return result
+
+
+def tree_hash(value):
+  leaves, structure = jax.tree.flatten(value)
+  digest = hashlib.sha256(str(structure).encode())
+  for leaf in leaves:
+    array = np.asarray(jax.device_get(leaf))
+    digest.update(str(array.dtype).encode())
+    digest.update(str(array.shape).encode())
+    digest.update(array.tobytes())
+  return digest.hexdigest()
+
+
+def parameter_hashes(agent):
+  return array_hashes(agent.save()['params'])
+
+
+def report_fingerprint(agent, replay, raw_batch):
+  saved = agent.save()
+  parameter_keys = array_hashes(saved['params'])
+  params = hashlib.sha256(json.dumps(
+      parameter_keys, sort_keys=True).encode()).hexdigest()
+  sampler_rng = getattr(getattr(replay, 'sampler', None), 'rng', None)
+  replay_rng = (repr(sampler_rng.bit_generator.state)
+                if sampler_rng is not None else None)
+  return dict(params_sha256=params, counters=saved['counters'],
+              batch_hashes=array_hashes(raw_batch),
+              replay_rng=replay_rng, replay_metrics=dict(replay.metrics))
+
+
 class ProtocolState:
 
   def __init__(self, budget, interval, episodes, match_start, match_end):
@@ -273,8 +316,9 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
         abs(frozen['c'] - config.agent.rep_probe.c) > 1e-12):
       raise ValueError('Frozen c artifact does not match this run')
   if not args.engineering_fixture:
-    if args.engineering_stop_after_actions:
-      raise ValueError('Engineering stop is forbidden in formal runs')
+    if (args.engineering_stop_after_actions or
+        args.engineering_trace_actions or args.engineering_trace_updates):
+      raise ValueError('Engineering stop/trace is forbidden in formal runs')
     if (int(args.action_budget), int(args.eval_every_actions),
         int(args.eval_eps), int(args.match_start), int(args.match_end)) != (
             1000000, 50000, 10, 100000, 300000):
@@ -392,6 +436,12 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
 
   def on_transition(tran, worker):
     state.on_train_transition(tran)
+    if (args.engineering_fixture and args.engineering_trace_actions and
+        state.actions <= args.engineering_trace_actions):
+      with (logdir / 'engineering_action_trace.jsonl').open(
+          'a', encoding='utf-8') as file:
+        file.write(json.dumps(dict(action_step=state.actions, worker=worker,
+            hashes=array_hashes(tran)), sort_keys=True) + '\n')
     if not tran['is_first']:
       step.increment()
     replay.add(tran, worker)
@@ -403,6 +453,17 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       raw_batch = next(stream_train)
       batch = agent.prepare_batch(raw_batch)
       last_batch[0] = raw_batch
+      if (args.engineering_fixture and args.engineering_trace_updates and
+          update_id < args.engineering_trace_updates):
+        with (logdir / 'engineering_update_trace.jsonl').open(
+            'a', encoding='utf-8') as file:
+          file.write(json.dumps(dict(
+              update_id=update_id, start_action=start_action,
+              batch_hashes=array_hashes(raw_batch, skip=('stepid',)),
+              seed_hash=tree_hash(batch['seed']),
+              carry_hash=tree_hash(carry_train[0]),
+              parameter_hashes=parameter_hashes(agent)),
+              sort_keys=True) + '\n')
       carry_train[0], delayed_outs, delayed_mets = agent.train(
           carry_train[0], dict(batch))
       if delayed_outs or delayed_mets:
@@ -489,9 +550,20 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
       driver.step_selected(train_policy, range(min(args.envs, remaining)))
       if (args.report_every_actions and last_batch[0] is not None and
           state.actions >= next_report):
+        before = (report_fingerprint(agent, replay, last_batch[0])
+                  if args.engineering_fixture else None)
         metrics = report_on_batch(
             agent, last_batch[0], state.reports, config.seed, config.task,
             config.report_length + config.replay_context)
+        if before is not None:
+          after = report_fingerprint(agent, replay, last_batch[0])
+          if before != after:
+            raise RuntimeError('Read-only report changed training state')
+          with (logdir / 'engineering_report_audit.jsonl').open(
+              'a', encoding='utf-8') as file:
+            file.write(json.dumps(dict(action_step=state.actions,
+                report_id=state.reports, fingerprint=before),
+                sort_keys=True) + '\n')
         state.reports += 1
         logger.add(metrics, prefix='report')
         next_report += int(args.report_every_actions)
