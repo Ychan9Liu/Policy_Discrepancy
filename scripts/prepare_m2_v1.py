@@ -166,6 +166,7 @@ def prepare(output, campaign, resources):
       env = dict(CUDA_VISIBLE_DEVICES=mapping['gpu_uuid'],
           CUDA_DEVICE_ORDER='PCI_BUS_ID',
           MUJOCO_EGL_DEVICE_ID=str(mapping['egl_index']), MUJOCO_GL='egl',
+          JAX_PLATFORMS='cuda', XLA_PYTHON_CLIENT_PREALLOCATE='false',
           PYOPENGL_PLATFORM='egl', PYTHONUNBUFFERED='1', OMP_NUM_THREADS='1',
           OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1', TMPDIR=directory+'/tmp')
       command = [PYTHON, '-u', '-m', 'dreamerv3.main', *argv]
@@ -176,6 +177,7 @@ def prepare(output, campaign, resources):
           mode=mode, seed=0, server=mapping['server'], host=mapping['host'],
           gpu_index=mapping['gpu_index'], gpu_uuid=mapping['gpu_uuid'],
           egl_index=mapping['egl_index'], binding_evidence=mapping['evidence'],
+          binding_evidence_sha256=mapping['evidence_sha256'],
           directory=directory, source_directory=directory,
           status='not_started', authorized=False, execution_sha=source_sha,
           configuration_complete=complete_config,
