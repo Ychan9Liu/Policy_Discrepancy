@@ -153,6 +153,8 @@ class ProtocolState:
 
 def report_on_batch(agent, batch, report_id, root, task, length):
   """Report from an already sampled batch without touching train replay/RNG."""
+  if not all(isinstance(v, np.ndarray) for v in batch.values()):
+    raise TypeError('Read-only report requires the consumed host replay batch')
   seed = seed32(root, task, 'report', report_id)
   rng = np.random.default_rng(seed=[seed, 0])
   key = rng.integers(0, np.iinfo(np.uint32).max, (2,), np.uint32)
@@ -160,9 +162,70 @@ def report_on_batch(agent, batch, report_id, root, task, length):
   if batch['is_first'].shape[1] < length:
     raise ValueError('Training batch is shorter than report length')
   batch = {k: v[:, :length] for k, v in batch.items() if k != 'seed'}
+  batch = internal.device_put(batch, agent.train_sharded)
   carry = agent.init_report(len(batch['is_first']))
   _, metrics = agent.report(carry, dict(batch, seed=key))
   return metrics
+
+
+def persisted_rows(path):
+  path = Path(path)
+  if not path.exists():
+    return []
+  return [json.loads(line) for line in path.read_text(
+      encoding='utf-8').splitlines()]
+
+
+def audit_persisted_history(logdir, state):
+  """Refuse checkpoint/log skew before any new training or evaluation IO."""
+  logdir = Path(logdir)
+  receipts = {}
+  for row in persisted_rows(logdir / 'update_receipts.jsonl'):
+    update_id = int(row['update_id'])
+    receipt = (int(row['start_action']), float(row['match_sum']),
+               int(row['match_count']), int(row['invalid_count']))
+    if update_id in receipts and receipts[update_id] != receipt:
+      raise RuntimeError(f'Conflicting persisted update {update_id}')
+    receipts[update_id] = receipt
+  if receipts != state.records:
+    extra = sorted(receipts.keys() - state.records.keys())
+    missing = sorted(state.records.keys() - receipts.keys())
+    raise RuntimeError(
+        f'Checkpoint/update receipts disagree: extra={extra}, missing={missing}')
+  evaluations = {}
+  for row in persisted_rows(logdir / 'evaluations.jsonl'):
+    point = int(row['action_step'])
+    value = {k: v for k, v in row.items() if k != 'action_step'}
+    if point in evaluations and evaluations[point] != value:
+      raise RuntimeError(f'Conflicting persisted evaluation {point}')
+    evaluations[point] = value
+  if evaluations != state.evaluations:
+    raise RuntimeError('Checkpoint/evaluation records disagree')
+
+
+def audit_complete_outputs(logdir, state, mode, git_commit):
+  logdir = Path(logdir)
+  path = logdir / 'final_state.json'
+  if not path.exists():
+    raise RuntimeError('Completed checkpoint lacks final_state.json')
+  final = json.loads(path.read_text(encoding='utf-8'))
+  if (final['git_commit'] != git_commit or
+      final['train_action_steps'] != state.budget or
+      final['updates'] != state.updates or
+      final['evaluations'] != len(state.grid) or
+      final['match_sum'] != state.match_sum or
+      final['match_count'] != state.match_count):
+    raise RuntimeError('Completed checkpoint/final state disagree')
+  if mode == 'logging':
+    path = logdir / 'matching_result.json'
+    if not path.exists():
+      raise RuntimeError('Completed logging checkpoint lacks matching result')
+    matching = json.loads(path.read_text(encoding='utf-8'))
+    if matching != dict(match_sum=state.match_sum,
+                        match_count=state.match_count,
+                        c=state.frozen_c(), start=state.match_start,
+                        end=state.match_end):
+      raise RuntimeError('Completed checkpoint/matching result disagree')
 
 
 def parameter_digest(agent):
@@ -272,25 +335,28 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
   cp.agent = agent
   cp.replay = replay
   cp.protocol = state
-  cp.load_or_save()
-  if int(step) != state.actions or int(agent.n_updates) != state.updates:
-    logger.close()
-    raise ValueError('Checkpoint counters disagree')
-  if state.actions:
-    if state.actions < state.budget:
-      logger.close()
-      raise RuntimeError(
-          'Training continuation refused: environment and replay RNG state '
-          'are not completely checkpointed; start a fresh run')
-    if len(state.evaluations) == len(state.grid):
-      if config.agent.rep_probe.mode == 'logging':
-        state.frozen_c()
+  had_checkpoint = (logdir / 'ckpt' / 'latest').exists()
+  try:
+    cp.load_or_save()
+    if int(step) != state.actions or int(agent.n_updates) != state.updates:
+      raise ValueError('Checkpoint counters disagree')
+    audit_persisted_history(logdir, state)
+    if had_checkpoint:
+      if state.actions < state.budget:
+        raise RuntimeError(
+            'Training continuation refused: environment and replay RNG '
+            'state are not completely checkpointed; start a fresh run')
+      if len(state.evaluations) != len(state.grid):
+        raise RuntimeError(
+            'Terminal evaluation recovery needs the fixed endpoint snapshot')
+      audit_complete_outputs(
+          logdir, state, config.agent.rep_probe.mode, git_commit)
       print('Completed protocol run already checkpointed')
       logger.close()
       return
+  except Exception:
     logger.close()
-    raise RuntimeError(
-        'Terminal evaluation recovery needs the fixed endpoint snapshot')
+    raise
 
   stream_train = iter(make_stream(replay, 'train'))
   carry_train = [agent.init_train(args.batch_size)]
@@ -334,8 +400,9 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
     for _ in range(should_train(step)):
       start_action = state.actions
       update_id = state.updates
-      batch = agent.prepare_batch(next(stream_train))
-      last_batch[0] = dict(batch)
+      raw_batch = next(stream_train)
+      batch = agent.prepare_batch(raw_batch)
+      last_batch[0] = raw_batch
       carry_train[0], delayed_outs, delayed_mets = agent.train(
           carry_train[0], dict(batch))
       if delayed_outs or delayed_mets:
