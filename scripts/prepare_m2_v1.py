@@ -215,7 +215,7 @@ def prepare(output, campaign, resources):
       analysis='mirror actual small files and make a new result index after runs'))
   dump(output/'configuration-audit.json', dict(code_sha=source_sha,
       training_launched=False, runs=checks, resolved=12, pending_formal_c=4,
-      unmodified_agent_runner_statistics=True,
+      imports_training_code=False,
       note='JSON retains preset Infinity for inactive priority.initial; not NaN loss'))
   dump(output/'artifact-hashes.json', {p.name: sha(p) for p in output.iterdir()
                                       if p.is_file()})
