@@ -13,8 +13,8 @@ from jax.sharding import Mesh, NamedSharding, PartitionSpec as P
 
 from embodied.core.driver import Driver
 from embodied.run.protocol_v1 import (
-    ProtocolState, audit_complete_outputs, audit_persisted_history,
-    report_on_batch, seed32)
+    ProtocolState, array_hashes, audit_complete_outputs, audit_persisted_history,
+    report_fingerprint, report_on_batch, seed32)
 from dreamerv3.freeze_c import freeze
 
 
@@ -101,6 +101,42 @@ class ProtocolV1Test(unittest.TestCase):
     self.assertTrue(config.env.dmc.image)
     self.assertTrue(config.env.dmc.use_seed)
     self.assertEqual(config.env.dmc.repeat, 1)
+    self.assertEqual(config.run.engineering_trace_actions, 0)
+    self.assertEqual(config.run.engineering_trace_updates, 0)
+
+  def test_engineering_hashes_exclude_replay_uuid_and_detect_input_change(self):
+    first = dict(image=np.zeros((2, 3, 3), np.uint8),
+                 action=np.zeros((2, 3, 1), np.float32),
+                 stepid=np.zeros((2, 3, 24), np.uint8))
+    second = {k: v.copy() for k, v in first.items()}
+    second['stepid'][0, 0, 0] = 1
+    self.assertEqual(array_hashes(first, skip=('stepid',)),
+                     array_hashes(second, skip=('stepid',)))
+    second['image'][0, 0, 0] = 1
+    self.assertNotEqual(array_hashes(first, skip=('stepid',))['image'],
+                        array_hashes(second, skip=('stepid',))['image'])
+
+  def test_report_fingerprint_detects_state_and_batch_changes(self):
+    class Agent:
+      def __init__(self):
+        self.params = {'weight': np.array([1, 2], np.float32)}
+        self.counters = {'updates': 3, 'batches': 3}
+      def save(self):
+        return dict(params=self.params, counters=self.counters.copy())
+    class Replay:
+      def __init__(self):
+        self.metrics = {'samples': 3}
+        self.sampler = type('Sampler', (), {})()
+        self.sampler.rng = np.random.default_rng(7)
+    agent, replay = Agent(), Replay()
+    batch = {'image': np.zeros((2, 3), np.uint8)}
+    before = report_fingerprint(agent, replay, batch)
+    self.assertEqual(before, report_fingerprint(agent, replay, batch))
+    agent.params['weight'][0] = 3
+    self.assertNotEqual(before, report_fingerprint(agent, replay, batch))
+    agent.params['weight'][0] = 1
+    batch['image'][0, 0] = 1
+    self.assertNotEqual(before, report_fingerprint(agent, replay, batch))
 
   def test_partial_driver_and_exact_action_budget(self):
     driver = Driver([TinyEnv] * 3, parallel=False)
