@@ -57,6 +57,10 @@ def base_command(task, directory, mode, c=-1, episodes=2, report=0, stop=0):
 
 
 def supervise(command, directory, label, gpu):
+  occupancy = subprocess.check_output(['nvidia-smi', '-i', str(gpu),
+      '--query-gpu=memory.used', '--format=csv,noheader,nounits'], text=True).strip()
+  if not occupancy.isdigit() or int(occupancy) != 0:
+    raise RuntimeError(f'GPU {gpu} is occupied ({occupancy} MiB); do not share existing jobs')
   directory.mkdir(parents=True, exist_ok=True)
   execution = directory / ('execution-' + label + '.json')
   log_path = directory / ('stdout-' + label + '.log')
@@ -246,8 +250,9 @@ def supplemental(args):
     raise RuntimeError(f'Refusing to overwrite {directory}')
   stop = 2049 if args.variant == 'interrupted' else 0
   episodes = 2 if stop else 1
+  report = 2049 if args.variant == 'isolation' else 0
   command = base_command(args.task, directory, 'logging',
-      episodes=episodes, report=0 if stop else 2049, stop=stop)
+      episodes=episodes, report=report, stop=stop)
   code = supervise(command, directory, 'initial', args.gpu)
   if stop:
     assert code != 0
@@ -278,7 +283,7 @@ def main():
   parser.add_argument('--task', required=True, choices=TASKS)
   parser.add_argument('--root', required=True)
   parser.add_argument('--gpu', required=True, type=int)
-  parser.add_argument('--variant', choices=('interrupted', 'isolation'))
+  parser.add_argument('--variant', choices=('interrupted', 'isolation', 'evaluation-isolation'))
   args = parser.parse_args()
   if subprocess.check_output(['git', 'status', '--porcelain'], cwd=REPO, text=True).strip():
     raise RuntimeError('Supervisor requires a clean checkout')
