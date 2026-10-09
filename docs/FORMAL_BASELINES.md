@@ -12,6 +12,14 @@ GPU0/1/2/3分别执行hopper_hop/quadruped_run/quadruped_walk/reacher_hard，独
 
 2026-10-09 22:10:49（北京时间）sv2八卡均0MiB、无compute/pmon作业，/data可用2148586057728 bytes；仅为当时快照，启动前再次核查。依赖在sv2 dreamer补充wandb==0.30.0并约束已有包版本，其他两台不安装。原freeze含Conda构建本地路径使首次constraints安装失败，保留日志；以实际metadata包名版本约束安装后，已有包版本无变化、pip check通过，新增包及完整快照在 `/data/Policy_Discrepancy/runs/wandb-pd1-setup-20261009/`。base-py311不删除/升级。
 
+### 首次启动与外部监测接管
+
+正式训练源SHA为 `48d71f1541721208322442f5a1d5977124f3e888`。22:20:25/26/29（北京时间）GPU0/1/2启动三个baseline，manifest均记录该SHA；PID2783723/2783734/2783748。W&B生产logger已全部接入PD_1。首次supervisor PID2783619在启动GPU3前退出，日志完整保留；三个训练进程独立存活，无训练重启。
+
+现场排查：GPU3显示1MiB，但NVML compute/graphics列表、nvidia-smi进程表和pmon均无PID（原始字节数/时间/UUID保存在setup目录gpu3-empty-process-evidence.json）。旧包装器以memory.used必须为0替代作业检查，因这项无进程显存读数拒绝启动；不能据此认定共享/未知作业。修复以UUID、NVML两类进程与pmon共同判断占用，显存原值照实记录，不修改科学协议或数值验收容差；新增测试覆盖0MiB但存在计算/图形/pmon作业均拒绝。
+
+本机提交外部supervisor修复，通过Git bundle传入确定提交对象；运行中的服务器HEAD保持48d71f1，不改变已启动训练源码。从该修复对象导出独立监督文件至runs证据目录，按原完整plan接管已有PID（核对命令与进程创建时间），仅为缺失且现场确认无作业的GPU3启动reacher。这不是runner/checkpoint恢复。监督修复SHA与训练SHA分别记录；孤儿训练PID无法回收原始退出码，必须明确留null并以final/checkpoint、收据、评价、W&B完成状态独立验收，不能伪造exit0。
+
 ## 历史状态：配置声明缺项，训练未启动
 
 用户指定资源已明确；四任务科学参数已经确认，无需重复批准。`AGENTS.md`、`docs/CHATS.md`、STATUS当前规则及正式准备报告明确：04此前提出的prealloc=False/仅JSONL仍是未批准候选。当前尚无用户与03共同声明该项执行设置的记录。已集中提出两个完整方案：候选False/jsonl，或03预设默认True/jsonl+scope；等待声明，不以GPU分配或启动授权替代未确认配置。

@@ -14,7 +14,7 @@ import subprocess
 import sys
 import time
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(os.environ.get('PD_REPO', Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(REPO))
 from scripts.prepare_m2_v1 import TASKS, resolve, check
 
@@ -50,15 +50,49 @@ def gpu_state():
           for x in [[s.strip() for s in line.split(',')]]}
 
 def require_free(gpu):
+  import pynvml
   uuid, memory = gpu_state()[gpu]
+  pynvml.nvmlInit()
+  try:
+    handle = pynvml.nvmlDeviceGetHandleByUUID(uuid)
+    compute = [p.pid for p in pynvml.nvmlDeviceGetComputeRunningProcesses(handle)]
+    graphics = [p.pid for p in pynvml.nvmlDeviceGetGraphicsRunningProcesses(handle)]
+  finally:
+    pynvml.nvmlShutdown()
   pmon = subprocess.check_output(['nvidia-smi', 'pmon', '-c', '1'], text=True)
   jobs = [line for line in pmon.splitlines() if line.strip()
           and not line.startswith('#') and line.split()[0] == str(gpu)
           and line.split()[1] != '-']
-  if uuid != UUIDS[gpu] or memory != 0 or jobs:
-    raise RuntimeError(f'Assigned physical GPU{gpu} unavailable; no substitution')
+  if uuid != UUIDS[gpu] or compute or graphics or jobs:
+    raise RuntimeError(f'Assigned physical GPU{gpu} unavailable; '
+        f'compute={compute}, graphics={graphics}, memory={memory}, '
+        f'pmon={jobs}; no substitution')
   return dict(checked_utc=now(), physical_gpu=gpu, uuid=uuid,
-              memory_used_mib=memory, pmon=pmon)
+              memory_used_mib=memory, compute_pids=compute,
+              graphics_pids=graphics, pmon=pmon)
+
+class Adopted:
+  """Monitor an existing process; never invokes runner recovery or training."""
+  adopted = True
+  def __init__(self, row):
+    import psutil
+    self.process = psutil.Process(row['pid'])
+    if self.process.cmdline() != row['command']:
+      raise RuntimeError('Existing PID command differs; cannot adopt')
+    self.directory = Path(row['directory'])
+    self.create_time = self.process.create_time()
+
+  def poll(self):
+    import psutil
+    try:
+      if (self.process.is_running() and
+          self.process.status() != psutil.STATUS_ZOMBIE and
+          self.process.create_time() == self.create_time):
+        return None
+    except psutil.NoSuchProcess:
+      pass
+    # Exit code is unavailable for an orphan; final outputs are audited below.
+    return 0 if (self.directory / 'final_state.json').exists() else 1
 
 def prepare(output, campaign, entity):
   commit = clean_sha()
@@ -132,22 +166,37 @@ def smoke(output):
   dump(output / 'logger_validation.json', result)
   print(json.dumps(result))
 
-def run(plan_path):
+def run(plan_path, adopt=False):
   plan = json.loads(Path(plan_path).read_text())
   if clean_sha() != plan['code_sha'] or platform.node() != plan['host']:
     raise RuntimeError('Plan source/host differs')
   root = Path(plan['root'])
-  if root.exists():
+  if root.exists() and not adopt:
     raise FileExistsError('No continuation or overwrite: ' + str(root))
-  checks = [require_free(i) for i in range(4)]
-  root.mkdir(parents=True)
-  dump(root / 'prelaunch.json', dict(utc=now(), checks=checks,
-      code_sha=plan['code_sha'], supervisor_pid=os.getpid()))
-  dump(root / 'plan.json', plan)
+  if not adopt:
+    checks = [require_free(i) for i in range(4)]
+    root.mkdir(parents=True)
+    dump(root / 'prelaunch.json', dict(utc=now(), checks=checks,
+        code_sha=plan['code_sha'], supervisor_pid=os.getpid()))
+    dump(root / 'plan.json', plan)
+  elif json.loads((root / 'plan.json').read_text()) != plan:
+    raise RuntimeError('Adoption plan differs')
   handles = []
-  for row in plan['runs']:
-    require_free(row['physical_gpu'])
+  for i, row in enumerate(plan['runs']):
     directory = Path(row['directory'])
+    if adopt and (directory / 'execution-initial.json').exists():
+      row = json.loads((directory / 'execution-initial.json').read_text())
+      process = Adopted(row)
+      row['supervisor_adopted_utc'] = now()
+      row['exit_code_available'] = False
+      plan['runs'][i] = row
+      dump(directory / 'supervisor-adoption.json', dict(utc=now(),
+          pid=row['pid'], process_create_time=process.create_time,
+          command_verified=True, runner_restarted=False,
+          supervisor_source_sha=os.environ.get('PD_SUPERVISOR_SHA', plan['code_sha'])))
+      handles.append((row, process, None))
+      continue
+    check = require_free(row['physical_gpu'])
     directory.mkdir(parents=True)
     (directory / 'tmp').mkdir()
     env = dict(os.environ)
@@ -172,9 +221,11 @@ def run(plan_path):
         stdout=log, stderr=subprocess.STDOUT)
     row.update(state='running', pid=process.pid, start_utc=now(),
         start_epoch=time.time(), code_sha=plan['code_sha'], environment=record_env,
+        prelaunch_check=check, exit_code_available=True,
         wandb_url=f'https://wandb.ai/{row["wandb_entity"]}/PD_1/runs/{row["wandb_id"]}')
     dump(directory / 'execution-initial.json', row)
     handles.append((row, process, log))
+    dump(root / 'RUN_INDEX.json', dict(runs=plan['runs']))
   dump(root / 'RUN_INDEX.json', dict(runs=plan['runs']))
   while any(row['state'] == 'running' for row, _, _ in handles):
     for row, process, log in handles:
@@ -188,8 +239,10 @@ def run(plan_path):
         f.write(json.dumps(resources) + '\n')
       if rc is None:
         continue
-      log.close()
-      row.update(exit_code=rc, end_utc=now(), elapsed_seconds=time.time()-row['start_epoch'],
+      if log is not None:
+        log.close()
+      row.update(exit_code=None if getattr(process, 'adopted', False) else rc,
+                 end_utc=now(), elapsed_seconds=time.time()-row['start_epoch'],
                  state='training_finished_pending_audit' if rc == 0 else 'failed')
       dump(directory / 'execution-initial.json', row)
       if rc == 0:
@@ -216,7 +269,7 @@ def run(plan_path):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument('action', choices=['prepare', 'smoke', 'run'])
+  parser.add_argument('action', choices=['prepare', 'smoke', 'run', 'adopt'])
   parser.add_argument('--output')
   parser.add_argument('--campaign')
   parser.add_argument('--entity')
@@ -227,4 +280,4 @@ if __name__ == '__main__':
   elif args.action == 'smoke':
     smoke(args.output)
   else:
-    run(args.plan)
+    run(args.plan, adopt=args.action == 'adopt')
