@@ -1,5 +1,7 @@
 # 04 · 四任务正式 logging-only baseline 与 c/return 索引
 
+**最新现场索引**：八条baseline/Dt已运行，当前事实、实际SHA/配置/设备/目录、监督修复与退出码限制、依赖收尾及下一步见 `docs/FORMAL_BASELINE_DT_PD1.md`；下方保留各时刻准备与首次启动历史，不用旧“未启动”行当当前状态。
+
 日期：2026-10-09（Asia/Shanghai）。用户本轮明确授权使用 **sv2物理GPU0–3** 执行四任务正式baseline，生成逐任务正式c及所需原始return指标。本轮范围为四条logging-only，不包含Dt/constant/shuffle；不新增seed、校准训练或改变冻结协议。
 
 ## 当前授权补充：Dt并行（2026-10-09）

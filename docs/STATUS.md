@@ -2,6 +2,12 @@
 
 更新日期：2026-10-09。
 
+## 04 最新：PD_1八条正式训练运行中（2026-10-09 22:55快照）
+
+- sv2 GPU0–3四logging baseline、GPU4–7四Dt已按用户授权启动；全部prealloc=False、JSONL+W&B PD_1、无scope，冻结科学参数不变，同任务完整配置仅mode/logdir不同。八条训练来源SHA48d71f1541721208322442f5a1d5977124f3e888，服务器checkout保持该版本，外部监督/收尾脚本从确定Git对象导出，不改运行中源码。
+- 22:55八条进程与W&B均running、无未知或错卡作业；已有成功更新/10完整episode评价，前三baseline已完成50000点。正式c及完整指标尚未产生；不能宣称全程验收/方法有效。八卡均仍有本项目作业，没有释放；constant/shuffle仍未授权。
+- 正式现场报告/版本差异/修复与限制/命令配置索引/后续prompt见 `docs/FORMAL_BASELINE_DT_PD1.md`。CPU依赖收尾已部署，仍待真实终点触发；首选继续现有04监测和完整审计，不重复要求启动批准。
+
 ## 04 当前执行：baseline + Dt（2026-10-09）
 
 - 用户已声明prealloc=False、JSONL+W&B PD_1、无scope，已启动sv2 GPU0–3四任务正式logging baseline；22:40:19均有成功更新及0点评价10完整episode，累计收据ID连续/invalid0，尚未完成。

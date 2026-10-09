@@ -1,5 +1,7 @@
 # 04 · 三台服务器W&B登录核查
 
+**后续变化**：本报告保留21:58只读核查事实。用户随后授权JSONL+W&B PD_1；sv2已安装锁定SDK并完成项目/日志上传验证，八条正式baseline/Dt已接入，见 `docs/FORMAL_BASELINE_DT_PD1.md`。不将本报告当当前SDK安装状态；sv1/sv3未在后续安装/同步。
+
 检查时间：2026-10-09 21:58:45–21:58:46（Asia/Shanghai，请求开始时间；UTC13:58:45–13:58:46）。范围为当前SSH用户及项目 `/data/Policy_Discrepancy/envs/dreamer`，不推断其他用户/环境的登录情况。
 
 | 服务器 / hostname | SSH用户 | 当前凭据与在线验证 | W&B账号 | dreamer SDK / 当前PATH CLI | 检查时repo SHA |
