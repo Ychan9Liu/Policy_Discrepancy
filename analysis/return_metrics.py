@@ -96,10 +96,13 @@ def snapshot_evidence(directory, targets, entry, manifest):
     if run['artifact_sha256']['evaluations.jsonl'] != sha(directory / 'evaluations.jsonl'):
       raise ValueError('Snapshot audit/evaluation file hash disagreement')
     for item in run['snapshots']:
-      evidence[item['action_step']] = dict(
+      candidate = dict(
           actual_step=item['action_step'], update_id=item['counters']['updates'],
           snapshot_id=f"eval_snapshots/{item['action_step']:07d}",
           params_sha256=item['params_sha256'], basis='04-checkpoint-read-audit')
+      if item['action_step'] in evidence and evidence[item['action_step']] != candidate:
+        raise ValueError('Conflicting snapshot audit records')
+      evidence[item['action_step']] = candidate
   else:
     # Reading trusted project checkpoints only, never arbitrary downloaded pickle.
     import pickle
@@ -115,7 +118,8 @@ def snapshot_evidence(directory, targets, entry, manifest):
         item = json.loads(metadata_path.read_text(encoding='utf-8'))
         if (item['git_commit'] != manifest['git_commit'] or
             item['snapshot_id'] != f'eval_snapshots/{point:07d}/{tag}' or
-            not (folder / tag / 'done').exists()):
+            not (folder / tag / 'done').exists() or
+            not (folder / tag / 'agent.pkl').exists()):
           raise ValueError('Snapshot metadata/checkpoint disagreement')
         sources[str(metadata_path)] = sha(metadata_path)
         sources[str(folder / 'latest')] = sha(folder / 'latest')
@@ -136,11 +140,14 @@ def snapshot_evidence(directory, targets, entry, manifest):
   return evidence, sources
 
 
-def normalize_points(metadata, records, snapshots, spec=MetricSpec()):
+def normalize_points(metadata, records, snapshots, spec=MetricSpec(), source_lines=None):
   """Preserve every source row, but never choose among conflicting snapshots."""
   episodes, points, issues = [], [], []
   grouped = {}
-  for line, record in enumerate(records, 1):
+  source_lines = source_lines if source_lines is not None else range(1, len(records)+1)
+  if len(source_lines) != len(records):
+    raise ValueError('Source line mapping does not cover every record')
+  for line, record in zip(source_lines, records):
     try:
       target = integer(record.get('target_action_step', record.get('action_step')))
       grouped.setdefault(target, []).append((line, record))
@@ -355,7 +362,7 @@ def analyze_run(entry, spec=MetricSpec()):
       legacy_raw_return_verified=manifest['git_commit'] in LEGACY_COMMITS)
   final_path = directory / 'final_state.json'
   metadata['source_final_state_present'] = final_path.exists()
-  records = []
+  records, source_lines = [], []
   parse_issues = [] if evaluation_path.exists() else ['missing_evaluations_file']
   if metadata['task'] not in spec.tasks or metadata['group'] not in GROUPS:
     parse_issues.append('outside_declared_task_or_group')
@@ -368,6 +375,7 @@ def analyze_run(entry, spec=MetricSpec()):
       if not isinstance(row, dict):
         raise ValueError('Not an evaluation object')
       records.append(row)
+      source_lines.append(line)
     except ValueError as error:
       parse_issues.append(f'malformed_json_at_line:{line}:{error}')
   targets = {row.get('target_action_step', row.get('action_step')) for row in records}
@@ -385,7 +393,8 @@ def analyze_run(entry, spec=MetricSpec()):
   except (KeyError, ValueError, OSError) as error:
     snapshots = {}
     parse_issues.append(f'snapshot_evidence_error:{error}')
-  episodes, points, issues = normalize_points(metadata, records, snapshots, spec)
+  episodes, points, issues = normalize_points(
+      metadata, records, snapshots, spec, source_lines=source_lines)
   summary = seed_metrics(metadata, points, parse_issues + issues, spec)
   audit = dict(metadata, input_sha256=sources,
       field_mapping={'scores': 'episode_return_raw', 'mean': 'mean_episode_return_raw',

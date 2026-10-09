@@ -1,6 +1,7 @@
 """Hand-calculated raw-return statistics; multi-seed data is fixture only."""
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -8,7 +9,7 @@ import unittest
 
 from analysis.return_metrics import (
     MetricSpec, TASKS, aggregate, analyze_run, normalize_points, seed_metrics,
-    trapezoid_auc, write_tables)
+    snapshot_evidence, trapezoid_auc, write_tables)
 from dreamerv3.return_stats import EpisodeReturn, REWARD_SOURCE, RETURN_DEFINITION
 
 
@@ -242,6 +243,7 @@ class ReturnMetricsTest(unittest.TestCase):
         folder=root/'eval_snapshots'/f"{row['action_step']:07d}"
         (folder/'fixture').mkdir(parents=True)
         (folder/'fixture'/'done').touch()
+        (folder/'fixture'/'agent.pkl').write_bytes(b'fixture-checkpoint-placeholder')
         (folder/'latest').write_text('fixture')
         (folder/'evaluation_snapshot.json').write_text(json.dumps(dict(
             snapshot_id=row['snapshot_id'],actual_action_step=row['action_step'],
@@ -257,6 +259,29 @@ class ReturnMetricsTest(unittest.TestCase):
       self.assertIn('input_sha256',audit)
       with self.assertRaises(FileExistsError):
         write_tables(output,{},audit)
+      with (root/'evaluations.jsonl').open('a') as file:
+        file.write('\n\ninvalid-json\n'+json.dumps(point(11)))
+      episodes,_,result,audit=analyze_run(dict(directory=str(root)),FIXTURE)
+      self.assertEqual([row['source_line'] for row in episodes
+                        if row['target_action_step']==11],[7,7])
+      self.assertFalse(result['auc_complete'])
+      self.assertTrue(any('malformed_json_at_line:6' in issue
+                          for issue in audit['parse_issues']))
+
+  def test_external_snapshot_audit_conflicts_are_not_selected(self):
+    with TemporaryDirectory() as temp:
+      root=Path(temp)
+      evaluation=root/'evaluations.jsonl'
+      evaluation.write_text(json.dumps(point(0)))
+      item=dict(action_step=0,counters={'updates':0},params_sha256='first')
+      audit=root/'snapshot-audit.json'
+      audit.write_text(json.dumps(dict(runs=[dict(directory='source-run',
+          git_commit='fixture-commit',artifact_sha256={'evaluations.jsonl':
+          hashlib.sha256(evaluation.read_bytes()).hexdigest()},
+          snapshots=[item,dict(item,params_sha256='different')])])) )
+      with self.assertRaisesRegex(ValueError,'Conflicting snapshot'):
+        snapshot_evidence(root,{0},dict(snapshot_audit_file=str(audit),
+            source_directory='source-run'),dict(git_commit='fixture-commit'))
 
 
 if __name__ == '__main__':
