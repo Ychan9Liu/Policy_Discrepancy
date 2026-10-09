@@ -9,9 +9,11 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import pickle
 import re
 import statistics
 import sys
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -45,6 +47,20 @@ def checkpoint_events(path):
     if 'Saving checkpoint:' in text:
       events.append(dict(epoch=stamp, path=text.split('Saving checkpoint:', 1)[1].strip()))
   return events
+
+
+def checkpoint_parameters(directory):
+  latest = (directory / 'latest').read_text().strip()
+  with (directory / latest / 'agent.pkl').open('rb') as file:
+    data = pickle.load(file)
+  digest = hashlib.sha256()
+  for key, value in sorted(data['params'].items()):
+    array = np.asarray(value)
+    digest.update(key.encode())
+    digest.update(str(array.dtype).encode())
+    digest.update(str(array.shape).encode())
+    digest.update(array.tobytes())
+  return dict(params_sha256=digest.hexdigest(), counters=data['counters'])
 
 
 def analyze_run(directory):
@@ -97,9 +113,61 @@ def analyze_run(directory):
   result['evaluation_lengths'] = [e['lengths'] for e in evaluations]
   result['snapshot_index'] = [dict(path=str(p.relative_to(directory)), bytes=p.stat().st_size)
       for p in (directory / 'eval_snapshots').rglob('*') if p.is_file()]
+  result['snapshots'] = []
+  for evaluation in evaluations:
+    point = evaluation['action_step']
+    saved = checkpoint_parameters(directory / 'eval_snapshots' / f'{point:07d}')
+    assert saved['counters']['updates'] == evaluation['update_id']
+    if point == 0:
+      assert saved['counters']['actions'] == saved['counters']['updates'] == 0
+    result['snapshots'].append(dict(action_step=point, **saved))
+  assert result['snapshots'][-1]['params_sha256'] == result['final']['params_sha256']
+  terminal = checkpoint_parameters(directory / 'ckpt')
+  assert terminal['params_sha256'] == result['final']['params_sha256']
+  result['endpoint_evaluation_did_not_modify_params'] = True
   result['artifact_sha256'] = {name: hashlib.sha256((directory/name).read_bytes()).hexdigest()
       for name in ('protocol_manifest.json', 'config.yaml', 'update_receipts.jsonl',
           'evaluations.jsonl', 'final_state.json')}
+  from embodied.run.protocol_v1 import ProtocolState
+  config = manifest['config']
+  ledger = ProtocolState(*(config[k] for k in ('run.action_budget',
+      'run.eval_every_actions', 'run.eval_eps', 'run.match_start', 'run.match_end')))
+  receipts = rows(directory / 'update_receipts.jsonl')
+  def record(row):
+    return ledger.record_update(row['update_id'], row['start_action'],
+        row['match_sum'], row['match_count'], row['invalid_count'])
+  assert all(record(row) for row in receipts)
+  before = (ledger.updates, ledger.match_sum, ledger.match_count)
+  assert not any(record(row) for row in receipts)
+  assert before == (ledger.updates, ledger.match_sum, ledger.match_count)
+  conflicting = dict(receipts[0], match_sum=receipts[0]['match_sum']+.125)
+  try:
+    record(conflicting)
+  except ValueError as error:
+    assert 'Conflicting receipt' in str(error)
+  else:
+    raise AssertionError('Conflicting real receipt was accepted')
+  result['receipt_audit'] = dict(unique_updates=ledger.updates,
+      duplicate_replay_of_receipts_ignored=True, conflicting_duplicate_rejected=True,
+      included_ids=[r['update_id'] for r in receipts if 2200 <= r['start_action'] < 3600])
+  frozen_path = directory.parent / 'logging' / 'c_frozen_engineering.json'
+  frozen = read(frozen_path)
+  assert frozen['engineering_fixture'] and frozen['root_seed'] == 0
+  assert frozen_path.with_suffix('.json.sha256').read_text().strip() == hashlib.sha256(
+      frozen_path.read_bytes()).hexdigest()
+  if result['mode'] == 'logging':
+    assert ledger.match_sum == result['final']['match_sum']
+    assert ledger.match_count == result['final']['match_count']
+    result['recomputed_engineering_c'] = ledger.frozen_c()
+    if directory.name == 'logging':
+      assert ledger.match_sum == frozen['match_sum']
+      assert ledger.match_count == frozen['match_count']
+      assert hashlib.sha256((directory/'update_receipts.jsonl').read_bytes()).hexdigest() == frozen['receipt_sha256']
+      assert ledger.frozen_c() == frozen['c']
+  if result['mode'] == 'constant':
+    assert config['agent.rep_probe.c'] == frozen['c']
+    result['constant_source'] = dict(path=str(frozen_path), c=frozen['c'],
+        sha256=hashlib.sha256(frozen_path.read_bytes()).hexdigest())
   return result
 
 
