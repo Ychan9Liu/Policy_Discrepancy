@@ -2,6 +2,8 @@
 
 更新日期：2026-10-09。
 
+**2026-10-09 最新baseline执行声明**：用户已明确sv2 GPU0–3四条正式logging baseline使用prealloc=False、JSONL+W&B、关闭scope，W&B project `PD_1`。配置缺项已解除，按已授权范围准备验证日志并启动；冻结科学协议不变，其他三组尚未授权。本段替代下方历史“等待声明”，状态/完整记录见 `docs/FORMAL_BASELINES.md` 和STATUS当前段。
+
 **2026-10-09 正式baseline任务（已授权，未启动）**：用户分配sv2物理GPU0–3，授权四任务logging-only全预算baseline、逐任务正式c及原始return指标，范围不含其余三组。设备/依赖/确定版本核查通过，当前等待prealloc/logger执行设置声明；科学协议不变，启动授权不重复请求。详见 `docs/FORMAL_BASELINES.md`、STATUS当前段与analysis/outputs中的完整配置备选，未运行训练或产生正式c/指标。
 
 **2026-10-09 正式准备索引（未启动）**：`docs/M2_V1_FORMAL_PREPARATION.md` 固定完整共同执行配置、sv2四任务CUDA UUID/EGL映射、16条新独立目录及baseline→正式c→其余组依赖。最终计划索引在 `analysis/outputs/formal-m2-v1-preparation-final/planned-run-index.json`，不是结果索引；全未授权/未启动，四份constant的c未绑定，正式指标为空。此次只有CPU配置解析和无训练单帧设备探针；不增加正式训练授权，不改变下述冻结科学协议或旧证据。

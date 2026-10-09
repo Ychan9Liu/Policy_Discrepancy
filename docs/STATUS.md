@@ -2,6 +2,12 @@
 
 更新日期：2026-10-09。
 
+## 04 正式baseline执行设置已明确（2026-10-09，当前）
+
+- 用户声明prealloc=False、JSONL+W&B、暂不使用scope；新建project PD_1并纳入本次四条正式logging baseline。sv2物理GPU0–3已有分配与启动授权，冻结科学协议不变；前轮配置缺项已解除，准备验证日志并启动，不重复请求批准。
+- 22:10:49（北京时间）sv2八卡均空闲、无compute/pmon作业；启动前重查，不将旧快照当当前状态。仅sv2 dreamer安装wandb==0.30.0及新增依赖，约束已有包不升级、pip check通过，base-py311保留；其他服务器不安装/同步。
+- 详见 `docs/FORMAL_BASELINES.md` 当前执行声明；完整依赖/失败安装证据在sv2 runs/wandb-pd1-setup-20261009。正式c与指标仍待完整baseline后产生，其他三组不在本轮授权范围。
+
 ## 04 W&B登录只读核查（2026-10-09 21:58，当前）
 
 - sv1/sv2/sv3当前SSH用户的netrc凭据均通过api.wandb.ai只读viewer在线校验，HTTP200，账号均 `ychan9liu`。三台项目dreamer环境未安装wandb SDK、当前PATH无CLI；有效凭据不等于已验证logger/run上传或具体项目写权限。

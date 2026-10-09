@@ -1,0 +1,12 @@
+# sv2 dreamer addition for approved JSONL + W&B PD_1 (2026-10-09).
+# Install alongside requirements-dreamer.lock, preserving existing versions.
+opentelemetry-exporter-http-transport==0.66b0
+opentelemetry-exporter-otlp-common==0.66b0
+opentelemetry-exporter-otlp-proto-common==1.45.0
+opentelemetry-exporter-otlp-proto-http==1.45.0
+opentelemetry-proto==1.45.0
+opentelemetry-sdk==1.45.0
+opentelemetry-semantic-conventions==0.66b0
+platformdirs==4.12.4
+wandb==0.30.0
+xxhash==4.0.1

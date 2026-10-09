@@ -2,7 +2,17 @@
 
 日期：2026-10-09（Asia/Shanghai）。用户本轮明确授权使用 **sv2物理GPU0–3** 执行四任务正式baseline，生成逐任务正式c及所需原始return指标。本轮范围为四条logging-only，不包含Dt/constant/shuffle；不新增seed、校准训练或改变冻结协议。
 
-## 当前状态：配置声明缺项，训练未启动
+## 当前执行声明（2026-10-09，替代下方历史缺项）
+
+用户已明确 `prealloc=False`、`JSONL + W&B`、暂不使用scope，并授权新建W&B project `PD_1`，将本次任务四条正式logging baseline挂入该project。沿用用户已指定的sv2物理GPU0–3与冻结科学协议，不再请求配置/启动批准。此前仅JSONL/默认scope的备选保留为历史，不作为此次启动配置。
+
+GPU0/1/2/3分别执行hopper_hop/quadruped_run/quadruped_walk/reacher_hard，独立attempt01、seed0。项目日志工程检查是无agent/无训练动作的独立W&B run，不属于四条baseline。此时启动准备中；最终实际代码SHA、W&B entity/run链接、运行与审计状态另随现场证据更新。
+
+本轮工程改动仅为main的既有W&B logger传入完整config及本地logdir，以及新增外部正式baseline supervisor；模型/runner/统计/RNG代码和科学参数未修改。supervisor显式检查sv2与固定UUID、干净SHA、新目录、指定卡空闲；不换卡/共享、不恢复或覆盖旧运行、不自动启动其他三组。结束自动调用原正式freeze_c与return统计，仍需04独立完成快照/收据/上传/指标验收。
+
+2026-10-09 22:10:49（北京时间）sv2八卡均0MiB、无compute/pmon作业，/data可用2148586057728 bytes；仅为当时快照，启动前再次核查。依赖在sv2 dreamer补充wandb==0.30.0并约束已有包版本，其他两台不安装。原freeze含Conda构建本地路径使首次constraints安装失败，保留日志；以实际metadata包名版本约束安装后，已有包版本无变化、pip check通过，新增包及完整快照在 `/data/Policy_Discrepancy/runs/wandb-pd1-setup-20261009/`。base-py311不删除/升级。
+
+## 历史状态：配置声明缺项，训练未启动
 
 用户指定资源已明确；四任务科学参数已经确认，无需重复批准。`AGENTS.md`、`docs/CHATS.md`、STATUS当前规则及正式准备报告明确：04此前提出的prealloc=False/仅JSONL仍是未批准候选。当前尚无用户与03共同声明该项执行设置的记录。已集中提出两个完整方案：候选False/jsonl，或03预设默认True/jsonl+scope；等待声明，不以GPU分配或启动授权替代未确认配置。
 
