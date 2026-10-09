@@ -1,8 +1,8 @@
 # 实验协议与结果索引
 
-更新日期：2026-10-08。
+更新日期：2026-10-09。
 
-**2026-10-09 执行状态补充**：用户告知return/score指标由02重新审议；以下v1确认记录保留历史决策依据，不代表本轮重新确认该指标。最终口径待02更新，04不自行选择。本轮四任务size50m的16个缩小预算真实工程主运行已完成，报告/真实重跑隔离仍有工程缺口；详情及运行索引见 `docs/SERVER_INTEGRATION_SIZE50M.md`、`docs/STATUS.md` 当前章节。工程c/return不混入正式实验；正式百万步比较未启动。
+**2026-10-09 指标口径补充（已确认，当前）**：继续沿用已冻结的原始 return 指标协议，不重新确认全部 v1，也不引入归一化 score。episode return、评价点均值、按 seed 独立 AUC、任务等权汇总、指定末段五点和缺失标记按下文 C 节执行。score 讨论不作为工程验收或正式实验准备的阻塞项；本次只澄清指标，不表示工程验收已通过、不新增正式实验启动授权。已有四任务 size50m 的16个缩小预算工程主运行及后续修复证据分别见 `docs/SERVER_INTEGRATION_SIZE50M.md`、`docs/CODE_SIZE50M_REPAIR.md`、`docs/STATUS.md`；工程 c/return 不混入正式实验，正式百万步比较未启动。
 
 状态：M2 实验协议 v1 已由用户于 2026-10-08 确认，作为 03 的明确实施交接版本。匹配窗口、统计单位、预算、评价网格和指标均已冻结；完整工程配置、随机流映射和运行链路仍须落实、验收。正式比较尚未启动，本轮不启动实验。方法定义及算法验收见 `docs/METHOD_SPEC.md`，既有工程验收证据见 `docs/CODE_PHASE1.md`、`docs/CODE_PHASE2.md`。
 
@@ -78,13 +78,17 @@ c_task = S/N
 
 固定网格为 `s_j=50000*j, j=0,...,20`，共 21 点，每点恰好 10 个完整 episode。s=0 是初始化完成、训练交互（含 replay 预填充）与更新开始前的策略，不能用预填充后的检查点代替。每点固定不可变参数快照，记录实际动作步和 update 编号；训练结束后完成 s=1000000 的终点评估，不能因循环退出漏掉终点。
 
-每个 episode return 为完整 episode 的原始奖励和；每点均值 `r_j=(1/10)*sum_e return_je`。评估统一采样动作，不能部分组用 mean/mode。并行评估须避免实际完成超过 10 条后择优挑选，预先固定 10 个 episode ID，保留全部得分/长度/随机性记录。评估不得写入训练 replay、推进训练 RNG/计数器、更新训练 normalization/模型/优化器，也不得读取仍在变化的参数。
+单个 episode 的 return 是完整 episode 内原始环境 reward 的累计和：不折扣、不除以 episode 长度、不使用模型预测奖励或训练时变换后的奖励。环境接口已将 action repeat 内的 reward 累计，统计端每次接口返回只累加一次，不再乘 repeat 或重复展开奖励；reset 返回不产生动作 reward，不能把下一个 episode 的奖励拼入本 episode。
 
-主指标采用全预算梯形积分，固定分母为 1000000；末段为指定五点评价均值的算术平均：
+每个评价点对该点全部预定完整评价 episode 的 return 求算术平均，v1 恰好10条，即 `r_j=(1/10)*sum_e return_je`。不按 episode 长度加权，不把不完整 episode 当成完整样本，也不因 return 高低删选 episode。评估沿用采样动作，不能部分组用 mean/mode。并行评估预先固定10个 episode ID，保留全部 return/长度/随机性记录。评估不得写入训练 replay、推进训练 RNG/计数器、更新训练 normalization/模型/优化器，也不得读取仍在变化的参数。
+
+每个训练 seed 在每任务/组内独立计算 mean return 曲线的梯形积分，再除以固定训练动作预算 B=1000000。横坐标 x 是评价快照对应的实际累计训练动作步（含 replay 预填充、排除 reset/评估），记录实际步数而非日志写出步或评价动作数；冻结网格要求 x_j=50000*j。原始 return AUC 只按固定预算除一次，不是 score 归一化。
 
 ```text
-M_task,group = (1/1000000) * sum_(j=0..19) ((r_j+r_(j+1))/2) * 50000
-T_task,group = (r_16+r_17+r_18+r_19+r_20)/5
+AUC_task,group,seed = sum_i ((x_(i+1)-x_i) * (r_(i+1)+r_i)/2) / B
+Tail_task,group,seed = (r_at_800000+r_at_850000+r_at_900000+r_at_950000+r_at_1000000)/5
+M_task,group = mean_over_training_seeds(AUC_task,group,seed)
+T_task,group = mean_over_training_seeds(Tail_task,group,seed)
 Delta_task,ref(M) = M_task,Dt - M_task,ref
 Delta_task,ref(T) = T_task,Dt - T_task,ref
 ref in {baseline, constant, shuffle}
@@ -92,9 +96,30 @@ Overall_X_group = (1/4)*sum_over_four_tasks X_task,group, for X in {M,T}
 Overall_Delta_ref(X) = (1/4)*sum_over_four_tasks Delta_task,ref(X)
 ```
 
-末段固定为 800000、850000、900000、950000、1000000 五点，不包括 750000。四任务按原始 episodic return 的 M/T 与差值等权汇总，不换成相对百分比、baseline 比例或 min-max 标准化。保留四任务、四组各自曲线与 M/T、三项差值，不让整体均值掩盖负向任务。
+v1 的训练 seed 集合仍只有 `{0}`，上述 seed 平均当前退化为该 seed 的指标；公式说明统计层级，不授权新增训练 seed。若以后经单独协议增加 seed，先每个 seed 独立积分，再在任务内对 seed 的 AUC 求算术平均，最后四任务等权平均。不能将不同任务或不同 seed 的 episode 池合并后直接作为独立训练重复，不根据结果改变任务权重。
 
-缺失初始/终点或其他评价点、短预算退出、checkpoint 步号错位应作为协议缺口报告；不允许静默缩短分母、前向填充或补插选择性评价。03 必须落实精确动作步网格；若现有调度无法生成对应快照，应报告工程阻碍并修复，不能自行放宽网格或运行后决定插值规则。当前只作单 seed 描述性探索，已决定暂不设最小增益或等效阈值，不作统计等效结论，也不根据结果追选判据。
+末段固定为 800000、850000、900000、950000、1000000 五个评价点 mean return 的算术平均，不直接取日志最后五条。必须按实际训练动作步和快照核对与预定点的对应关系；日志乱序、重写或额外工程记录不改变该集合。四任务按原始 episodic return 的 M/T 与差值等权汇总，不换成归一化 score、相对百分比、baseline 比例或 min-max 标准化。保留每任务/组/seed 的曲线和指标、任务均值、四任务总体值及三项 Dt 差值，不让整体均值掩盖负向任务。
+
+缺失 AUC 初始/终点、任何冻结网格评价点，或缺失指定末段五点时，分别将受影响指标标为不完整，并记录缺失点和原因；短预算退出、episode 数不足或快照步号错位也不能伪装成完整指标。保留可用原始记录供审计，不自行缩短积分区间、改变 B、替换末段点、前向填充或跨缺点补插评价。某指标不完整不应自动删除另一项仍完整的指标；但完整四任务/seed 总体指标需声明预定组成是否齐全，不能默默忽略缺失项后重加权。03 必须落实精确动作步网格，无法生成对应快照时报告工程阻碍并修复，不自行放宽。当前只作单 seed 描述性探索，不设最小增益或等效阈值，不作跨 seed 稳定性或统计等效结论，也不根据结果追选判据。
+
+### C.1 字段语义、结果表与 03/04 验收（2026-10-09 已确认口径）
+
+现有字段叫 `score/scores` 不意味着归一化：若实际为累计原始环境 reward，应在字段映射和产物 schema 中明确 `score := episode_return_raw`，`mean := mean_episode_return_raw`。允许保留兼容字段名，不要求为改名而重跑；03/04 要核查实际奖励来源、累计方式和完整 episode，再记录语义，不能只凭名称认定正确。后续引入归一化 score 需单独记录协议变更及适用范围，本轮暂缓该讨论，不作为工程验收或正式准备的阻塞项。
+
+统计代码和结果表至少保留以下信息（字段名可按兼容性映射，语义不可改变）：
+
+| 层级 | 必须可追溯的字段/内容 |
+| --- | --- |
+| episode | task/group/训练 seed、run ID、评价点 ID/目标动作步/实际快照动作步、snapshot/update ID、评价 episode ID、环境/动作随机流、原始 return、长度、完整性与奖励来源语义 |
+| 评价点 | 目标/实际训练动作步、全部10条完整 episode 的 return、episode 数、mean return、完整性/偏离原因；每个点只能对应一个有效固定快照，冲突记录报告而非任选 |
+| 每任务/组/训练 seed | 固定 B、使用的动作步列表、return AUC/B、指定五点评价均值、各指标 complete 标记和缺失/冲突列表、源提交/配置/文件映射 |
+| 任务与四任务汇总 | 每任务先对预定训练 seed 指标平均、四任务等权平均、三项 Dt 差值；保留各任务与 seed 原值及组成完整性，不报告跨 seed 稳定性或统计等效 |
+
+03 应落实/核对统计代码和结果表，并以手算可核验 fixture 覆盖：原始奖励含不同 episode 长度、非零最终奖励、repeat 已累计；评价点均值；非等间距实际 x 的梯形公式与固定 B；逐 seed 积分→任务均值→四任务等权（多 seed 仅作统计 fixture，不新增正式训练）；乱序/额外记录仍按指定五点选取；边界/指定点/完整 episode 缺失时明确不完整，不换分母、不替点；旧 scores 字段的 return 映射。04 用既有工程产物核查提交、快照、实际动作步、episode 与字段语义，工程缩小网格不能冒充正式21点或正式百万步 AUC。新增运行需符合另行授权，不能为本次指标说明自动启动训练。
+
+统计实现与必要测试保存在仓库适当代码/测试目录，生成表格与审计产物放 `analysis/outputs/` 或既有服务器运行目录的独立分析子目录，大产物不提交。字段映射/缺失点/配置与源文件索引随结果保存，验收记录更新 `docs/CODE_PROTOCOL_V1.md`、`docs/STATUS.md`，结果索引更新本文件。完成交接按 AGENTS 提供完整最终/实际测试 SHA、差异、同步范围、已通过和未通过项及下一步 prompt，不能把工程示例表写成正式 M2 结果。
+
+本轮源码只读核对基准为 `696fa9e0ded3a8da0864beadfb850af05668e1c3`：`embodied/run/protocol_v1.py` 的 evaluate 累计 `tran['reward']` 到 scores，record_evaluation 对 scores 求 mean；`embodied/envs/from_dm.py` 的 reset reward 为0、动作 reward 来自 DM 环境，DMC 的 `ActionRepeat` 已累计 reward，main 的通用包装未作奖励变换。当前 `scripts/analyze_size50m_integration.py` 是工程/资源审计，未提供完整冻结网格的正式 AUC/指定五点/跨任务指标汇总。这些是源码事实，不是本轮运行验收；上述统计 fixture 与结果表仍由03/04落实核验。本次仅更新文档，不改代码、不启动实验，不宣称工程通过或 M2 有效。
 
 ### D 作用诊断与解释边界
 
