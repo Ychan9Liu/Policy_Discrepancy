@@ -2,6 +2,14 @@
 
 更新日期：2026-10-09。
 
+## 03 原始 return 统计与结果表验收（2026-10-09，当前）
+
+- 从干净的 `22fe4b3bf712bb43019f6e88001e4df6353cf324` 接手，按已冻结C/C.1实现原始return累加器、兼容评价schema v2及离线分层结果表；不改变算法或科研协议。代码首次提交 `6eef3696dbdfff74a6f9ede61c28186ecd0d93f7`，统计与相关回归最后实测 `1f5b5a385346da01e1108c90114fed721c8bbaf2`；完整CPU agent fixture实际 `c4de170928e9314559be793634209320d97fe0b4`，后续仅离线审计/测试/使用说明变化。详情与命令见 `docs/CODE_PROTOCOL_V1.md` 最新节、`analysis/README.md`。
+- 本机15项手算统计测试、sv1 CPU两逻辑设备39项相关测试通过；连续动作完整agent的报告/评价/并行变体保留既有训练参数摘要与收据一致性，新schema的40条完整episode/20源快照审计通过。这是工程fixture；本轮没有新的真实任务训练、正式百万步运行或方法结论。
+- 只读核查既有16个真实size50m主运行：三台服务器96个源文件哈希与本机小证据镜像一致；48个工程评价点/96条episode保留原始return、长度、seed和快照映射，源配置完整性核对通过。所有正式AUC/末段/总体/差值均null且标不完整，保留预算4098、每点2episode及缺失正式网格的原因；不换分母或替点。旧score完整性有已审查源码与快照审计依据，但缺少逐reward/terminal原始轨迹，限制明确记录。
+- 产物在忽略的 `analysis/outputs/return-v1-engineering-audit-1f5b5a3/`、`return-v1-hand-fixture-1f5b5a3/` 及 `return-v1-validation-summary-1f5b5a3.json`；源镜像/实时哈希在 `return-v1-source-20261009/`。CPU agent产物在sv1 repo的 `analysis/outputs/return-v1-agent-fixtures-c4de170/`，测试/bundle记录在 `/data/Policy_Discrepancy/runs/statistics-raw-return-v1-20261009-c4de170/`，没有大产物入Git。
+- 本次03任务已完成；首选用户手动交给**现有04**核查表格与真实源快照、完成前轮修复的size50m工程补验和完整配置/资源质量检查。原始return协议已确认，不再等待02选择score。正式实验依赖工程闭环及用户授权；正式c仍未产生，不用工程c替代，不自动创建chat或发消息。
+
 ## 02 原始 return 口径与 03/04 交接（2026-10-09，当前）
 
 - 用户明确继续沿用冻结的原始 return 指标，02不重开全部协议。原始完整episode reward累计和（repeat已由接口累计）→评价点算术mean→每训练seed独立梯形AUC/固定100万预算→任务内seed平均→四任务等权；末段按实际步/快照选80/85/90/95/100万五点，不取最后五条日志。边界或冻结评价点缺失时标不完整，不缩区间、换分母或替点。完整定义和结果表要求见 `docs/EXPERIMENTS.md` C/C.1。

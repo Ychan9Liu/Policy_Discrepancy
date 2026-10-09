@@ -176,6 +176,14 @@ c 的实测数值尚未产生，是按确定规则计算的运行产物，不是
 
 ## 结果索引
 
+### 2026-10-09 原始 return 统计与表格验收（非正式 M2 数据）
+
+C/C.1统计实现与字段映射已由03落实：`dreamerv3/return_stats.py`、`analysis/return_metrics.py`、兼容的protocol_v1评价schema v2；使用说明在 `analysis/README.md`，验收报告在 `docs/CODE_PROTOCOL_V1.md` 最新节。统计/相关单元测试实际SHA `1f5b5a385346da01e1108c90114fed721c8bbaf2`，CPU完整agent fixture实际 `c4de170928e9314559be793634209320d97fe0b4`。15项手算统计及39项相关回归通过；多seed合成表只作统计fixture，不授权新增训练seed。
+
+既有04主运行的只读表根目录（本机Git忽略）：`analysis/outputs/return-v1-engineering-audit-1f5b5a3/`，含episode/评价点/seed/任务/总体/三项差值六表及JSON/audit。48个工程点、96条episode的score映射为原始return，源提交仍是 `1393548fb6e46d28f92a834204f7b09495a3eab1`；96个输入文件实时哈希与三台服务器原目录相同，来源index/哈希在 `analysis/outputs/return-v1-source-20261009/`。工程点按每点2episode核对为 `source_complete`，不表示满足正式每点10episode；预算4098/网格0、2049、4098不满足正式21点。各层正式AUC/指定末段指标与差值全部null/不完整，记录缺失与来源原因，未生成缩短区间或归一化score结果。旧聚合日志缺少逐reward/terminal轨迹，完整性依据已审查源码逐episodeDriver路径及快照读审计，不能声称重算了每步原始奖励。
+
+手算fixture表 `analysis/outputs/return-v1-hand-fixture-1f5b5a3/`，产物哈希/核查摘要 `analysis/outputs/return-v1-validation-summary-1f5b5a3.json`；CPU/debug完整agent新schema表在sv1 `/data/Policy_Discrepancy/repo/analysis/outputs/return-v1-agent-schema-audit-1f5b5a3/`。这些不是正式运行或M2效果证据。03实现和本次允许的只读核查已完成；下一步现有04做独立产物质量检查与前轮真实size50m工程补验，正式比较还需工程闭环和用户授权，score讨论不阻塞。
+
 ### 2026-10-09 真实 size50m 工程集成（非正式 M2 数据）
 
 共同产物根目录 `/data/Policy_Discrepancy/runs/engineering-size50m-20261009-1393548/`；每任务下 `logging/dt/constant/shuffle` 四个独立目录。主矩阵实际提交 `1393548fb6e46d28f92a834204f7b09495a3eab1`，四任务/四模式均seed0，size50m/CUDA/bfloat16，4098训练动作、每2049动作评价2完整episode、匹配窗口 `[2200,3600)`，保留固定科学设置。工程baseline生成本任务隔离工程c，再从头跑constant；不能复用于正式比较。

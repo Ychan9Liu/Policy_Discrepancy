@@ -59,3 +59,40 @@ $PY -m dreamerv3.main --configs m2_v1 --task dmc_hopper_hop --logdir /data/Polic
 Dt、shuffle 分别改 `--agent.rep_probe.mode dt`、`shuffle`，alpha20 已在预设中；四任务分别从头训练。运行前按 `config.yaml` 核对 size50m、纯视觉、repeat1、batch/replay/环境数、dtype/设备及四组唯一差异；记录 Git SHA、服务器/GPU、环境版本。真实 size50m 的显存、吞吐、四个 DMC 的完整长链路、异常失败与跨服务器运行尚未验收。先做独立工程集成试跑并检查诊断、磁盘及评价快照，再由 04 按已冻结 v1 执行正式比较。正式 c 实测数值尚未产生，不能用本文工程 fixture c。
 
 评价逐点 mean 已存 `evaluations.jsonl`。正式主指标按 21 点均值作梯形积分后除以 1000000；末段指标是 800000、850000、900000、950000、1000000 五点 mean 的算术平均。四组差值和四任务等权汇总按 `EXPERIMENTS.md`，此处不产生效果判断。
+
+## 原始 return 与分层结果表落实（2026-10-09，当前）
+
+接手版本 `22fe4b3bf712bb43019f6e88001e4df6353cf324`，工作区干净；核对 `20ab3486bfaa067cc7950d3f5c8408fe2ed92ec3` 至接手版本仅文档变化。依据 `EXPERIMENTS.md` C/C.1，原始 return 及冻结指标已经确认，不再等待02选择 score。科学设置、gate、匹配、训练随机流和正式预算均未修改；本轮没有真实任务新训练或正式百万步比较。
+
+### 代码及兼容语义
+
+- 代码提交 `6eef3696dbdfff74a6f9ede61c28186ecd0d93f7`；首轮测试/完整 agent fixture 提交 `c4de170928e9314559be793634209320d97fe0b4`；最后统计代码/测试实测提交 `1f5b5a385346da01e1108c90114fed721c8bbaf2`。后者相比完整 agent 版本只增强离线行号/快照审计、测试和使用说明，runner与累计算法无变化；完成后的文档提交另记最终HEAD。
+- `dreamerv3/return_stats.py` 的 `EpisodeReturn` 按环境接口 reward 顺序累加，排除reset、包含终止动作非零奖励，不折扣、不除长度、不乘repeat。缺少完整episode、非有限reward或中途reset拼接直接报错。DMC ActionRepeat先累计primitive reward，统计端只加一次接口返回。
+- `protocol_v1.evaluate` 使用该累加器并校验完整episode；保留原 `scores/lengths/seeds/mean/update_id`，schema v2增加 `returns_raw/mean_return_raw`、目标/实际快照动作步、快照tag和update ID、逐episode ID/完整性/reward来源/环境seed/动作随机流。每个已保存快照增加小文件 `evaluation_snapshot.json`，不修改模型、奖励接口或训练目标。
+- `analysis/return_metrics.py` 为标准库离线工具。生产CLI固定B=1000000、21点评价/10完整episode、末段固定五点、seed0及四任务；按实际x积分，然后任务内seed均值、四任务等权。保留每任务负向差值，输出六张表：episode、评价点、seed指标、任务均值、总体、三项Dt差值；另有JSON表和输入/工具/字段/完整性审计。使用与run index格式见 `analysis/README.md`。
+- AUC和tail分别校验必需点、episode、实际步与固定快照，缺失/冲突分别标不完整。多条相同评价重写只保留一次并记录计数；不同快照/内容冲突不任选。源JSONL行号包含空行/损坏行的真实偏移；损坏未知行不会被静默丢弃来完成指标。同task/group/seed多个运行不择优或平均。总体缺任何预定组成即留空，不重加权。额外评价记录保留，不替代指定末段五点。
+- 旧字段语义通过**已审查源码提交**和快照证据映射，`scores := episode_return_raw`、`mean := mean_episode_return_raw`；不从字段名推断归一化。旧聚合日志缺少逐transition terminal/reward轨迹，不能重新直接复算reward总和；episode完整性依据为源代码每次Driver只跑一个完整episode及旧长度/seed/快照读审计，输出注明 `reviewed_legacy_source`。只读审查 `evaluations.jsonl`，不将缺少快照索引的训练 `scores.jsonl` 混入评价曲线。
+- 点均值浮点核对容差事前固定 `atol=1e-9, rtol=1e-12`（float64求和顺序差），动作步、数量、ID与快照匹配为精确核对。缺失指标JSON为null、CSV留空，不是0；`--require-complete` 仍生成审计表，然后返回2。输出目录已存在则拒绝覆盖。
+
+### 本轮测试与只读产物核查
+
+本机 Python3.12.14，sv1 dreamer Python3.11.16。纯统计测试15项通过；sv1 CPU、两个逻辑host设备上的相关回归共39项通过，保留phase1/2的probe、梯度、free-nats、shuffle及protocol测试。首个服务器命令误用 `JAX_PLATFORM_NAME` 隔离CUDA，1项设备初始化失败，日志保留；改为明确 `JAX_PLATFORMS=cpu` 后通过，没有修改代码或放宽容差。最终测试命令：
+
+```sh
+python -m unittest tests.test_return_metrics -v
+CUDA_VISIBLE_DEVICES="" JAX_PLATFORMS=cpu XLA_FLAGS=--xla_force_host_platform_device_count=2 /data/Policy_Discrepancy/envs/dreamer/bin/python -m unittest tests.test_return_metrics tests.test_protocol_v1 tests.test_rep_probe tests.test_rep_overlay -v
+python -m tests.run_return_metrics_fixtures --output analysis/outputs/NEW_HAND_FIXTURE
+python -m analysis.return_metrics --index analysis/outputs/RUN_INDEX.json --output analysis/outputs/NEW_RETURN_AUDIT
+```
+
+手算fixture覆盖：不同长度/负奖励/非零终止奖励、接口repeat不重复加、算术均值；实际非等间距x的面积 `4+6+15=25` 再除固定100万；逐seed积分再任务均值、任务值 `[2,4,20,30]` 等权为14，Dt任务差值 `[2,-1,4,-2]` 总体0.75；乱序与额外记录；指定末段五点；缺失初始/终点/中间点、完整episode、快照/均值冲突；旧score映射和未知语义拒绝。另有纯合成21点×10episode曲线 `r=1+x/100000`，AUC/B=6、末段五点均值10。多seed只为统计fixture，不新增训练seed或科研结论。
+
+`c4de170...` 上沿用完整连续动作CPU/float32 agent矩阵：12动作/9更新、网格0/3/6/9/12，报告开关、评价episode数及并行环境变体的参数摘要仍为 `4317c6095b04e61698f26beb6e7c077c6c5d49e1baf135a716e3b3849c7d74b2`，与先前协议fixture一致；训练收据逐位一致，四模式均完成，中断拒绝也保留。最后离线reader读其4个模式的schema v2，40条显式完整episode/20个源快照匹配通过。它是CPU/debug工程fixture，不能替代04真实size50m CUDA补验。前轮20ab的真实CUDA修复证据仍保留其原范围。
+
+既有04主矩阵只读统计：本机三份小证据包哈希与 `SERVER_INTEGRATION_SIZE50M` 一致；实时只读三台服务器16目录的manifest/evaluations/config/execution/audit/final，共96文件哈希与本机镜像全同。原始运行SHA仍为 `1393548fb6e46d28f92a834204f7b09495a3eab1`，没有重跑或修改。48个0/2049/4098工程评价点、96条episode的旧return映射、算术mean、长度/seed、快照更新counter及文件来源核对通过。源点 `source_complete=true` 只表示各自2episode工程配置满足；正式 `protocol_complete=false`。16条正式AUC/tail及总体/差值全部null，明确短预算/不足10episode/缺少冻结点，不缩区间或除4098来冒充正式指标。`--require-complete` 实测返回2。
+
+### 证据位置、同步和剩余条件
+
+- 本机（均Git忽略）：`analysis/outputs/return-v1-hand-fixture-1f5b5a3/`、`return-v1-engineering-audit-1f5b5a3/` 六表/JSON/audit；`return-v1-source-20261009/` 的run index、小日志、三台实时哈希和 `live-source-parity.json`；`return-v1-validation-summary-1f5b5a3.json` 保存核查结论及产物SHA-256；测试stdout日志也在outputs。
+- sv1 CPU agent与schema审计：`/data/Policy_Discrepancy/repo/analysis/outputs/return-v1-agent-fixtures-c4de170/`、`return-v1-agent-schema-audit-1f5b5a3/`。确定提交、测试日志和bundle记录：`/data/Policy_Discrepancy/runs/statistics-raw-return-v1-20261009-c4de170/`。代码从本机Git提交后通过校验bundle快进同步；没有服务器直接改项目代码，没有使用GPU或干扰现有GPU作业。GitHub及最终文档同步范围以完成回复核对为准。
+- 统计代码、分层结果表和本轮允许的只读核查已完成。未产生正式指标或方法效果；旧episode缺少逐reward原始轨迹的证据限制保留。下一步由**现有04**独立核查源目录/快照/新schema及表格，完成此前真实size50m工程补验、完整配置与资源质量检查。原始return指标已冻结，归一化score讨论不阻塞；正式比较仍须工程闭环和用户另行授权。不得自动创建chat或发送消息。
