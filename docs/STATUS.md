@@ -2,6 +2,11 @@
 
 更新日期：2026-10-09。
 
+## 04 W&B登录只读核查（2026-10-09 21:58，当前）
+
+- sv1/sv2/sv3当前SSH用户的netrc凭据均通过api.wandb.ai只读viewer在线校验，HTTP200，账号均 `ychan9liu`。三台项目dreamer环境未安装wandb SDK、当前PATH无CLI；有效凭据不等于已验证logger/run上传或具体项目写权限。
+- 详见 `docs/WANDB_STATUS.md`，脱敏证据在 `analysis/outputs/wandb-login-check-20261009/`。无密钥输出/保存、登录修改、依赖安装、GPU使用或实验启动；当前baseline执行配置待声明的状态不变。
+
 ## 04 四任务正式baseline授权与启动核查（2026-10-09，当前）
 
 - 用户已指定sv2物理GPU0–3并授权四任务logging-only baseline、正式c及原始return指标；Dt/constant/shuffle不在本轮范围。初查21:38:12与复查21:47:52（北京时间）八卡均空闲无进程，依赖检查通过；只同步实际执行核查的sv2至 `40fd48dcf735ac2ad56c5ff86e86c9eeeb9b5985`，其他服务器未使用。
