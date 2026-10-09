@@ -2,6 +2,8 @@
 
 更新日期：2026-10-09。
 
+**2026-10-09 正式baseline任务（已授权，未启动）**：用户分配sv2物理GPU0–3，授权四任务logging-only全预算baseline、逐任务正式c及原始return指标，范围不含其余三组。设备/依赖/确定版本核查通过，当前等待prealloc/logger执行设置声明；科学协议不变，启动授权不重复请求。详见 `docs/FORMAL_BASELINES.md`、STATUS当前段与analysis/outputs中的完整配置备选，未运行训练或产生正式c/指标。
+
 **2026-10-09 正式准备索引（未启动）**：`docs/M2_V1_FORMAL_PREPARATION.md` 固定完整共同执行配置、sv2四任务CUDA UUID/EGL映射、16条新独立目录及baseline→正式c→其余组依赖。最终计划索引在 `analysis/outputs/formal-m2-v1-preparation-final/planned-run-index.json`，不是结果索引；全未授权/未启动，四份constant的c未绑定，正式指标为空。此次只有CPU配置解析和无训练单帧设备探针；不增加正式训练授权，不改变下述冻结科学协议或旧证据。
 
 **2026-10-09 04执行核验索引**：旧16条真实size50m工程产物/统计已独立复核，新增四任务schema v2 CUDA报告与状态隔离、固定输入/恢复/去重补验见 `docs/SERVER_RETURN_CUDA_AUDIT.md` 和 STATUS当前段。工程表的正式AUC/tail仍为空，原始return冻结口径未变；新增工程c不得正式复用。CUDA与EGL设备须同时绑定、现场核查。此次有限工程完成不新增正式百万步运行授权。
