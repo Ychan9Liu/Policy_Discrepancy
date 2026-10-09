@@ -78,6 +78,16 @@ def report_fingerprint(agent, replay, raw_batch):
               replay_rng=replay_rng, replay_metrics=dict(replay.metrics))
 
 
+def training_fingerprint(agent, replay):
+  """State that evaluation must leave unchanged, excluding eval counters."""
+  fingerprint = report_fingerprint(agent, replay, {})
+  fingerprint.pop('batch_hashes')
+  fingerprint['counters'] = {
+      key: value for key, value in fingerprint['counters'].items()
+      if key not in ('eval_actions', 'eval_seed')}
+  return fingerprint
+
+
 class ProtocolState:
 
   def __init__(self, budget, interval, episodes, match_start, match_end):
@@ -227,8 +237,8 @@ def audit_persisted_history(logdir, state):
     update_id = int(row['update_id'])
     receipt = (int(row['start_action']), float(row['match_sum']),
                int(row['match_count']), int(row['invalid_count']))
-    if update_id in receipts and receipts[update_id] != receipt:
-      raise RuntimeError(f'Conflicting persisted update {update_id}')
+    if update_id in receipts:
+      raise RuntimeError(f'Duplicate persisted update {update_id}')
     receipts[update_id] = receipt
   if receipts != state.records:
     extra = sorted(receipts.keys() - state.records.keys())
@@ -239,8 +249,8 @@ def audit_persisted_history(logdir, state):
   for row in persisted_rows(logdir / 'evaluations.jsonl'):
     point = int(row['action_step'])
     value = {k: v for k, v in row.items() if k != 'action_step'}
-    if point in evaluations and evaluations[point] != value:
-      raise RuntimeError(f'Conflicting persisted evaluation {point}')
+    if point in evaluations:
+      raise RuntimeError(f'Duplicate persisted evaluation {point}')
     evaluations[point] = value
   if evaluations != state.evaluations:
     raise RuntimeError('Checkpoint/evaluation records disagree')
@@ -504,6 +514,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
   train_policy = lambda *xs: agent.policy(*xs, mode='train')
 
   def evaluate(point):
+    before = (training_fingerprint(agent, replay)
+              if args.engineering_fixture else None)
     grid_index = point // state.interval
     agent.sync_policy()
     snapshot = elements.Checkpoint(elements.Path(
@@ -541,6 +553,14 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
         updates=state.updates), prefix='protocol')
     logger.write()
     cp.save()
+    if before is not None:
+      after = training_fingerprint(agent, replay)
+      if before != after:
+        raise RuntimeError('Evaluation changed training state')
+      with (logdir / 'engineering_evaluation_audit.jsonl').open(
+          'a', encoding='utf-8') as file:
+        file.write(json.dumps(dict(action_step=point, fingerprint=before),
+            sort_keys=True) + '\n')
 
   try:
     if 0 not in state.evaluations:

@@ -14,7 +14,7 @@ from jax.sharding import Mesh, NamedSharding, PartitionSpec as P
 from embodied.core.driver import Driver
 from embodied.run.protocol_v1 import (
     ProtocolState, array_hashes, audit_complete_outputs, audit_persisted_history,
-    report_fingerprint, report_on_batch, seed32)
+    report_fingerprint, report_on_batch, seed32, training_fingerprint)
 from dreamerv3.freeze_c import freeze
 
 
@@ -82,6 +82,17 @@ class ProtocolV1Test(unittest.TestCase):
       self.assertEqual(len(receipt_path.read_text().splitlines()), 1)
       state.record_update(0, 3, 0.5, 1)
       audit_persisted_history(root, state)
+      receipt_path.write_text(receipt_path.read_text() + json.dumps(orphan) + '\n')
+      with self.assertRaisesRegex(RuntimeError, 'Duplicate persisted update 0'):
+        audit_persisted_history(root, state)
+      receipt_path.write_text(json.dumps(orphan) + '\n')
+      evaluation_path = root / 'evaluations.jsonl'
+      evaluation_path.write_text(
+          evaluation_path.read_text() + evaluation_path.read_text())
+      with self.assertRaisesRegex(RuntimeError, 'Duplicate persisted evaluation 0'):
+        audit_persisted_history(root, state)
+      evaluation_path.write_text(json.dumps(dict(
+          action_step=0, **state.evaluations[0])) + '\n')
       with self.assertRaisesRegex(RuntimeError, 'lacks final_state'):
         audit_complete_outputs(root, state, 'logging', 'fixture')
 
@@ -146,6 +157,15 @@ class ProtocolV1Test(unittest.TestCase):
     agent.params['weight'][0] = 1
     batch['image'][0, 0] = 1
     self.assertNotEqual(before, report_fingerprint(agent, replay, batch))
+    baseline = training_fingerprint(agent, replay)
+    agent.counters['eval_actions'] = 10
+    agent.counters['eval_seed'] = 20
+    self.assertEqual(baseline, training_fingerprint(agent, replay))
+    agent.counters['actions'] = 1
+    self.assertNotEqual(baseline, training_fingerprint(agent, replay))
+    agent.counters.pop('actions')
+    replay.sampler.rng.integers(10)
+    self.assertNotEqual(baseline, training_fingerprint(agent, replay))
 
   def test_partial_driver_and_exact_action_budget(self):
     driver = Driver([TinyEnv] * 3, parallel=False)
