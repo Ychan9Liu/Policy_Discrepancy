@@ -2,6 +2,8 @@
 
 更新日期：2026-10-09。
 
+**2026-10-10最新执行**：baseline/Dt八条均结束，21点×10episode原始return指标及四个正式c完整。用户追加授权constant GPU0–3、global shuffle GPU4–7在sv2从头执行，八条已启动；M2 v1冻结协议、seed0及prealloc=False/JSONL+W&B PD_1/无scope不变。详见 `docs/FORMAL_CONSTANT_SHUFFLE_PD1.md` 的正式c/指标/配置/版本/失败与修复/最新资源索引。下方22:55及更早“未授权/未启动/c未产生”是历史记录，不作为当前状态。
+
 **最新正式运行索引（22:55快照）**：用户授权sv2 GPU0–3四logging baseline和GPU4–7四Dt，八条均已启动、来源SHA48d71f1541721208322442f5a1d5977124f3e888。共同prealloc=False、JSONL+W&B project PD_1、无scope；科学协议继续按C/C.1。实际运行目录/设备/PID/完整配置与命令、外部监督修复/收尾版本及证据见 `docs/FORMAL_BASELINE_DT_PD1.md`；实际八条index在其P目录all-eight-RUN_INDEX.json及本机outputs镜像。正式c/完整指标/差值尚待结束审计，constant/shuffle未授权。本段替代下面历史“未启动/配置缺项”。
 
 **2026-10-09 最新baseline执行声明**：用户已明确sv2 GPU0–3四条正式logging baseline使用prealloc=False、JSONL+W&B、关闭scope，W&B project `PD_1`。配置缺项已解除，按已授权范围准备验证日志并启动；冻结科学协议不变，其他三组尚未授权。本段替代下方历史“等待声明”，状态/完整记录见 `docs/FORMAL_BASELINES.md` 和STATUS当前段。

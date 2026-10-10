@@ -1,5 +1,7 @@
 # 04 · PD_1 正式 baseline / Dt 执行记录
 
+**2026-10-10最新补充**：八条已完成100万动作和21点×10episode，原始return指标与四个正式c已独立复核。旧CPU收尾因W&B浮点末位回读失败，新attempt02以精确JSON/hash审计传输；原失败保留，训练未重跑。用户已授权剩余constant/shuffle，沿用sv2 GPU0–3/4–7启动；最新状态、c、指标、修复版本及交接见 `docs/FORMAL_CONSTANT_SHUFFLE_PD1.md`。下文22:55记录为历史快照，不代表当前资源或授权。
+
 日期：2026-10-09，Asia/Shanghai。**状态：八条运行中，尚未完成正式验收。** 用户已授权sv2物理GPU0–3四任务logging baseline并生成正式c/return，随后明确prealloc=False、JSONL+W&B、无scope、project PD_1，再追加直接启动GPU4–7的四任务Dt。constant/shuffle尚未授权；不等待baseline c启动Dt，不复用baseline训练状态。
 
 ## 实际安排与现场核查
