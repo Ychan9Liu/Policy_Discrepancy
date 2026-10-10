@@ -1,4 +1,4 @@
-"""DL-engineering-r3: real-image size50m engineering and compression inspection.
+"""DL-engineering-r4: real-image size50m engineering and compression inspection.
 
 Runs isolated paired groups from a trusted checkpoint and independently
 collected episode NPZs. No environment construction, rendering, or training
@@ -25,7 +25,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-VERSION = 'DL-engineering-r3'
+VERSION = 'DL-engineering-r4'
 GROUPS = ('off', 'alpha0', 'rho0', 'logging', 'dtlatch')
 
 
@@ -313,12 +313,15 @@ def worker(args):
   # Float32 independent posterior logits isolate the local rep gradient.
   post, frozen_prior = jax.jit(lambda q, p: (jnp.float32(q),
       jax.lax.stop_gradient(p)))(repfeat['logit'], prior)
-  def local_rep(q):
-    k = model.dyn._dist(q).kl(model.dyn._dist(frozen_prior))
+  def local_rep(q, p):
+    k = model.dyn._dist(q).kl(model.dyn._dist(jax.lax.stop_gradient(p)))
     return jnp.maximum(k, model.dyn.free_nats)
-  base_local = jax.jit(jax.grad(lambda q: local_rep(q).mean()))(post)
-  gated_local = jax.jit(jax.grad(lambda q: (jax.lax.stop_gradient(actual_v) *
-      local_rep(q)).mean()))(post)
+  # Pass device arrays as dynamic arguments: captured CUDA arrays otherwise
+  # become MLIR constants and violate Dreamer's device-to-host transfer guard.
+  base_local = jax.jit(jax.grad(lambda q, p: local_rep(q, p).mean()))(
+      post, frozen_prior)
+  gated_local = jax.jit(jax.grad(lambda q, p, v: (jax.lax.stop_gradient(v) *
+      local_rep(q, p)).mean()))(post, frozen_prior, actual_v)
   expected_local = jax.jit(lambda v, g: v[..., None, None] * g)(actual_v, base_local)
   g1, ge = host(gated_local), host(expected_local)
   np.testing.assert_allclose(g1, ge, rtol=2e-6, atol=1e-8)

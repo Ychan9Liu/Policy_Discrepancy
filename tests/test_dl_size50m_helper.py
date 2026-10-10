@@ -1,4 +1,4 @@
-"""DL-engineering-r3 tiny production Agent regression, CPU only.
+"""DL-engineering-r4 tiny production Agent regression, CPU only.
 
 Executes the same accessed-parameter probe gradient helper used by the real
 size50m worker. This is a small engineering fixture, not size50m evidence.
@@ -24,7 +24,7 @@ class Size50mHelperTest(unittest.TestCase):
     self.assertEqual(result.returncode, 0,
         result.stdout[-4000:] + result.stderr[-4000:])
     report = json.loads(result.stdout.strip().splitlines()[-1])
-    self.assertEqual(report['code_version'], 'DL-engineering-r3')
+    self.assertEqual(report['code_version'], 'DL-engineering-r4')
     self.assertGreater(report['tested_count'], 0)
     self.assertGreater(report['unaccessed_state_count'], 0)
     self.assertEqual(report['tested_modules'], ['dyn', 'pol', 'rew'])
