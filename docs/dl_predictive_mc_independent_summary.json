@@ -1,0 +1,121 @@
+{
+  "version": "DL-predictive-MC-independent-summary-r1",
+  "execution_sha": "4fb7e8947f71dce8faf96096e700ab2b1987f8e3",
+  "full_audit_sha256": "eed5199844ac35d61aeb7868f3b7e61adbf7ec97929b6ab092dab115216ecb0b",
+  "auditor_sha256": "321a127fe7f5c5ef8f3d02da7a2c61f2fd2c6b19c2219e389f40cabec96f407f",
+  "source_result_sha256": "28788c2e1303439f59245b73348b8bcac6ca281b2fe22ec284f41f2d71ea8ff8",
+  "source_plan_sha256": "e9dc0c5c4f0c90558fb0a1f71ef6b6b71614d494aecf885ca384787f54e5b4ce",
+  "passed": true,
+  "raw_chunks_verified": 2048,
+  "raw_keys_verified": 1081344,
+  "positions": 128,
+  "calibration_episodes": 8,
+  "all_2056_npz_byte_hashes_verified": true,
+  "all_eight_source_and_modal_npz_byte_hashes_verified": true,
+  "private_named_keys_exact": true,
+  "true_rewards_and_raw_controls_exact": true,
+  "maximum_probability_reconstruction_absolute_error": 2.4868995751603507E-14,
+  "maximum_statistics_reconstruction_absolute_error": 9.71445146547012E-17,
+  "scientific_decision": {
+    "decision": "MC-inconclusive",
+    "directions_robust": false,
+    "interpretation": "Finite numerical reliability indicator, not a rigorous integration-error bound",
+    "mc_stable": false,
+    "metrics": {
+      "clean_minus_prior_log_score": {
+        "components": {
+          "block_t_margin": 0.0014073707340201776,
+          "independent_halves": 0.00020388556516227636,
+          "nested32_64": 0.0007923413773281455,
+          "nested64_128": 0.00011014770130509787
+        },
+        "epsilon": 0.0014073707340201776,
+        "positive_margin_robust": false,
+        "stable": false
+      },
+      "clean_over_deprived_log_score": {
+        "components": {
+          "block_t_margin": 0.0012547101607285492,
+          "independent_halves": 0.000524649670478829,
+          "nested32_64": 0.0007672493518516895,
+          "nested64_128": 0.00025498045128628105
+        },
+        "epsilon": 0.0012547101607285492,
+        "positive_margin_robust": false,
+        "stable": false
+      }
+    },
+    "numeric_decision": "MC-inconclusive"
+  },
+  "primary_fixed_H10": {
+    "background_a_minus_clean_CE": {
+      "episodes": 8,
+      "lower95": 0.0014467550284635563,
+      "point": 0.010139526836164037,
+      "upper95": 0.021038766953101924,
+      "valid_bootstrap_draws": 2000
+    },
+    "background_b_minus_clean_CE": {
+      "episodes": 8,
+      "lower95": -0.003414964761249597,
+      "point": 0.003474410567702371,
+      "upper95": 0.013338771388044977,
+      "valid_bootstrap_draws": 2000
+    },
+    "clean_minus_prior_log_score": {
+      "episodes": 8,
+      "lower95": -0.015457849606745889,
+      "point": -0.005371812663359298,
+      "upper95": 0.004172132661637924,
+      "valid_bootstrap_draws": 2000
+    },
+    "clean_over_deprived_log_score": {
+      "episodes": 8,
+      "lower95": -0.042183974338395124,
+      "point": -0.012776164261586549,
+      "upper95": 0.008993346253494367,
+      "valid_bootstrap_draws": 2000
+    },
+    "mean_CE_p": 1.1414764191631874,
+    "mean_CE_q": 1.1468482318265465
+  },
+  "control_sensitivity": {
+    "episodes": 8,
+    "positions": 68,
+    "sufficient": true
+  },
+  "mode_replay": {
+    "attribution": "Nonexact mode replay retains floating-point/history confounding; no tolerance pass",
+    "byte_exact_all": true,
+    "maximum_absolute_error": 0.0,
+    "nonexact_positions": []
+  },
+  "frozen_state_receipts": {
+    "params_unchanged": true,
+    "counters_unchanged": true,
+    "independently_reexecuted": false
+  },
+  "compressed_raw_npz_bytes": 220539681,
+  "audit_elapsed_seconds": 37.48274960881099,
+  "worker_elapsed_seconds": 164.36462673498318,
+  "launcher_elapsed_seconds": 167,
+  "peak_sampled_gpu_memory_MiB": 2519,
+  "physical_gpu": 4,
+  "logical_cuda_device": 0,
+  "resource_checked_Beijing": "2026-10-10 22:42:35",
+  "assigned_gpus_4_through_7_no_project_jobs": true,
+  "blind_arrays_read": false,
+  "snapshots_unpickled": false,
+  "training_authorized": false,
+  "proceed_short_training": false,
+  "eligible_method_training": false,
+  "method_effectiveness_established": false,
+  "limitations": [
+    "Artifact consistency only; no independent model/checkpoint forward execution or physics.",
+    "Frozen parameter/counter/zero-update claims are receipts; checkpoint mutation was not re-executed here.",
+    "Finite epsilon is not a rigorous MC error bound; calibration support is not independent method evidence.",
+    "Initial h/q/p arrays are shape/finite checked, not reconstructed; past latent histories are not integrated."
+  ],
+  "server_run": "/data/Policy_Discrepancy/runs/dl-predictive-mc-20261010-4fb7e89/cp300000-attempt01/",
+  "local_receipts": "analysis/outputs/dl-predictive-mc/4fb7e89/attempt01"
+}

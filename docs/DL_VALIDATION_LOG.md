@@ -64,6 +64,18 @@ GPU7/r7 attempt06于21:39:15–21:47:20结束exit1/6675MiB；off/alpha0/rho0/log
 
 22:25:31北京时间只读查询：GPU4–7均0MiB、compute/pmon无作业，GPU0/2未知作业不触碰；原repo干净d9be557。GPU4计划只运行一次300k MC-r1（pooled128/chunk8/H10/六控制），包含源验证/加载/编译/评分的3600秒上限；GPU5–7本项不使用。启动仍须新fresh库存及CUDA/EGL proof。本节尚无MC GPU结果，不构成新gate或短训练依据。
 
+**22:33运行快照**：实际执行提交 `4fb7e8947f71dce8faf96096e700ab2b1987f8e3`，已push并ls-remote核验，未合入main；只部署sv3隔离worktree，原repo干净d9be557保持。确定提交上sv3 clean CPU5项15.831秒/pip check及真实来源校验通过：只打开8校准episode/128预定位置，checkpoint/config/八来源与modal产物hash一致、控制敏感68点/8ep；没有模型/GPU/环境构造。CPU收据 `/data/Policy_Discrepancy/runs/dl-predictive-mc-4fb7e89-cpu/`。
+
+22:31:52 fresh完整GPU inventory/pmon确认4–7均0MiB无作业；新CUDA/EGL probe及单UUID binding通过。GPU4真实MC于22:32:50开始，目录 `/data/Policy_Discrepancy/runs/dl-predictive-mc-20261010-4fb7e89/cp300000-attempt01/`，PID1463837，进程内CUDA0，物理UUID9c070d5a；22:33:40已完成首5位置，2508MiB，实际参数digest与冻结源一致。GPU5–7不使用；GPU0/2未知作业不触碰。该行仅运行快照，尚无完整数值/科学裁决及独立原始chunk审计，不称方法已通过。
+
+## MC完成及独立审计（22:42后）
+
+4fb7e89真实MC于22:35:37结束exit0，167秒/2519MiB；原128位置/128路径/六控制H10全部完成。模型参数/counters收据不变，原mode128点重演logits字节精确、最大差0。科学裁决MC-inconclusive：两个主epsilon .00140737/.00125471超过事前.001，均值−.00537181/−.01277616及区间跨0，无必要方向支持。按事前门停止此分支，不提高L或追加key、换H/控制/阈值，不运行1m/新gate/18条短训练。完整结果 [DL_PREDICTIVE_MC_RESULTS.md](DL_PREDICTIVE_MC_RESULTS.md)。
+
+NumPy/stdlib独立审计37.483秒passed，2056个NPZ原字节hash、全部1,081,344命名key、8 source/modal来源、控制/reward、概率先混合CE、episode bootstrap/epsilon/裁决全部核对；最大概率/统计差2.4869e-14/9.7145e-17，无科学阈值调整。小证据 [dl_predictive_mc_independent_summary.json](dl_predictive_mc_independent_summary.json)。原数组留服务器、完整收据镜像 `analysis/outputs/dl-predictive-mc/4fb7e89/attempt01/`；收据tar SHA256c16cc82fce4c38c2923c7547c21e885fafb40fab75d4d50a65ff814547f195a9本机/服务器相同。SSH个别连接关闭只影响收据复制，未重跑模型、覆盖产物或改写失败。
+
+22:42:35 fresh query/pmon确认GPU4–7均0MiB、无本项目作业，GPU0/2未知作业未触碰；GPU4已释放，5–7本项未使用。当前验证最低1卡串行、2卡并行即可，现有4卡足够；训练费用尚不能冻结，旧20.4GPU小时外推不应用于修订方法。整体目标仍未完成。闭环一次观测省略是首选下一研究建议（见RESEARCH/DL-13），尚未冻结/执行，不能靠一个新公式宣布可正式实验。
+
 ## 环境与本地证据
 
 隔离环境为 `%LOCALAPPDATA%/Codex/dl-validation-env`，Windows/Python3.12.14、JAX/jaxlib0.4.33、NumPy1.26.4、elements3.22.2、ninjax3.6.3、optax0.2.5、chex0.1.90、portal3.8.1、dm-control1.0.48、MuJoCo3.15.0；关键版本对齐服务器 lock，`pip check`通过。Windows Python3.12 与实际 sv3 Linux Python3.11.16 仍有差异，本机验收不能替代服务器验收。未升级服务器环境；进程 DLL 路径补充只存在本机外部隔离环境。

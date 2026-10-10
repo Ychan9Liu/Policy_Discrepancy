@@ -2,6 +2,8 @@
 
 版本 `DL-predictive-MC-r1`，2026-10-10。**这是用户总体授权范围内由 Agent 决定的必要排除诊断，未采用为训练方法，也不是用户逐项确认的新算法。** 原 mode 诊断结果保持：300k 固定控制 H10 未支持 clean 相对 prior、clean 相对 gray-body 的必要预测方向。不能据此断言奖励头完全没有技能；生产 RSSM 在初始及未来 latent 上采样，而旧诊断逐步取 mode，因此仍需一次有限、预先固定的边际诊断。参见 [DL_PREDICTIVE_DIAGNOSTIC.md](DL_PREDICTIVE_DIAGNOSTIC.md) 和 [DL_REVISIONS.md](DL_REVISIONS.md)。
 
+**执行后索引**：确定SHA4fb7e89上的真实诊断及独立原始chunk审计完成，原门裁决MC-inconclusive，停止此MC分支。实际167秒/2519MiB及证据见 [DL_PREDICTIVE_MC_RESULTS.md](DL_PREDICTIVE_MC_RESULTS.md)。下文保留事前冻结协议，不由结果调整L/门槛或解释成训练方法。
+
 ## 已决定的诊断对象
 
 只用原 300k baseline checkpoint：文件 SHA256 `2ab693c8ded4d8f2186bd489aa8b77498448ba2f2c331090159da4e5f08056b9`，参数 digest `14859c4e129b51aa488c10eab09f16d56fd110c76239b2c9072f415829d111c2`，updates74493，原完整配置 SHA256 `11428512fdc9b9e04a5384e419c5abcef93e5429db0a3327d05ccb0d4bd20445`。真实 size50m、vision64、camera2、repeat1、propriofalse、RSSM unimix=.01，模型参数/状态保持冻结。
@@ -57,7 +59,7 @@ epsilon = max(
 
 模型直接按冻结生产DMC wrapper的spaces构造：image uint8[64,64,3]、reward float32、三bool flags、normalized action float32[12]范围[-1,1]；Agent配置传入与生产make_agent一致。不能调用旧 `d.load_agent`（它会为取spaces构造环境），也不调用make_env。完整配置/hash及参数digest复核确保此处只重建同一冻结模型；输入raw Gaussian动作仍保留，不因声明的action空间范围而裁剪。
 
-脚本 `scripts/dl_predictive_mc.py`，测试 `tests/test_dl_predictive_mc.py`。执行输入为 `--checkpoint --config --dataset --modal-scores --modal-audit --output --resource-record`；`--sample-chunk`默认8、真实入口只接受8；底层CPU fixture可以检验其他分块的key契约。没有可调整的 L/H/seed/gate 参数。真实worker拒绝CPU；CPU只验证底层小真实模型和统计/来源契约。原始float32 logits未压缩约5.0GB，另有概率sum约0.3GB和logsum约0.3GB；实际NPZ压缩量和写盘时间须记录，不能从其数量推断硬预算内一定完成。
+脚本 `scripts/dl_predictive_mc.py`，测试 `tests/test_dl_predictive_mc.py`。执行输入为 `--checkpoint --config --dataset --modal-scores --modal-audit --output --resource-record`；`--sample-chunk`默认8、真实入口只接受8；底层CPU fixture可以检验其他分块的key契约。没有可调整的 L/H/seed/gate 参数。真实worker拒绝CPU；CPU只验证底层小真实模型和统计/来源契约。原始float32 logits未压缩约5.0GB；episode aggregate的概率sum/logsum各约0.3GB，2048chunk还各自保存两种sum（合计约2.5GB未压缩）。实际NPZ压缩量和写盘时间另记录，不能从其数量推断硬预算内一定完成。
 
 CPU验收需涵盖实际tiny Agent：q=p同噪声精确一致、实际unimix分布频率/不重复混匀、未来各步采样、私有seed重现与分块不变、无Ninjax seed/状态写入、未来控制不影响过去prefix，以及概率混合与平均CE的反例、稳定/不稳/缺控制覆盖停止规则、source/hash/axis拒绝。CPU fixture不能写成真实size50m验收，更不能写成方法有效。
 
