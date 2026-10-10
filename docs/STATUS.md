@@ -9,6 +9,14 @@
 - 理论接口参考 SHA `40fd48dcf735ac2ad56c5ff86e86c9eeeb9b5985`；本次文档归档开始于干净main `3979d67813a65f665bf3ee1cb176f11929b8acfb`。本轮只改 RESEARCH／STATUS，未运行测试、训练、仿真或GPU作业，未访问服务器、提交、推送或同步；仅检查文档差异和本机Git状态。现有04运行快照保持下方记录，不由本轮重新验证。
 - 本候选首选下一任务：由用户手动交给现有“02｜方法与机制”审查并确认／否决，完成标准为明确科学范围、未决协议与后续03规范；实现和实验需各自授权与验收。本研究交接不替代现有04已授权运行和审计，不自动创建chat或发送消息。
 
+## 04 最新：PD_1剩余constant / shuffle已启动（2026-10-10）
+
+- baseline/Dt八条均结束，100万训练动作、249493成功更新、21点×10完整episode；四任务正式c与原始return指标已独立复核。原W&B收尾浮点末位失败保留，新的attempt02以精确JSON/hash审计，不改科学容差或重跑训练。
+- 用户授权剩余两组，沿用sv2物理GPU0–3跑constant、4–7跑global shuffle，顺序hopper/run/walk/reacher；11:47:37启动前八卡空闲、无未知作业。八条新attempt01从头启动，科学配置不变，prealloc=False、JSONL+W&B PD_1、无scope，正式c不取工程来源。
+- 全部训练源码48d71f1541721208322442f5a1d5977124f3e888；启动监督a8b62436827721c49a77af55663dbb5225e1ed39、最终CPU收尾测试d239c3fb7e5b77ddf205fe994c46c2e5a6acce6a，仅同步sv2确定Git对象/外部操作脚本，checkout保持48且干净，9项CPU边界测试及pip check通过。RESEARCH中的DtLatch未批准，不进入v1。
+- 11:57:19新八条W&B运行、manifest精确一致、136个计算/渲染PID落卡正确；0点评价各10完整episode，收据连续invalid0。12:00:54均有3300余成功更新，0–7仍有本项目作业，无释放新运行卡；旧baseline/Dt全释放。旧八条attempt02已核验完整指标/精确W&B摘要，原失败保留无重跑；16条CPU依赖收尾PID3164661等待终点，不声称已验收新八条或方法有效。
+- 最新配置/设备/PID/c/指标/目录/证据/修复和可复制交接见 `docs/FORMAL_CONSTANT_SHUFFLE_PD1.md`。首选继续现有04监测和16条终点审计，八条新运行尚未完成验收；下面资源/授权段均为历史快照，不自动创建chat或发消息。
+
 ## 04 最新：PD_1八条正式训练运行中（2026-10-09 22:55快照）
 
 - sv2 GPU0–3四logging baseline、GPU4–7四Dt已按用户授权启动；全部prealloc=False、JSONL+W&B PD_1、无scope，冻结科学参数不变，同任务完整配置仅mode/logdir不同。八条训练来源SHA48d71f1541721208322442f5a1d5977124f3e888，服务器checkout保持该版本，外部监督/收尾脚本从确定Git对象导出，不改运行中源码。
