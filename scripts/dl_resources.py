@@ -119,7 +119,10 @@ def live_state(physical):
 def require_idle(state, expected_uuid):
   if state['gpu_uuid'] != expected_uuid:
     raise RuntimeError('Live physical GPU UUID differs from the assigned device')
-  if state['processes'] or state['pmon_jobs'] or state['memory_used_mib'] != 0:
+  # DL-engineering-r2: match the existing formal supervisor's job inventory
+  # semantics. Real idle sv3 cards report 1 MiB without any XML/pmon process;
+  # preserve that telemetry instead of treating it as an occupied job or zero.
+  if state['processes'] or state['pmon_jobs']:
     raise RuntimeError(f"Assigned GPU{state['physical_gpu']} has occupied/unknown work; "
         'no sharing, stopping, or device substitution is permitted')
 
@@ -153,7 +156,8 @@ def refresh(record):
   state = live_state(record['physical_gpu'])
   require_idle(state, record['gpu_uuid'])
   return dict(record, checked_at_utc=state['checked_at_utc'], occupancy='idle',
-      exclusive=True, live_check=state, device_mapping_evidence=mapping)
+      exclusive=True, live_check=state, device_mapping_evidence=mapping,
+      occupancy_basis='available complete XML process inventory and assigned-device pmon')
 
 
 def require_resource(path):

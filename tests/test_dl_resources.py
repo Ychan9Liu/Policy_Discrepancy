@@ -101,13 +101,24 @@ class DLResourceContracts(unittest.TestCase):
       self.assertEqual(state['pmon_jobs'], [])
       self.assertIn('900 C', state['raw_pmon'])
 
-  def test_occupied_memory_xml_or_pmon_and_uuid_mismatch_refuse(self):
+  def test_xml_or_pmon_jobs_and_uuid_mismatch_refuse(self):
     with self.runtime_mocks():
       state = resource.live_state(4)
-      for changed in [dict(memory_used_mib=1), dict(processes=[{'pid': 9, 'type': 'G'}]),
+      for changed in [dict(processes=[{'pid': 9, 'type': 'G'}]),
           dict(pmon_jobs=[{'pid': 8, 'type': 'C'}]), dict(gpu_uuid='other')]:
         with self.assertRaises(RuntimeError):
           resource.require_idle(dict(state, **changed), UUID)
+
+  def test_actual_idle_one_mib_is_preserved_as_telemetry_not_a_job(self):
+    # DL-engineering-r2: reproduce the observed sv3 boundary and the existing
+    # formal supervisor's inventory definition, without masking a process.
+    with self.runtime_mocks():
+      state = dict(resource.live_state(4), memory_used_mib=1)
+      resource.require_idle(state, UUID)
+      self.assertEqual(state['memory_used_mib'], 1)
+      for field in ('processes', 'pmon_jobs'):
+        with self.assertRaises(RuntimeError):
+          resource.require_idle(dict(state, **{field: [{'pid': 9, 'type': 'G'}]}), UUID)
 
   def test_absent_xml_inventory_missing_pmon_row_and_non_numeric_memory_refuse(self):
     for replaced, output in [('-x', '<nvidia_smi_log><gpu><uuid>'+UUID+'</uuid></gpu></nvidia_smi_log>'),
