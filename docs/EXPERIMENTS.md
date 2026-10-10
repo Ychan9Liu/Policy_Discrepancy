@@ -8,6 +8,8 @@ DtLatch 当前任务已由用户特许文档、代码、干预和前验证，资
 
 当前必要诊断为 `docs/DL_PREDICTIVE_DIAGNOSTIC.md`（DL-predictive-r1）：仅原8 calibration episode、6固定H10控制，检查clean q相对p与cue剥夺的预测技能，并要求真实固定控制敏感性。它不是已采用的新gate，不读取blind数组、不更新optimizer。实现与CPU验收提交 `597a3a6374955d9bb31277c1c4678abd709d7369`；该提交的24项CPU检查通过，GPU4/300k预测诊断及GPU7/r7单步工程审计于2026-10-10 21:38后启动，实际状态见 `docs/DL_VALIDATION_LOG.md`。替代方案见 `docs/DL_REVISIONS.md`，仍按建议及触发条件区分。
 
+22:14后最新：be9e32a上的GPU4固定控制mode诊断完成、独立审计通过，但主必要技能未支持，停止1m/该代理，见 `docs/DL_PREDICTIVE_RESULTS.md`。ab665a8上的GPU7真实size50m五组单步工程验收及独立summary审计通过、6675MiB峰值，旧失败保留；不当方法验收。下一条授权内排除诊断是 `docs/DL_PREDICTIVE_MC.md`：同八校准episode/原控制/H10，完整latent路径概率混合，pooled128/数值可靠性和3600秒上限预先冻结，零新增物理/训练；源码/CPU验收正在准备、尚无GPU结果。
+
 该索引不改变下面 M2 v1 的任务、方法、校准、seed0/百万步或正在执行的作业。DL 的六组×3 seeds×100k 是诊断和对照通过后的独立短训练设计，不是新的 v1 正式实验；不从历史归档或待运行文件推定验收。
 
 更新日期：2026-10-09。

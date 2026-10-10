@@ -24,4 +24,4 @@
 
 **仍未排除**：mode与模型边际预测不同、未来latent mode误差、共同模型误差、gray-body保留姿态/影子、开环与正常接收未来观测的闭环差异。这些解释尚非已证实原因。
 
-**独立Agent建议，尚未采用协议**：一次有限R-M校准排查，保持同128点/6控制/H10/真实reward，初始及未来latent按实际unimix采样，先混合TwoHot概率再评分，独立MC RNG及预算/可靠性/停止规则先冻结。不读blind、不直接训练；若数值稳定仍无必要技能，停止当前reward支持候选，真实key/closed-loop另立对象。不能长期禁止p接收未来观测制造差距。即使MC技能成立，原D仍是modal条件Gaussian sym-KL/actiondim，不能声称完整策略mixture/variance控制价值或正式方法通过。
+**后续Agent授权内决定**：上述有限R-M排除诊断已冻结为 [DL_PREDICTIVE_MC.md](DL_PREDICTIVE_MC.md)，保持同128点/6控制/H10/真实reward，初始及未来latent按实际unimix采样，先混合TwoHot概率再评分，使用独立MC RNG、pooled128、数值可靠性条件及3600秒硬上限。它是必要诊断，尚未采用为新gate或训练方法；实际验收和结果另记，不改写本mode负结果。不读blind、不直接训练；若数值稳定仍无必要技能，停止当前reward支持候选，真实key/closed-loop另立对象。不能长期禁止p接收未来观测制造差距。即使MC技能成立，原D仍是modal条件Gaussian sym-KL/actiondim，不能声称完整策略mixture/variance控制价值或正式方法通过。

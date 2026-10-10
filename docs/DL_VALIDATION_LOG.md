@@ -1,6 +1,6 @@
 # DL 验证日志与证据索引
 
-版本 **DL-engineering-r7 / DL-protocol-r1 / DL-opportunity-r1 / DL-predictive-r1**，2026-10-10。整体目标**未完成**：r1及新H100真实诊断、独立审计均完成，当前H1 gate辨别及幅度未获支持；logging r5/r6已隔离真实更新，但精简日志特征未精确一致，r7仍待CUDA验收；新增有限控制预测技能诊断尚未GPU执行。进程exit0、文件完整或工程fixture通过均不等于方法有效。
+版本 **DL-engineering-r8 / DL-protocol-r1 / DL-opportunity-r1 / DL-predictive-r1 / DL-predictive-MC-r1**，2026-10-10。整体目标**未完成**：真实size50m五组单步工程验收及独立审计已通过；r1/H100信号与幅度未获支持，有限固定控制下mode后验特异预测技能也未支持。后续一次有限MC是授权内排除诊断，未采用为gate或正式方法。进程exit0、文件完整或工程fixture通过均不等于方法有效。
 
 本日志区分历史证据和当前状态。运行状态依据本轮根 Agent 已核查的收据；本次H100启动前资源快照为 **2026-10-10 18:35:43 北京时间**，GPU4–7各0MiB且无可见作业，不代表持续空闲。GPU0/2有未知其他作业，未触碰。科研定义、冻结分割与筛选标准仍以 [DL_PREVALIDATION.md](DL_PREVALIDATION.md) 和 [DL_PREVALIDATION_REVIEW.md](DL_PREVALIDATION_REVIEW.md) 为准。
 
@@ -18,10 +18,12 @@
 | `bd8bd4dd11fc5f251435487d810bc8d277c5152f` | r5 logging独立精简前向；sv3 clean CPU 13项dt_latch（含完整9个Agent快照、2个真实逻辑CPU设备）、logging1项两次完整更新、helper1项、rep_probe5项均通过；GPU7 attempt04在logging特征exact处失败，off/alpha0/rho0完成 |
 | `ed2afde0274694bace1c42086f3ceb2d3c4530af` | r6只改helper失败证据记录，不改生产模型；sv3 clean helper1项通过14.384秒。GPU7 logging-features-attempt05完成观察及单步重放，但exact失败仍exit1；日志对应训练更新已与r5 off严格相等，重算recurrent特征不相等 |
 | `597a3a6374955d9bb31277c1c4678abd709d7369` | r7完整独立loss-and-gradient日志collector、严格只读score；新增calibration-only DL-predictive-r1。sv3 clean CPU 24项通过：dt_latch13项159.810秒、logging1项50.967秒、helper1项16.927秒、rep_probe5项3.537秒、predictive4项7.234秒；pip check通过。21:38后GPU7 attempt06及GPU4/300k预测诊断启动，结果仍待审计 |
+| `be9e32aa018d8b61c0b2931fe44f72a6f480d4b5` | 输入契约修复，源raw Gaussian样本保留；sv3 clean predictive CPU4项7.399秒。GPU4/300k attempt02 exit0、128校准位置原数组审计通过，必要预测方向未支持，停止1m/代理/短训练 |
+| `ab665a850466f0948edc877d5f9a977709905c33` | r8仅修helper嵌套对象hash，生产代码仍r7；sv3 clean helper CPU2项17.539秒及pip check通过。GPU7 attempt07真实五组完整通过，四日志leaf bytes相等、off/logging完整update相等、probe梯度零、N局部缩放及非rep梯度通过；独立summary复核通过 |
 
 历史attempt03实际SHA为 `55a527c620fb14339ee00f76f045a5dfddc81068`；后续r5/r6/r7的实际版本如上表，不混同。9e之后至55的三个提交未改 `dreamerv3/` 方法代码，也未改科学配置、筛选阈值或精确比较条件。r7改变诊断执行图而保持原optimizer执行图及科学gate；CPU通过不替代CUDA精确状态/特征验收，不能将文档提交或当前HEAD写成所有旧运行的执行版本。
 
-sv3 已部署独立worktree `9e6da39`、`1280bea`、`3721103`、`55a527c`、`5765c89`、`bd8bd4d`、`ed2afde`、`597a3a6`，位置 `/data/Policy_Discrepancy/dl-worktrees/<版本>/`。原 `/data/Policy_Discrepancy/repo` 在21:33:39核验仍保持干净d9be557，不修改原作业checkout；SV2仅只读取得checkpoint，没有代码同步或GPU运行。DL分支**未合入main**；最近确认成功push为 `bd8bd4d`，随后ed2/597推送在GitHub:443连接失败，最新远端SHA待再次核验。不覆盖canonical main既有本地修改。
+sv3 已部署上述确定版本，含be9e32a/ab665a8，位置 `/data/Policy_Discrepancy/dl-worktrees/<版本>/`。原 `/data/Policy_Discrepancy/repo` 在21:33:39核验仍保持干净d9be557，不修改原作业checkout；SV2仅只读取得checkpoint，没有代码同步或GPU运行。DL分支**未合入main**；前序连接失败保留，22:01 push恢复且ls-remote核验 `origin/codex/dl-prevalidation=ab665a850466f0948edc877d5f9a977709905c33`。不由该次push推定后续提交已推送，不覆盖canonical main既有本地修改。
 
 ## r7 / predictive启动及CPU证据（21:39快照）
 
@@ -43,6 +45,24 @@ sv3 已部署独立worktree `9e6da39`、`1280bea`、`3721103`、`55a527c`、`576
 GPU7/r7 attempt06于21:39:15–21:47:20结束exit1/6675MiB；off/alpha0/rho0/logging单步完成、N未执行。四特征逐元素exact且误差0，但helper对嵌套repfeat dict产生object标量并hash内存地址，导致假失败。旧exit1保留；数值相等不能证明signed-zero/完整byte。根独立summary审计确认597a3a6 off/logging全部initial/updated state（含optimizer/norm）、gradient/othergradient、原抽样、RNG、raw/context、branch/total loss严格相等；证据 `analysis/outputs/dl-prevalidation/validation-597a3a6/attempt06/independent-update-audit-v1.json`。不替代新完整paired验收。
 
 **DL-engineering-r8**只修helper为四真实数值leaf的dtype/shape/bytes hash并拒绝object，不改生产代码/配置/容差。另分配同值字典/单叶改变/object拒绝反例及tiny完整helper共CPU2项通过10.190秒；确定提交clean CPU及GPU新attempt07待执行。21:50:06核查GPU4–7无本项目compute作业，已释放，GPU0/2未知作业未触碰；非持续资源状态。
+
+## r8完整工程验收（22:14:53快照）
+
+确定执行SHA `ab665a850466f0948edc877d5f9a977709905c33`。sv3 GPU7 `R/size50m-cp1000000-attempt07/` 于22:02:04–22:13:12运行，668秒、exit0、1秒采样峰值6675MiB；原科学配置、checkpoint、B16×T64/context1、精确state/gradient/RNG及local rtol2e-6/atol1e-8不变。新helper对象修复不是降低标准，旧attempt01–06失败完整保留。
+
+五组off/alpha0/rho0/logging/N全部完整，`paired_check.json checks_passed=true`。根独立审计重读五summary：三个旁路组相对off的全部initial/updated state（含optimizer/norm）、gradient/othergradient、sampled latent、RNG、raw/context、branch/total loss严格相等；日志tokens/deter/logit/stoch的dtype/shape/bytes四leaf hash严格相等；每组detached实际读取参数梯度严格0且原checkpoint单步重放精确。N非rep梯度相同、rep梯度实际改变，局部缩放最大绝对误差2.3283e-10。小证据 [dl_engineering_r8_independent_summary.json](dl_engineering_r8_independent_summary.json)，ignored原始镜像 `analysis/outputs/dl-prevalidation/validation-ab665a8/attempt07/`。
+
+预热单步off/alpha0/rho0/logging/N分别.11254/.10833/.10841/.24479/.13430秒。logging额外完整gradient图有实际开销；这些是同checkpoint单次重放、不是整段训练吞吐，旧20.4GPU小时不得直接当修订后预算。最低1卡串行、2卡并行诊断/工程；当前4卡分配足够，不需占满或多卡模型。
+
+22:14:53 fresh queryGPU4–7均0MiB、无compute作业，本项目所有卡已释放；GPU0/2未知作业未干扰。这是时间快照。工程通过只证明真实单步旁路/压缩语义，不证明长期训练复现、held-out信号/幅度、S/P/W或性能有效；整体目标仍未完成。
+
+## 有限MC冻结与启动前检查
+
+协议 [DL_PREDICTIVE_MC.md](DL_PREDICTIVE_MC.md)；代码/测试新增，生产训练代码不改。本机CPU5项通过8.16秒：实际vision64小Agent、全11步实际分布抽样、unimix0/.4及逐key参考、q=p共噪声、seed/分块/未来prefix、状态与counter不变/写入拒绝、来源仅8校准episode、概率混合反例和不稳/缺覆盖停止。测试基底ab665a8加未提交新文件；确定提交后的sv3 clean CPU及真实来源验收仍待执行，不能称真实size50m/科学验收。
+
+必要入口修复：旧d.load_agent为取spaces调用make_env；MC直接按冻结DMC/wrapper spaces构造同配置Agent，避免新增环境构造或physics/render。固定源checkpoint/config哈希在pickle前校验，实际载入后仍需完整parameter digest相等；raw动作不裁剪。额外mode replay保存原128点logits精确性作为归因限制，不新增接受容差或改变主裁决。
+
+22:25:31北京时间只读查询：GPU4–7均0MiB、compute/pmon无作业，GPU0/2未知作业不触碰；原repo干净d9be557。GPU4计划只运行一次300k MC-r1（pooled128/chunk8/H10/六控制），包含源验证/加载/编译/评分的3600秒上限；GPU5–7本项不使用。启动仍须新fresh库存及CUDA/EGL proof。本节尚无MC GPU结果，不构成新gate或短训练依据。
 
 ## 环境与本地证据
 

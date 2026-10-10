@@ -1,0 +1,90 @@
+{
+  "version": "DL-engineering-r8-independent-v1",
+  "execution_sha": "ab665a850466f0948edc877d5f9a977709905c33",
+  "all_five_summaries_verified": true,
+  "bypass_full_state_gradient_loss_rng_exact": {
+    "alpha0": {
+      "initial_param_hashes": true,
+      "updated_param_hashes": true,
+      "gradient_hashes": true,
+      "other_gradient_hashes": true,
+      "sampled_latent_hashes": true,
+      "context_hashes": true,
+      "raw_input_hashes": true,
+      "normalization_initial_hashes": true,
+      "normalization_updated_hashes": true,
+      "train_rng": true,
+      "cache_rng": true,
+      "branch_losses": true,
+      "total_loss": true
+    },
+    "rho0": {
+      "initial_param_hashes": true,
+      "updated_param_hashes": true,
+      "gradient_hashes": true,
+      "other_gradient_hashes": true,
+      "sampled_latent_hashes": true,
+      "context_hashes": true,
+      "raw_input_hashes": true,
+      "normalization_initial_hashes": true,
+      "normalization_updated_hashes": true,
+      "train_rng": true,
+      "cache_rng": true,
+      "branch_losses": true,
+      "total_loss": true
+    },
+    "logging": {
+      "initial_param_hashes": true,
+      "updated_param_hashes": true,
+      "gradient_hashes": true,
+      "other_gradient_hashes": true,
+      "sampled_latent_hashes": true,
+      "context_hashes": true,
+      "raw_input_hashes": true,
+      "normalization_initial_hashes": true,
+      "normalization_updated_hashes": true,
+      "train_rng": true,
+      "cache_rng": true,
+      "branch_losses": true,
+      "total_loss": true
+    }
+  },
+  "logging_features_byte_hashes_exact": true,
+  "detached_probe_gradient_zero": true,
+  "N_other_gradients_exact": true,
+  "N_rep_scaled_gradients_changed": true,
+  "N_local_gradient_max_abs_error": 2.3283064365386963e-10,
+  "all_same_checkpoint_updates_replay_exact": true,
+  "paired_check": {
+    "checks_passed": true,
+    "code_version": "DL-engineering-r8",
+    "compression_exercised": true,
+    "errors": [],
+    "git": {
+      "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha": "ab665a850466f0948edc877d5f9a977709905c33",
+      "status": ""
+    },
+    "limitation": "Engineering and local compression only; no task-selection or performance conclusion",
+    "local_gradient_atol": 1e-08,
+    "local_gradient_rtol": 2e-06,
+    "real_size50m_production_shape": true
+  },
+  "sampled_peak_MiB": 6675.0,
+  "warmed_seconds": {
+    "off": 0.11253676610067487,
+    "alpha0": 0.10833196295425296,
+    "rho0": 0.10840669693425298,
+    "logging": 0.24479124834761024,
+    "dtlatch": 0.13429954508319497
+  },
+  "source_summary_sha256": {
+    "off": "fc3cd50efe2a863650cfb07890b7d1add9e8a275cdeb39287c7112060084781d",
+    "alpha0": "b5516cf425a71e9527adbfa3b07460ce9bef006a33b2646e6b5b8ac7377547ec",
+    "rho0": "49ffd5de5703029b16b8e6bd137fb6488f1d71288f6db637c28ad2add7618654",
+    "logging": "58c1abb4368af5614c2f1bc90d7e7d7a2d09cea06bc3954bd16a7fa83cd0a49d",
+    "dtlatch": "15804799442f61b5ef50afc0daeb1432145c0f5d58cd8002bfa290ecd5303397"
+  },
+  "interpretation": "Real size50m/B16xT64 single-update engineering; no full training, signal or effectiveness acceptance",
+  "method_effectiveness": false
+}
