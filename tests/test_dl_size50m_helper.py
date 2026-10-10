@@ -1,4 +1,4 @@
-"""DL-engineering-r7 tiny production Agent regression, CPU only.
+"""DL-engineering-r8 tiny production Agent regression, CPU only.
 
 Executes the same accessed-parameter probe gradient helper used by the real
 size50m worker. This is a small engineering fixture, not size50m evidence.
@@ -24,7 +24,7 @@ class Size50mHelperTest(unittest.TestCase):
     self.assertEqual(result.returncode, 0,
         result.stdout[-4000:] + result.stderr[-4000:])
     report = json.loads(result.stdout.strip().splitlines()[-1])
-    self.assertEqual(report['code_version'], 'DL-engineering-r7')
+    self.assertEqual(report['code_version'], 'DL-engineering-r8')
     self.assertGreater(report['tested_count'], 0)
     self.assertGreater(report['unaccessed_state_count'], 0)
     self.assertEqual(report['tested_modules'], ['dyn', 'pol', 'rew'])
@@ -32,6 +32,26 @@ class Size50mHelperTest(unittest.TestCase):
     self.assertTrue(report['state_unchanged'])
     self.assertTrue(report['logging_sampling_exact'])
     self.assertTrue(report['logging_state_unchanged'])
+
+  def test_nested_feature_hashes_depend_on_values_not_dictionary_addresses(self):
+    import numpy as np
+    sys.path.insert(0, str(ROOT))
+    spec = importlib.util.spec_from_file_location('dl_feature_hash_check',
+        Path(__file__).with_name('dl_size50m_check.py'))
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    left = dict(tokens=np.arange(6, dtype=np.float32),
+        repfeat=dict(deter=np.zeros((2, 3), np.float32),
+            logit=np.ones((2, 2), np.float32), stoch=np.eye(2, dtype=np.float32)))
+    right = dict(repfeat={k: v.copy() for k, v in left['repfeat'].items()},
+        tokens=left['tokens'].copy())
+    baseline = helper.feature_array_hashes(left)
+    self.assertEqual(baseline, helper.feature_array_hashes(right))
+    self.assertEqual(set(baseline), {'tokens', 'repfeat/deter', 'repfeat/logit', 'repfeat/stoch'})
+    right['repfeat']['stoch'][0, 0] = 0.
+    self.assertNotEqual(baseline, helper.feature_array_hashes(right))
+    with self.assertRaises(TypeError):
+      helper.feature_array_hashes(dict(tokens=np.array([{}], dtype=object)))
 
 
 def production_agent_fixture():

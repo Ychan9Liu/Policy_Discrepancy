@@ -36,6 +36,14 @@ sv3 已部署独立worktree `9e6da39`、`1280bea`、`3721103`、`55a527c`、`576
 
 **21:43:26更新**：GPU4 predictive attempt01在21:39:15–21:39:49执行后exit1，未产生预测技能裁决，GPU4已释放。错误是新入口假定记录动作必须[-1,1]；源实际为未裁剪Gaussian样本。八条calibration仅文件经hash核验、均有限、范围[-5.10,5.33]，blind数组未读；小证据在 `analysis/outputs/dl-predictive/597a3a6/recorded-action-audit.json`。`DL-predictive-engineering-r2`移除错误样本域假定，仍严格要求10步/float32/有限、原动作保留及真实复原；五固定控制和评分/停止条件不改。dirty CPU4项通过4.475秒，包含[-3,3]原动作真实复原及编码精确，新提交需clean CPU后新attempt，不覆盖attempt01。GPU7 off/alpha0已完成，其余仍运行。
 
+## 21:50完成快照与必要工程修复
+
+`be9e32aa018d8b61c0b2931fe44f72a6f480d4b5` sv3 clean CPU4项通过7.399秒。GPU4预测attempt02于21:45:40–21:46:48完成exit0/2511MiB；独立原数组审计通过，但主必要技能未支持，停止1m/新代理/短训练。真实控制敏感68点/8ep、复原0；见 [DL_PREDICTIVE_RESULTS.md](DL_PREDICTIVE_RESULTS.md)，不写成reward head全部无技能。
+
+GPU7/r7 attempt06于21:39:15–21:47:20结束exit1/6675MiB；off/alpha0/rho0/logging单步完成、N未执行。四特征逐元素exact且误差0，但helper对嵌套repfeat dict产生object标量并hash内存地址，导致假失败。旧exit1保留；数值相等不能证明signed-zero/完整byte。根独立summary审计确认597a3a6 off/logging全部initial/updated state（含optimizer/norm）、gradient/othergradient、原抽样、RNG、raw/context、branch/total loss严格相等；证据 `analysis/outputs/dl-prevalidation/validation-597a3a6/attempt06/independent-update-audit-v1.json`。不替代新完整paired验收。
+
+**DL-engineering-r8**只修helper为四真实数值leaf的dtype/shape/bytes hash并拒绝object，不改生产代码/配置/容差。另分配同值字典/单叶改变/object拒绝反例及tiny完整helper共CPU2项通过10.190秒；确定提交clean CPU及GPU新attempt07待执行。21:50:06核查GPU4–7无本项目compute作业，已释放，GPU0/2未知作业未触碰；非持续资源状态。
+
 ## 环境与本地证据
 
 隔离环境为 `%LOCALAPPDATA%/Codex/dl-validation-env`，Windows/Python3.12.14、JAX/jaxlib0.4.33、NumPy1.26.4、elements3.22.2、ninjax3.6.3、optax0.2.5、chex0.1.90、portal3.8.1、dm-control1.0.48、MuJoCo3.15.0；关键版本对齐服务器 lock，`pip check`通过。Windows Python3.12 与实际 sv3 Linux Python3.11.16 仍有差异，本机验收不能替代服务器验收。未升级服务器环境；进程 DLL 路径补充只存在本机外部隔离环境。

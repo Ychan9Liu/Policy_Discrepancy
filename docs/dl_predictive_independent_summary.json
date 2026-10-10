@@ -1,0 +1,179 @@
+{
+  "audit_version": "DL-predictive-independent-v1",
+  "source_result_sha256": "cc4ccf9e4842cd6fe2e0e94a85f7be2fceecb50996aa68d7fda134f87c778d2a",
+  "maximum_CE_interval_error": 5.760157455181325e-10,
+  "all_eight_calibration_artifact_hashes_verified": true,
+  "blind_arrays_read": false,
+  "prior_rollouts_equal": true,
+  "fixed_controls_exact": true,
+  "maximum_physics_repeat_error": 0.0,
+  "prefixes": {
+    "1": {
+      "recorded": {
+        "clean_minus_prior_log_score": {
+          "point": 0.0007084225926595588,
+          "lower95": -0.014560348369835118,
+          "upper95": 0.020791213774658385,
+          "episodes": 8
+        },
+        "clean_over_deprived_log_score": {
+          "point": 0.004884763204716965,
+          "lower95": -0.002851918633967925,
+          "upper95": 0.012344518675835275,
+          "episodes": 8
+        },
+        "background_a_minus_clean_CE": {
+          "point": -0.0036680668608900955,
+          "lower95": -0.016443178386704782,
+          "upper95": 0.008770527327024605,
+          "episodes": 8
+        },
+        "background_b_minus_clean_CE": {
+          "point": -0.006615582013531723,
+          "lower95": -0.025352134726729477,
+          "upper95": 0.005558469344251804,
+          "episodes": 8
+        }
+      },
+      "fixed": {
+        "clean_minus_prior_log_score": {
+          "point": -0.01766961218115176,
+          "lower95": -0.043689924566776527,
+          "upper95": 0.014432547078310454,
+          "episodes": 8
+        },
+        "clean_over_deprived_log_score": {
+          "point": 0.0009093765051517938,
+          "lower95": -0.010767858834934644,
+          "upper95": 0.013841722907557835,
+          "episodes": 8
+        },
+        "background_a_minus_clean_CE": {
+          "point": -0.0036369824971936612,
+          "lower95": -0.012813698086711438,
+          "upper95": 0.00603213988601365,
+          "episodes": 8
+        },
+        "background_b_minus_clean_CE": {
+          "point": -0.010787241146466498,
+          "lower95": -0.03381404841027932,
+          "upper95": 0.007965181774940853,
+          "episodes": 8
+        }
+      }
+    },
+    "3": {
+      "recorded": {
+        "clean_minus_prior_log_score": {
+          "point": 0.00026402925217457445,
+          "lower95": -0.012578358908035353,
+          "upper95": 0.013987871959027917,
+          "episodes": 8
+        },
+        "clean_over_deprived_log_score": {
+          "point": 0.010006264775071355,
+          "lower95": 0.002367761524871869,
+          "upper95": 0.018204818717775677,
+          "episodes": 8
+        },
+        "background_a_minus_clean_CE": {
+          "point": 0.004729314572559986,
+          "lower95": -0.003969551880487524,
+          "upper95": 0.014538216388492082,
+          "episodes": 8
+        },
+        "background_b_minus_clean_CE": {
+          "point": -0.0003458179863971688,
+          "lower95": -0.011466743145887224,
+          "upper95": 0.009663645226924738,
+          "episodes": 8
+        }
+      },
+      "fixed": {
+        "clean_minus_prior_log_score": {
+          "point": -0.0023604061160417585,
+          "lower95": -0.02267345875105597,
+          "upper95": 0.023395286253201076,
+          "episodes": 8
+        },
+        "clean_over_deprived_log_score": {
+          "point": 0.012924488516235542,
+          "lower95": -0.002491103460914018,
+          "upper95": 0.031117271435421857,
+          "episodes": 8
+        },
+        "background_a_minus_clean_CE": {
+          "point": 0.009062636706060511,
+          "lower95": -0.006091528962931407,
+          "upper95": 0.025961760184008583,
+          "episodes": 8
+        },
+        "background_b_minus_clean_CE": {
+          "point": 0.005905684158324375,
+          "lower95": -0.0027234088387094913,
+          "upper95": 0.013758475841693837,
+          "episodes": 8
+        }
+      }
+    },
+    "10": {
+      "recorded": {
+        "clean_minus_prior_log_score": {
+          "point": 0.005358806279412487,
+          "lower95": -0.01002227739638843,
+          "upper95": 0.023506252829074623,
+          "episodes": 8
+        },
+        "clean_over_deprived_log_score": {
+          "point": -0.0016556067076772766,
+          "lower95": -0.017438107927952848,
+          "upper95": 0.015663958904869785,
+          "episodes": 8
+        },
+        "background_a_minus_clean_CE": {
+          "point": -0.008925134479093237,
+          "lower95": -0.029984320695778947,
+          "upper95": 0.010692350598955836,
+          "episodes": 8
+        },
+        "background_b_minus_clean_CE": {
+          "point": -0.0012932819858964522,
+          "lower95": -0.008149397354232509,
+          "upper95": 0.005262338566697449,
+          "episodes": 8
+        }
+      },
+      "fixed": {
+        "clean_minus_prior_log_score": {
+          "point": -0.002496234783457742,
+          "lower95": -0.012201839802111137,
+          "upper95": 0.007979435838243487,
+          "episodes": 8
+        },
+        "clean_over_deprived_log_score": {
+          "point": -0.03059862018161357,
+          "lower95": -0.08387270892477634,
+          "upper95": 0.00950732784032793,
+          "episodes": 8
+        },
+        "background_a_minus_clean_CE": {
+          "point": 0.013040940987683717,
+          "lower95": -0.0038680546787631565,
+          "upper95": 0.031074828561432177,
+          "episodes": 8
+        },
+        "background_b_minus_clean_CE": {
+          "point": 0.009590590023762035,
+          "lower95": -0.002520687042704761,
+          "upper95": 0.02174385197635775,
+          "episodes": 8
+        }
+      }
+    }
+  },
+  "control_sensitivity_positions": 68,
+  "control_sensitivity_episodes": 8,
+  "necessary_skill_supported_on_calibration": false,
+  "scope": "Numerical and artifact audit; not independent new scientific data",
+  "training_authorized": false
+}

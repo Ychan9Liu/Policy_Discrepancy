@@ -1,4 +1,4 @@
-"""DL-engineering-r7: real-image size50m engineering and compression inspection.
+"""DL-engineering-r8: real-image size50m engineering and compression inspection.
 
 Runs isolated paired groups from a trusted checkpoint and independently
 collected episode NPZs. No environment construction, rendering, or training
@@ -25,8 +25,18 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-VERSION = 'DL-engineering-r7'
+VERSION = 'DL-engineering-r8'
 GROUPS = ('off', 'alpha0', 'rho0', 'logging', 'dtlatch')
+
+
+def feature_array_hashes(features):
+  """Hash actual numeric leaves, never object-array dictionary addresses."""
+  import elements
+  from embodied.run.protocol_v1 import array_hashes
+  leaves = elements.tree.flatdict(features)
+  if any(np.asarray(value).dtype.kind == 'O' for value in leaves.values()):
+    raise TypeError('Feature audit requires numeric array leaves')
+  return array_hashes(leaves)
 
 
 def sha256(path):
@@ -302,7 +312,9 @@ def worker(args):
     if hashes(log_state) != initial_hashes:
       raise AssertionError('Separate logging audit changed pre-update state')
     expected_features = dict(tokens=aux[2]['tokens'], repfeat=repfeat)
-    features_equal = hashes(log_features) == hashes(expected_features)
+    actual_features = feature_array_hashes(host(log_features))
+    expected_features_hashes = feature_array_hashes(host(expected_features))
+    features_equal = actual_features == expected_features_hashes
     feature_differences = {}
     for key in ('tokens', *sorted(repfeat)):
       left = log_features['tokens'] if key == 'tokens' else log_features['repfeat'][key]
@@ -314,14 +326,14 @@ def worker(args):
     if not features_equal:
       logging_errors.append('Separate logger sampling differs from actual loss sampling')
     write_json(output / 'logging_feature_check.json', dict(exact=features_equal,
-        differences=feature_differences, actual=hashes(log_features),
-        expected=hashes(expected_features), acceptance_relaxed=False))
+        differences=feature_differences, actual=actual_features,
+        expected=expected_features_hashes, acceptance_relaxed=False))
     log_host = host(log_metrics)
     if not log_host or any(not np.isfinite(x).all() for x in log_host.values()):
       raise AssertionError('Logging audit produced missing or non-finite metrics')
     logging_audit = dict(features_exact=features_equal, state_unchanged=True,
         accessed_state_count=int(host(accessed)),
-        feature_hashes=hashes(log_features), metric_keys=sorted(log_metrics),
+        feature_hashes=actual_features, metric_keys=sorted(log_metrics),
         differences=feature_differences)
   def signals(feat, obs, prevact):
     prior = model.dyn._prior(feat['deter'])

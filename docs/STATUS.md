@@ -13,6 +13,7 @@
 - logging r5/r6真实CUDA诊断显示：真实完整单步更新、梯度/loss/原抽样与off相等，但精简日志前向重新计算的recurrent特征/离散抽样不精确一致，仍未通过。r7改为完整独立loss-and-gradient JIT取特征、另一个只读JIT评分；副本的normalization更新被丢弃，参数/optimizer/target写入禁止。确定提交597a3a6上的24项clean CPU检查及pip check通过；GPU7真实attempt06已启动，尚未验收。
 - 首选继续本次已授权任务：审计r7真实CUDA和 `docs/DL_PREDICTIVE_DIAGNOSTIC.md` 冻结的calibration-only有限控制H10预测技能诊断。仅现有8 calibration episode，6固定控制，主H10、H1/3描述；不读新blind数组、不采用新gate。GPU4/300k已在597a3a6启动，硬预算3600秒，optimizer0。21:39:33本项目PID1431993/1431893分别GPU7/4，GPU5/6未用；不是持续资源状态。诊断技能不等于gate/正式方法，完整目标保持未完成。
 - 21:43:26更新：GPU4预测attempt01在新增动作范围检查退出exit1，源raw Gaussian样本全部有限但可超[-1,1]；GPU4已释放，尚无技能结果。必要输入契约修复 `DL-predictive-engineering-r2` 保留raw动作、固定控制/物理精确性/科学条件不变；dirty CPU4项通过，新提交clean验收后重跑新attempt。GPU7原597a3a6运行不改源码，off/alpha0已完成，其余待验收。
+- 21:50更新：be9e32a clean CPU4项及GPU4/300k attempt02/独立审计完成，exit0/2511MiB；真实控制敏感68点/8ep充分，但H10 mode后验特异技能未支持，停止1m/多步代理，见 `docs/DL_PREDICTIVE_RESULTS.md`。GPU7 attempt06四特征数值相等，helper嵌套dict/object地址hash假失败exit1；完整off/logging状态/梯度summary独立相等，r8只修helper逐叶byte hash仍须新完整paired。CPU2项通过、新GPU待执行；GPU4–7核查无本项目进程。目标未完成，R-M是建议、尚未采用协议。
 
 ## 01 研究归档日志：DtLatch（奖励闩，2026-10-10）
 

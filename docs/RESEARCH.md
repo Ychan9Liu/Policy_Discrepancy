@@ -680,3 +680,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **授权内Agent决定**：停止扩展H100窗口、改阈值或直接放大gate；r1不进入短训练。先进行 `DL-predictive-r1` 校准预测技能诊断：现有8 calibration episode、16原H100位置、6条预先固定H10控制，比较真实未来reward的q/p及clean/cue预测准确度，分开记录行为动作和五条策略无关控制；不读blind数组、不改训练gate。必要性、充分性边界及停止规则见 [DL_PREDICTIVE_DIAGNOSTIC.md](DL_PREDICTIVE_DIAGNOSTIC.md)。多步训练方法尚未采用，技能正例也不代表正式准备就绪。
 
 **工程未决**：r5/r6 logging已使实际完整更新与off一致，但精简前向的训练特征/抽样未精确一致，CUDA验收仍失败。r7完整梯度路径采集与独立只读评分是必要工程修复，CPU两次完整更新通过，CUDA尚待验证；副本normalization状态丢弃且不得写参数/optimizer。科研信号、作用幅度和有效对照的缺口不会由logging修复替代。
+
+### DL-12 固定控制下的mode预测边界（2026-10-10）
+
+**已验证事实**：300k原8校准ep/128位置、固定五H10控制真实敏感68点/8ep，复原0、checkpoint不变；必要后验特异预测技能未支持。clean−prior平均logscore−.002496、clean相对gray-cue−.030599，episode区间均跨0。执行be9e32a，独立原数组CE/区间差≤5.7602e-10。对象和证据见 [DL_PREDICTIVE_RESULTS.md](DL_PREDICTIVE_RESULTS.md)，不是独立blind检验或完整reward head能力结论。
+
+**Agent授权内决定**：按冻结条件停止该对象1m和多步mode代理，不改gate/强度，不启动短训练。r7真实日志四特征数值exact及全单步状态/梯度与off相等，但helper嵌套dict hash错误导致exit1；r8仅修验收逐叶byte hash，新GPU整体验收仍待完成，不以工程推进替代科研目标。
+
+**工作假设及尚未采用建议**：mode没有整合真实categorical随机路径可能漏掉后验特异预测信息；尚无证据选定该解释。独立Agent首选一次预算固定的完整路径MC混合校准诊断，复用同对象/控制/真reward、不读blind，先混合概率再评分。MC技能若成立仍需新的独立数据、gate和策略边际/关键线索/闭环证据；若数值稳定仍不足，停止当前reward支持候选。合法关键状态/正常未来观测闭环属于另立对象，不是为使旧判据通过的补采。
