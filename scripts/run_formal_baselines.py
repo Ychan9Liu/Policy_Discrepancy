@@ -1,6 +1,6 @@
-"""Explicit sv2 logging GPU0--3 or Dt GPU4--7; preparation never trains.
+"""Explicit sv2 logging/constant GPU0--3 or Dt/shuffle GPU4--7.
 
-Run only under the user's allocation. No resume, other modes, seed changes,
+Run only under the user's allocation. No resume, seed changes,
 resource substitution or retries. Raw failures and successful sources remain.
 """
 import argparse
@@ -103,7 +103,37 @@ class Adopted:
     # Exit code is unavailable for an orphan; final outputs are audited below.
     return 0 if (self.directory / 'final_state.json').exists() else 1
 
-def prepare(output, campaign, entity, mode='logging', gpu_start=0):
+def frozen_source(baseline_root, task):
+  """Validate the existing official artifact; never substitute a default c."""
+  from dreamerv3.freeze_c import freeze
+  directory = Path(baseline_root) / task / 'logging-attempt01'
+  artifact = directory / 'c_frozen.json'
+  if not artifact.exists():
+    raise ValueError('Formal baseline c must already be frozen')
+  before = sha(artifact)
+  value = freeze(directory, artifact)
+  if sha(artifact) != before or value['task'] != task:
+    raise RuntimeError('Frozen source changed or task differs')
+  return dict(path=str(artifact), sha256=before, c=value['c'],
+      match_sum=value['match_sum'], match_count=value['match_count'],
+      receipt_sha256=value['receipt_sha256'],
+      baseline_git_commit=value['baseline_git_commit'])
+
+def config_differences(config, baseline_config, mode):
+  current = json.loads(json.dumps(dict(config.flat)))
+  differences = {k: dict(baseline=baseline_config.get(k), actual=current.get(k))
+      for k in set(current) | set(baseline_config)
+      if current.get(k) != baseline_config.get(k)}
+  allowed = {'logdir', 'agent.rep_probe.mode'}
+  if mode == 'constant':
+    allowed |= {'agent.rep_probe.c', 'run.frozen_c_file'}
+  if set(differences) - allowed:
+    raise ValueError('Undeclared configuration differences: ' +
+                     str(set(differences) - allowed))
+  return differences
+
+def prepare(output, campaign, entity, mode='logging', gpu_start=0,
+            baseline_root=None):
   commit = clean_sha()
   output = Path(output)
   if output.exists():
@@ -113,19 +143,35 @@ def prepare(output, campaign, entity, mode='logging', gpu_start=0):
     raise ValueError('A new formal campaign directory is required')
   if platform.node() != 'lyg0360':
     raise RuntimeError('Only the user-assigned sv2 is allowed')
-  if (mode, gpu_start) not in (('logging', 0), ('dt', 4)):
-    raise ValueError('Only user-assigned logging GPU0-3 or Dt GPU4-7')
+  if (mode, gpu_start) not in (
+      ('logging', 0), ('dt', 4), ('constant', 0), ('shuffle', 4)):
+    raise ValueError('Mode/GPU allocation is outside the user assignment')
+  if mode in ('constant', 'shuffle') and not baseline_root:
+    raise ValueError('The completed formal baseline root is required')
   output.mkdir(parents=True)
   rows = []
   for gpu, task in enumerate(TASKS, start=gpu_start):
+    source = frozen_source(baseline_root, task) if mode == 'constant' else None
     argv = ['--configs', 'm2_v1', '--task', task,
             '--logdir', str(root / task / (mode + '-attempt01')),
             '--agent.rep_probe.mode', mode, '--jax.prealloc', 'False',
             '--logger.outputs', 'jsonl', 'wandb']
+    if source:
+      argv += ['--agent.rep_probe.c', repr(source['c']),
+               '--run.frozen_c_file', source['path']]
     config = resolve(argv)
     # Reuse the frozen scientific checker; only the approved logger differs.
     check(config.update({'logger.outputs': ['jsonl']}))
     assert tuple(config.logger.outputs) == ('jsonl', 'wandb')
+    differences = None
+    if baseline_root:
+      manifest = json.loads((Path(baseline_root) / task / 'logging-attempt01' /
+                             'protocol_manifest.json').read_text())
+      if manifest['git_commit'] != commit:
+        raise ValueError('Use the same training source as the baseline')
+      differences = config_differences(config, manifest['config'], mode)
+    if source and config.agent.rep_probe.c != source['c']:
+      raise ValueError('Parsed c differs from the exact frozen source')
     config.save(str(output / (task + '.yaml')))
     dump(output / (task + '.json'), dict(config.flat))
     rows.append(dict(run_id=campaign + ':' + task + ':' + mode + ':attempt01',
@@ -137,6 +183,7 @@ def prepare(output, campaign, entity, mode='logging', gpu_start=0):
         command=[sys.executable, '-u', '-m', 'dreamerv3.main', *argv],
         wandb_id=campaign + '-' + task + '-' + mode + '-01',
         wandb_project='PD_1', wandb_entity=entity,
+        formal_c_source=source, baseline_config_differences=differences,
         config_sha256=sha(output / (task + '.yaml'))))
   dump(output / 'RUN_INDEX.json', dict(runs=rows))
   dump(output / 'plan.json', dict(campaign=campaign, code_sha=commit,
@@ -208,6 +255,9 @@ def run(plan_path, adopt=False):
           supervisor_source_sha=os.environ.get('PD_SUPERVISOR_SHA', plan['code_sha'])))
       handles.append((row, process, None))
       continue
+    source = row.get('formal_c_source')
+    if source and sha(source['path']) != source['sha256']:
+      raise RuntimeError('Frozen c changed after preparation')
     check = require_free(row['physical_gpu'])
     directory.mkdir(parents=True)
     (directory / 'tmp').mkdir()
@@ -287,11 +337,14 @@ if __name__ == '__main__':
   parser.add_argument('--campaign')
   parser.add_argument('--entity')
   parser.add_argument('--plan')
-  parser.add_argument('--mode', choices=['logging', 'dt'], default='logging')
+  parser.add_argument('--mode', choices=['logging', 'dt', 'constant', 'shuffle'],
+                      default='logging')
   parser.add_argument('--gpu-start', type=int, default=0)
+  parser.add_argument('--baseline-root')
   args = parser.parse_args()
   if args.action == 'prepare':
-    prepare(args.output, args.campaign, args.entity, args.mode, args.gpu_start)
+    prepare(args.output, args.campaign, args.entity, args.mode, args.gpu_start,
+            args.baseline_root)
   elif args.action == 'smoke':
     smoke(args.output)
   else:
