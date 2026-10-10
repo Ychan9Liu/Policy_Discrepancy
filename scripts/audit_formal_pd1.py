@@ -146,6 +146,10 @@ def main(args):
         'formal/overall_group_auc': overall['auc_return_per_budget'],
         'formal/overall_group_tail': overall['tail_mean_return'],
         'formal/return_metrics_complete': True}
+    config_json = json.dumps(config, sort_keys=True, separators=(',', ':'),
+                             allow_nan=False)
+    values.update({'formal/exact_config_json': config_json,
+        'formal/exact_config_sha256': hashlib.sha256(config_json.encode()).hexdigest()})
     if row['group'] in ('baseline', 'constant'):
       artifact = (directory / 'c_frozen.json' if row['group'] == 'baseline'
                   else Path(config['run.frozen_c_file']))
