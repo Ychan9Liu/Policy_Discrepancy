@@ -1,0 +1,93 @@
+{
+  "audit_version": "DL-opportunity-independent-v1",
+  "scope": "CPU NumPy on fixed exported arrays; no new policy/physics inference",
+  "script_sha256": "606c5e59caaaecfbdfa393c4fa8cf226d6f753304f1a69bb3992ca37e438d323",
+  "stages": {
+    "1000000": {
+      "C_auc": 0.5116475858636137,
+      "C_minus_D": -0.013091090094574431,
+      "D_auc": 0.5247386759581881,
+      "all_32_artifact_hashes_verified": true,
+      "blind_positions": 384,
+      "counts": {
+        "gray": {
+          "episodes": 24,
+          "positions": 130
+        },
+        "joint": {
+          "episodes": 18,
+          "positions": 27
+        },
+        "negative": {
+          "episodes": 24,
+          "positions": 205
+        },
+        "positive": {
+          "episodes": 22,
+          "positions": 49
+        },
+        "useful_cue": {
+          "episodes": 22,
+          "positions": 62
+        }
+      },
+      "joint_mean_C": 0.0013426056614628545,
+      "maximum_gate_recomputation_error": 6.631950960622746e-07,
+      "params_unchanged": true,
+      "positive_H1_nonpositive": 26,
+      "prior_invariance_exact": true,
+      "release_ratio": 0.0008102934074801241,
+      "release_ratio95": [
+        0.0004005937042804529,
+        0.0013347278834575725
+      ],
+      "report_sha256": "423c21026574e6a8ed27c80b4d038946e43b5276520316fc8d3dd706239171dd",
+      "sequence_prefix_exact": true,
+      "status": "H100 joint coverage insufficient; no short training",
+      "training_ready": false
+    },
+    "300000": {
+      "C_auc": 0.5080117724002616,
+      "C_minus_D": 0.05072759973839114,
+      "D_auc": 0.4572841726618705,
+      "all_32_artifact_hashes_verified": true,
+      "blind_positions": 384,
+      "counts": {
+        "gray": {
+          "episodes": 18,
+          "positions": 69
+        },
+        "joint": {
+          "episodes": 24,
+          "positions": 93
+        },
+        "negative": {
+          "episodes": 24,
+          "positions": 176
+        },
+        "positive": {
+          "episodes": 24,
+          "positions": 139
+        },
+        "useful_cue": {
+          "episodes": 24,
+          "positions": 150
+        }
+      },
+      "joint_mean_C": 0.0016285495091510076,
+      "maximum_gate_recomputation_error": 2.8679757346772305e-07,
+      "params_unchanged": true,
+      "positive_H1_nonpositive": 65,
+      "prior_invariance_exact": true,
+      "release_ratio": 0.0014653082759384835,
+      "release_ratio95": [
+        0.0007540200951188172,
+        0.0023214512225539943
+      ],
+      "report_sha256": "ffb303ca898ced5346388360cb5aa3a1b80668a01f7ead94962008dc62708aa8",
+      "sequence_prefix_exact": true,
+      "status": "H100 joint coverage insufficient; no short training",
+      "training_ready": false
+    }
+  }
+}

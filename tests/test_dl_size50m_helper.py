@@ -1,4 +1,4 @@
-"""DL-engineering-r6 tiny production Agent regression, CPU only.
+"""DL-engineering-r7 tiny production Agent regression, CPU only.
 
 Executes the same accessed-parameter probe gradient helper used by the real
 size50m worker. This is a small engineering fixture, not size50m evidence.
@@ -24,7 +24,7 @@ class Size50mHelperTest(unittest.TestCase):
     self.assertEqual(result.returncode, 0,
         result.stdout[-4000:] + result.stderr[-4000:])
     report = json.loads(result.stdout.strip().splitlines()[-1])
-    self.assertEqual(report['code_version'], 'DL-engineering-r6')
+    self.assertEqual(report['code_version'], 'DL-engineering-r7')
     self.assertGreater(report['tested_count'], 0)
     self.assertGreater(report['unaccessed_state_count'], 0)
     self.assertEqual(report['tested_modules'], ['dyn', 'pol', 'rew'])
@@ -119,8 +119,7 @@ def production_agent_fixture():
       agent.model.loss, agent.model.modules, has_aux=True)(
           c, o, p, True, dl_logging=False)))
   _, (_, _, _, grad_aux) = grad_fn(agent.params, loss_carry, obs, prevact, seed=seed)
-  log_fn = jax.jit(lambda s, c, d, k: helper.read_only_logging(agent.model, s, c, d, k))
-  log_state, (log_metrics, log_features, accessed) = log_fn(
+  log_state, (log_metrics, log_features, accessed) = helper.read_only_logging(agent,
       agent.params, carry, data, seed)
   jax.block_until_ready(log_features)
   with jax._src.config.explicit_device_get_scope():

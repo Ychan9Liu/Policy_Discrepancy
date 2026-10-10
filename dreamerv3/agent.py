@@ -288,49 +288,26 @@ class Agent(embodied.jax.Agent):
       outs['dl'] = dl_signals
     return loss, (carry, entries, outs, metrics)
 
-  def log_train(self, carry, data, return_features=False):
-    """DL logging from the pre-update state and actual loss sampling stream.
+  def log_train_collect(self, carry, obs, prevact):
+    """DL-engineering-r7: preserve the complete loss-and-gradient outputs.
 
-    Optimizer's nj.grad consumes one key for its prerun and the next for its
-    value-and-gradient call. Replay context consumes no key. Reproduce that
-    derivation in this separate context; never modify parameters or consume a
-    new batch seed. return_features is only for independent sampling audits.
+    A reduced forward can change CUDA rounding and subsequent categorical
+    samples. The wrapper materializes this complete separate JIT before scoring
+    its features. Normalization updates occur only on a discarded copied state.
+    No optimizer, slow target or parameter update is performed here.
     """
-    carry, obs, prevact, _ = self._apply_replay_context(carry, data)
-    nj.seed(optional=True)  # Same key reserved by nj.grad's prerun.
-    loss_seed = nj.seed(optional=True)
-    _, (metrics, features), _, modified, created = nj.pure(
-        self._log_train_observe, nested=True)(
-        dict(nj.context()), carry, obs, prevact, seed=loss_seed,
-        create=False, modify=True, track=True)
-    # nj.scan needs modify=True for parameter-access discovery in its prerun.
-    # The isolated copy may nevertheless perform no writes or creations.
-    if modified or created:
-      raise RuntimeError(f'DL logging attempted state mutation: {modified}, {created}')
-    return (metrics, features) if return_features else metrics
+    return nj.grad(self.loss, self.modules, has_aux=True)(
+        carry, obs, prevact, True, dl_logging=False)
 
-  def _log_train_observe(self, carry, obs, prevact):
-    enc_carry, dyn_carry, _ = carry
-    reset = obs['is_first']
-    _, _, tokens = self.enc(enc_carry, obs, reset, training=True)
-    _, _, losses, repfeat, _, probe = self.dyn.loss(
-        dyn_carry, tokens, prevact, reset, training=True, rep_probe=True)
-    rep_before, signal = losses['rep'], None
-    # Preserve the original v1 overlay in the optimizer graph and its ordering
-    # before DL when logging alongside a pre-existing representation probe.
-    if self.rep_probe_active:
-      weight, _, signal = rep_probe.overlay(
-          self, repfeat, probe['prior_logit'], probe['rep_raw'], rep_before,
-          self.rep_probe_mode, self.config.rep_probe.alpha,
-          self.config.rep_probe.c, self.config.seed, self.opt.step.read(),
-          return_signal=True)
-      if self.rep_probe_mode != 'logging':
-        rep_before = weight * rep_before
+  def log_train_score(self, repfeat, rep_before, obs, prevact):
+    """Read-only DL metrics on features returned by the complete gradient JIT."""
+    prior = self.dyn._prior(repfeat['deter'])
+    raw = self.dyn._dist(repfeat['logit']).kl(self.dyn._dist(prior))
     _, metrics, _ = dt_latch.overlay(
-        self, repfeat, probe['prior_logit'], probe['rep_raw'], rep_before,
+        self, repfeat, prior, raw, rep_before,
         obs, prevact, self.config.dt_latch, self.config.seed,
-        self.opt.step.read(), signal)
-    return metrics, dict(tokens=tokens, repfeat=repfeat)
+        self.opt.step.read())
+    return metrics
 
   def report(self, carry, data):
     if not self.config.report:

@@ -9,7 +9,9 @@
 - 确定9e6da39上的完整tiny Agent/回归/CPU物理验证已完成。真实300k/1m各32 episode的主诊断也完成：关键正例及cue覆盖不足，活跃释放仅0.12944%/0.22305%，原幅度门未满足，P对照不充分。当前不进入短训练、尚未形成可正式实验的方法。详见 `docs/DL_R1_RESULTS.md` 和小型科学汇总。
 - 真实size50m GPU7 attempt03五组执行完，但logging两项optimizer状态与off不严格相等，整体验收失败；必要工程修复进行中，不放宽标准。18个预定calibration帧的像素/视觉审查通过有限背景检查，灰body仍保留姿态轮廓，不能当作完全关键线索剥夺；背景尾部反例保留。
 - sv3入口已恢复，源checkpoint与实际CUDA/EGL均核验，隔离worktrees已部署；原checkout干净d9be557保持。实际运行仅分配GPU4–7；占用以 `docs/DL_VALIDATION_LOG.md` 带时间记录及每次启动核查为准。采集/score峰值约2.5GiB、完整工程检查采样峰值6665MiB。最低1卡串行可做，4卡足够并行；20.4 GPU小时只是条件18条短训练的旧吞吐外推，不是当前已批准启动或总ETA。
-- 首选继续本次已授权任务：完成logging隔离修复的确定提交与真实CUDA重验，独立审计新H100数组。clean 5765c89 在sv3 CPU通过14项diagnostic、6项opportunity检查及84项真实H100恢复/prefix检查，重复误差0；两阶段新GPU4/5采集/评分和CPU分析均exit0。各384 blind位置的joint为93/27，初判limited_opportunity；300k正负标签覆盖充分但C AUROC约.508，不支持当前H1辨别。独立复算待完成，停止继续延H或调标签；诊断机会不等于gate有效，不能绕过原失败门槛直接训练；完整目标保持未完成。
+- H100两阶段和独立NumPy审计均完成，见 `docs/DL_OPPORTUNITY_RESULTS.md`。joint为93/27，均覆盖不足；300k正负标签已足够但C AUROC约.508，原H1辨别不获支持。300k真实cue损害子集上，gate平均更多保护剥夺状态，保留为反例。停止延H/调标签/直接放大gate；不进入短训练。
+- logging r5/r6真实CUDA诊断显示：真实完整单步更新、梯度/loss/原抽样与off相等，但精简日志前向重新计算的recurrent特征/离散抽样不精确一致，仍未通过。r7改为完整独立loss-and-gradient JIT取特征、另一个只读JIT评分；副本的normalization更新被丢弃，参数/optimizer/target写入禁止。dirty CPU两次完整更新与写入拒绝验收通过，真实CUDA仍待新attempt。
+- 首选继续本次已授权任务：r7确定提交CPU/GPU验收，并完成 `docs/DL_PREDICTIVE_DIAGNOSTIC.md` 冻结的calibration-only有限控制H10预测技能诊断。仅现有8 calibration episode，6固定控制，先GPU4/300k，主H10、H1/3描述；不读新blind数组、不采用新gate。源码及4项CPU工程检查（含真实18分支复原）已完成，GPU尚未执行。诊断技能不等于gate/正式方法，完整目标保持未完成。
 
 ## 01 研究归档日志：DtLatch（奖励闩，2026-10-10）
 

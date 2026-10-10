@@ -147,19 +147,35 @@ class Agent(embodied.Agent):
         **shared_kwargs)
     if (getattr(self.model, 'dt_latch_active', False) and
         self.model.config.dt_latch.mode == 'logging'):
-      pure_log = nj.pure(self.model.log_train)
-      def read_only_log(*args, **kwargs):
-        state, metrics, _, modified, created = pure_log(
+      self._log_context = jax.jit(self.model._apply_replay_context)
+      pure_collect = nj.pure(self.model.log_train_collect)
+      def copied_collect(*args, **kwargs):
+        state, bundle, accessed, modified, created = pure_collect(
             *args, create=False, modify=True, track=True, **kwargs)
-        # Ninjax scan discovers parameter reads only when modify is enabled.
-        # Track on a copied context and reject every attempted state write.
+        # loss normalizers update the copied context. Discard these results and
+        # forbid every parameter/optimizer/target write or any state creation.
+        forbidden = {k for k in modified if not k.startswith(
+            ('retnorm/', 'valnorm/', 'advnorm/'))}
+        if forbidden or created:
+          raise RuntimeError(f'DL collector attempted forbidden mutation: {forbidden}, {created}')
+        self._log_collect_accessed = tuple(sorted(accessed))
+        self._log_collect_scratch_modified = tuple(sorted(modified))
+        return state, bundle
+      # Keep every gradient and aux output at this separate JIT boundary. Do not
+      # nest it in the score JIT, which would prune the unused gradient graph.
+      self._log_collect = jax.jit(copied_collect)
+      self._log_collect_read_only = copied_collect
+      def read_only_score(*args, **kwargs):
+        state, metrics, _, modified, created = nj.pure(self.model.log_train_score)(
+            *args, create=False, modify=True, track=True, **kwargs)
         if modified or created:
-          raise RuntimeError(f'DL logging attempted state mutation: {modified}, {created}')
+          raise RuntimeError(f'DL scoring attempted state mutation: {modified}, {created}')
         return state, metrics
-      read_only_log._is_pure = True
-      self._log_train = transform.apply(
-          read_only_log, self.train_mesh, (tp, tm, ts, ts), (tm,), ar,
-          single_output=True, first_outnums=(0,), **shared_kwargs)
+      read_only_score._is_pure = True
+      self._log_score_read_only = read_only_score
+      self._log_score = transform.apply(
+          read_only_score, self.train_mesh, (tp, tm, ts, ts, ts, ts),
+          (tm,), ar, single_output=True, first_outnums=(0,), **shared_kwargs)
     self._report = transform.apply(
         nj.pure(self.model.report), self.train_mesh,
         (tp, tm, ts, ts), (ts, tm), ar,
@@ -294,8 +310,8 @@ class Agent(embodied.Agent):
     dona = {k: v for k, v in self.params.items() if k not in self.policy_keys}
     with self.train_lock:
       log_mets = {}
-      if hasattr(self, '_log_train'):
-        log_mets = self._log_train(self.params, seed, carry, data)
+      if hasattr(self, '_log_collect'):
+        log_mets = self.log_train_diagnostics(carry, data, seed)
         # The optimizer donates buffers. Finish all read-only diagnostic reads
         # before donating the same pre-update parameter buffers.
         jax.block_until_ready(log_mets)
@@ -352,6 +368,21 @@ class Agent(embodied.Agent):
     self.pending_outs = None
     self.pending_mets = None
     return outs, mets
+
+  def log_train_diagnostics(self, carry, data, seed, return_features=False):
+    """DL-engineering-r7: compose two separate JITs without touching params."""
+    ca, obs, prevact, _ = self._log_context(carry, data)
+    scratch, bundle = self._log_collect(self.params, ca, obs, prevact, seed=seed)
+    jax.block_until_ready((scratch, bundle))
+    _, _, _, aux = bundle
+    outs = aux[2]
+    features = dict(tokens=outs['tokens'], repfeat=outs['repfeat'])
+    metrics = self._log_score(self.params, seed, outs['repfeat'],
+        outs['losses']['rep'], obs, prevact)
+    jax.block_until_ready(metrics)
+    # Neither scratch normalization state nor the computed gradients are used
+    # by the real optimizer. Its unchanged graph performs the only real update.
+    return (metrics, features) if return_features else metrics
 
   def set_eval_seed(self, seed):
     """Begin one evaluation episode in an independent policy RNG stream."""

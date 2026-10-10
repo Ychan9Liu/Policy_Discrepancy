@@ -1,4 +1,4 @@
-"""DL-engineering-r6: real-image size50m engineering and compression inspection.
+"""DL-engineering-r7: real-image size50m engineering and compression inspection.
 
 Runs isolated paired groups from a trusted checkpoint and independently
 collected episode NPZs. No environment construction, rendering, or training
@@ -25,7 +25,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-VERSION = 'DL-engineering-r6'
+VERSION = 'DL-engineering-r7'
 GROUPS = ('off', 'alpha0', 'rho0', 'logging', 'dtlatch')
 
 
@@ -198,16 +198,13 @@ def probe_shared_gradients(model, repfeat, obs, prevact, alpha, rho):
   return nj.grad(objective, targets)(repfeat, obs, prevact)
 
 
-def read_only_logging(model, state, carry, data, seed):
-  """Audit the separate logger on dynamic pre-update state and batch inputs."""
-  import ninjax as nj
-  state, result, accessed, modified, created = nj.pure(
-      lambda c, d: model.log_train(c, d, return_features=True))(
-          state, carry, data, seed=seed, create=False, modify=True, track=True)
-  if modified or created:
-    raise AssertionError('Logging audit attempted model state mutation')
-  metrics, features = result
-  return state, (metrics, features, len(accessed))
+def read_only_logging(agent, state, carry, data, seed):
+  """Use the actual two-JIT wrapper; nesting would prune gradient outputs."""
+  if state is not agent.params:
+    raise AssertionError('Logging audit requires actual pre-update parameter state')
+  metrics, features = agent.log_train_diagnostics(carry, data, seed,
+      return_features=True)
+  return agent.params, (metrics, features, len(agent._log_collect_accessed))
 
 
 def worker(args):
@@ -299,8 +296,7 @@ def worker(args):
   logging_audit, logging_errors = None, []
   if args.worker == 'logging':
     batch_inputs = {k: v for k, v in prepared.items() if k != 'seed'}
-    log_fn = jax.jit(lambda s, c, d, k: read_only_logging(model, s, c, d, k))
-    log_state, (log_metrics, log_features, accessed) = log_fn(
+    log_state, (log_metrics, log_features, accessed) = read_only_logging(agent,
         agent.params, carry, batch_inputs, seed)
     jax.block_until_ready((log_metrics, log_features))
     if hashes(log_state) != initial_hashes:

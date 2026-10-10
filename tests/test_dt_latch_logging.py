@@ -46,7 +46,7 @@ def snapshot(mode, output):
       dict(action=elements.Space(np.float32, (2,))), elements.Config(**flat,
           logdir=str(Path(output).parent / mode), seed=7, jax=config.jax,
           batch_size=2, batch_length=3, replay_context=1))
-  assert hasattr(agent, '_log_train') == (mode == 'logging')
+  assert hasattr(agent, '_log_collect') == (mode == 'logging')
   data = agent._zeros(agent.spaces, (2, 4))
   data['vector'][:] = np.arange(40, dtype=np.float32).reshape(2, 4, 5) / 40
   data['reward'][:] = [[0, -.5, .25, 1], [.1, .5, -.25, .75]]
@@ -90,15 +90,6 @@ def snapshot(mode, output):
   grad_fn = jax.jit(nj.pure(lambda c, o, p: nj.grad(
       agent.model.loss, agent.model.modules, has_aux=True)(
           c, o, p, True, dl_logging=False)))
-  if mode == 'logging':
-    pure_log = nj.pure(lambda c, d: agent.model.log_train(c, d, return_features=True))
-    def read_only_log(state, c, d, seed):
-      state, result, _, modified, created = pure_log(
-          state, c, d, seed=seed, create=False, modify=True, track=True)
-      if modified or created:
-        raise RuntimeError(f'DL logging attempted state mutation: {modified}, {created}')
-      return state, result
-    audit_log = jax.jit(read_only_log)
   for step in range(2):
     raw = {k: np.array(v, copy=True) for k, v in data.items()}
     if step:
@@ -118,9 +109,10 @@ def snapshot(mode, output):
     add(f'step{step}/loss/', aux[2]['losses'])
     add(f'step{step}/rng/', seed)
     if mode == 'logging':
-      unchanged, (log, features) = audit_log(agent.params, carry, batch,
-          seed=seed)
-      exact(unchanged, agent.params)
+      before = host(agent.params)
+      log, features = agent.log_train_diagnostics(carry, batch, seed,
+          return_features=True)
+      exact(before, agent.params)
       exact(features, dict(tokens=aux[2]['tokens'], repfeat=aux[2]['repfeat']))
       sampling_checks += 1
       assert 'dl/D_valid_mean' in log and float(host(log['dl/valid_count'])) > 0
@@ -140,21 +132,42 @@ def snapshot(mode, output):
         if not k.startswith('dl/')})
   write_rejected = False
   if mode == 'logging':
-    original_observe = agent.model._log_train_observe
-    def attempted_write(ca, ob, pa):
-      result = original_observe(ca, ob, pa)
+    original_score = agent.model.log_train_score
+    def attempted_write(feat, rep, ob, pa):
+      result = original_score(feat, rep, ob, pa)
       agent.model.opt.step.write(agent.model.opt.step.read() + 1)
       return result
-    agent.model._log_train_observe = attempted_write
+    agent.model.log_train_score = attempted_write
     before = host(agent.params)
     try:
-      jax.jit(nj.pure(agent.model.log_train))(agent.params, carry, batch, seed=seed)
+      jax.jit(agent._log_score_read_only)(agent.params, aux[2]['repfeat'],
+          aux[2]['losses']['rep'], obs, previous, seed=seed)
     except RuntimeError as error:
       assert 'opt/step' in str(error)
       write_rejected = True
     finally:
-      agent.model._log_train_observe = original_observe
+      agent.model.log_train_score = original_score
     assert write_rejected
+    exact(agent.params, before)
+    original_loss = agent.model.loss
+    def collector_write(*args, **kwargs):
+      result = original_loss(*args, **kwargs)
+      agent.model.opt.step.write(agent.model.opt.step.read() + 1)
+      return result
+    agent.model.loss = collector_write
+    collector_rejected = False
+    try:
+      # A fresh function forces tracing after fault injection; jitting the same
+      # previously compiled callable would legitimately reuse its old program.
+      jax.jit(lambda *a, **k: agent._log_collect_read_only(*a, **k))(
+          agent.params, loss_carry,
+          obs, previous, seed=seed)
+    except RuntimeError as error:
+      assert 'opt/step' in str(error)
+      collector_rejected = True
+    finally:
+      agent.model.loss = original_loss
+    assert collector_rejected
     exact(agent.params, before)
   np.savez(output, **arrays)
   Path(str(output) + '.json').write_text(json.dumps(dict(mode=mode,

@@ -1,6 +1,6 @@
 # DL 验证日志与证据索引
 
-版本 **DL-engineering-r5 / DL-protocol-r1 / DL-opportunity-r1**，2026-10-10。整体目标**未完成**：真实r1两阶段主诊断完成，当前幅度判据未满足且关键标签覆盖不足；真实size50m attempt03也因logging optimizer状态差异未通过。必要logging隔离修复已实施，真实CUDA重验未完成；新H100采集/评分及初步分析完成，独立复算未完成。进程exit0、文件完整或工程fixture通过均不等于方法有效。
+版本 **DL-engineering-r7 / DL-protocol-r1 / DL-opportunity-r1 / DL-predictive-r1**，2026-10-10。整体目标**未完成**：r1及新H100真实诊断、独立审计均完成，当前H1 gate辨别及幅度未获支持；logging r5/r6已隔离真实更新，但精简日志特征未精确一致，r7仍待CUDA验收；新增有限控制预测技能诊断尚未GPU执行。进程exit0、文件完整或工程fixture通过均不等于方法有效。
 
 本日志区分历史证据和当前状态。运行状态依据本轮根 Agent 已核查的收据；本次H100启动前资源快照为 **2026-10-10 18:35:43 北京时间**，GPU4–7各0MiB且无可见作业，不代表持续空闲。GPU0/2有未知其他作业，未触碰。科研定义、冻结分割与筛选标准仍以 [DL_PREVALIDATION.md](DL_PREVALIDATION.md) 和 [DL_PREVALIDATION_REVIEW.md](DL_PREVALIDATION_REVIEW.md) 为准。
 
@@ -15,6 +15,8 @@
 | `3721103a081e6e667ca2329a0b221cf8d0aeb5ef` | DL-engineering-r3，仅改 size50m 梯度验收 helper 及其测试；对 probe 实际访问的参数逐叶检查，未读取状态明确列为不依赖；clean 提交上2项 helper 测试通过 |
 | `55a527c620fb14339ee00f76f045a5dfddc81068` | DL-engineering-r4，将CUDA prior/v动态传入独立局部梯度检查，避免闭包常量触发transfer guard；没有改变stop-gradient、均值、free-nats或容差；本机helper2项通过，真实GPU7 attempt03五worker执行完成但paired整体验收失败 |
 | `5765c893a419a59db46e5a3e3197af20b9059757` | 原r1裁决与H100机会协议/字段/独立分析；原r1覆盖充分而幅度不足分类修正为not_supported，数值和阈值未改。sv3 clean CPU 14项diagnostic及6项opportunity检查通过；84项真实H100恢复/prefix检查通过。新seed20261012 GPU4/5采集/评分使用此确定版本 |
+| `bd8bd4dd11fc5f251435487d810bc8d277c5152f` | r5 logging独立精简前向；sv3 clean CPU 13项dt_latch（含完整9个Agent快照、2个真实逻辑CPU设备）、logging1项两次完整更新、helper1项、rep_probe5项均通过；GPU7 attempt04在logging特征exact处失败，off/alpha0/rho0完成 |
+| `ed2afde0274694bace1c42086f3ceb2d3c4530af` | r6只改helper失败证据记录，不改生产模型；sv3 clean helper1项通过14.384秒。GPU7 logging-features-attempt05完成观察及单步重放，但exact失败仍exit1；日志对应训练更新已与r5 off严格相等，重算recurrent特征不相等 |
 
 最近真实size50m工程执行SHA为 `55a527c620fb14339ee00f76f045a5dfddc81068`。9e之后至55的三个提交未改 `dreamerv3/` 方法代码，也未改科学配置、筛选阈值或精确比较条件。后续logging分离和机会helper尚需另记确定提交及实测；不能将文档提交或当前HEAD写成所有旧运行的执行版本。
 
