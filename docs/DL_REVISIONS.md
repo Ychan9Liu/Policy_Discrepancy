@@ -170,7 +170,7 @@ rawK=KL(q||p)是观测改变latent分布的量，在Dreamer内部已可取得，
 KL(Pi_q || Pi_p) <= KL(q || p) = K
 ```
 
-证明是联合q(z)pi(a|h,z)与p(z)pi(a|h,z)的KL等于K，边际化z不能增加KL。该data-processing结论只适用于真实策略边际的KL；不约束r1的modal W2代理，也不能拿有限MC超界值硬clip到K来伪造一致。[信息处理原作者论文](https://arxiv.org/abs/1405.3629)
+证明是联合q(z)pi(a|h,z)与p(z)pi(a|h,z)的KL等于K，边际化z不能增加KL。该data-processing结论只适用于真实策略边际的有向KL；不直接约束r1的共享h、categorical mode条件Gaussian对称KL/actiondim代理，也不能拿有限MC超界值硬clip到K来伪造一致。[信息处理原作者论文](https://arxiv.org/abs/1405.3629)
 
 **首选建议**先用K做既有D/K分层、检查e在固定D/K后的增量、区分large-K nuisance与真实关键新信息；再比较K-only、D+K、e-only、D+K+e，避免任意添加第三门后无法证明必要性。K在原free-nats之上仅表明rep梯度可活跃，不代表应保护；乘一个随K增加的函数还可能保护更多背景，乘一个随K减小的函数又可能漏掉真正新事件。
 

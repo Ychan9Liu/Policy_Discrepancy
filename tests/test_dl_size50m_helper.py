@@ -1,4 +1,4 @@
-"""DL-engineering-r4 tiny production Agent regression, CPU only.
+"""DL-engineering-r5 tiny production Agent regression, CPU only.
 
 Executes the same accessed-parameter probe gradient helper used by the real
 size50m worker. This is a small engineering fixture, not size50m evidence.
@@ -24,12 +24,14 @@ class Size50mHelperTest(unittest.TestCase):
     self.assertEqual(result.returncode, 0,
         result.stdout[-4000:] + result.stderr[-4000:])
     report = json.loads(result.stdout.strip().splitlines()[-1])
-    self.assertEqual(report['code_version'], 'DL-engineering-r4')
+    self.assertEqual(report['code_version'], 'DL-engineering-r5')
     self.assertGreater(report['tested_count'], 0)
     self.assertGreater(report['unaccessed_state_count'], 0)
     self.assertEqual(report['tested_modules'], ['dyn', 'pol', 'rew'])
     self.assertEqual(report['probe_gradient_norm'], 0.)
     self.assertTrue(report['state_unchanged'])
+    self.assertTrue(report['logging_sampling_exact'])
+    self.assertTrue(report['logging_state_unchanged'])
 
 
 def production_agent_fixture():
@@ -61,7 +63,7 @@ def production_agent_fixture():
       'jax.precompile': False, 'jax.profiler': False,
       'jax.enable_policy': False, 'agent.imag_length': 2,
       'agent.imag_last': 2, 'agent.rep_probe.mode': 'off',
-      'agent.dt_latch.mode': 'off'}})
+      'agent.dt_latch.mode': 'logging'}})
   obs_space = dict(vector=elements.Space(np.float32, (5,)),
       reward=elements.Space(np.float32), is_first=elements.Space(bool),
       is_last=elements.Space(bool), is_terminal=elements.Space(bool))
@@ -113,9 +115,26 @@ def production_agent_fixture():
       np.testing.assert_array_equal(np.asarray(state[key]), np.asarray(agent.params[key]))
     norm = float(jax.device_get(jax.jit(optax.global_norm)(gradients)))
   assert norm == 0.
+  grad_fn = jax.jit(nj.pure(lambda c, o, p: nj.grad(
+      agent.model.loss, agent.model.modules, has_aux=True)(
+          c, o, p, True, dl_logging=False)))
+  _, (_, _, _, grad_aux) = grad_fn(agent.params, loss_carry, obs, prevact, seed=seed)
+  log_fn = jax.jit(lambda s, c, d, k: helper.read_only_logging(agent.model, s, c, d, k))
+  log_state, (log_metrics, log_features, accessed) = log_fn(
+      agent.params, carry, data, seed)
+  jax.block_until_ready(log_features)
+  with jax._src.config.explicit_device_get_scope():
+    for a, b in zip(jax.tree.leaves(log_features), jax.tree.leaves(dict(
+        tokens=grad_aux[2]['tokens'], repfeat=grad_aux[2]['repfeat']))):
+      np.testing.assert_array_equal(np.asarray(a), np.asarray(b))
+    for key in agent.params:
+      np.testing.assert_array_equal(np.asarray(log_state[key]), np.asarray(agent.params[key]))
+    assert int(np.asarray(accessed)) > 0
+    assert float(np.asarray(log_metrics['dl/actual_v_mean'])) == 1.
   print(json.dumps(dict(code_version=helper.VERSION, fixture='tiny production Agent CPU',
       tested_count=len(gradients), unaccessed_state_count=len(agent.params) - len(gradients),
-      tested_modules=modules, probe_gradient_norm=norm, state_unchanged=True)))
+      tested_modules=modules, probe_gradient_norm=norm, state_unchanged=True,
+      logging_sampling_exact=True, logging_state_unchanged=True)))
 
 
 if __name__ == '__main__':

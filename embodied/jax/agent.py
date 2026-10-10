@@ -145,6 +145,21 @@ class Agent(embodied.Agent):
         (dona_sharding, allo_sharding, tm, ts, ts), (tp, ts, ts, tm), ar,
         return_params=True, donate_params=True, first_outnums=(3,),
         **shared_kwargs)
+    if (getattr(self.model, 'dt_latch_active', False) and
+        self.model.config.dt_latch.mode == 'logging'):
+      pure_log = nj.pure(self.model.log_train)
+      def read_only_log(*args, **kwargs):
+        state, metrics, _, modified, created = pure_log(
+            *args, create=False, modify=True, track=True, **kwargs)
+        # Ninjax scan discovers parameter reads only when modify is enabled.
+        # Track on a copied context and reject every attempted state write.
+        if modified or created:
+          raise RuntimeError(f'DL logging attempted state mutation: {modified}, {created}')
+        return state, metrics
+      read_only_log._is_pure = True
+      self._log_train = transform.apply(
+          read_only_log, self.train_mesh, (tp, tm, ts, ts), (tm,), ar,
+          single_output=True, first_outnums=(0,), **shared_kwargs)
     self._report = transform.apply(
         nj.pure(self.model.report), self.train_mesh,
         (tp, tm, ts, ts), (ts, tm), ar,
@@ -278,11 +293,19 @@ class Agent(embodied.Agent):
     allo = {k: v for k, v in self.params.items() if k in self.policy_keys}
     dona = {k: v for k, v in self.params.items() if k not in self.policy_keys}
     with self.train_lock:
+      log_mets = {}
+      if hasattr(self, '_log_train'):
+        log_mets = self._log_train(self.params, seed, carry, data)
+        # The optimizer donates buffers. Finish all read-only diagnostic reads
+        # before donating the same pre-update parameter buffers.
+        jax.block_until_ready(log_mets)
       with elements.timer.section('jit_train'):
         with jax.profiler.StepTraceAnnotation(
             'train', step_num=int(self.n_updates)):
           self.params, carry, outs, mets = self._train(
               dona, allo, seed, carry, data)
+      if log_mets:
+        mets = {**mets, **log_mets}
     self.n_updates.increment()
 
     if self.jaxcfg.enable_policy:

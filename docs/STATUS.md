@@ -9,7 +9,7 @@
 - 确定9e6da39上的完整tiny Agent/回归/CPU物理验证已完成。真实300k/1m各32 episode的主诊断也完成：关键正例及cue覆盖不足，活跃释放仅0.12944%/0.22305%，原幅度门未满足，P对照不充分。当前不进入短训练、尚未形成可正式实验的方法。详见 `docs/DL_R1_RESULTS.md` 和小型科学汇总。
 - 真实size50m GPU7 attempt03五组执行完，但logging两项optimizer状态与off不严格相等，整体验收失败；必要工程修复进行中，不放宽标准。18个预定calibration帧的像素/视觉审查通过有限背景检查，灰body仍保留姿态轮廓，不能当作完全关键线索剥夺；背景尾部反例保留。
 - sv3入口已恢复，源checkpoint与实际CUDA/EGL均核验，隔离worktrees已部署；原checkout干净d9be557保持。实际运行仅分配GPU4–7；占用以 `docs/DL_VALIDATION_LOG.md` 带时间记录及每次启动核查为准。采集/score峰值约2.5GiB、完整工程检查采样峰值6665MiB。最低1卡串行可做，4卡足够并行；20.4 GPU小时只是条件18条短训练的旧吞吐外推，不是当前已批准启动或总ETA。
-- 首选继续本次已授权任务：修复并重新验收logging旁路，同时按独立 `DL-opportunity-r1` 以新seed20261012检查H100首动作真实累计后果，保持原H1 gate不变。H100已有84项真实CPU恢复/prefix工程证据；两阶段新GPU采集/评分及机会裁决仍待执行。诊断机会不等于gate有效，不能绕过原失败门槛直接训练；完整目标保持未完成。
+- 首选继续本次已授权任务：完成logging隔离修复的确定提交与真实CUDA重验，独立审计新H100数组。clean 5765c89 在sv3 CPU通过14项diagnostic、6项opportunity检查及84项真实H100恢复/prefix检查，重复误差0；两阶段新GPU4/5采集/评分和CPU分析均exit0。各384 blind位置的joint为93/27，初判limited_opportunity；300k正负标签覆盖充分但C AUROC约.508，不支持当前H1辨别。独立复算待完成，停止继续延H或调标签；诊断机会不等于gate有效，不能绕过原失败门槛直接训练；完整目标保持未完成。
 
 ## 01 研究归档日志：DtLatch（奖励闩，2026-10-10）
 

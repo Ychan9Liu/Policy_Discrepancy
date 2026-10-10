@@ -1,4 +1,4 @@
-"""DL-engineering-r4: real-image size50m engineering and compression inspection.
+"""DL-engineering-r5: real-image size50m engineering and compression inspection.
 
 Runs isolated paired groups from a trusted checkpoint and independently
 collected episode NPZs. No environment construction, rendering, or training
@@ -25,7 +25,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-VERSION = 'DL-engineering-r4'
+VERSION = 'DL-engineering-r5'
 GROUPS = ('off', 'alpha0', 'rho0', 'logging', 'dtlatch')
 
 
@@ -198,6 +198,18 @@ def probe_shared_gradients(model, repfeat, obs, prevact, alpha, rho):
   return nj.grad(objective, targets)(repfeat, obs, prevact)
 
 
+def read_only_logging(model, state, carry, data, seed):
+  """Audit the separate logger on dynamic pre-update state and batch inputs."""
+  import ninjax as nj
+  state, result, accessed, modified, created = nj.pure(
+      lambda c, d: model.log_train(c, d, return_features=True))(
+          state, carry, data, seed=seed, create=False, modify=True, track=True)
+  if modified or created:
+    raise AssertionError('Logging audit attempted model state mutation')
+  metrics, features = result
+  return state, (metrics, features, len(accessed))
+
+
 def worker(args):
   if os.name == 'nt' and args.platform == 'cuda':
     raise RuntimeError('Real CUDA verification runs on assigned Linux server only')
@@ -278,12 +290,30 @@ def worker(args):
   if hashes(cache_state) != initial_hashes:
     raise AssertionError('Context reconstruction changed checkpoint parameters/state')
   grad_fn = jax.jit(nj.pure(lambda c, o, p: nj.grad(model.loss, model.modules,
-      has_aux=True)(c, o, p, True)))
+      has_aux=True)(c, o, p, True, dl_logging=False)))
   start = time.perf_counter()
   _, (total_loss, _, grads, aux) = grad_fn(agent.params, loss_carry, obs, prevact, seed=seed)
   jax.block_until_ready((grads, aux))
   grad_seconds = time.perf_counter() - start
   repfeat = aux[2]['repfeat']
+  logging_audit = None
+  if args.worker == 'logging':
+    batch_inputs = {k: v for k, v in prepared.items() if k != 'seed'}
+    log_fn = jax.jit(lambda s, c, d, k: read_only_logging(model, s, c, d, k))
+    log_state, (log_metrics, log_features, accessed) = log_fn(
+        agent.params, carry, batch_inputs, seed)
+    jax.block_until_ready((log_metrics, log_features))
+    if hashes(log_state) != initial_hashes:
+      raise AssertionError('Separate logging audit changed pre-update state')
+    expected_features = dict(tokens=aux[2]['tokens'], repfeat=repfeat)
+    if hashes(log_features) != hashes(expected_features):
+      raise AssertionError('Separate logger sampling differs from actual loss sampling')
+    log_host = host(log_metrics)
+    if not log_host or any(not np.isfinite(x).all() for x in log_host.values()):
+      raise AssertionError('Logging audit produced missing or non-finite metrics')
+    logging_audit = dict(features_exact=True, state_unchanged=True,
+        accessed_state_count=int(host(accessed)),
+        feature_hashes=hashes(log_features), metric_keys=sorted(log_metrics))
   def signals(feat, obs, prevact):
     prior = model.dyn._prior(feat['deter'])
     raw_k = model.dyn._dist(feat['logit']).kl(model.dyn._dist(jax.lax.stop_gradient(prior)))
@@ -303,7 +333,7 @@ def worker(args):
   if probe_norm != 0 or not probe_all_zero:
     raise AssertionError('Probe leaked gradient into shared model parameters')
   def other_loss(c, o, p):
-    losses = model.loss(c, o, p, True)[1][2]['losses']
+    losses = model.loss(c, o, p, True, dl_logging=False)[1][2]['losses']
     return sum(x.mean() * model.scales[k] for k, x in losses.items() if k != 'rep')
   other_fn = jax.jit(nj.pure(lambda c, o, p: nj.grad(other_loss,
       model.modules)(c, o, p)))
@@ -327,10 +357,20 @@ def worker(args):
   np.testing.assert_allclose(g1, ge, rtol=2e-6, atol=1e-8)
   first_update = time.perf_counter()
   agent.train(carry, dict(prepared))
-  agent.take_train_result()
+  _, actual_metrics = agent.take_train_result()
   jax.block_until_ready(agent.params)
   update_seconds = time.perf_counter() - first_update
   updated_hashes = hashes(agent.params)
+  if args.worker == 'logging':
+    actual_log = {k: v for k, v in actual_metrics.items() if k.startswith('dl/')}
+    if not actual_log or 'dl/D_valid_mean' not in actual_log:
+      raise AssertionError('Actual training omitted DL logging metrics')
+    if any(not np.isfinite(x).all() for x in actual_log.values()):
+      raise AssertionError('Actual training produced non-finite DL logging')
+    if float(actual_log['dl/actual_v_mean']) != 1.:
+      raise AssertionError('Logging changed actual representation weight')
+    logging_audit['actual_train_metric_keys'] = sorted(actual_log)
+    logging_audit['actual_train_v_mean'] = float(actual_log['dl/actual_v_mean'])
   # Re-load, repeat exactly one update; not a continuing training run.
   agent.load(checkpoint)
   carry2 = agent.init_train(b)
@@ -365,6 +405,7 @@ def worker(args):
       other_gradient_norm=float(host(norm(other_grads))),
       probe_shared_gradient_norm=probe_norm,
       probe_shared_gradient_all_zero=probe_all_zero,
+      separate_logging_audit=logging_audit,
       probe_gradient_tested_keys=sorted(probe_grads),
       probe_gradient_tested_count=len(probe_grads),
       probe_unaccessed_state_count=len(agent.params) - len(probe_grads),

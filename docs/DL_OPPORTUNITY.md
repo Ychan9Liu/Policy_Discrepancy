@@ -1,6 +1,6 @@
 # DL 长后果机会诊断
 
-版本：**`DL-opportunity-r1`**，2026-10-10。状态：协议已冻结，尚未执行。本文是当前用户授权内的 **Agent 自主设计**，不是用户逐项确认的设计，也不是方法有效结论。只新增一个外部后果诊断对象；不修改 `DL-protocol-r1`、其阈值、DtLatch H1 信号、gate、alpha/rho、训练配置或原 M2 作业。实现与实际运行须另记完整 SHA。
+版本：**`DL-opportunity-r1`**，2026-10-10。状态：clean `5765c893a419a59db46e5a3e3197af20b9059757` 的服务器CPU检查、两阶段新GPU采集/评分及CPU分析均完成；初步分析判为limited_opportunity，独立数组复算尚待完成。本文是当前用户授权内的 **Agent 自主设计**，不是用户逐项确认的设计，也不是方法有效结论。只新增一个外部后果诊断对象；不修改 `DL-protocol-r1`、其阈值、DtLatch H1 信号、gate、alpha/rho、训练配置或原 M2 作业。实际运行与工程证据见 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
 
 ## 1. 原因及问题
 

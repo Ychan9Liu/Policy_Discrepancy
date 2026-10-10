@@ -1,8 +1,8 @@
 # DL 验证日志与证据索引
 
-版本 **DL-engineering-r4 / DL-protocol-r1**，2026-10-10。整体目标**未完成**：真实r1两阶段主诊断完成，当前幅度判据未满足且关键标签覆盖不足；真实size50m attempt03也因logging optimizer状态差异未通过。必要工程修复及独立H100机会诊断进行中。进程exit0、文件完整或工程fixture通过均不等于方法有效。
+版本 **DL-engineering-r5 / DL-protocol-r1 / DL-opportunity-r1**，2026-10-10。整体目标**未完成**：真实r1两阶段主诊断完成，当前幅度判据未满足且关键标签覆盖不足；真实size50m attempt03也因logging optimizer状态差异未通过。必要logging隔离修复已实施，真实CUDA重验未完成；新H100采集/评分及初步分析完成，独立复算未完成。进程exit0、文件完整或工程fixture通过均不等于方法有效。
 
-本日志区分历史证据和当前状态。运行状态依据本轮根 Agent 已核查的收据；最近一次资源快照为 **2026-10-10 17:39 北京时间**，不代表持续空闲。科研定义、冻结分割与筛选标准仍以 [DL_PREVALIDATION.md](DL_PREVALIDATION.md) 和 [DL_PREVALIDATION_REVIEW.md](DL_PREVALIDATION_REVIEW.md) 为准。
+本日志区分历史证据和当前状态。运行状态依据本轮根 Agent 已核查的收据；本次H100启动前资源快照为 **2026-10-10 18:35:43 北京时间**，GPU4–7各0MiB且无可见作业，不代表持续空闲。GPU0/2有未知其他作业，未触碰。科研定义、冻结分割与筛选标准仍以 [DL_PREVALIDATION.md](DL_PREVALIDATION.md) 和 [DL_PREVALIDATION_REVIEW.md](DL_PREVALIDATION_REVIEW.md) 为准。
 
 ## 版本和同步边界
 
@@ -14,6 +14,7 @@
 | `1280bea7bf409e9cc6fa975704bcb370b8880a0a` | DL-engineering-r2，仅改资源空闲判定及测试；完整 XML/pmon/UUID 作业库存判占用，显存作为真实 telemetry 保留；clean 提交上资源/runner 26项通过 |
 | `3721103a081e6e667ca2329a0b221cf8d0aeb5ef` | DL-engineering-r3，仅改 size50m 梯度验收 helper 及其测试；对 probe 实际访问的参数逐叶检查，未读取状态明确列为不依赖；clean 提交上2项 helper 测试通过 |
 | `55a527c620fb14339ee00f76f045a5dfddc81068` | DL-engineering-r4，将CUDA prior/v动态传入独立局部梯度检查，避免闭包常量触发transfer guard；没有改变stop-gradient、均值、free-nats或容差；本机helper2项通过，真实GPU7 attempt03五worker执行完成但paired整体验收失败 |
+| `5765c893a419a59db46e5a3e3197af20b9059757` | 原r1裁决与H100机会协议/字段/独立分析；原r1覆盖充分而幅度不足分类修正为not_supported，数值和阈值未改。sv3 clean CPU 14项diagnostic及6项opportunity检查通过；84项真实H100恢复/prefix检查通过。新seed20261012 GPU4/5采集/评分使用此确定版本 |
 
 最近真实size50m工程执行SHA为 `55a527c620fb14339ee00f76f045a5dfddc81068`。9e之后至55的三个提交未改 `dreamerv3/` 方法代码，也未改科学配置、筛选阈值或精确比较条件。后续logging分离和机会helper尚需另记确定提交及实测；不能将文档提交或当前HEAD写成所有旧运行的执行版本。
 
@@ -112,6 +113,14 @@ sv3 初期多次 SSH 在认证前关闭，失败证据 `bootstrap/sv3-ssh-202610
 后续每条实际任务都另做该任务版本的 CUDA/EGL probe，绑定单个 `CUDA_VISIBLE_DEVICES` UUID、`CUDA_DEVICE_ORDER=PCI_BUS_ID`、物理 `MUJOCO_EGL_DEVICE_ID`、`MUJOCO_GL=egl`、`PYOPENGL_PLATFORM=egl`；进程内CUDA0。不能沿用bootstrap旧空闲时间，或把GPU4绑定证据外推GPU5–7。r2 fresh resource记录以完整XML+pmon+UUID证明当时无可见作业，实际1MiB保留。17:39北京时间 sv3 GPU4–7均0MiB，是运行结束后的瞬时快照，不构成下一启动核查；GPU0/2未知其他作业未触碰。
 
 XLA报告driver CUDA12.8比PTX编译器12.9.86旧，关闭并行编译；不改驱动/环境，实际耗时包含该影响。最低一张独占A100可串行推进，四张用于独立任务并行，无需多卡模型。六组×3seed×100k=180万动作，旧吞吐外推约20.4 GPU小时纯训练；诊断、编译、评价及新探针开销另计，尚非本轮实测预算或完成时刻承诺。
+
+## 新H100机会诊断实际执行
+
+确定运行SHA `5765c893a419a59db46e5a3e3197af20b9059757`，clean sv3 worktree `/data/Policy_Discrepancy/dl-worktrees/5765c89`。服务器CPU预检exit0：`test_dl_diagnostic.py` 14项通过、9.264秒（含真实FrozenScorer），`test_dl_opportunity.py` 6项通过、2.422秒；真实MuJoCo H100 84项通过、12.382秒，完整参考回放、候选终态/任务/RNG/counter及独立prefix重复最大误差0。证据根 `O=/data/Policy_Discrepancy/runs/dl-opportunity-20261010-5765c89`，分别为 `diagnostic-cpu.log`、`opportunity-cpu.log`、`physics-cpu.json`。这些是实施证据，不是模型机会或方法有效证据。
+
+18:35:43北京时间资源预检后启动：GPU4负责300k、GPU5负责1m，各单GPU size50m/vision64/repeat1、32完整episode（8校准/24盲测），seed20261012；评分16预定位置/H100并共用H1/10/50/100 prefix。alpha20/rho.5、原H1 gate不变，不更新optimizer，无c匹配或训练评价。本轮每阶段collection+score硬预算3600秒；launcher `launch-opportunity-5765c89.sh` 存在外部bootstrap目录，实际hash、资源及CUDA/EGL核验每phase独立写入 `O/cp<stage>-<phase>-attempt01/`。两阶段均exit0，32×16位置齐全。20:30:47北京时间再次核查GPU4–7各0MiB且无可见作业。CPU分析使用同clean SHA，输出 `O/cp<stage>-analysis-attempt01.json`，均为limited_opportunity：300k positive139/negative176/useful-cue150/joint93；1m为49/205/62/27，分母各384。300k C AUROC .508、C−D区间跨0。新结果不覆盖原r1；小数组/收据包SHA256 `405df188f0d431d7e7e2022eafde9a88b0911c8a2d58b94b103e021b7591a2b8`，本机镜像在 `analysis/outputs/dl-opportunity/5765c89/`，独立复算仍待完成。
+
+DL-engineering-r5将logging放入独立只读JIT，在相同pre-update参数/batch/seed上重现实际loss的抽样key，完成诊断读取后才允许optimizer donation；默认off和非logging weighting图保留。两层copied context禁止任何状态创建/写入，独立代码审查未发现阻断问题。dirty CPU小模型两次完整更新验证已完成；新增实际helper抽样/只读fixture1项通过8.012秒。helper先前新增audit漏传nested RNG的失败保留在helper-r5-precommit.log，修正为与生产wrapper相同的顶层pure+显式seed，未改生产随机流。真实CUDA验收尚待确定提交后的新attempt04，不能把此项写成DL-B已通过。
 
 ## 待完成清单
 
