@@ -1,4 +1,4 @@
-"""DL-engineering-r5: real-image size50m engineering and compression inspection.
+"""DL-engineering-r6: real-image size50m engineering and compression inspection.
 
 Runs isolated paired groups from a trusted checkpoint and independently
 collected episode NPZs. No environment construction, rendering, or training
@@ -25,7 +25,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-VERSION = 'DL-engineering-r5'
+VERSION = 'DL-engineering-r6'
 GROUPS = ('off', 'alpha0', 'rho0', 'logging', 'dtlatch')
 
 
@@ -296,7 +296,7 @@ def worker(args):
   jax.block_until_ready((grads, aux))
   grad_seconds = time.perf_counter() - start
   repfeat = aux[2]['repfeat']
-  logging_audit = None
+  logging_audit, logging_errors = None, []
   if args.worker == 'logging':
     batch_inputs = {k: v for k, v in prepared.items() if k != 'seed'}
     log_fn = jax.jit(lambda s, c, d, k: read_only_logging(model, s, c, d, k))
@@ -306,14 +306,27 @@ def worker(args):
     if hashes(log_state) != initial_hashes:
       raise AssertionError('Separate logging audit changed pre-update state')
     expected_features = dict(tokens=aux[2]['tokens'], repfeat=repfeat)
-    if hashes(log_features) != hashes(expected_features):
-      raise AssertionError('Separate logger sampling differs from actual loss sampling')
+    features_equal = hashes(log_features) == hashes(expected_features)
+    feature_differences = {}
+    for key in ('tokens', *sorted(repfeat)):
+      left = log_features['tokens'] if key == 'tokens' else log_features['repfeat'][key]
+      right = expected_features['tokens'] if key == 'tokens' else expected_features['repfeat'][key]
+      lh, rh = host(left), host(right)
+      feature_differences[key] = dict(shape=list(lh.shape), dtype=str(lh.dtype),
+          exact=np.array_equal(lh, rh), differing_values=int(np.count_nonzero(lh != rh)),
+          maximum_absolute_error=float(np.max(np.abs(lh.astype(float) - rh.astype(float)))))
+    if not features_equal:
+      logging_errors.append('Separate logger sampling differs from actual loss sampling')
+    write_json(output / 'logging_feature_check.json', dict(exact=features_equal,
+        differences=feature_differences, actual=hashes(log_features),
+        expected=hashes(expected_features), acceptance_relaxed=False))
     log_host = host(log_metrics)
     if not log_host or any(not np.isfinite(x).all() for x in log_host.values()):
       raise AssertionError('Logging audit produced missing or non-finite metrics')
-    logging_audit = dict(features_exact=True, state_unchanged=True,
+    logging_audit = dict(features_exact=features_equal, state_unchanged=True,
         accessed_state_count=int(host(accessed)),
-        feature_hashes=hashes(log_features), metric_keys=sorted(log_metrics))
+        feature_hashes=hashes(log_features), metric_keys=sorted(log_metrics),
+        differences=feature_differences)
   def signals(feat, obs, prevact):
     prior = model.dyn._prior(feat['deter'])
     raw_k = model.dyn._dist(feat['logit']).kl(model.dyn._dist(jax.lax.stop_gradient(prior)))
@@ -429,9 +442,13 @@ def worker(args):
       ('D', 'm', 'e', 'v', 'f_D', 'ell_q', 'ell_p', 'u_q', 'u_p', 'signed_support')},
       raw_kl=raw_host, actual_v=actual)
   write_json(output / 'summary.json', summary)
-  print(json.dumps(dict(group=args.worker, complete=True,
+  print(json.dumps(dict(group=args.worker, complete=True, accepted=not logging_errors,
       active_protected_fraction=summary['active_protected_fraction'],
       warmed_update_seconds=warm_seconds)), flush=True)
+  if logging_errors:
+    # Complete the isolated engineering observation and preserve evidence, but
+    # keep the same exact acceptance failure and nonzero worker exit code.
+    raise AssertionError('; '.join(logging_errors))
 
 
 def paired(args):
