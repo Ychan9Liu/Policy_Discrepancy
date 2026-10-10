@@ -85,7 +85,7 @@ def matching_stats(rep_raw, candidate_weight, threshold):
 
 
 def overlay(agent, repfeat, prior_logit, rep_raw, rep_before,
-            mode, alpha, c=-1.0, seed=0, step=0):
+            mode, alpha, c=-1.0, seed=0, step=0, return_signal=False):
   """Probe the initialized actor; return the actual rep weight and metrics."""
   qmode = agent.dyn._dist(repfeat['logit']).pred()
   pmode = agent.dyn._dist(prior_logit).pred()
@@ -165,7 +165,10 @@ def overlay(agent, repfeat, prior_logit, rep_raw, rep_before,
       'raw_active_D_near_zero_frac': (active & (d <= 1e-6)).mean(),
       'invalid_D_frac': (~jnp.isfinite(d)).mean(),
   }
-  return weight, {f'dt/{key}': value for key, value in result.items()}
+  result = (weight, {f'dt/{key}': value for key, value in result.items()})
+  if return_signal:  # DL-code-r1: reuse the existing actor calls in logging.
+    return (*result, dict(qmode=qmode, pmode=pmode, D=d))
+  return result
 
 
 def metrics(agent, repfeat, prior_logit, rep_raw, rep_before, alpha):

@@ -85,7 +85,8 @@ def freeze(baseline_dir, output, engineering_fixture=False):
     return existing
   artifact['frozen_at_utc'] = datetime.now(timezone.utc).isoformat()
   payload = json.dumps(artifact, sort_keys=True, indent=2) + '\n'
-  output.write_text(payload, encoding='utf-8')
+  # DL-engineering-r1: preserve the exact hashed UTF-8 payload on Windows too.
+  output.write_bytes(payload.encode('utf-8'))
   output.with_suffix(output.suffix + '.sha256').write_text(
       hashlib.sha256(payload.encode()).hexdigest() + '\n',
       encoding='utf-8')

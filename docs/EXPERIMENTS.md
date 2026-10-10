@@ -1,5 +1,11 @@
 # 实验协议与结果索引
 
+## DL 独立前验证索引（2026-10-10）
+
+DtLatch 当前任务已由用户特许文档、代码、干预和前验证，资源仅 sv3 物理 GPU4–7。独立协议/门槛见 `docs/DL_PREVALIDATION.md`（DL-protocol-r1），理论与代码审查见 `docs/DL_PREVALIDATION_REVIEW.md`，工程证据和运行状态见 `docs/DL_VALIDATION_LOG.md`。当前本地 CPU 验证不能替代真实 size50m/GPU/盲测或方法效果；DL GPU 尚未启动，15:30北京时间服务器入口恢复，15:31:14分配卡只读快照空闲，设备绑定/真实验收待执行。
+
+该索引不改变下面 M2 v1 的任务、方法、校准、seed0/百万步或正在执行的作业。DL 的六组×3 seeds×100k 是诊断和对照通过后的独立短训练设计，不是新的 v1 正式实验；不从历史归档或待运行文件推定验收。
+
 更新日期：2026-10-09。
 
 **2026-10-10最新执行**：baseline/Dt八条均结束，21点×10episode原始return指标及四个正式c完整。用户追加授权constant GPU0–3、global shuffle GPU4–7在sv2从头执行，八条已启动；M2 v1冻结协议、seed0及prealloc=False/JSONL+W&B PD_1/无scope不变。详见 `docs/FORMAL_CONSTANT_SHUFFLE_PD1.md` 的正式c/指标/配置/版本/失败与修复/最新资源索引。下方22:55及更早“未授权/未启动/c未产生”是历史记录，不作为当前状态。

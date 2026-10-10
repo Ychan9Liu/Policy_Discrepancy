@@ -308,7 +308,8 @@ class TwoHot(Output):
       wavg = ((p1 * b1)[..., ::-1] + (p2 * b2)).sum(-1)
       return self.unsquash(wavg)
 
-  def loss(self, target):
+  def target(self, target):
+    """DL-code-r1: exact label encoding shared by loss and detached probes."""
     assert target.dtype == f32, target.dtype
     target = sg(self.squash(target))
     below = (self.bins <= target[..., None]).astype(i32).sum(-1) - 1
@@ -325,6 +326,10 @@ class TwoHot(Output):
     target = (
         jax.nn.one_hot(below, len(self.bins)) * weight_below[..., None] +
         jax.nn.one_hot(above, len(self.bins)) * weight_above[..., None])
+    return target
+
+  def loss(self, target):
+    target = self.target(target)
     log_pred = self.logits - jax.scipy.special.logsumexp(
         self.logits, -1, keepdims=True)
     return -(target * log_pred).sum(-1)

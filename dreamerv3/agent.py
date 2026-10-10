@@ -12,6 +12,7 @@ import optax
 
 from . import rssm
 from . import rep_probe
+from . import dt_latch
 
 f32 = jnp.float32
 i32 = jnp.int32
@@ -36,6 +37,8 @@ class Agent(embodied.jax.Agent):
     self.act_space = act_space
     self.config = config
     rep_probe.validate(config, act_space)
+    dt_latch.validate(config, act_space)
+    self.dt_latch_active = dt_latch.active(config)
     mode = config.rep_probe.mode
     self.rep_probe_mode = mode
     self.rep_probe_active = (
@@ -173,7 +176,7 @@ class Agent(embodied.jax.Agent):
         enc_carry, obs, reset, training)
     dyn_carry, dyn_entries, los, repfeat, mets, probe = self.dyn.loss(
         dyn_carry, tokens, prevact, reset, training,
-        rep_probe=self.rep_probe_active and training)
+        rep_probe=(self.rep_probe_active or self.dt_latch_active) and training)
     losses.update(los)
     metrics.update(mets)
     dec_carry, dec_entries, recons = self.dec(
@@ -243,14 +246,28 @@ class Agent(embodied.jax.Agent):
       losses.update(los)
       metrics.update(prefix(mets, 'reploss'))
 
+    dl_signal = None
     if self.rep_probe_active and training:
       rep_before = losses['rep']
-      weight, probe_metrics = rep_probe.overlay(
+      probe_result = rep_probe.overlay(
           self, repfeat, probe['prior_logit'], probe['rep_raw'],
           rep_before, self.rep_probe_mode, self.config.rep_probe.alpha,
-          self.config.rep_probe.c, self.config.seed, self.opt.step.read())
+          self.config.rep_probe.c, self.config.seed, self.opt.step.read(),
+          return_signal=self.dt_latch_active)
+      weight, probe_metrics = probe_result[:2]
+      if self.dt_latch_active:
+        dl_signal = probe_result[2]
       if self.rep_probe_mode != 'logging':
         losses['rep'] = weight * rep_before
+      metrics.update(probe_metrics)
+
+    if self.dt_latch_active and training:  # DL-code-r1, after free-nats.
+      weight, probe_metrics, dl_signals = dt_latch.overlay(
+          self, repfeat, probe['prior_logit'], probe['rep_raw'], losses['rep'],
+          obs, prevact, self.config.dt_latch, self.config.seed,
+          self.opt.step.read(), dl_signal)
+      if self.config.dt_latch.mode != 'logging':
+        losses['rep'] = weight * losses['rep']
       metrics.update(probe_metrics)
 
     assert set(losses.keys()) == set(self.scales.keys()), (
@@ -261,6 +278,8 @@ class Agent(embodied.jax.Agent):
     carry = (enc_carry, dyn_carry, dec_carry)
     entries = (enc_entries, dyn_entries, dec_entries)
     outs = {'tokens': tokens, 'repfeat': repfeat, 'losses': losses}
+    if self.dt_latch_active and training:
+      outs['dl'] = dl_signals
     return loss, (carry, entries, outs, metrics)
 
   def report(self, carry, data):

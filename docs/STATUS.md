@@ -2,6 +2,14 @@
 
 更新日期：2026-10-10。
 
+## DL 当前：正式实验前验证实施中（2026-10-10）
+
+- 用户已明确授权本任务文档、代码、必要干预和前验证，资源仅 sv3 物理 GPU4–7；本段替代下方 DtLatch 归档时“没有实现/实验授权”的当前解释，历史事实保留。原 M2 v1 作业及协议不变。
+- 当前分支 `codex/dl-prevalidation`，合并基准 `ae8372e42a815824d2e4ec3a527bfb985a81972b`。实施 `DL-code-r1`：detached H1 reward 支持、rep gate、S/P/W 对照、独立诊断及条件短训练入口。当前实际提交/测试 SHA、差异与同步范围以 `docs/DL_VALIDATION_LOG.md` 和实际 Git 为准，不将该基准误称最终运行版。
+- 本机隔离 CPU 已有工程验证和真实无渲染物理复原证据；尚无真实 size50m GPU 验收、segmentation 视觉验收、盲测辨别、短训练或方法有效证据。见 `docs/DL_PREVALIDATION.md`、`docs/DL_PREVALIDATION_REVIEW.md`、`docs/DL_VALIDATION_LOG.md`。
+- sv3 SSH 初期多次在认证前关闭，15:30北京时间恢复；15:31:14快照 hostname lyg0326、A10080GB GPU4–7均0MiB/无计算图形进程，0–2未知作业不干扰；Python3.11.16/pip check通过。原 checkout保持干净 d9be5574878d2c3f117cc6667be844f9a527eb84，checkpoint及CUDA/EGL待核验，尚未启动 DL GPU 作业。启动前再核查，不把本快照当持续空闲承诺。最低 1 卡可串行验证；4 卡足以计划并行，先单卡测实际资源。六组×3 seeds×100k 的旧吞吐纯训练外推约20.4 GPU小时，编译/诊断/评价/新增探针另计。
+- 首选继续本次已授权任务：完成确定提交上的本地验收；恢复连接后核查 sv3 GPU4–7，执行真实模型和独立信号诊断，符合门槛再短训练。方法证据不足时不得将整体目标标为完成，不用跨 chat 交接代替执行。
+
 ## 01 研究归档日志：DtLatch（奖励闩，2026-10-10）
 
 - 用户授权将本轮理论结果归档并由助手命名；候选名为 **DtLatch（奖励闩）**，研究候选 r0／项目内标识 `dt_latch`。完整内容见 `docs/RESEARCH.md` 的 DL-0至DL-8：高Dt成因、raw KL可辨识边界、路线比较、一步真实奖励预测支持gate、工作假设／反例、接口／退化、五组扩展建议、证据缺口和02交接。
