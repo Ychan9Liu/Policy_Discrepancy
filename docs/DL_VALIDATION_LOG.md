@@ -17,10 +17,24 @@
 | `5765c893a419a59db46e5a3e3197af20b9059757` | 原r1裁决与H100机会协议/字段/独立分析；原r1覆盖充分而幅度不足分类修正为not_supported，数值和阈值未改。sv3 clean CPU 14项diagnostic及6项opportunity检查通过；84项真实H100恢复/prefix检查通过。新seed20261012 GPU4/5采集/评分使用此确定版本 |
 | `bd8bd4dd11fc5f251435487d810bc8d277c5152f` | r5 logging独立精简前向；sv3 clean CPU 13项dt_latch（含完整9个Agent快照、2个真实逻辑CPU设备）、logging1项两次完整更新、helper1项、rep_probe5项均通过；GPU7 attempt04在logging特征exact处失败，off/alpha0/rho0完成 |
 | `ed2afde0274694bace1c42086f3ceb2d3c4530af` | r6只改helper失败证据记录，不改生产模型；sv3 clean helper1项通过14.384秒。GPU7 logging-features-attempt05完成观察及单步重放，但exact失败仍exit1；日志对应训练更新已与r5 off严格相等，重算recurrent特征不相等 |
+| `597a3a6374955d9bb31277c1c4678abd709d7369` | r7完整独立loss-and-gradient日志collector、严格只读score；新增calibration-only DL-predictive-r1。sv3 clean CPU 24项通过：dt_latch13项159.810秒、logging1项50.967秒、helper1项16.927秒、rep_probe5项3.537秒、predictive4项7.234秒；pip check通过。21:38后GPU7 attempt06及GPU4/300k预测诊断启动，结果仍待审计 |
 
-最近真实size50m工程执行SHA为 `55a527c620fb14339ee00f76f045a5dfddc81068`。9e之后至55的三个提交未改 `dreamerv3/` 方法代码，也未改科学配置、筛选阈值或精确比较条件。后续logging分离和机会helper尚需另记确定提交及实测；不能将文档提交或当前HEAD写成所有旧运行的执行版本。
+历史attempt03实际SHA为 `55a527c620fb14339ee00f76f045a5dfddc81068`；后续r5/r6/r7的实际版本如上表，不混同。9e之后至55的三个提交未改 `dreamerv3/` 方法代码，也未改科学配置、筛选阈值或精确比较条件。r7改变诊断执行图而保持原optimizer执行图及科学gate；CPU通过不替代CUDA精确状态/特征验收，不能将文档提交或当前HEAD写成所有旧运行的执行版本。
 
-sv3 已部署独立worktree `9e6da39`、`1280bea`、`3721103`、`55a527c`，位置 `/data/Policy_Discrepancy/dl-worktrees/<版本>/`。原 `/data/Policy_Discrepancy/repo` 保持干净d9be557，不修改原作业checkout；SV2仅只读取得checkpoint，没有代码同步或GPU运行。DL分支**未合入main**；初次push连接reset失败，随后成功推送至GitHub `origin/codex/dl-prevalidation` 的3721103。当次成功不冒充后续55或新修改已推送；最终远端SHA须实际再核。不覆盖canonical main既有本地修改。
+sv3 已部署独立worktree `9e6da39`、`1280bea`、`3721103`、`55a527c`、`5765c89`、`bd8bd4d`、`ed2afde`、`597a3a6`，位置 `/data/Policy_Discrepancy/dl-worktrees/<版本>/`。原 `/data/Policy_Discrepancy/repo` 在21:33:39核验仍保持干净d9be557，不修改原作业checkout；SV2仅只读取得checkpoint，没有代码同步或GPU运行。DL分支**未合入main**；最近确认成功push为 `bd8bd4d`，随后ed2/597推送在GitHub:443连接失败，最新远端SHA待再次核验。不覆盖canonical main既有本地修改。
+
+## r7 / predictive启动及CPU证据（21:39快照）
+
+实际提交均为 `597a3a6374955d9bb31277c1c4678abd709d7369`。CPU收据在sv3 `/data/Policy_Discrepancy/runs/dl-engineering-r7-597a3a6-cpu/`，本机镜像 `analysis/outputs/dl-prevalidation/validation-597a3a6/`；5套检查总24项，含真实2个逻辑CPU设备、完整Agent退化/隔离、两次完整日志更新、生产写入拒绝及18个真实物理固定控制重复。CPU fixture不等于真实size50m或方法有效。
+
+启动前21:38:28北京时间，GPU4–7均0MiB、compute/pmon库存无PID；GPU0/2未知作业不触碰。每阶段launcher另生成fresh资源proof及实际CUDA/EGL probe，物理GPU4 UUID `GPU-9c070d5a-ac68-4c26-9522-a790ad874b23`、GPU7 UUID `GPU-c9a4f076-5f8a-8136-9535-7e74e14e895f`，进程内均CUDA0、EGL分别物理4/7。
+
+- GPU7：`R/size50m-cp1000000-attempt06/`，off/alpha0/rho0/logging/N，B16×T64/context1，真实1m checkpoint，原free-nats1、dyn/rep1/.1、ac_grads=False、alpha20/rho.5。完整精确比较条件不变；允许工程单步和同源重放，不是短训练。21:39:33 PID1431993在GPU7初始化/编译，尚未验收。
+- GPU4：`/data/Policy_Discrepancy/runs/dl-predictive-20261010-597a3a6/cp300000-attempt01/`，size50m/vision64/repeat1；8 calibration×16预定位置，6固定控制×H10×真实双重复，seed20261012、统计seed20261016，硬预算3600秒、optimizer0。21:39:33 PID1431893在GPU4初始化/编译，尚未验收。1m是否启动依冻结必要技能条件决定，GPU5/6本轮未用。
+
+上述进程状态均是带时间快照；结束后另记exit、峰值、hash、独立审计和释放卡，不由启动成功推定通过。此前2.5GiB诊断/6.5GiB工程峰值和条件20.4GPU小时仍是旧实测/外推，r7额外梯度图的新成本待测。
+
+**21:43:26更新**：GPU4 predictive attempt01在21:39:15–21:39:49执行后exit1，未产生预测技能裁决，GPU4已释放。错误是新入口假定记录动作必须[-1,1]；源实际为未裁剪Gaussian样本。八条calibration仅文件经hash核验、均有限、范围[-5.10,5.33]，blind数组未读；小证据在 `analysis/outputs/dl-predictive/597a3a6/recorded-action-audit.json`。`DL-predictive-engineering-r2`移除错误样本域假定，仍严格要求10步/float32/有限、原动作保留及真实复原；五固定控制和评分/停止条件不改。dirty CPU4项通过4.475秒，包含[-3,3]原动作真实复原及编码精确，新提交需clean CPU后新attempt，不覆盖attempt01。GPU7 off/alpha0已完成，其余仍运行。
 
 ## 环境与本地证据
 

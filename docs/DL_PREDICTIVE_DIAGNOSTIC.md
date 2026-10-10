@@ -10,6 +10,8 @@
 
 每位置固定6条H10控制：实际记录的10动作序列；零动作10步；每维+.25；每维−.25；正负交替pattern；反pattern，各固定序列10步。后五条与actor/图像/D/e/K无关，均匀报告，不按收益挑控制。实际首动作加共同续行的旧H100标签与这些控制是不同对象。
 
+**工程语义澄清（DL-predictive-engineering-r2）**：源采集直接保存`Agent.policy`返回、传入dm_control的raw Gaussian样本；actor mean经过tanh不表示sample被限制在[-1,1]。八条300k calibration源文件均hash核验，raw范围约[-5.10,5.33]、全部有限。最初入口错误新增“记录动作须在[-1,1]”检查，GPU4 attempt01因此exit1、尚无预测结果。修复保留原raw float32动作及现有精确复原条件，不裁剪/重写source；固定五控制仍±.25不变。CPU真实续行使用跨界raw控制另验编码精确和完整复原；这是输入契约修复，不改变科学对象或接受容差。
+
 真实环境从原完整snapshot复原，各序列重复；逐步reward、终态/task/RNG/counter保持原1e-8要求。记录序列的10个reward须float32编码精确匹配原采集。未满足窗口/终止/复原即停止，不补齐/放宽。最大2阶段×8episode×16位置×6控制×10步×2重复=30720物理步，另计历史前向；不新增采集。
 
 模型路径共享h，四观测变体q与共同p均取categorical mode，从各自初态按相同控制序列确定性core→prior→mode→reward向前10步，不读未来图像或奖励、不新增参数/抽样、所有checkpoint状态不变。未来奖励仅用于事后评分；不能流入t处预测。保存每变体/控制/步的q/p原始logits、bins、预测reward和真实float64序列。

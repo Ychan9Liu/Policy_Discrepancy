@@ -23,7 +23,9 @@ class PredictiveTest(unittest.TestCase):
     np.testing.assert_array_equal(original, before)
     for i in range(1, 6):
       np.testing.assert_array_equal(controls[i], np.repeat(controls[i, :1], 10, 0))
-    for bad in (original[:9], original.astype(np.float64), original * np.nan, original * 2):
+    raw = original * 5
+    np.testing.assert_array_equal(p.control_sequences(raw)[0], raw)
+    for bad in (original[:9], original.astype(np.float64), original * np.nan):
       with self.assertRaises(ValueError):
         p.control_sequences(bad)
 
@@ -36,7 +38,7 @@ class PredictiveTest(unittest.TestCase):
         for _ in range(5):
           env.step(np.zeros(12))
         snapshot = d.physics_snapshot(env)
-        sequence = np.linspace(-.25, .25, 120, dtype=np.float32).reshape(10, 12)
+        sequence = np.linspace(-3., 3., 120, dtype=np.float32).reshape(10, 12)
         recorded = np.asarray([env.step(a).reward for a in sequence], np.float32)
         for i, actions in enumerate(p.control_sequences(sequence)):
           reward, error, _ = d.verified_consequence(env, snapshot,

@@ -26,8 +26,11 @@ def control_sequences(recorded):
   recorded = np.asarray(recorded)
   if recorded.dtype != np.float32 or recorded.ndim != 2 or len(recorded) != HORIZON:
     raise ValueError('Require exactly ten float32 vector actions')
-  if not np.isfinite(recorded).all() or np.any(np.abs(recorded) > 1):
-    raise ValueError('Nonfinite or out-of-bounds actual action')
+  if not np.isfinite(recorded).all():
+    raise ValueError('Nonfinite recorded action')
+  # The verified source stores raw sampled Gaussian actions, as returned by
+  # Agent.policy and passed to dm_control. Preserve their actual encoding;
+  # neither silently clip them nor mistake bounded means for bounded samples.
   fixed = d.fixed_actions(recorded.shape[1:])
   return np.concatenate([recorded[None], np.repeat(fixed[:, None], HORIZON, 1)])
 
@@ -183,6 +186,7 @@ def run(args):
       source_complete_sha256=d.sha256(source / 'collection_complete.json'), metadata=metadata,
       resource=resource, selected_episodes=[x['episode'] for x in selected],
       selection='calibration only; same 16 H100 positions', controls=6,
+      recorded_action_semantics='Verified raw sampled float32 actions; retained without clipping',
       horizon=HORIZON, prefixes=PREFIXES, diagnostic_seed=20261012,
       statistical_seed=20261016, optimizer_updates=0, gate_changed=False))
   predictor, rows, artifacts = Predictor(agent), [], []
