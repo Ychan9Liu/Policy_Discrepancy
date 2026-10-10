@@ -1,0 +1,228 @@
+{
+  "actual_source_hostname": "lyg0360",
+  "checked_at_utc": "2026-10-10T09:27:51.029127+00:00",
+  "checkpoints": [
+    {
+      "actual_training_action_step": 300000,
+      "checkpoint": {
+        "bytes": 513050095,
+        "expected_bytes": 513050095,
+        "expected_sha256": "2ab693c8ded4d8f2186bd489aa8b77498448ba2f2c331090159da4e5f08056b9",
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/0300000/20261010T013839F541319/agent.pkl",
+        "sha256": "2ab693c8ded4d8f2186bd489aa8b77498448ba2f2c331090159da4e5f08056b9"
+      },
+      "checks": {
+        "file_bytes_matches_declared": true,
+        "file_sha256_matches_declared": true,
+        "latest_points_to_selected_snapshot": true,
+        "metadata_snapshot_id_matches_selected_folder": true,
+        "metadata_source_git_matches_manifest": true,
+        "metadata_stage_matches_fixed_stage": true,
+        "metadata_update_id_matches_pickle_updates": true,
+        "policy_calls_match_declared": true
+      },
+      "done_marker": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/0300000/20261010T013839F541319/done",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "evaluation_metadata": {
+        "bytes": 173,
+        "content": {
+          "actual_action_step": 300000,
+          "git_commit": "48d71f1541721208322442f5a1d5977124f3e888",
+          "snapshot_id": "eval_snapshots/0300000/20261010T013839F541319",
+          "update_id": 74493
+        },
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/0300000/evaluation_snapshot.json",
+        "sha256": "ee465687047a3205969ea090ce713781649cfdfa2b860e80f216ecd610b9287a"
+      },
+      "latest": {
+        "bytes": 22,
+        "content": "20261010T013839F541319",
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/0300000/latest",
+        "sha256": "c347b3e35a26f8eadadc5c2f522a848c57daf718a30d916d97d2149854248ee3"
+      },
+      "nominal_training_stage": 300000,
+      "params_sha256": "14859c4e129b51aa488c10eab09f16d56fd110c76239b2c9072f415829d111c2",
+      "pickle_counters": {
+        "actions": 18769,
+        "batches": 74493,
+        "eval_actions": 1001,
+        "eval_seed": 3404107006,
+        "updates": 74493
+      }
+    },
+    {
+      "actual_training_action_step": 1000000,
+      "checkpoint": {
+        "bytes": 513050095,
+        "expected_bytes": 513050095,
+        "expected_sha256": "c9c893081485c8ad22468611d046bc5bf9fbe463d55996fda15cf85b2a0323fe",
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/1000000/20261010T091852F745674/agent.pkl",
+        "sha256": "c9c893081485c8ad22468611d046bc5bf9fbe463d55996fda15cf85b2a0323fe"
+      },
+      "checks": {
+        "file_bytes_matches_declared": true,
+        "file_sha256_matches_declared": true,
+        "latest_points_to_selected_snapshot": true,
+        "metadata_snapshot_id_matches_selected_folder": true,
+        "metadata_source_git_matches_manifest": true,
+        "metadata_stage_matches_fixed_stage": true,
+        "metadata_update_id_matches_pickle_updates": true,
+        "params_match_completed_final_state": true,
+        "policy_calls_match_declared": true
+      },
+      "done_marker": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/1000000/20261010T091852F745674/done",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "evaluation_metadata": {
+        "bytes": 175,
+        "content": {
+          "actual_action_step": 1000000,
+          "git_commit": "48d71f1541721208322442f5a1d5977124f3e888",
+          "snapshot_id": "eval_snapshots/1000000/20261010T091852F745674",
+          "update_id": 249493
+        },
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/1000000/evaluation_snapshot.json",
+        "sha256": "b0428c8f301a1d04f60e000326eac48a125bd865eb8bf2fe82a645b8ee6e8bb0"
+      },
+      "latest": {
+        "bytes": 22,
+        "content": "20261010T091852F745674",
+        "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/eval_snapshots/1000000/latest",
+        "sha256": "e4a2a1a1da4654165bdfd21b8cfa9bb990d5be65e82d3e6c6b51bbd845adeb5e"
+      },
+      "nominal_training_stage": 1000000,
+      "params_sha256": "fb8c429cb13861d90f2aeba32842eda8958bd17d1b80f2dfa15c0363aca7549d",
+      "pickle_counters": {
+        "actions": 62563,
+        "batches": 249493,
+        "eval_actions": 1001,
+        "eval_seed": 2823791453,
+        "updates": 249493
+      }
+    }
+  ],
+  "config": {
+    "bytes": 4858,
+    "expected_bytes": 4858,
+    "expected_hash_matches": true,
+    "expected_sha256": "11428512fdc9b9e04a5384e419c5abcef93e5429db0a3327d05ccb0d4bd20445",
+    "expected_size_matches": true,
+    "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/config.yaml",
+    "sha256": "11428512fdc9b9e04a5384e419c5abcef93e5429db0a3327d05ccb0d4bd20445"
+  },
+  "counter_semantics": {
+    "pickle.counters.actions": "Training policy call counter used for policy RNG; not the environment-action budget",
+    "pickle.counters.batches": "Training batch-key counter",
+    "pickle.counters.eval_actions": "Evaluation policy call counter for the most recently configured episode; not evaluation environment action sum",
+    "pickle.counters.updates": "Successfully committed optimizer updates",
+    "training_stage": "evaluation_snapshot.json.actual_action_step: non-reset training environment actions; excludes evaluation/reset actions"
+  },
+  "evidence_identity_note": "New independent re-audit with new timestamp/hash under unique scientific filename; not a claim that historical 221bb880 artifact bytes were recovered.",
+  "formal_completion_audit": {
+    "bytes": 8826,
+    "checked_utc": "2026-10-10T03:50:17.686657+00:00",
+    "full_four_groups_complete": false,
+    "path": "/data/Policy_Discrepancy/repo/analysis/outputs/formal-baseline-dt-pd1-20261010-audit-attempt02/completion.json",
+    "selected_exact_payload_sha256": "c91a202ceca76a7764370f87e9552c1959a4df0b0645b9f6c4891478f65b33ec",
+    "selected_exact_transport_verified": true,
+    "selected_original_exit_code": null,
+    "selected_original_exit_code_available": false,
+    "selected_return_metrics_complete": true,
+    "selected_run_id": "formal-m2-v1-pd1-seed0-20261009:dmc_quadruped_walk:logging:attempt01",
+    "sha256": "16b226a1fac0e23b1446d0df2c7515d4b79295c873f97d23abec56f2d1a69540",
+    "verified_run_count": 8
+  },
+  "limitations": [
+    "Only CPU file/metadata/parameter provenance; no new GPU/model inference or method efficacy evidence.",
+    "Both phases share one task, baseline group and training seed; they are not independent training replicates.",
+    "Formal completion contains 8 baseline/Dt runs; full_four_groups_complete=false does not certify all four formal groups.",
+    "The selected baseline original process exit code is unavailable; complete artifacts/transport are separately verified."
+  ],
+  "read_only_cpu_audit": true,
+  "reader_environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "JAX_PLATFORMS": "cpu"
+  },
+  "schema": "DL-source-checkpoints-scientific-r1",
+  "selection": {
+    "design": "DL-protocol-r1 autonomous prevalidation design",
+    "fixed_training_action_stages": [
+      300000,
+      1000000
+    ],
+    "rationale": "Two fixed phases separated by 700000 training actions; one baseline seed0, no best-return checkpoint search.",
+    "selection_uses_return": false
+  },
+  "source_final_state": {
+    "bytes": 431,
+    "params_sha256": "fb8c429cb13861d90f2aeba32842eda8958bd17d1b80f2dfa15c0363aca7549d",
+    "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/final_state.json",
+    "sha256": "04c37ec98512a5cda54d16fb85c9837a1d52ce8b90294c67b8d5a02ab3038322",
+    "train_action_steps": 1000000,
+    "train_batch_keys": 249493,
+    "train_policy_calls": 62563,
+    "updates": 249493
+  },
+  "source_protocol_manifest": {
+    "bytes": 9901,
+    "critical_config": {
+      "agent.dec.simple.depth": 32,
+      "agent.dyn.rssm.classes": 32,
+      "agent.dyn.rssm.deter": 4096,
+      "agent.dyn.rssm.free_nats": 1.0,
+      "agent.dyn.rssm.hidden": 512,
+      "agent.dyn.rssm.stoch": 32,
+      "agent.dyn.rssm.unimix": 0.01,
+      "agent.enc.simple.depth": 32,
+      "agent.loss_scales.dyn": 1.0,
+      "agent.loss_scales.rep": 0.1,
+      "agent.policy.units": 512,
+      "agent.rep_probe.alpha": 20.0,
+      "agent.rep_probe.mode": "logging",
+      "agent.rewhead.bins": 255,
+      "agent.rewhead.output": "symexp_twohot",
+      "batch_length": 64,
+      "batch_size": 16,
+      "env.dmc.camera": -1,
+      "env.dmc.image": true,
+      "env.dmc.proprio": false,
+      "env.dmc.repeat": 1,
+      "env.dmc.size": [
+        64,
+        64
+      ],
+      "replay_context": 1,
+      "run.action_budget": 1000000,
+      "run.envs": 16,
+      "run.train_ratio": 256.0,
+      "seed": 0,
+      "task": "dmc_quadruped_walk"
+    },
+    "dependency_lock_sha256": "cd50c7936690f9adbc5c35f99b3df2f7a977cef3222582f988979b11f65b6f22",
+    "git_commit": "48d71f1541721208322442f5a1d5977124f3e888",
+    "host": "lyg0360",
+    "jax": "0.4.33",
+    "packages": {
+      "dm-control": "1.0.48",
+      "jaxlib": "0.4.33",
+      "mujoco": "3.15.0",
+      "numpy": "1.26.4"
+    },
+    "path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01/protocol_manifest.json",
+    "protocol": "M2-v1",
+    "python": "3.11.16 (main, Sep  2 2026, 23:39:52) [GCC 15.3.0]",
+    "root_seed": 0,
+    "sha256": "c304d77a03515b34aafc8bd4e9d613ed005dbe4be127ee789e0b49bf17d43af4",
+    "task": "dmc_quadruped_walk"
+  },
+  "source_run_path": "/data/Policy_Discrepancy/runs/formal-m2-v1-pd1-seed0-20261009/dmc_quadruped_walk/logging-attempt01",
+  "source_server": "sv2",
+  "verification_status": "provenance_verified_not_method_validation"
+}

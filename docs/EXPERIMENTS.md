@@ -2,7 +2,9 @@
 
 ## DL 独立前验证索引（2026-10-10）
 
-DtLatch 当前任务已由用户特许文档、代码、干预和前验证，资源仅 sv3 物理 GPU4–7。独立协议/门槛见 `docs/DL_PREVALIDATION.md`（DL-protocol-r1），理论与代码审查见 `docs/DL_PREVALIDATION_REVIEW.md`，工程证据和运行状态见 `docs/DL_VALIDATION_LOG.md`。当前本地 CPU 验证不能替代真实 size50m/GPU/盲测或方法效果；DL GPU 尚未启动，15:30北京时间服务器入口恢复，15:31:14分配卡只读快照空闲，设备绑定/真实验收待执行。
+DtLatch 当前任务已由用户特许文档、代码、干预和前验证，资源仅 sv3 物理 GPU4–7。独立协议/门槛见 `docs/DL_PREVALIDATION.md`（DL-protocol-r1），理论与代码审查见 `docs/DL_PREVALIDATION_REVIEW.md`，工程证据和运行状态见 `docs/DL_VALIDATION_LOG.md`。两阶段真实32 episode采集/主诊断已完成，裁决见 `docs/DL_R1_RESULTS.md`：信号/cue覆盖不足、活跃释放幅度门未满足、P对照不充分，尚无方法有效证据。真实size50m attempt03有logging严格状态差异，工程修复后另attempt重验，不以tiny CPU通过替代。
+
+后续有限对象另立 `docs/DL_OPPORTUNITY.md`（DL-opportunity-r1）：新seed20261012、每阶段32 episode×16位置、H100累计首动作后果及共同续行动；原H1信号/gate/参数不改。H100不同于原H10平均收益对象，任何结果均不直接授权短训练。CPU真实物理预验已完成，新GPU诊断待执行；原r1输出和失败不覆盖。替代方案见 `docs/DL_REVISIONS.md`，全部是条件建议而非已采用方法。
 
 该索引不改变下面 M2 v1 的任务、方法、校准、seed0/百万步或正在执行的作业。DL 的六组×3 seeds×100k 是诊断和对照通过后的独立短训练设计，不是新的 v1 正式实验；不从历史归档或待运行文件推定验收。
 

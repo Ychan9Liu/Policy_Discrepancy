@@ -84,6 +84,29 @@ class DLDiagnosticTest(unittest.TestCase):
       with self.assertRaises(ValueError):
         dl.true_consequence(env, 0, np.array([1.]), [], horizon=2)
 
+  def test_external_prefixes_use_same_path_and_keep_variants_and_prior_separate(self):
+    # Candidate effects change sign with time; summaries must use true prefixes
+    # rather than copying H1 or selecting a separately favourable rollout.
+    payoffs = np.array([[2, -1, 3], [4, 0, 0], [1, 1, 1], [0, 0, 0], [1, 2, 3]])
+    result = dl.consequence_prefixes(payoffs, (1, 3))
+    np.testing.assert_array_equal(result['true_q_prefix_sum'],
+        [[2, 4], [4, 4], [1, 3], [0, 0]])
+    np.testing.assert_array_equal(result['true_p_prefix_sum'], [1, 6])
+    np.testing.assert_allclose(result['true_q_prefix_mean'][:, 1], [4/3, 4/3, 1, 0])
+    for prefixes in ((), (3, 1), (1, 1), (0,), (4,), (1.0,)):
+      with self.subTest(prefixes=prefixes), self.assertRaises(ValueError):
+        dl.consequence_prefixes(payoffs, prefixes)
+    with self.assertRaises(ValueError):
+      dl.consequence_prefixes(payoffs[:-1], (1,))
+
+  def test_original_analysis_rejects_long_opportunity_labels(self):
+    with tempfile.TemporaryDirectory() as temporary:
+      source = Path(temporary)
+      dl.write_json(source / 'score_plan.json', dict(horizon=100,
+          opportunity_version='DL-opportunity-r1'))
+      with self.assertRaisesRegex(ValueError, 'original H10 labels'):
+        dl.analyze(types.SimpleNamespace(scores=source))
+
   def test_twohot_exact_bins_endpoints_and_positive_part(self):
     bins = np.array([-3, 0, 2], np.float32)
     reward = np.array([-10, -1.5, 0, 1, 20], np.float32)
@@ -171,8 +194,13 @@ class DLDiagnosticTest(unittest.TestCase):
             body_frac=np.ones(1) * .1, raw_logits_q=np.zeros((1, 4, 5)),
             raw_logits_p=np.zeros((1, 4, 5)), bins=np.linspace(-2, 2, 5, dtype=np.float32))
         path = source / f'episode_{episode:03}.npz'
+        # Enough active positions for the mechanism criterion, while each
+        # utility class still lacks the required coverage. Zero release is an
+        # observed criterion failure, not a missing-active-data result.
+        values = {k: np.repeat(v, 8, axis=0) if k != 'bins' else v
+            for k, v in values.items()}
         np.savez_compressed(path, **values)
-        artifacts.append(dict(episode=episode, split=entry['split'], positions=1,
+        artifacts.append(dict(episode=episode, split=entry['split'], positions=8,
             path=path.name, sha256=dl.sha256(path)))
       dl.write_json(source / 'score_complete.json', dict(artifacts=artifacts,
           plan_sha256=dl.sha256(source / 'score_plan.json')))
@@ -183,6 +211,7 @@ class DLDiagnosticTest(unittest.TestCase):
       self.assertEqual(result['screening']['cue_deprivation'], 'inconclusive')
       self.assertFalse(result['screening']['proceed_short_training'])
       self.assertFalse(result['screening']['eligible_for_short_training_review'])
+      self.assertEqual(result['screening']['active_release'], 'not_supported')
       self.assertIn('C', result['signal_auc'])
       self.assertEqual(result['calibration_only']['kappa'], 0)
       self.assertIsNone(result['calibration_only']['reward_only_lambda'])

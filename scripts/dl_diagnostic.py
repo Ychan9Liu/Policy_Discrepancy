@@ -345,6 +345,26 @@ def verified_consequence(env, snapshot, action, continuation, horizon):
   return reward, error, digest
 
 
+def consequence_prefixes(payoffs, horizons):
+  """DL-opportunity-r1: summaries of the same true recorded continuation.
+
+  The last candidate is the prior; earlier candidates follow VARIANTS order.
+  This changes only external labels, never the H1 reward probe or its gate.
+  """
+  payoffs = np.asarray(payoffs, np.float64)
+  horizons = tuple(horizons)
+  if (payoffs.ndim != 2 or payoffs.shape[0] != len(VARIANTS) + 1 or
+      not np.isfinite(payoffs).all() or not horizons or
+      any(type(h) is not int or h < 1 or h > payoffs.shape[1] for h in horizons) or
+      any(a >= b for a, b in zip(horizons, horizons[1:]))):
+    raise ValueError('Invalid external consequence prefix dimensions or horizons')
+  sums = np.stack([payoffs[:, :h].sum(axis=-1) for h in horizons], axis=-1)
+  means = sums / np.asarray(horizons)
+  return dict(consequence_prefixes=np.asarray(horizons, np.int32),
+      true_q_prefix_sum=sums[:-1], true_p_prefix_sum=sums[-1],
+      true_q_prefix_mean=means[:-1], true_p_prefix_mean=means[-1])
+
+
 def collect(args):
   from scripts.dl_resources import require_resource, verify_runtime
   resource = require_resource(args.resource_record)
@@ -535,6 +555,10 @@ class FrozenScorer:
 
 
 def score(args):
+  prefixes = tuple(getattr(args, 'consequence_prefixes', ()))
+  if prefixes and (prefixes != (1, 10, 50, 100) or args.horizon != 100 or
+      args.samples != 16 or args.seed != 20261012):
+    raise ValueError('DL-opportunity-r1 requires frozen H100/16 positions/new seed')
   from scripts.dl_resources import require_resource, verify_runtime
   resource = require_resource(args.resource_record)
   import jax
@@ -547,6 +571,30 @@ def score(args):
     raise ValueError('Dataset task mismatch or invalid declared gate parameters')
   if sha256(source / 'collection_plan.json') != completed['plan_sha256']:
     raise ValueError('Collection plan hash mismatch')
+  if prefixes:
+    expected = episode_plan(32, 8, 20261012)
+    keys = ('episode', 'split', 'seed', 'policy_seed')
+    actual = [{k: x[k] for k in keys} for x in completed['artifacts']]
+    checkpoint = Path(args.checkpoint)
+    if checkpoint.is_dir() and (checkpoint / 'latest').exists():
+      checkpoint /= (checkpoint / 'latest').read_text().strip()
+    if checkpoint.is_dir():
+      checkpoint /= 'agent.pkl'
+    sources = {
+        '2ab693c8ded4d8f2186bd489aa8b77498448ba2f2c331090159da4e5f08056b9':
+            '14859c4e129b51aa488c10eab09f16d56fd110c76239b2c9072f415829d111c2',
+        'c9c893081485c8ad22468611d046bc5bf9fbe463d55996fda15cf85b2a0323fe':
+            'fb8c429cb13861d90f2aeba32842eda8958bd17d1b80f2dfa15c0363aca7549d'}
+    fingerprint = sha256(checkpoint)
+    config_fingerprint = '11428512fdc9b9e04a5384e419c5abcef93e5429db0a3327d05ccb0d4bd20445'
+    if (plan.get('seed') != 20261012 or plan.get('episodes') != expected or
+        actual != expected or not completed.get('params_unchanged') or
+        args.alpha != 20 or args.rho != .5 or fingerprint not in sources or
+        plan.get('checkpoint_sha256') != fingerprint or
+        plan.get('params_sha256') != sources[fingerprint] or
+        sha256(args.config) != config_fingerprint or
+        plan.get('config_source_sha256') != config_fingerprint):
+      raise ValueError('DL-opportunity-r1 requires frozen independent collection and gate')
   agent, config, metadata = load_agent(args)
   resource['runtime_compute'] = verify_runtime(resource, compute=args.platform == 'cuda')
   metadata['resource'] = resource
@@ -554,7 +602,18 @@ def score(args):
       'params_sha256'] != plan['params_sha256']:
     raise ValueError('DL-r1 requires independent episodes from this same frozen checkpoint')
   scorer = FrozenScorer(agent, args.alpha, args.rho)
-  write_json(output / 'score_plan.json', dict(**metadata,
+  if prefixes:
+    output.mkdir(parents=True, exist_ok=True)
+    for filename in ('collection_plan.json', 'collection_complete.json'):
+      copied = output / filename
+      if copied.exists():
+        raise FileExistsError(copied)
+      copied.write_bytes((source / filename).read_bytes())
+  extra_plan = dict(consequence_prefixes=list(prefixes),
+      diagnostic_seed=args.seed, dataset_complete_sha256=sha256(
+          source / 'collection_complete.json'),
+      opportunity_version='DL-opportunity-r1') if prefixes else {}
+  write_json(output / 'score_plan.json', dict(**metadata, **extra_plan,
       dataset=str(source.resolve()), dataset_plan_sha256=completed['plan_sha256'],
       collection_checkpoint_sha256=plan['checkpoint_sha256'],
       collection_params_sha256=plan['params_sha256'], cross_model_behavior=False,
@@ -593,10 +652,12 @@ def score(args):
           continue
         continuation = data['action'][t + 1:t + args.horizon]
         reference, error, reference_hash = verified_consequence(
-            env, states[t], data['action'][t], continuation, 1)
+            env, states[t], data['action'][t], continuation,
+            args.horizon if prefixes else 1)
         # Collection uses float32 labels. Compare their exact encoding without
         # loosening the independent float64 repeated-physics tolerance.
-        if np.float32(reference[0]) != data['reward'][t + 1]:
+        if not np.array_equal(np.asarray(reference, np.float32),
+            data['reward'][t + 1:t + 1 + len(reference)]):
           raise AssertionError(f'Restored reward encoding differs at ep={entry["episode"]},t={t}')
         fixed_reward = []
         for action in fixed:
@@ -633,6 +694,13 @@ def score(args):
             reference_endstate_hash=reference_hash, payoff_endstate_hash=payoff_hashes,
             background_frac=float((~data['preserve'][t]).mean()),
             body_frac=float(data['body'][t].mean()))
+        if prefixes:
+          result.update(consequence_prefixes(payoffs, prefixes))
+          result['true_reward_sequences'] = payoffs
+          result['reference_reward_sequence'] = reference
+          result['reference_full_window_verified'] = True
+          result['reference_prefix_sum'] = np.asarray([
+              reference[:h].sum() for h in prefixes])
         records.append(result)
       target = output / f'episode_{entry["episode"]:03}.npz'
       if target.exists():
@@ -654,6 +722,8 @@ def score(args):
 def analyze(args):
   source = Path(args.scores)
   plan = json.loads((source / 'score_plan.json').read_text())
+  if plan.get('horizon', 10) != 10 or plan.get('opportunity_version'):
+    raise ValueError('DL-protocol-r1 analysis requires original H10 labels')
   complete = json.loads((source / 'score_complete.json').read_text())
   if sha256(source / 'score_plan.json') != complete['plan_sha256']:
     raise ValueError('Scoring plan hash mismatch')
@@ -854,14 +924,16 @@ def analyze(args):
   release = result['weighted_excess_release_fraction']
   mechanism = int(active.sum()) >= 128 and result['active_episodes'] >= 8 and release is not None and release >= .01
   increment = result['paired_auc_C_minus_D']
-  increment_supported = increment['lower95'] is not None and increment['lower95'] > 0
+  increment_supported = sufficient and increment['lower95'] is not None and increment['lower95'] > 0
   result['screening'] = dict(signal='supported' if supported else (
       'inconclusive' if not sufficient or signal['lower95'] is None else 'not_supported'),
       nuisance='supported' if nuisance else ('inconclusive' if not result[
           'background_available'] else 'not_supported'),
       cue_deprivation='supported' if cue_supported else ('inconclusive' if not result[
           'body_available'] or not cue_coverage or cue['lower95'] is None else 'not_supported'),
-      active_release='supported' if mechanism else 'inconclusive',
+      active_release='supported' if mechanism else ('not_supported' if
+          int(active.sum()) >= 128 and result['active_episodes'] >= 8 and
+          release is not None else 'inconclusive'),
       added_signal_beyond_D='supported' if increment_supported else 'inconclusive',
       full_policy_distribution='inconclusive' if std_dominated else 'mean_action_scope_only',
       eligible_for_short_training_review=bool(supported and nuisance and cue_supported and
@@ -899,6 +971,8 @@ def main():
   score_parser.add_argument('--horizon', type=int, default=10)
   score_parser.add_argument('--alpha', type=float, default=20)
   score_parser.add_argument('--rho', type=float, default=.5)
+  score_parser.add_argument('--consequence-prefixes', type=int, nargs='+', default=[],
+      help='DL-opportunity-r1 external H1/10/50/100 labels; H1 gate remains unchanged')
   analyze_parser = sub.add_parser('analyze')
   analyze_parser.set_defaults(function=analyze)
   analyze_parser.add_argument('--scores', required=True)

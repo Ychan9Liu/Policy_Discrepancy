@@ -1,0 +1,165 @@
+{
+  "script_sha256": "3cb54e76cb636b7a9cf9b40741926c64c67d321539811d79ddf149f992883e62",
+  "runs": [
+    {
+      "directory": "cp1000000-collection-attempt01",
+      "files": {
+        "start.txt": "8bec5535964ff41b9977268322aab29341e2345a359c2f904959ccc49b819bf4",
+        "end.txt": "5bd1256bfea112ed70e9e63d6437955f31aa174a25eae7ca0434ee8ee66569cc",
+        "exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "launcher-sha256.txt": "11db9386348742f5e873d7cdb58a3f7750af54bd9d98de76320f59f245d6a4db",
+        "resource.json": "8d7d9a602c3d1f5a001517e052dd6bb0739c98dfeef54900a4c4f1621fe8a4b4",
+        "resource-device-probe.json": "62b06df508b297c33ed141861b0d9c63bac978b5eb15ebeb2e018b2a7af5bb3b"
+      },
+      "start.txt": "2026-10-10T09:04:14+00:00",
+      "end.txt": "2026-10-10T09:09:49+00:00",
+      "exit-code.txt": "0",
+      "launcher-sha256.txt": "ff5f5c322b8a795a871afac971eb8dd2770a6123a79449d1ff3ea20d11f83a33  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-collection-9e6da39.sh",
+      "gpu_memory_peak_mib_sampled_1s": 2585,
+      "gpu_samples_count": 335,
+      "gpu_samples_sha256": "f1c3ebbb10566241223a67a295ac19b0ba3615f428404e9521b81b41ad9f41e7"
+    },
+    {
+      "directory": "cp1000000-score-attempt01",
+      "files": {
+        "start.txt": "9cff78241ab74080a4c9145510cc995864002c9a74b52406199bb63185044aab",
+        "end.txt": "936bebddff1ba141eb704cbe3382ce8aa02fbbfc83dcb87c37f44b9bb70f2f32",
+        "exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "launcher-sha256.txt": "a65ba052b60f4835d7f99e9a60dd51d529ae851fa025e64564bd293aeceb7855",
+        "resource.json": "887876b290c0dd583c70b58d1e27040e6af7c66cacf95f8daef428eedf9444cf",
+        "resource-device-probe.json": "07fb17472c5b5aa72b05a8fceff25f573ec9e11826712ccd17d7b3fc666d2fd3"
+      },
+      "start.txt": "2026-10-10T09:18:49+00:00",
+      "end.txt": "2026-10-10T09:21:47+00:00",
+      "exit-code.txt": "0",
+      "launcher-sha256.txt": "26c2fe299fae7cb960564a92e3a125dded57fcecb06c97aeb475de2b06458ec5  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-score-1280bea.sh",
+      "gpu_memory_peak_mib_sampled_1s": 2511,
+      "gpu_samples_count": 179,
+      "gpu_samples_sha256": "259edb92c71f20b2b4f6658d6fbb19a8c53894da2af1bdb70c4339657862be0e"
+    },
+    {
+      "directory": "cp300000-collection-attempt01",
+      "files": {
+        "start.txt": "85b2a275472acd76681c899c226f72c2ba3addcc92d143a066c09c39a7fe3740",
+        "end.txt": "eeccbf28d75ced46fe8a9b5089a5709f7b36ed2d22ee41b5c8b6deb95fc3b9d1",
+        "exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "launcher-sha256.txt": "3e1be4755857a4cf180d7d9afc93a98cb5d44140013cda4e67e7c77f93c954b5",
+        "resource.json": "3f03f89e2dad9f1e813d76c73872c294e8799fdbba0f29d6e6e2c4bf643ad799",
+        "resource-device-probe.json": "68cfb8b48f902d1dd407e16e4208290be1cb5a5658a52a13cda9b0f7357bc0cf"
+      },
+      "start.txt": "2026-10-10T09:16:49+00:00",
+      "end.txt": "2026-10-10T09:22:30+00:00",
+      "exit-code.txt": "0",
+      "launcher-sha256.txt": "c119569d26bc49b08c5143699b94c987047744dd34a33215cb68640e3fa89f64  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-collection-1280bea.sh",
+      "gpu_memory_peak_mib_sampled_1s": 2585,
+      "gpu_samples_count": 342,
+      "gpu_samples_sha256": "fbf1fca200b9219913a77a99ebdf04e46ebe96cbaef752b1f5cff907fe312024"
+    },
+    {
+      "directory": "cp300000-score-attempt01",
+      "files": {
+        "start.txt": "526ff95029c3d46a855407fe327d93090ebe098b2502d74a00b004cda568eb96",
+        "end.txt": "0c36d8ef87e73e0fc881a69e5e5d14c5e6c3b59d67a39bc85a31e643aa580c11",
+        "exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "launcher-sha256.txt": "a65ba052b60f4835d7f99e9a60dd51d529ae851fa025e64564bd293aeceb7855",
+        "resource.json": "b0ca77f56b2b876cadc5eac21a5169af04a37afa0a8e01d98af8dcdae47f6d63",
+        "resource-device-probe.json": "61a2812d5fd1e34608db618aa4601ce57e52f454a62f0dfb460dd9fd3f306367"
+      },
+      "start.txt": "2026-10-10T09:40:55+00:00",
+      "end.txt": "2026-10-10T09:44:13+00:00",
+      "exit-code.txt": "0",
+      "launcher-sha256.txt": "26c2fe299fae7cb960564a92e3a125dded57fcecb06c97aeb475de2b06458ec5  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-score-1280bea.sh",
+      "gpu_memory_peak_mib_sampled_1s": 2511,
+      "gpu_samples_count": 189,
+      "gpu_samples_sha256": "31beb5037ca2f08b5c75dc6742d60ddd25b462ff2e276a6d66b05d5b08e33e71"
+    },
+    {
+      "directory": "pilot-cp300000-attempt01",
+      "files": {
+        "start.txt": "d57c562c574905bb810669d50d8dcbdada082aa89127ef26bd07c2968ac108e6",
+        "end.txt": "601b71bc9050fb43c7019a327683498a9d100a9a9f2c2e93ab42d3f4055272fe",
+        "exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "resource.json": "bd1252fc7b7354cb2871a41e5c36b50487c4ac8c762b0c103c2fa3e126f4236b",
+        "resource-device-probe.json": "1728841b619aea728b78c6204bc9288a3fe3c323dd3000c6bde82047583746b4"
+      },
+      "start.txt": "2026-10-10T08:57:36+00:00",
+      "end.txt": "2026-10-10T08:58:18+00:00",
+      "exit-code.txt": "0",
+      "gpu_memory_peak_mib_sampled_1s": 2585,
+      "gpu_samples_count": 43,
+      "gpu_samples_sha256": "14e20b95b26e35fbd413dc4961ce3f8d7f3eb91f0e682753c106d1517d61dbe6"
+    },
+    {
+      "directory": "pilot-cp300000-score-attempt01",
+      "files": {
+        "start.txt": "8bec5535964ff41b9977268322aab29341e2345a359c2f904959ccc49b819bf4",
+        "end.txt": "b81e9aedd7ee9317a2c2be6b01b1e309562c1c5b57a352d82d99a3fa3245a215",
+        "exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "launcher-sha256.txt": "30c50769b0fc907db85d473cd9f1b22fba63265e178dab93316f499b75c9e638",
+        "resource.json": "02560449144285571607a1e8dbc2fc868b09852895a16e58bc2854ec476aab50",
+        "resource-device-probe.json": "5f598dce86b2f30b27ff30376105da83f99ba23d0874a9d5309d4a68d466b2ff"
+      },
+      "start.txt": "2026-10-10T09:04:14+00:00",
+      "end.txt": "2026-10-10T09:04:47+00:00",
+      "exit-code.txt": "0",
+      "launcher-sha256.txt": "b146f2261c9cd37adbe29c6eb1e67cd3f6b80b2f974843267a26ffb06a1ebe5c  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-score-pilot-9e6da39.sh",
+      "gpu_memory_peak_mib_sampled_1s": 2511,
+      "gpu_samples_count": 33,
+      "gpu_samples_sha256": "dfd515d9ade21f3c7233f6c5d82d74759f14b1abaffd54234135bace0529856a"
+    },
+    {
+      "directory": "size50m-cp1000000-attempt01",
+      "files": {
+        "start.txt": "575b5134faf21be40196523c51de16b174a7dc8adcf5905c0dd26458fcb525f4",
+        "end.txt": "952e075074849275f93aa0b465b2dba6f095cdb87495c0f5e37d52e398f330da",
+        "exit-code.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "launcher-sha256.txt": "e2835cdda53f029088da3e8d884a9d3dafc20839d156a925b23ed72a7641d38b",
+        "resource.json": "b9e784dd16495ce2e3f75e411c11b4b3f7003004341c79a5837ab0e1a4bdbabe",
+        "resource-device-probe.json": "b40f7ec32ffcc1426634fe490b27391515710ac3c88dcf1916915971234693fd"
+      },
+      "start.txt": "2026-10-10T09:18:48+00:00",
+      "end.txt": "2026-10-10T09:19:39+00:00",
+      "exit-code.txt": "1",
+      "launcher-sha256.txt": "4ca8afd04031c6c3144574ca53887a4b40e817bd40197d02340ff903c922fde1  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-size50m-1280bea.sh",
+      "gpu_memory_peak_mib_sampled_1s": 6635,
+      "gpu_samples_count": 51,
+      "gpu_samples_sha256": "c5bddfa951cbb1c32cc51bd70c6e5a7a9b1ea090e13be897e9e9451dd5d3e9dc"
+    },
+    {
+      "directory": "size50m-cp1000000-attempt02",
+      "files": {
+        "start.txt": "b1e9185a2fcdd7d62aa8aab30df21f09c5e6ee2dd1772c5066898987458d5410",
+        "end.txt": "4d2da90524cafad9241826ab0a5fa329d3e7be02372a813809f26fa72e74d2fb",
+        "exit-code.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "launcher-sha256.txt": "c3dce8b7e813b29c01e221d7ad5fd1f101b2d394f836acf4e347d13b41652081",
+        "resource.json": "95e09a72d5b00359eba2aad2be07ded0a28abce390933e950ec585fa6be50ad8",
+        "resource-device-probe.json": "7b7e84be7262b502b17ab5a808475b09adf857066ed367f1d2bbc9b35fc6c5da"
+      },
+      "start.txt": "2026-10-10T09:45:21+00:00",
+      "end.txt": "2026-10-10T09:46:44+00:00",
+      "exit-code.txt": "1",
+      "launcher-sha256.txt": "2de0954ce3e614843e58e7dc7dee45db7c9f5eb62e8d0a4649855cda79ba6c7a  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-size50m-3721103.sh",
+      "gpu_memory_peak_mib_sampled_1s": 6637,
+      "gpu_samples_count": 78,
+      "gpu_samples_sha256": "1c6ec9a5a9da747fe8251e95537d78f05ebae083b6aa1ba1e7723f77d4eaffbf"
+    },
+    {
+      "directory": "size50m-cp1000000-attempt03",
+      "files": {
+        "start.txt": "72d49a69a5e0b0a103d58c20031cd7518d1051e522f3a0c532d3208b49527c71",
+        "end.txt": "91a402c3954ea621c2f9a994223fb624b30bf0d0389583aad14d4466c1bcd926",
+        "exit-code.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "launcher-sha256.txt": "2a4e13ba0205617c7e4abfe79eec0fe57b72df54d2b7dda54ca850ca94fdaf1d",
+        "resource.json": "9552b97c62195840d6d93995b8fc9f23ab67d395e1f3026fb6923ee6bf03b865",
+        "resource-device-probe.json": "a95184cc61bf5f1ce79c655520531d25ec9720fe3b81ebab10ddc52fd0cce2ac"
+      },
+      "start.txt": "2026-10-10T09:54:19+00:00",
+      "end.txt": "2026-10-10T10:06:22+00:00",
+      "exit-code.txt": "1",
+      "launcher-sha256.txt": "88ee3e42eebb01262b8a9036629ef7dd848f93332a65f68a21bb04fba33f9d85  /data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/launch-size50m-55a527c.sh",
+      "gpu_memory_peak_mib_sampled_1s": 6665,
+      "gpu_samples_count": 690,
+      "gpu_samples_sha256": "b495a133200e6e8b221daf30c34a39caba1752f871040c319bd1ff4888a7f329"
+    }
+  ]
+}

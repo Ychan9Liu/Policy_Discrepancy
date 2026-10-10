@@ -1,6 +1,6 @@
 # DL 正式实验前验证
 
-版本：**DL-protocol-r1**，2026-10-10。状态：实施中，真实 GPU 诊断尚未启动，未证明方法有效。
+版本：**DL-protocol-r1**，2026-10-10。状态：两个阶段的真实 GPU 诊断已完成；当前候选未满足原判据，不能进入短训练，未形成可正式实验的方法。原协议与失败证据保留；下一项有限机会诊断另见 [DL_OPPORTUNITY.md](DL_OPPORTUNITY.md)。
 
 ## 授权和范围
 
@@ -73,9 +73,12 @@ v_W = 1-m*lambda_W*e
 
 ## DL 当前事实与执行限制
 
-- 2026-10-10 本轮初期多次只读 SSH 调用在认证前关闭；15:30北京时间恢复。15:31:14北京时间核查 sv3 实际 hostname=lyg0326，A100-SXM4-80GB 物理 GPU4–7 各0MiB、无计算/图形进程；0–2为未知作业，不干扰。服务器原 checkout 干净、SHA d9be5574878d2c3f117cc6667be844f9a527eb84，Python3.11.16、pip check通过、/data约1.1TiB可用。15:36:53–56在GPU4完成既有helper零动作CUDA/EGL真探针，两者落同一卡，训练动作/更新为0；这不是 size50m验收。启动前继续重查占用，checkpoint来源待核对，尚无DL训练或冻结模型诊断。
+- sv3 15:30北京时间恢复连接，实际 hostname=lyg0326、Python3.11.16/pip check通过；原 checkout保持干净 d9be5574878d2c3f117cc6667be844f9a527eb84。确定代码在独立 `/data/Policy_Discrepancy/dl-worktrees/` 部署，只在分配的物理GPU4–7运行；每项实际任务均核查占用和CUDA/EGL同卡，不干扰其他作业。设备探针、来源、实际版本和运行证据见 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)，资源快照不是持续空闲承诺。
+- 同一正式baseline seed0的300k/1m checkpoint均经来源与字节hash审计，各32 episode、8/24分割和32预定位置的真实采集/评分已经完成，参数未变、物理复原最大误差0。原H10平均收益正例21/4点、cuecost26/7点，覆盖不足；活跃rep覆盖充分但超额KL释放仅0.12944%/0.22305%，原1%幅度门未满足。P释放偏差11.883%/62.730%使对应关系对照不充分。详细裁决见 [DL_R1_RESULTS.md](DL_R1_RESULTS.md)，不能以1m少量正例的高AUROC宣称通过。
+- 真实size50m工程attempt03五组均执行完，只有logging的两项optimizer二阶状态hash与off不等，总体旁路验收失败；模型参数、单独求得的梯度/loss/latent一致，不放宽全状态严格标准。必要logging工程修复与新attempt尚需实际验收。没有启动100k短训练或正式DL性能实验。
+- 两阶段各预定3个calibration episode×3帧，共18帧的视觉审查已完成：所示背景只替换天空，geometry/ground/边缘保留且逐像素相等。灰色body替换保留轮廓、四肢姿态和地面影子；这只是外观线索剥夺，不能声称完整移除运动学信息或全部图像合法性已验。背景平均保护上界支持不代表尾部误保护已排除。
 - 本机隔离 CPU 环境使用 Python 3.12.14、JAX/jaxlib 0.4.33，服务器预期 Python 3.11；环境差异必须写入验收限制，不修改原服务器 lock。
-- 本机新增实现、测试和诊断工具仍需完成验证。阶段状态不能依据文件存在、计划或子 Agent 自述直接标为通过。
+- 确定9e6da39方法代码上的完整tiny Agent、92项回归及84项CPU物理复原已完成；后续资源/helper工程版本分别实测。H100机会分支的84项真实CPU完整参考复原、候选重复和独立短prefix匹配已通过，不能当作模型机会或gate有效性证据。阶段状态按实际证据分别记录。
 
 本地工程验证与失败记录见 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。资源规划：最低一张独占卡可串行完成，sv3 GPU4–7 四张足以计划并行独立任务，无需多卡模型；先单卡测实际峰值/耗时，再排程。上述 20.4 GPU 小时不含诊断，四卡一天是预留建议而非实测 ETA。CPU 物理分支不需要 GPU 渲染，RGB/segmentation 与模型前向的设备仍须绑定核查。
 

@@ -1,0 +1,774 @@
+{
+  "version": "DL-r1-results-v1",
+  "assembled_at_utc": "2026-10-10T10:08:18.710058+00:00",
+  "scientific_method_git_sha": "9e6da39e59ad347f53db93af649dc8e8b63425ad",
+  "actual_scoring_git_sha": "1280bea7bf409e9cc6fa975704bcb370b8880a0a",
+  "actual_scoring_engineering_version": "DL-engineering-r2",
+  "protocol": "DL-protocol-r1",
+  "task": "dmc_quadruped_walk",
+  "baseline_training_seed": 0,
+  "independent_model_replicates": false,
+  "statistical_unit": "episode within each fixed checkpoint",
+  "scope": "Real frozen-model r1 diagnostics; CPU independent post-result audit; no efficacy conclusion",
+  "original_analysis_files_preserved": true,
+  "source_index": {
+    "path": "docs/dl_checkpoint_sources.json",
+    "sha256": "b7d81f8a123ca44a8abdddf37da535980b4586e116e0c3349c6755f4b4da1600"
+  },
+  "independent_evidence": [
+    {
+      "path": "analysis/outputs/dl-prevalidation/bootstrap/r1-independent-scientific-audit.json",
+      "sha256": "6e37754e599b9ed98c26d4c587047d4f82df7c35384294e8dd23d29feb0f5da1"
+    },
+    {
+      "path": "analysis/outputs/dl-prevalidation/bootstrap/r1-independent-opportunity-decomposition.json",
+      "sha256": "55024f6f4bd3a145eb8bd7e71f6fd9ffe3e3c093f29fd15b903d456907e46d21"
+    }
+  ],
+  "thresholds": {
+    "positive_h10_mean_reward_gain": 0.01,
+    "negative_h10_mean_reward_gain_max": 0,
+    "positive_negative_positions_each": 128,
+    "positive_negative_episodes_each": 8,
+    "cue_positions": 128,
+    "cue_episodes": 8,
+    "cue_delta_C_point_min": 0.01,
+    "cue_delta_C_lower95_min": 0,
+    "active_positions": 128,
+    "active_episodes": 8,
+    "weighted_excess_release_fraction_min": 0.01,
+    "nuisance_mean_upper95_max": 0.01,
+    "auc_C_point_min": 0.6,
+    "auc_C_lower95_min": 0.5,
+    "added_auc_C_minus_D_lower95_min": 0,
+    "P_protected_weight_changed_fraction_min": 0.5,
+    "P_weighted_excess_relative_change_max": 0.1
+  },
+  "stages": {
+    "300000": {
+      "source": {
+        "training_action_stage": 300000,
+        "checkpoint_sha256": "2ab693c8ded4d8f2186bd489aa8b77498448ba2f2c331090159da4e5f08056b9",
+        "params_sha256": "14859c4e129b51aa488c10eab09f16d56fd110c76239b2c9072f415829d111c2",
+        "collection_checkpoint_sha256": "2ab693c8ded4d8f2186bd489aa8b77498448ba2f2c331090159da4e5f08056b9",
+        "collection_params_sha256": "14859c4e129b51aa488c10eab09f16d56fd110c76239b2c9072f415829d111c2",
+        "config_sha256": "11428512fdc9b9e04a5384e419c5abcef93e5429db0a3327d05ccb0d4bd20445",
+        "checkpoint_counters": {
+          "actions": 18769,
+          "batches": 74493,
+          "eval_actions": 1001,
+          "eval_seed": 3404107006,
+          "updates": 74493
+        }
+      },
+      "actual_scoring": {
+        "git_sha": "1280bea7bf409e9cc6fa975704bcb370b8880a0a",
+        "code_version": "DL-code-r1",
+        "plan_resource_checked_at_utc": "2026-10-10T09:40:56.214707+00:00",
+        "physical_gpu": 4,
+        "actual_hostname": "lyg0326",
+        "compute_uuid": "GPU-9c070d5a-ac68-4c26-9522-a790ad874b23",
+        "elapsed_seconds": 167.26851706812158,
+        "elapsed_scope": "Scoring-loop timer; excludes collection and prior loading/setup; loop JIT compilation may be included; not total GPU walltime",
+        "score_plan_sha256": "ea32e3e53b6003bef6a588130f7470ae273a1d60bd1ae728f38e97f901a0eb08",
+        "score_complete_sha256": "82e740259d137d10895d84fdad9ab389a14897e374d26e9b57dee3821dc3399d",
+        "all_32_score_artifact_hashes_match": true,
+        "params_unchanged": true
+      },
+      "original_report": {
+        "path": "analysis/outputs/dl-prevalidation/cp300000-analysis-r1.json",
+        "sha256": "abb37f413fb2293a0c0dd132525e7cacfd5b1b67fd11921fbee5c622d7ea230c",
+        "screening": {
+          "active_release": "inconclusive",
+          "added_signal_beyond_D": "inconclusive",
+          "cue_deprivation": "inconclusive",
+          "eligible_for_short_training_review": false,
+          "full_policy_distribution": "mean_action_scope_only",
+          "limitation": "Single task/checkpoint screening; no formal performance conclusion. Cue deprivation and finite action utility do not prove posterior causal correctness.",
+          "nuisance": "supported",
+          "proceed_short_training": false,
+          "remaining_engineering": "Size50m DL-B, segmentation visual review and training controls must be independently audited; this analysis cannot authorize training",
+          "signal": "inconclusive"
+        }
+      },
+      "verdict": {
+        "signal": "insufficient_label_coverage",
+        "added_signal_beyond_D": "not_established_and_insufficient_label_coverage",
+        "cue": "insufficient_useful_cue_coverage",
+        "active_release": "observed_frozen_criterion_not_satisfied",
+        "permutation": "control_not_valid_for_correspondence_interpretation",
+        "nuisance": "mean_bound_supported_conditional_on_intervention_validity",
+        "training_ready": false
+      },
+      "label_counts": {
+        "positive": 21,
+        "positive_episodes": 9,
+        "negative": 377,
+        "negative_episodes": 24,
+        "gray": 370,
+        "useful_cue": 26,
+        "useful_cue_episodes": 8,
+        "positive_and_useful_cue": 9
+      },
+      "active_positions": 768,
+      "active_episodes": 24,
+      "weighted_excess_release_fraction": 0.0012944182381033897,
+      "weighted_excess_release_fraction_independent_episode_interval": {
+        "point": 0.001294418269108466,
+        "lower95": 0.0008968692610459964,
+        "upper95": 0.0017679469847981185,
+        "statistical_unit": "episode",
+        "draws": 2000,
+        "seed": 2026401001
+      },
+      "signal_auc": {
+        "C": {
+          "episodes": 24,
+          "lower95": 0.4409206693450309,
+          "point": 0.572565365668814,
+          "upper95": 0.7014560410212584,
+          "valid_bootstrap_draws": 2000
+        },
+        "D": {
+          "episodes": 24,
+          "lower95": 0.5946038663797679,
+          "point": 0.6967285587975244,
+          "upper95": 0.7781890262008115,
+          "valid_bootstrap_draws": 2000
+        },
+        "K": {
+          "episodes": 24,
+          "lower95": 0.5230502879357062,
+          "point": 0.6307944928634582,
+          "upper95": 0.7672451934124855,
+          "valid_bootstrap_draws": 2000
+        },
+        "e": {
+          "episodes": 24,
+          "lower95": 0.41568061754686486,
+          "point": 0.5425034735379562,
+          "upper95": 0.6711968058282258,
+          "valid_bootstrap_draws": 2000
+        }
+      },
+      "paired_auc_C_minus_D": {
+        "episodes": 24,
+        "lower95": -0.29289603798058694,
+        "point": -0.12416319312871038,
+        "upper95": 0.021650772025431624,
+        "valid_bootstrap_draws": 2000
+      },
+      "paired_auc_C_minus_reward_only": {
+        "episodes": 24,
+        "lower95": -0.0007520191977217757,
+        "point": 0.030061892130857748,
+        "upper95": 0.05599870895319195,
+        "valid_bootstrap_draws": 2000
+      },
+      "useful_cue_retention_delta_C": {
+        "episodes": 8,
+        "lower95": -0.007366142480168492,
+        "point": -0.0031234200578182936,
+        "upper95": 0.0003523854073137042,
+        "valid_bootstrap_draws": 2000
+      },
+      "nuisance_mean_delta_C": {
+        "background_a": {
+          "episodes": 24,
+          "lower95": 0.00031234440975822506,
+          "point": 0.0010123344836756587,
+          "upper95": 0.001840378635097295,
+          "valid_bootstrap_draws": 2000
+        },
+        "background_b": {
+          "episodes": 24,
+          "lower95": 0.0001961903653864283,
+          "point": 0.0007524699904024601,
+          "upper95": 0.0014026753226062281,
+          "valid_bootstrap_draws": 2000
+        }
+      },
+      "nuisance_tail": {
+        "background_a": {
+          "max_delta_C": 0.17886382341384888,
+          "max_episode": 7,
+          "max_position": 1,
+          "q99_delta_C": 0.02549666166305542,
+          "positions_delta_C_gt_001": 28,
+          "blind_positions": 768
+        },
+        "background_b": {
+          "max_delta_C": 0.06975996494293213,
+          "max_episode": 18,
+          "max_position": 351,
+          "q99_delta_C": 0.02065753698349006,
+          "positions_delta_C_gt_001": 28,
+          "blind_positions": 768
+        }
+      },
+      "offline_permutation": {
+        "active_protected_moved_fraction": 0.9973890339425587,
+        "active_protected_value_changed_fraction": 0.9947780678851175,
+        "blind_moved_release_mass": 16.685609817504883,
+        "blind_singleton_fraction": 0.0,
+        "blind_weighted_excess_relative_change": 0.11883237490564989,
+        "status": "inconclusive",
+        "warning": "Offline diagnostic only; does not certify training-batch control validity"
+      },
+      "physics_max_repeat_error": 0.0,
+      "independent_signal_description": {
+        "mean_C": {
+          "n": 768,
+          "mean": 0.0009392790185908476,
+          "median": 7.152557373046875e-07,
+          "minimum": 0.0,
+          "maximum": 0.05654066801071167
+        },
+        "mean_e": {
+          "n": 768,
+          "mean": 0.010327720414638955,
+          "median": 0.00012478232383728027,
+          "minimum": 0.0,
+          "maximum": 0.32958635687828064
+        },
+        "D": {
+          "n": 768,
+          "mean": 0.015543904072713074,
+          "median": 0.005545186344534159,
+          "minimum": 3.3036074000847293e-06,
+          "maximum": 0.46132296323776245
+        },
+        "K": {
+          "n": 768,
+          "mean": 11.888313297803203,
+          "median": 10.560372829437256,
+          "minimum": 2.958747386932373,
+          "maximum": 55.967254638671875
+        },
+        "u_q": {
+          "n": 768,
+          "mean": 0.8610725984687804,
+          "median": 0.978963702917099,
+          "minimum": 3.034031396964565e-05,
+          "maximum": 0.9999995231628418
+        },
+        "u_p": {
+          "n": 768,
+          "mean": 0.8587117343448915,
+          "median": 0.9772672057151794,
+          "minimum": 2.7371503165340982e-05,
+          "maximum": 0.9999991059303284
+        },
+        "positive_loss_gap": {
+          "n": 399,
+          "mean": 0.05418511868027368,
+          "median": 0.0067548006772994995,
+          "minimum": 9.5367431640625e-07,
+          "maximum": 0.874699592590332
+        },
+        "next_reward": {
+          "n": 768,
+          "mean": 0.2801181931771328,
+          "median": 0.04762372747063637,
+          "minimum": 0.0,
+          "maximum": 0.9998762011528015
+        },
+        "fraction_next_reward_ge_099": 0.1015625,
+        "q_minus_p_h1": {
+          "n": 768,
+          "mean": -8.14361292607012e-05,
+          "median": 1.5511516767662292e-09,
+          "minimum": -0.050761638359579475,
+          "maximum": 0.024239461993546596
+        },
+        "q_minus_p_h10": {
+          "n": 768,
+          "mean": 0.0003893445941982787,
+          "median": 1.0041887603833455e-06,
+          "minimum": -0.04573463982607062,
+          "maximum": 0.14475552017170557
+        },
+        "q_p_action_mean_square_difference": {
+          "n": 768,
+          "mean": 0.027300890159576003,
+          "median": 0.010359438601881266,
+          "minimum": 6.57468672216055e-06,
+          "maximum": 0.6778871417045593
+        },
+        "attenuation_on_positive_score_margin": {
+          "n": 399,
+          "mean": 0.8485983134680675,
+          "median": 0.9779344797134399,
+          "minimum": 3.034031396964565e-05,
+          "maximum": 0.9999995231628418
+        },
+        "relative_support_release_ratio_descriptive_only": {
+          "point": 0.00280188129966791,
+          "lower95": 0.0019473654563116854,
+          "upper95": 0.003716399102936311,
+          "statistical_unit": "episode",
+          "draws": 2000,
+          "seed": 2026401001
+        }
+      },
+      "relative_support_counterfactual_decomposition": {
+        "groups": {
+          "positive": {
+            "n": 21,
+            "actual_release_share": 0.03378147631883621,
+            "relative_release_share": 0.12682108581066132,
+            "relative_release_fraction_of_total_excess": 0.000355337600922212,
+            "utility": {
+              "n": 21,
+              "mean": 0.034535487333555666,
+              "median": 0.017611529284171867
+            }
+          },
+          "negative": {
+            "n": 377,
+            "actual_release_share": 0.5604004859924316,
+            "relative_release_share": 0.5827351808547974,
+            "relative_release_fraction_of_total_excess": 0.0016327546909451485,
+            "utility": {
+              "n": 377,
+              "mean": -0.0020635392574400173,
+              "median": -0.00029424275130193744
+            }
+          },
+          "gray": {
+            "n": 370,
+            "actual_release_share": 0.40581804513931274,
+            "relative_release_share": 0.2904438078403473,
+            "relative_release_fraction_of_total_excess": 0.0008137890254147351,
+            "utility": {
+              "n": 370,
+              "mean": 0.0009506100389040423,
+              "median": 0.00024674986433861294
+            }
+          },
+          "uq_lt_05": {
+            "n": 83,
+            "actual_release_share": 0.16421885788440704,
+            "relative_release_share": 0.46284449100494385,
+            "relative_release_fraction_of_total_excess": 0.0012968352530151606,
+            "utility": {
+              "n": 83,
+              "mean": 0.0018015579514267053,
+              "median": -7.035980960809485e-05
+            }
+          }
+        },
+        "fixed_H1_reward_span": {
+          "n": 768,
+          "mean": 0.002958953380584717,
+          "median": 0.0004278961569070816,
+          "q90": 0.00968747437000275,
+          "q99": 0.02527257680892948,
+          "max": 0.04073435068130493
+        },
+        "fixed_H1_span_ge_001_positions": 75,
+        "fixed_H1_span_ge_001_episodes": 13
+      },
+      "classification_correction": {
+        "original_active_release": "inconclusive",
+        "corrected_active_release": "not_supported",
+        "reason": "Active coverage sufficient; observed release fraction below original 1% threshold; no threshold changed",
+        "source_corrected_after_original_outputs": true,
+        "original_outputs_not_overwritten": true
+      }
+    },
+    "1000000": {
+      "source": {
+        "training_action_stage": 1000000,
+        "checkpoint_sha256": "c9c893081485c8ad22468611d046bc5bf9fbe463d55996fda15cf85b2a0323fe",
+        "params_sha256": "fb8c429cb13861d90f2aeba32842eda8958bd17d1b80f2dfa15c0363aca7549d",
+        "collection_checkpoint_sha256": "c9c893081485c8ad22468611d046bc5bf9fbe463d55996fda15cf85b2a0323fe",
+        "collection_params_sha256": "fb8c429cb13861d90f2aeba32842eda8958bd17d1b80f2dfa15c0363aca7549d",
+        "config_sha256": "11428512fdc9b9e04a5384e419c5abcef93e5429db0a3327d05ccb0d4bd20445",
+        "checkpoint_counters": {
+          "actions": 62563,
+          "batches": 249493,
+          "eval_actions": 1001,
+          "eval_seed": 2823791453,
+          "updates": 249493
+        }
+      },
+      "actual_scoring": {
+        "git_sha": "1280bea7bf409e9cc6fa975704bcb370b8880a0a",
+        "code_version": "DL-code-r1",
+        "plan_resource_checked_at_utc": "2026-10-10T09:18:49.718845+00:00",
+        "physical_gpu": 5,
+        "actual_hostname": "lyg0326",
+        "compute_uuid": "GPU-79704918-e096-92b4-252c-e3244497a8b3",
+        "elapsed_seconds": 159.84081276413053,
+        "elapsed_scope": "Scoring-loop timer; excludes collection and prior loading/setup; loop JIT compilation may be included; not total GPU walltime",
+        "score_plan_sha256": "8d4f461b8475017c56119fe998a36d337d07841603d169deb7ee4d66ad5c0ffc",
+        "score_complete_sha256": "1f72668bb077736e520986a436f0834e83aafd635f721242caa077f16d15bdea",
+        "all_32_score_artifact_hashes_match": true,
+        "params_unchanged": true
+      },
+      "original_report": {
+        "path": "analysis/outputs/dl-prevalidation/cp1000000-analysis-r1.json",
+        "sha256": "02461c43461d05d21d9802536c4e51b9ced776a65d5ecc8ad5ea7458b4311263",
+        "screening": {
+          "active_release": "inconclusive",
+          "added_signal_beyond_D": "inconclusive",
+          "cue_deprivation": "inconclusive",
+          "eligible_for_short_training_review": false,
+          "full_policy_distribution": "mean_action_scope_only",
+          "limitation": "Single task/checkpoint screening; no formal performance conclusion. Cue deprivation and finite action utility do not prove posterior causal correctness.",
+          "nuisance": "supported",
+          "proceed_short_training": false,
+          "remaining_engineering": "Size50m DL-B, segmentation visual review and training controls must be independently audited; this analysis cannot authorize training",
+          "signal": "inconclusive"
+        }
+      },
+      "verdict": {
+        "signal": "insufficient_label_coverage",
+        "added_signal_beyond_D": "not_established_and_insufficient_label_coverage",
+        "cue": "insufficient_useful_cue_coverage",
+        "active_release": "observed_frozen_criterion_not_satisfied",
+        "permutation": "control_not_valid_for_correspondence_interpretation",
+        "nuisance": "mean_bound_supported_conditional_on_intervention_validity",
+        "training_ready": false
+      },
+      "label_counts": {
+        "positive": 4,
+        "positive_episodes": 4,
+        "negative": 393,
+        "negative_episodes": 24,
+        "gray": 371,
+        "useful_cue": 7,
+        "useful_cue_episodes": 6,
+        "positive_and_useful_cue": 1
+      },
+      "active_positions": 760,
+      "active_episodes": 24,
+      "weighted_excess_release_fraction": 0.002230472397059202,
+      "weighted_excess_release_fraction_independent_episode_interval": {
+        "point": 0.0022304721957192852,
+        "lower95": 0.0010687152102192492,
+        "upper95": 0.003612390011336791,
+        "statistical_unit": "episode",
+        "draws": 2000,
+        "seed": 2027101001
+      },
+      "signal_auc": {
+        "C": {
+          "episodes": 24,
+          "lower95": 0.9329571244997379,
+          "point": 0.9710559796437659,
+          "upper95": 1.0,
+          "valid_bootstrap_draws": 1978
+        },
+        "D": {
+          "episodes": 24,
+          "lower95": 0.4969736727589208,
+          "point": 0.7544529262086515,
+          "upper95": 1.0,
+          "valid_bootstrap_draws": 1978
+        },
+        "K": {
+          "episodes": 24,
+          "lower95": 0.8601289771195938,
+          "point": 0.9446564885496183,
+          "upper95": 0.9943446430469332,
+          "valid_bootstrap_draws": 1978
+        },
+        "e": {
+          "episodes": 24,
+          "lower95": 0.8438799627791564,
+          "point": 0.9478371501272265,
+          "upper95": 0.9974236596852727,
+          "valid_bootstrap_draws": 1978
+        }
+      },
+      "paired_auc_C_minus_D": {
+        "episodes": 24,
+        "lower95": -0.038075892857142996,
+        "point": 0.21660305343511443,
+        "upper95": 0.48696471796127067,
+        "valid_bootstrap_draws": 1978
+      },
+      "paired_auc_C_minus_reward_only": {
+        "episodes": 24,
+        "lower95": -0.012177975467762546,
+        "point": 0.02321882951653942,
+        "upper95": 0.08912305429586968,
+        "valid_bootstrap_draws": 1978
+      },
+      "useful_cue_retention_delta_C": {
+        "episodes": 6,
+        "lower95": 0.0009359419345855713,
+        "point": 0.011505290865898132,
+        "upper95": 0.03004285991191864,
+        "valid_bootstrap_draws": 2000
+      },
+      "nuisance_mean_delta_C": {
+        "background_a": {
+          "episodes": 24,
+          "lower95": -4.417105737957171e-05,
+          "point": 0.000376218551537022,
+          "upper95": 0.0008679630642291158,
+          "valid_bootstrap_draws": 2000
+        },
+        "background_b": {
+          "episodes": 24,
+          "lower95": 3.1601522368873706e-05,
+          "point": 0.0003463050816208124,
+          "upper95": 0.000738197559257969,
+          "valid_bootstrap_draws": 2000
+        }
+      },
+      "nuisance_tail": {
+        "background_a": {
+          "max_delta_C": 0.11687397956848145,
+          "max_episode": 25,
+          "max_position": 1,
+          "q99_delta_C": 0.017985681295394972,
+          "positions_delta_C_gt_001": 13,
+          "blind_positions": 768
+        },
+        "background_b": {
+          "max_delta_C": 0.09330922365188599,
+          "max_episode": 25,
+          "max_position": 1,
+          "q99_delta_C": 0.011295872926712039,
+          "positions_delta_C_gt_001": 10,
+          "blind_positions": 768
+        }
+      },
+      "offline_permutation": {
+        "active_protected_moved_fraction": 1.0,
+        "active_protected_value_changed_fraction": 0.9948717948717949,
+        "blind_moved_release_mass": 10.096355438232422,
+        "blind_singleton_fraction": 0.0013020833333333333,
+        "blind_weighted_excess_relative_change": 0.6273008743426486,
+        "status": "inconclusive",
+        "warning": "Offline diagnostic only; does not certify training-batch control validity"
+      },
+      "physics_max_repeat_error": 0.0,
+      "independent_signal_description": {
+        "mean_C": {
+          "n": 768,
+          "mean": 0.0005326258639494578,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.08032715320587158
+        },
+        "mean_e": {
+          "n": 768,
+          "mean": 0.002799995719518241,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.28427544236183167
+        },
+        "D": {
+          "n": 768,
+          "mean": 0.02660402215979237,
+          "median": 0.01030057342723012,
+          "minimum": 5.4252603149507195e-05,
+          "maximum": 2.4454336166381836
+        },
+        "K": {
+          "n": 768,
+          "mean": 5.8172647608444095,
+          "median": 4.176472902297974,
+          "minimum": 0.6915264129638672,
+          "maximum": 48.626197814941406
+        },
+        "u_q": {
+          "n": 768,
+          "mean": 0.9674037521316071,
+          "median": 0.9995910823345184,
+          "minimum": 0.0013623415725305676,
+          "maximum": 0.9999997615814209
+        },
+        "u_p": {
+          "n": 768,
+          "mean": 0.967496342572152,
+          "median": 0.9995945990085602,
+          "minimum": 0.0009502830216661096,
+          "maximum": 0.9999993443489075
+        },
+        "positive_loss_gap": {
+          "n": 283,
+          "mean": 0.025175198333423465,
+          "median": 0.00042629241943359375,
+          "minimum": 5.960464477539062e-07,
+          "maximum": 1.205742597579956
+        },
+        "next_reward": {
+          "n": 768,
+          "mean": 0.9346654233122536,
+          "median": 0.9976803660392761,
+          "minimum": 0.0,
+          "maximum": 0.9999954700469971
+        },
+        "fraction_next_reward_ge_099": 0.8502604166666666,
+        "q_minus_p_h1": {
+          "n": 768,
+          "mean": 2.1387582690890222e-05,
+          "median": -6.519907202462427e-07,
+          "minimum": -0.007375138111315072,
+          "maximum": 0.029155621333315285
+        },
+        "q_minus_p_h10": {
+          "n": 768,
+          "mean": -4.366619101323914e-05,
+          "median": -2.5419202739906943e-06,
+          "minimum": -0.021699191871735413,
+          "maximum": 0.02712220843623328
+        },
+        "q_p_action_mean_square_difference": {
+          "n": 768,
+          "mean": 0.032377269009127886,
+          "median": 0.01881926693022251,
+          "minimum": 3.6864228150079725e-06,
+          "maximum": 0.6730816960334778
+        },
+        "attenuation_on_positive_score_margin": {
+          "n": 283,
+          "mean": 0.9485114306156349,
+          "median": 0.9997311234474182,
+          "minimum": 0.0013623415725305676,
+          "maximum": 0.9999997615814209
+        },
+        "relative_support_release_ratio_descriptive_only": {
+          "point": 0.010892297476868965,
+          "lower95": 0.0033269117145382074,
+          "upper95": 0.02059854868230303,
+          "statistical_unit": "episode",
+          "draws": 2000,
+          "seed": 2027101001
+        }
+      },
+      "relative_support_counterfactual_decomposition": {
+        "groups": {
+          "positive": {
+            "n": 4,
+            "actual_release_share": 0.07810620218515396,
+            "relative_release_share": 0.10160180181264877,
+            "relative_release_fraction_of_total_excess": 0.001106677227653563,
+            "utility": {
+              "n": 4,
+              "mean": 0.019353039296246405,
+              "median": 0.018565786837308237
+            }
+          },
+          "negative": {
+            "n": 393,
+            "actual_release_share": 0.39661726355552673,
+            "relative_release_share": 0.4691219925880432,
+            "relative_release_fraction_of_total_excess": 0.005109816789627075,
+            "utility": {
+              "n": 393,
+              "mean": -0.0005839292706165649,
+              "median": -0.00012052489093306029
+            }
+          },
+          "gray": {
+            "n": 371,
+            "actual_release_share": 0.5252764821052551,
+            "relative_release_share": 0.42927610874176025,
+            "relative_release_fraction_of_total_excess": 0.004675803240388632,
+            "utility": {
+              "n": 371,
+              "mean": 0.0003195051522079697,
+              "median": 9.440513808844919e-05
+            }
+          },
+          "uq_lt_05": {
+            "n": 21,
+            "actual_release_share": 0.4296543300151825,
+            "relative_release_share": 0.8516907095909119,
+            "relative_release_fraction_of_total_excess": 0.00927686970680952,
+            "utility": {
+              "n": 21,
+              "mean": -0.001196733051340793,
+              "median": -0.00013122711681456956
+            }
+          }
+        },
+        "fixed_H1_reward_span": {
+          "n": 768,
+          "mean": 0.0005879602977074683,
+          "median": 4.2885541915893555e-05,
+          "q90": 0.0002503335475921631,
+          "q99": 0.014841553568840156,
+          "max": 0.044319212436676025
+        },
+        "fixed_H1_span_ge_001_positions": 15,
+        "fixed_H1_span_ge_001_episodes": 14
+      },
+      "classification_correction": {
+        "original_active_release": "inconclusive",
+        "corrected_active_release": "not_supported",
+        "reason": "Active coverage sufficient; observed release fraction below original 1% threshold; no threshold changed",
+        "source_corrected_after_original_outputs": true,
+        "original_outputs_not_overwritten": true
+      }
+    }
+  },
+  "overall": {
+    "method_ready_for_formal_experiments": false,
+    "proceed_short_training": false,
+    "frozen_next_protocol": "DL-opportunity-r1",
+    "next_protocol_path": "docs/DL_OPPORTUNITY.md",
+    "next_scope": "New seed20261012 H100 cumulative first-action consequences; unchanged r1 H1 signal",
+    "size50m_engineering": "attempt03 at55a527c reported running on GPU7; outcome not audited by this report",
+    "size50m_evidence_path": "docs/DL_VALIDATION_LOG.md",
+    "visual_QA": {
+      "root_reported_18_frames_checked": true,
+      "observation": "Background changed sky only in checked samples; robot/ground/edges/shadows preserved. Gray-body retains current shape, limb pose and ground shadows.",
+      "intervention_scope": "Body appearance/texture removal, not full kinematic key information deprivation",
+      "low_cuecost_interpretation": "Remaining visible control information is a hypothesis; does not imply prior is sufficient",
+      "remaining": "Full-frame legality and worst blind nuisance point QA remain; complete key removal not established",
+      "proofs": {
+        "300000": {
+          "frames": 9,
+          "episodes": [
+            4,
+            6,
+            10
+          ],
+          "frame_indices": [
+            50,
+            500,
+            900
+          ],
+          "montage_path": "analysis/outputs/dl-prevalidation/operational-evidence-r1/cp300000-calibration-mask-montage.png",
+          "montage_sha256": "f88940a32ca5c26c46c43db8fb09a9e350ce782b607bc886149f76b7d43a181f",
+          "montage_metadata_sha256": "1ee1d02107db9fba4bbfe2f4a2caf42948248d6e37b564a36d01697c27d1439b",
+          "source_visuals_metadata_sha256": "e0d533244a8d79c5c10cf7ad5af2e1d82e12924ac65dfadd37bbe04b98021bb3",
+          "source_visuals_npz_sha256": "76bae2491f737a3735095d93148fd7de528056b4a4703acb4fe30259f7287e79",
+          "sample_protected_rgb_exact": true,
+          "sample_outside_graybody_rgb_exact": true,
+          "scope": "Preselected calibration samples only, not all-frame semantic guarantee"
+        },
+        "1000000": {
+          "frames": 9,
+          "episodes": [
+            4,
+            6,
+            10
+          ],
+          "frame_indices": [
+            50,
+            500,
+            900
+          ],
+          "montage_path": "analysis/outputs/dl-prevalidation/operational-evidence-r1/cp1000000-calibration-mask-montage.png",
+          "montage_sha256": "839375fdd593853bc4df785252b4d24481374c7e747b7e8f6b909801018f65a6",
+          "montage_metadata_sha256": "37212550649c553f927a69142dcae68e6d5ea68c7d208024bee3c396dbb1f77e",
+          "source_visuals_metadata_sha256": "3ee1832f4ee8d827c07317846bbd15c1a048ddc0d34068dd28ed08a0a6a57f54",
+          "source_visuals_npz_sha256": "2dd841047a4d3ff5f11247dfb2c813d2320e7cf945b3086394847e5b01010ed9",
+          "sample_protected_rgb_exact": true,
+          "sample_outside_graybody_rgb_exact": true,
+          "scope": "Preselected calibration samples only, not all-frame semantic guarantee"
+        }
+      }
+    }
+  },
+  "last_updated_at_utc": "2026-10-10T10:23:42.790481+00:00"
+}
