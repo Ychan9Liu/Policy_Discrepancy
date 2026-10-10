@@ -1,4 +1,4 @@
-"""DL-code-r1: real-image size50m engineering and compression inspection.
+"""DL-engineering-r3: real-image size50m engineering and compression inspection.
 
 Runs isolated paired groups from a trusted checkpoint and independently
 collected episode NPZs. No environment construction, rendering, or training
@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import pickle
 import platform
+import re
 import subprocess
 import sys
 import time
@@ -24,7 +25,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-VERSION = 'DL-code-r1'
+VERSION = 'DL-engineering-r3'
 GROUPS = ('off', 'alpha0', 'rho0', 'logging', 'dtlatch')
 
 
@@ -169,6 +170,34 @@ def reconstruct_context_entries(model, carry, obs, prevact):
   return elements.tree.flatdict(dict(enc=ee, dyn=de, dec=ce))
 
 
+def probe_shared_gradients(model, repfeat, obs, prevact, alpha, rho):
+  """Impure Ninjax helper: differentiate every actually read probe parameter.
+
+  Ninjax rejects requested state entries that the objective does not read.
+  Track its real accesses before selecting exact leaf targets; state entries
+  not read by this objective are independent of it, not directly gradient
+  tested. No model state may be created or modified by the detached probe.
+  """
+  import ninjax as nj
+  from dreamerv3 import dt_latch
+
+  def objective(feat, ob, pa):
+    prior = model.dyn._prior(feat['deter'])
+    signal = dt_latch.probe(model, feat, prior, ob, pa, alpha, rho)
+    return sum(signal[k].sum() for k in ('D', 'ell_q', 'ell_p', 'e', 'v'))
+
+  _, _, accessed, modified, created = nj.pure(objective, nested=True)(
+      dict(nj.context()), repfeat, obs, prevact,
+      create=False, modify=False, track=True)
+  if modified or created:
+    raise AssertionError('Detached probe attempted to create or modify model state')
+  if not accessed:
+    raise AssertionError('Detached probe did not access any shared parameters')
+  # Escape full leaf names: Ninjax accepts regular-expression state targets.
+  targets = tuple(re.escape(key) for key in sorted(accessed))
+  return nj.grad(objective, targets)(repfeat, obs, prevact)
+
+
 def worker(args):
   if os.name == 'nt' and args.platform == 'cuda':
     raise RuntimeError('Real CUDA verification runs on assigned Linux server only')
@@ -264,15 +293,14 @@ def worker(args):
   signal_state, (prior, raw_k, dl) = signal_fn(agent.params, repfeat, obs, prevact, seed=seed)
   if hashes(signal_state) != initial_hashes:
     raise AssertionError('Detached probe changed model state')
-  def probe_objective(feat, obs, prevact):
-    _, _, signal = signals(feat, obs, prevact)
-    return sum(signal[k].sum() for k in ('D', 'ell_q', 'ell_p', 'e', 'v'))
-  probe_grad_fn = jax.jit(nj.pure(lambda f, o, p: nj.grad(
-      probe_objective, model.modules)(f, o, p)))
+  probe_grad_fn = jax.jit(nj.pure(lambda f, o, p: probe_shared_gradients(
+      model, f, o, p, args.alpha, args.rho)))
   _, (_, _, probe_grads) = probe_grad_fn(agent.params, repfeat, obs, prevact, seed=seed)
   norm = jax.jit(optax.global_norm)
   probe_norm = float(host(norm(probe_grads)))
-  if probe_norm != 0:
+  probe_all_zero = bool(host(jax.jit(lambda tree: jnp.all(jnp.stack([
+      jnp.all(value == 0) for value in jax.tree.leaves(tree)])))(probe_grads)))
+  if probe_norm != 0 or not probe_all_zero:
     raise AssertionError('Probe leaked gradient into shared model parameters')
   def other_loss(c, o, p):
     losses = model.loss(c, o, p, True)[1][2]['losses']
@@ -333,6 +361,11 @@ def worker(args):
       total_loss=float(host(total_loss)), total_gradient_norm=float(host(norm(grads))),
       other_gradient_norm=float(host(norm(other_grads))),
       probe_shared_gradient_norm=probe_norm,
+      probe_shared_gradient_all_zero=probe_all_zero,
+      probe_gradient_tested_keys=sorted(probe_grads),
+      probe_gradient_tested_count=len(probe_grads),
+      probe_unaccessed_state_count=len(agent.params) - len(probe_grads),
+      probe_gradient_scope='All actually accessed probe parameters; unread state entries are mathematically independent, not directly gradient tested',
       local_gradient_max_abs_error=float(np.max(np.abs(g1 - ge))),
       branch_losses={k: float(host(v).mean()) for k, v in aux[2]['losses'].items()},
       active_fraction=float(active.mean()), valid_active_fraction=float(
