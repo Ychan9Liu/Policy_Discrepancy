@@ -1,5 +1,9 @@
 # 项目状态
 
+**DL工程进展（2026-10-12 04:45，真实对象未启动）**：新r1四组必要Windows契约共38项，37通过、1待Linux进程组；源码和科学规范已冻结，下一确定提交clean Linux组合验收与fresh sv3物理4/CUDA/EGL检查。没有新source/checkpoint/GPU/physics访问；旧M2保持、完整目标active。资源需求仍1独占A100、单次主7200秒≤2GPUh上限，CPU独审1200秒0GPU；不是全科研总ETA或新显存保证。详情 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
+
+**DL当前（2026-10-12 04:27）**：全窗口rep到nativeactor有限对象科学r1已采用，工程实施/CPU构造检查中，尚未真实读取本对象source/checkpoint或启动GPU。规范 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md)；A128匹配原B完整输入/keys，旧B认证复用、0解释，新32seed1024–1055各1000步/0-B-A共96k真实transition，主A−B闭环F64回报，不新增F/信号/gate。仅sv3物理4独占一A100/主7200秒≤2GPUh；CPU独审1200秒0GPU，probe/失败实际成本另记，总剩余GPU小时及新显存未定。当前未核GPU占用、5–7无本对象计划。工程验收不能当真实actor、机制或方法有效，M2不改、完整目标active。下一继续现chat确定版本Linux验收和完整科学执行；04:04主/独立算术诊断已验收。以下带时间为历史。
+
 **DL当前（2026-10-12 04:04主入口、独立算术已验收）**：实际SHA `1a3fa6ddda95d3b71cc8d821fc54dfaab7c98e35`，clean Linux算术契约通过；CPU外入口.236131秒/120秒/exit0/owned终止、0GPU，无模型/更新/physics。独审866比较max1.388e−17，不fit或重演模型/optimizer。全8cal/24已开留出、冻结程序不改：cal p参考3fold变化造成平均U的.101425分量，固定p5后cal S/U相关仍负，不能将参考变化解释成全部根因或信号已有效。报告 [DL_RESET_SIGNAL_ERROR.md](DL_RESET_SIGNAL_ERROR.md)，完整目标active，旧联合对象裁决保持。下一候选全窗口rep-stop A对B并测新seed nativeactor闭环回报，协议/工程工作稿未采用/未启动，F仅辅助，正式M2不改。本轮没有GPU占用核查或新GPU作业，不把此前03:45快照称当前；源码仅sv3隔离checkout、canonical/sv1/sv2不改，最终Git状态按终点收据。
 
 **Git最新核验（2026-10-12 03:48:41.314300）**：网络恢复，研究分支 `codex/dl-prevalidation` 已补推并以ls-remote核验到 `45045f9017bd2d1ccf768cf5ae3d6bad41854562`；GitHub/main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。两次工程修复、tested主/独审版本和结果文档均已进入研究分支；03:30段落的连接失败是此前历史状态，原收据保留。证据 `analysis/outputs/dl-reset-joint/engineering/git-sync-final-45045f9.json`；其后仅同步收据文档归档，最终SHA见终点Git回复/收据。

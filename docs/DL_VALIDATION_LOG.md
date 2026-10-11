@@ -1,5 +1,17 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 04:45：native有限对象工程冻结，Windows必要契约通过
+
+新增A全窗口rep helper、currentparams native actor、主7200秒owned父入口、独立1200秒CPU审计及四组测试均已冻结；科学r1、旧19生产文件、原M2保持。实际Windows基底 `06f5413ba36232d4be3e8a37458e64c2c9c73ea2` 加新文件：A/native联合13项全过20.656秒；主driver8项7过/1 Linux进程组跳过.290秒；独审17项全过3.132秒。实际官方tiny RSSM/Optimizer/embodiedJAXAgent用于梯度、采样、公共policy oracle、完整state/counter守卫；fakephysics/filesystem只验字节、完整性、统计、预算和退出，不是实际physics或size50m。ignored `analysis/outputs/dl-rep-native/engineering/windows-precommit-receipt.json` 记录原字节hash与测试边界。
+
+首次native tiny fixture180.479秒锁重入失败，owned进程已终止、残留fixture Python为0；修复为锁内直接对当前params/counters使用原typed定义hash，不放宽不变性。冻结前发现的source元数据末核、额外统计arm、完整parent seal hash绑定及helper r1 schema问题已修复并交叉审；无真实数据、checkpoint、科学模型、GPU、render或物理transition读取/执行。下一确定提交clean Linux组合38项（含Windows跳过项）与pip check，再fresh物理4/CUDA/EGL核查和一次真实A/0-B-A对象。新对象仍未启动，资源上限1独占A100/单attempt7200秒≤2GPUh，实际成本及显存待测；完整方法目标active。
+
+## 2026-10-12 04:27：全窗口rep到nativeactor对象采用，工程实施中
+
+授权内Agent科学/源码交叉审采用 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) r1；全窗口当前rep-stop A128严格匹配旧B初态/cal/context/batch/keys，正常native闭环新32seed各1000步、主A−B，0解释；F只引用旧背景。新helper `scripts/dl_reset_all_rep.py` 与6项必要CPU构造测试已写，Windows全过15.305秒（HEAD06f5413加新文件），官方tiny前向/nonrep梯度byteexact、rep梯度0、真实Optimizer int32步骤+1及128匹配/拒绝契约；是工程构造证据，不是size50m真实学习。native adapter/主driver/独审接线和确定版本Linux验收仍实施中，最终SHA与结果后记。
+
+本对象尚无真实source/checkpoint/model/GPU/render/physics/训练或新资源核查；只sv3物理4/独占一A100/主完整7200秒≤2GPUh，CPU独审1200秒0GPU，设备probe/失败另记。旧19producer和正式M2不改、原24已开不重新称blind。完整目标active；下一继续当前chat完成确定版本工程验及实际一次主/独审，统计/信号/保护/替代解释缺口按科学r1保留。
+
 ## 2026-10-12 04:04：冻结信号误差实际CPU执行及独立算术验收完成
 
 实际/Windows及clean Linux算术契约SHA `1a3fa6ddda95d3b71cc8d821fc54dfaab7c98e35`，新analysis模块和 [DL_RESET_SIGNAL_ERROR.md](DL_RESET_SIGNAL_ERROR.md) 科学r1；sv3 clean隔离checkout，canonical仍clean d9be557。父完整入口.23613102594390512秒/120秒/exit0/owned PID2044043终止，内.1864484278485179秒；父覆盖Python import/start/exit，超时owned kill且拒绝完整性。0GPU/0模型/0optimizer/0physics，仅读既有已审派生pickle/JSON前后同hash；完整pickle解码事实与科学数值白名单分别记录。whitelist SHA03707edf…fd0e1、diagnostic SHA8dfe644b…414e及镜像核验、完整命令/退出/代码/输入输出pins在新run engineering与complete.json；独立算术收据待追加。

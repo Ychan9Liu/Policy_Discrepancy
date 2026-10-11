@@ -1,5 +1,9 @@
 # 研究问题与方法
 
+**DL工程证据（2026-10-12 04:45）**：已采用native有限对象r1的A/native/主driver/独审必要Windows契约37通过、1 Linux进程组待验；旧19文件和M2不改，无真实source/checkpoint/学习/模型/GPU/physics结果。源码工程通过不升级为策略收益、机制或方法有效；下一确定提交Linux/设备验收及原冻结对象执行，见 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
+
+**DL当前（2026-10-12 04:27，实施中未科学运行）**：Agent在完整授权内交叉审查后采用 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) `DL-rep-native-assay-r1`，128次匹配学习的全窗口当前rep停止A对已审B，0只解释；新seed1024–1055各1000步的native posterior actor真实闭环回报为主，不新增A-F或第二信号拟合。sv3物理4独占一A100、单次主完整入口7200秒/≤2GPUh，CPU独审1200秒/0GPU；不是总ETA或显存保证，设备probe另记录。源码/构造验收在实施中，确定版本Linux和真实source/device/完整执行尚未完成，未启动GPU、当前占用未核。全窗口干预不是拟部署方法或selective gate上界，原M2不变；科学边界见DL-32。04:04信号误差诊断及独立866项算术已通过，旧对象裁决保持。
+
 **DL最新推进（2026-10-12 04:04）**：冻结 [DL_RESET_SIGNAL_ERROR.md](DL_RESET_SIGNAL_ERROR.md) 的CPU诊断已在实际SHA `1a3fa6ddda95d3b71cc8d821fc54dfaab7c98e35` 完成，外入口.236131秒/120秒/exit0，新增0GPU。cal交叉验证的p参考动作3/8改变，cal U均值.116656=.015231（同q对固定p5）+.101425（参考变化），而24留出p全5；cal S/U相关负、留出正，冻结S系数负。已直接观察测量程序失配，尚不能识别全部误差根因，也不重拟合或推翻旧阴性。下一候选集中比较全窗口rep停止A与B的真实nativeactor闭环效用，F只辅助；协议/工程工作稿尚未采用或运行，整个方法仍未完成。以下是带日期历史与有限联合对象结果。
 
 **DL联合诊断最新状态（2026-10-12 03:30独审通过）**：[DL_RESET_JOINT_RESULTS.md](DL_RESET_JOINT_RESULTS.md) 和DL-30记录冻结r1的实际有限结果。主SHA `c030e26f688ed227aa43866bd68dcf4352a073e3`，独审SHA `d987650c749b8917e2ea80a719d586232088f501`；完整0/B128/R128、cal封口后24留出一次联评及独立CPU审计完成。初始q−p=q−constant +.046400259/CI[.014348478,.080743645]支持有限共享七控制读出；局部R−B效用CI跨零，未建立保护收益；D+K/D+S/S-only留出增量均负且实用正例覆盖不足，未建立双信号辨别。sv3物理4一张A100，成功外入口8.424分钟/占卡上界.140399GPUh、含失败合计.165340GPUh，采样峰6.47GiB；独审0GPU。固定对象停止，完整方法未完成、总GPU小时未定，正式M2和旧对象裁决不变。下一建议先0GPU定位冻结信号误差；下方带日期状态均为历史，不把已开24点再称blind。
@@ -904,3 +908,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **工作假设与无证据推测**：测量参考/fit程序不一致、小样本、环境分布或表示/模型质量可共同导致转移失败；当前只识别程序与输出层现象，不能选一个根因当结论。没有换target、拟合新阈值/λ、筛点或新确认集；旧coverage不足、局部保护无明确收益、完整方法未完成保持。
 
 **授权内下一设计方向，尚未采用**：一个全窗口当前rep停止A对正常B128、初始0的匹配学习对象，必须包含新固定episode上原nativeactor正常未来RGB/posterior闭环回报，有限F只机制辅助。停止当前rep不等于冻结posterior、不清旧momentum，A不是selective保护上界；若F受益但actor不受益，须解决actor利用，不能称方法性能提升。原actor动作条件的模型signed regret可作另一个候选第二来源，但reward/value单头、slow value EMA不是独立ensemble，需真实后果校准；不直接启gate。协议/工程工作稿还需交叉审、工程验收与固定配置/预算，当前没有新GPU启动；正式M2不改。
+
+### DL-32 全窗口学习干预与原actor闭环效用（2026-10-12）
+
+**授权内Agent已采用设计，尚未真实执行**：科学与源码交叉审查后采用 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) r1。A从原300k完整state开始，保留旧B的8cal/terminal context/16×64窗口/128次prepare_batch实际keys、完整optimizer/momentum及其它loss；仅原RSSM.loss一次前向后停止整个当前rep反向项。旧B认证复用，0解释，不冒称本次独立B训练。新32环境seed1024–1055，每0/B/A一完整1000步原native sampled actor episode，正常未来RGB/posterior/carry；固定A−B真实累计F64return为主、whole-episode配对bootstrap及所有signed差。源/source/code/hash/私有root/实际public oracle/physics/render/退出分别验收，尚无新真实回报或机制结论。
+
+**设计理由与反例**：局部R没有涵盖未来rep通路；旧F/参考程序变化没有证明原actor可利用的收益。因此新对象把整个当前rep净作用直接接到原actor的正常任务表现，避免继续用readout改善替代性能。A可能同时删除有益rep；旧momentum和其它loss仍保留，A不是选择性保护的上界，也不定位某个posterior特征。离线reset富集的重复8cal训练仍不是普通replay，单训练seed/cp300k/128更新＋32evalseed不支持跨训练seed结论。即使A阳性，通用正则、actor/value学习等替代解释仍未排除。
+
+**已确认范围、未决和资源**：本对象不新增A-F、独立第二信号、nuisance/错误依赖、gate或正式M2变更；这些仍待后续证据。资源仅sv3物理4一A100，主完整入口7200秒/最多2GPUh、CPU独审1200秒/0GPU；单次上限不保证实际吞吐足够、显存或科研总小时，超时整对象失败而不补样本或延长。GPU5–7不用于本对象；启动前重新核指定卡和实际CUDA/EGL，当前无新GPU核查/作业。首选继续当前完整授权chat完成确定SHA CPU/Linux工程验收、实际完整链及新闭环对象/CPU独审，按预先分支解释结果，不能以工程或单项阳性宣布方法已可正式实验。
