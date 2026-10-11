@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 import pickle
+import subprocess
 import sys
 import tempfile
 import time
@@ -28,7 +29,10 @@ class FakePolicy:
   """Only the action/counter interface is stubbed; actual physics/wrappers run."""
   def __init__(self):
     import elements
+    import jax
     self.n_eval_actions = elements.Counter()
+    self.policy_mirrored = jax.sharding.NamedSharding(
+        jax.sharding.Mesh(np.array(jax.devices()), ('d',)), jax.sharding.PartitionSpec())
     self.eval_seed = 0
   def set_eval_seed(self, seed):
     self.eval_seed, self.n_eval_actions.value = seed, 0
@@ -146,6 +150,52 @@ class ProductionSourceTest(unittest.TestCase):
       self.assertTrue(receipt['worker_terminal'])
       self.assertEqual((Path(directory) / 'worker_exit_code.txt').read_text().strip(), '124')
 
+  def test_public_tiny_policy_replays_host_bfloat16_carry_under_strict_transfer_guard(self):
+    child = subprocess.run([sys.executable, str(Path(__file__).resolve()), '--policy-fixture'],
+        cwd=ROOT, capture_output=True, text=True, timeout=180,
+        env=dict(os.environ, JAX_PLATFORMS='cpu', CUDA_VISIBLE_DEVICES='', PYTHONPATH=str(ROOT)))
+    self.assertEqual(child.returncode, 0, child.stdout[-3500:] + child.stderr[-4500:])
+    self.assertIn('strict_guard_host_carry_replay_passed', child.stdout)
+
+
+def policy_fixture():
+  dll = (os.add_dll_directory(os.environ['DL_DLL_DIRECTORY'])
+      if os.name == 'nt' and os.environ.get('DL_DLL_DIRECTORY') else None)
+  import elements
+  import jax
+  from ruamel.yaml import YAML
+  presets = YAML(typ='safe').load((ROOT/'dreamerv3/configs.yaml').read_text(encoding='utf-8'))
+  config = elements.Config(presets['defaults']).update(presets['debug'])
+  config = elements.Config({**config.flat, **{'jax.platform': 'cpu',
+      'jax.compute_dtype': 'bfloat16', 'jax.precompile': False,
+      'jax.profiler': False, 'jax.enable_policy': True, 'jax.transfer_guard': True,
+      'batch_size': 2, 'batch_length': 3, 'replay_context': 0,
+      'agent.imag_length': 2, 'agent.imag_last': 2,
+      'agent.rep_probe.mode': 'off', 'agent.dt_latch.mode': 'off'}})
+  config = config.update(logdir='/tmp/dl-source-policy-fixture', seed=7)
+  agent = p.pinned.agent_from_spaces(config)
+  agent.set_eval_seed(123)
+  carry = agent.init_policy(1, mode='eval')
+  obs0 = dict(image=np.zeros((1,64,64,3), np.uint8), reward=np.zeros(1,np.float32),
+      is_first=np.ones(1,bool), is_last=np.zeros(1,bool), is_terminal=np.zeros(1,bool))
+  carry, _, _ = agent.policy(carry, obs0, mode='eval')
+  before = p.host_copy(carry)
+  assert any(str(x.dtype) == 'bfloat16' for x in jax.tree.leaves(before))
+  obs1 = {**obs0, 'is_first': np.zeros(1,bool)}
+  after, raw, _ = agent.policy(carry, obs1, mode='eval')
+  records = [dict(position=1, carry=before, carry_sha256=p.tree_digest(before),
+      after_carry_sha256=p.tree_digest(p.host_copy(after)), eval_seed=123, eval_counter=1)]
+  arrays = {k: np.concatenate([obs0[k], obs1[k]]) for k in obs0}
+  arrays['action'] = np.concatenate([np.zeros((1,12),np.float32), raw['action']])
+  receipt = p.verify_policy_records(agent, arrays, records)
+  assert receipt['raw_sample_byte_exact'] and receipt['after_carry_byte_hash_exact']
+  assert int(agent.n_eval_actions) == 2 and agent.eval_seed == 123
+  assert jax.config.jax_transfer_guard == 'disallow'
+  print('strict_guard_host_carry_replay_passed')
+
 
 if __name__ == '__main__':
-  unittest.main()
+  if '--policy-fixture' in sys.argv:
+    policy_fixture()
+  else:
+    unittest.main()

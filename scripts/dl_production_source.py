@@ -25,6 +25,7 @@ from scripts import dl_diagnostic as d
 from scripts import dl_predictive_mc as pinned
 
 VERSION = 'DL-source-r1'
+IMPLEMENTATION = 'DL-source-engineering-r2'
 CONTRACT = 'production_clip_unify_normalize_v1'
 SEED, EPISODES, CALIBRATION, POSITIONS, HORIZON = 20261020, 32, 8, 16, 100
 BUDGET = 3600
@@ -158,6 +159,7 @@ def counters(agent):
 
 def verify_policy_records(agent, arrays, records):
   """Replay actual eval keys/carry on frozen RGB; restore eval counters afterward."""
+  from embodied.jax import internal
   previous_seed, previous_counter = int(agent.eval_seed), int(agent.n_eval_actions)
   try:
     for record in records:
@@ -169,7 +171,12 @@ def verify_policy_records(agent, arrays, records):
         agent.n_eval_actions.value = record['eval_counter']
       obs = {k: arrays[k][t][None] for k in
           ('image', 'reward', 'is_first', 'is_last', 'is_terminal')}
-      after, action, _ = agent.policy(record['carry'], obs, mode='eval')
+      # Public policy expects its split carry already on the policy devices.
+      # Restoring trusted host leaves must be explicit under the unchanged
+      # production transfer guard; retain every dtype, key and numeric value.
+      device_carry = internal.device_put(record['carry'],
+          internal.local_sharding(agent.policy_mirrored))
+      after, action, _ = agent.policy(device_carry, obs, mode='eval')
       raw = np.asarray(action['action'][0])
       if (raw.dtype != arrays['action'].dtype or
           raw.tobytes() != arrays['action'][t].tobytes() or
@@ -288,7 +295,7 @@ def collect(args):
   from embodied.run.protocol_v1 import parameter_digest
   deadline = budget['monotonic_start'] + BUDGET
   agent, config, metadata = pinned.load_agent_no_env(args)
-  metadata.update(code_version=VERSION,
+  metadata.update(code_version=IMPLEMENTATION, source_version=VERSION,
       space_contract='Production DMC spaces; collection executes actual DMC + main.wrap_env')
   if metadata['params_sha256'] != pinned.PARAMS_SHA:
     raise ValueError('Frozen 300k parameter digest differs')
@@ -300,7 +307,7 @@ def collect(args):
       'dreamerv3/main.py', 'embodied/core/wrappers.py', 'embodied/core/driver.py',
       'embodied/envs/dmc.py', 'embodied/envs/from_dm.py', 'dreamerv3/agent.py',
       'embodied/jax/agent.py')
-  d.write_json(output / 'collection_plan.json', dict(version=VERSION,
+  d.write_json(output / 'collection_plan.json', dict(version=VERSION, implementation=IMPLEMENTATION,
       action_contract=CONTRACT, metadata=metadata, episodes=plan, seed=SEED,
       positions=POSITIONS, eligibility_horizon=HORIZON, expected_frames=1001,
       camera=2, shape=[64, 64], behavior='actual sampled eval policy; raw carry',
@@ -341,7 +348,7 @@ def collect(args):
   if (parameter_digest(agent) != metadata['params_sha256'] or
       any(final[k] != frozen[k] for k in ('updates', 'batches', 'actions'))):
     raise AssertionError('Frozen training parameter/state counters changed')
-  d.write_json(output / 'collection_complete.json', dict(version=VERSION,
+  d.write_json(output / 'collection_complete.json', dict(version=VERSION, implementation=IMPLEMENTATION,
       action_contract=CONTRACT, artifacts=artifacts, params_unchanged=True,
       training_counters_unchanged=True, eval_counters_legitimately_advanced=True,
       counters_before=frozen, counters_after=final, resource=resource,

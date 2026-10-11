@@ -2,6 +2,10 @@
 
 ## 2026-10-11 动作接口审查与新来源准备
 
+**12:56后执行更新**：确定实现提交bb78e8c625c141d862293d26fc32d5ca64a598cb已push/ls-remote核验；仅sv3隔离worktree部署，原repo干净d9be557不变。clean CPU action3项8.971秒/source4项4.154秒及pip check通过。12:52:37 fresh完整库存/pmon：GPU4–7均0MiB无作业，GPU0/2未知作业不碰。新CUDA/EGL probe核验physical4/UUID9c070d5a；source attempt01于12:53:35启动、12:54:46结束exit1，父监督记录worker50.438587秒/PID1749300。GPU4释放（12:56:00 query为0MiB）；没有source episode artifact/complete或科研结果。
+
+失败来自冻结RGB/policy重演时将已保存的host BF16 carry直接交给公共policy `_stack`，触发原JAX implicit transfer guard。保留目录 `/data/Policy_Discrepancy/runs/dl-production-source-20261011-bb78e8c/cp300000-attempt01/`、完整source.log/supervisor/budget/resource/采样，不把source首episode或exit0局部步骤当整体验收。必要修复 `DL-source-engineering-r2`：按原local policy_mirrored sharding显式device_put原carry，dtype/结构/数值/key/counter检查不变；未放宽guard、容差或科学协议。新增actual public tiny Agent/BF16/strict disallow下host carry重演，source本机最终5项通过6.722秒。提交后clean服务器source验收、新attempt02同seed/分割/预算/资源再核查，未改变source-r1对象；新反馈仍未冻结，不启动训练。
+
 旧DL采集/外部后果绕过生产动作映射；实际quadruped float64 bounds不是全±1。新CPU动作检查8固定case与实际wrapper逐字节相等、完整物理/task/counters exact，legacy raw有真实qpos/qvel差异；实际tiny Agent raw sample/carry/下一RSSM输入相等，3项本机测试通过5.78秒。测试基底dd7da2ef4b99447e7fa867bec48fe6235655c8ae加新helper/tests；ignored证据 `analysis/outputs/dl-action-contract/cpu-audit-r1-final.json` SHA25648f74482d22fa8f4549b30b21ff4f5c02a8b2acd604c160ebfa0c9057df456ca。详细证据范围/必要修复见 [DL_ACTION_CONTRACT.md](DL_ACTION_CONTRACT.md)；不覆盖旧数值、原门与失败。
 
 新source实现实际DMC+main.wrap_env、raw/applied独立、actualprecarry/evalkey来源、suite+FromDM._done保存/恢复、冻结RGB实际policy/aftercarry重演及H100每transition的F32 reward/完整物理核对。本机source CPU最初3项通过2.426秒；独立审查指出NaN放行及cooperative deadline不足，已修finite/dtype/shape拒绝与完整父监督硬终止、末帧action_executed mask和环境provenance。最终4项通过2.582秒，含真实sleep子进程.15秒期限后终止124。模型/RGB为stub，DMC/wrapper/physics为实际对象，包含1001帧/16×100步与近终止/隐藏_done反例；不是size50m科研通过。两套新检查共7项；确定提交服务器clean验收与实际采集仍待执行。
