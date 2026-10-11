@@ -1,5 +1,7 @@
 # 项目状态
 
+- **2026-10-11 资源答复与B科学协议采用（未执行）**：内部交叉审查采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) `DL-production-reward-r1`，正确生产cal8固定H20/128futurepaths，BC-MSE扣MC variance/N，p/LOEO常数对照与真实选择独立判；官方imagine私有root、nativepred、六数值白名单，不读records/blind、不新physics/render/optimizer。工程源码/CPU验收/真实B尚未开始，完整方法目标仍active。最低1独占A100串行/2可独立并行，现有sv3 4–7足够；B预算仅GPU4/1800s/.5GPUh上限，总小时/新训练显存未定。当前0GPU，本轮未SSH/核占用/改算法或运行实验。下一首选继续现chat完成B工程及确定SHA验收，再fresh资源核查、有限执行与独审；旧A及正式M2不变，下方为历史。
+
 更新日期：2026-10-11。
 
 - **23:14后有限nested CPU及独审完成**：实际/Linux39全test SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0；一次cal8对象2.216830秒／120秒／exit0／完整链，独立solve464次/140557比较max1.0658e−14，父2.025088秒／120秒，choice/λ/CI零侧exact，GPU0。q−p .00392780／CI[.000515909,.00819541]、q−constant .0156442／CI[.00687072,.02843294]仅本程序名义探索性支持，q的MSE更高；未证明新RGB／KL压缩／保护／性能。停止本对象、不读blind/启gate/训练，不翻旧r1。报告 [DL_NESTED_PROBE_RESULTS.md](DL_NESTED_PROBE_RESULTS.md)。下一首选继续本聊天审定生产reward候选，B-r0/1800s/1GPU仍建议；配对cue/独立信号/active保护及完整目标未完成。资源当前0／1A100串行／2可独立并行，4–7足够不用全占；新训练显存/总小时未定，无GPU当前占用核查。下方为历史。

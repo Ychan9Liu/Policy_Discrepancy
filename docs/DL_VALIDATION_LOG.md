@@ -1,5 +1,13 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11：GPU资源答复与B科学协议采用，未执行
+
+基于clean HEAD5035c892e7a197f911f6fbab861f01d3021f2b90，root及三Agent只读审查官方imagine/physical-bin symmetric pred、正确生产f1数值白名单/来源、MC variance偏差和有限停止规则；未读真实NPZ/checkpoint、SSH、测试、模型调用或GPU。本轮仅文档更新：采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) `DL-production-reward-r1`，科学对象cal8/H20/128futurepaths，BC-MSE修正、LOEO常数/真实选择分开、私有seed20261024/stat20261025，一次GPU4/1800s全入口上限。协议是完整授权内Agent设计，非用户逐项认可或工程/方法验收。
+
+目前理论/统计/CPU工程0GPU；既有规模诊断最低1独占A100串行，2卡可做独立并行，sv3 4–7无需全占。本B最多.5GPU小时，不是实测ETA或完整总预算；历史约2.5/6.5GiB是不同单项采样峰，新训练上限及总GPU小时未定。没有本轮当前占用快照或释放卡声明。官方私有nj.seed只消费显式每步root，禁止生产Agent随机流推进；不可import会清CUDA的旧CPU loader/supervisor。
+
+下一继续本chat实现并验收确定版本B、数值oracle容差先固定，再fresh GPU4/映射、一次真实执行及独审。完整目标、第二信号/active保护/替代解释/性能未完成；旧停止结果、blind封存及M2不变。实际提交和同步以本轮最终Git收据为准，本轮没有新测试SHA。
+
 ## 2026-10-11 23:14后：有限nested CPU对象与独审验收
 
 确定SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0的sv3 Linux39test全过4.770104秒；入口alarm、真worker命令绑定、最终写盘、owned后代/无关sentinel均验，旧synthetic与Dreamer算法未改。仅sv3隔离315工作区；bundle40e484f7…18eaf，canonical d9be557 clean／本机main595e982f原dirty两docs保留，sv1/sv2不动。

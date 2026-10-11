@@ -19,3 +19,4 @@ tests/test_dl_nested_probe_loader.py text eol=lf
 tests/test_dl_nested_probe_stats.py text eol=lf
 tests/test_dl_nested_probe_supervisor.py text eol=lf
 docs/DL_NESTED_PROBE.md text eol=lf
+docs/DL_PRODUCTION_REWARD.md text eol=lf

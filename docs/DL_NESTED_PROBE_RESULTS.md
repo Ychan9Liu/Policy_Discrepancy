@@ -44,4 +44,4 @@ q/p/constant选择reward分别5.728799392014874／5.7248715921255435／5.7131551
 
 正文1.956172780秒，父终点2.025088133秒／120秒，worker1941441 terminal/exit0/only-owned-group清理。`attempt01/independent-audit01/audit.json` SHA `c934bc2cc2c367b4e163802e45c782a53c9fca9be1c1b6a81281d7b1ff28f373`；父收据 `841c336525d2a229af5275585820312cddac31d3c413d925a1ecb75b7e94feb5`，launcher `335c34d41c2a7bbdb3ad377fcaea6f6dfc92d7eae8bb768e88cec3a9d489b352`。父通用process API的`generic_fixture_without_scientific_verification=true`仅表示未运行nested-worker验链，actual reads保持unknown；实际八episode读取及独立数值结论在auditor正文，不将正文误当纯fixture。
 
-**停止此有限对象**：不追加λ/seed/样本、outer winner搜索、blind、gate或训练。首选继续当前完整授权聊天审定正确生产reward技能分支；配对历史/可见cue、独立第二信号、active rep损伤/保护与性能仍缺证据。当前0GPU、已有规模模型诊断1A100串行/2可独立并行，sv3 4–7足够不用全占；历史2.5–6.5GiB采样峰不保证新训练显存，总剩余GPU小时未定，B候选1800秒/1卡是未采用建议。
+**停止此有限对象**：不追加λ/seed/样本、outer winner搜索、blind、gate或训练。A验收时B-r0仍为未采用建议；后续交叉审查已采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) r1 科学协议，工程及真实执行尚未开始。首选继续当前完整授权聊天实现并验收B，不因A阳性推进训练；配对历史/可见cue、独立第二信号、active rep损伤/保护与性能仍缺证据。当前0GPU、已有规模模型诊断1A100串行/2可独立并行，sv3 4–7足够不用全占；历史2.5–6.5GiB采样峰不保证新训练显存，总剩余GPU小时未定。本B的GPU4/1800秒是单个有限对象上限，不是整体预算。

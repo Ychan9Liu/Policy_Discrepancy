@@ -814,3 +814,15 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **Agent建议，未采用/运行**：`DL-production-reward-r0`可从原native h_p及四实际sampled q/p起点，七normalized首控制＋19zero各imagine20次，将每个未来feature的当前physical-bin symexp_twohot `.pred()`求和；不能加当前过去reward、再做一次observe/core或输入applied物理控制，也不能把逐步TwoHot当累计return分布。候选主量是七控制within-state-centered累计预测MSE相对p及train-only常数成本向量，真argmax选择效用独立联报。未来128paths/4block/chunk8、私有seed、MC稳定门、一次1800秒/1A100均为待冻结建议，尚无模型执行证据。H20超过当前imag_length15，失败限联合RSSM＋reward-head有限开放环估计器；不裁决H1 head、rawK或未来actor学习路线。
 
 **下一具体问题**：首选继续本完整授权聊天，以源码/实际phase与shape/key oracle审定B是否有必要且足够、MC误差判据/常数对照/停止/算力，再决定实现；不能只因A阳性进入gate/训练。配对历史的可见cue、第二信号增量、正常active rep损伤与保护、强度/shuffle/reward-only/OOD对照和后续性能仍待证据，完整方法未完成。当前阶段CPU0GPU；后续已有规模诊断1卡可串行、2可独立并行、分配4–7无需全占，总GPU小时与新训练显存未定。
+
+### DL-25 生产奖励均值对象与有限 GPU 预算（2026-10-11）
+
+**授权内 Agent 已确认诊断设计，未实现/执行**：科学、来源及官方模型源码交叉审查后采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) 的 `DL-production-reward-r1`。原正确生产 cal8/32state/四已存 sampled q/p/七首 normalized 控制＋19zero/H20 不变；实际 official imagine 与 native reward pred，未来固定128 paths，私有seed20261024/统计20261025，0新 physics/render/optimizer，不读 records/blind。这是Agent在完整授权内的设计决定，非用户逐项确认、科研结论或已通过的工程。
+
+**测量修正与停止设计**：主量为逐path控制中心化、扣除 sample variance/N 的 signed BC-MSE，不截负值，排除 q/p future MC variance 差伪装技能；相对p和LOEO常数双gap、八ep等权/2000名义bootstrap。32/64/128、独立half/block固定可靠性epsilon≤源δ²/100=.0004 reward²，并要求20%阳性margin及lower95−epsilon>0；有限epsilon不是严格积分误差界。真实argmax效用独立联报，选择的epsilon_U≤δ/100=.002另判，不以MSE改善代替选择改善。固定一次完整对象，失败/不稳定/阴性/不确定均停止本B，不追加样本、路径、H、seed或checkpoint。
+
+**工作假设及反例**：现成RSSM＋head或许能利用q的有限接口增量，尚无生产H20模型预测证据。q可学信息被head忽略、H20开放环误差、固定zero尾支持偏离、历史重编码、两边都差但q稍好、MSE与选择相反、稀有latent尾部均保留。B阴性只止指定均值误差型reward-support候选，不作H1/head整体无技能/rawK/未来学习路线的普遍停止门；阳性不证明独立辨别、压缩保护或性能。
+
+**资源事实与建议**：当前理论/已有数组统计/CPU工程验收需要0GPU；后续已有规模模型诊断最低1独占A100串行，2卡仅用于可独立环节并行，现有sv3 GPU4–7足够，无需全占。B已采用预算为物理GPU4单卡、1800秒全入口硬限，即本对象最多.5 GPU小时，未执行，不是整体ETA；新训练显存及完整剩余GPU小时仍未定。历史2.5–6.5GiB是不同单项采样峰，不是新训练保证。本轮没有SSH/GPU占用核查、真实数组或checkpoint读取、新模型调用/实验/算法改动。
+
+**下一具体问题**：继续本聊天实现B六数值白名单、官方私有root imagine适配、BC-MSE/独立U-stat与B独立监督/验链；先确定提交上的CPU工程/小模型/Linux owned-process验收并固定数值oracle容差，再fresh核指定GPU4和实际映射，才执行一次完整B及独审。下一阶段不自动获得blind/gate/训练许可，完整目标缺项仍按DL-24和新协议末节记录。
