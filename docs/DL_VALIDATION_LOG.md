@@ -1,5 +1,17 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12：正常reset对象采用及Git同步恢复
+
+上一goal turn完成B实测/独审/31文件镜像及五doc归档提交06448d687526395cb231eff86b3c2af1a4550e97，归类为实质进展；完整目标未达成。本轮重新读取当前clean版本、授权及现有主张，三Agent只读交叉审查来源/第二信号/normal压缩，发现正常task reset可建立共同history对象，以及first65/context1会排除reset0的工程边界。讨论没有把B MC-inconclusive变成方法或整体路线裁决。
+
+Root已采用 [DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) 的CPU校准r1，工程实施中，实际科学执行尚未开始。使用正确生产f2已收集8cal/reset0，不新采episode、不打开24blind；原7controls/.25/H20/δ.2固定，fresh官方seed reset＋source参考160＋新主1120＋复放1120transition，父180秒/0GPU。独审另CPU180秒、全统计及1120stored-applied官方复放。source F32exact/state原1e−8和新F64/fullstate byteexact不同oracle，fsum数值1e−10/科学集合分类exact已在真实输入前冻结。相关源码/fixtures由不同Agent实施，最终代码SHA、测试、完整退出及独审以后续证据为准。
+
+工程冻结补记：primary及独审实现已分别完成；root对两新测试模块及复用物理接口的最终组合测试43项，40pass/3POSIXskip，3.081秒。日志 `analysis/outputs/dl-natural-reset/engineering/windows-reset-release-final.log`。覆盖闭δ/加性reward及共同近优反例、全32字节先核/八cal同payload解码、原source退出链、源F32与新F64及完整state区别、真实tiny官方reset/H20、拒绝earlyterminal/padding、generic callback不冒实际scope、owned超时及晚收据。源码科学交审完成，尚须确定提交的clean Linux全项及真实对象，fixture不称方法有效。
+
+本轮SSH仅核f2源目录元数据（collection及两源audit JSON位置），未打开episode数组、执行科学physics/model/GPU或核当前卡占用。理论/CPU对象需要0GPU，不引用旧4–7快照为当前保证。完整研究的第二来源独立增量、normal压缩/选择性保护/替代解释/后续学习仍未完成；共享F/预测regret和terminal-context候选只是待采用建议。
+
+GitHub连接恢复：06448d6 push exit0，ls-remote独立确认研究分支06448d687526395cb231eff86b3c2af1a4550e97、main595e982f1a3939775879728009e2105ee516e86d。上一失败收据 `analysis/outputs/dl-production-reward/engineering/git-closing-06448d6.json` 保留，恢复收据 `git-sync-recovery-06448d6.json` 另写；本机canonical dirty两docs及server canonical d9be557未改、未main/sv1/sv2/新server源码部署。本轮新reset最终同步按后续Git收据，不以064冒充即将执行版本。
+
 ## 2026-10-12：固定B真实执行、独立审计与实测GPU资源
 
 执行及clean Linux工程完整SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`，五B脚本/独立auditor/六测试入Git，未改Dreamer原算法及正式M2协议。Windows54项50pass/4POSIXskip、10.495秒；确定版本Linux54项全过/no skip、19.993秒，pip check与独审selftest通过，CPU工程入口21.489秒/0GPU。前述b675加工程稿及“未启动”记录为历史。

@@ -1,5 +1,7 @@
 # 项目状态
 
+**最新推进：2026-10-12 正常reset CPU校准实施中**。授权内科学交叉审查已采用 [DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) `DL-natural-reset-calibration-r1`：正确f2 source八cal/reset0、原7controls/.25/H20/δ.2，参考160＋主1120＋复放1120步/180秒/0GPU；独立CPU审计另180秒/1120复放。源码和fixtures实施中，尚无本对象科学实测，需确定版本clean Linux验收后一次执行。只证明有限外部控制需要的前置，24blind封存、不执行model/gate/更新，完整方法未完成。06448d6已补推并远端核验、main595e982f不变；上一轮网络失败收据保留，恢复收据在ignored工程目录。首选继续本chat完成本CPU对象及独审，再审定共同h/prior/readout和normal压缩规范。下方B仍科学MC-inconclusive且停止；其资源快照不当当前GPU占用。
+
 **当前：2026-10-12 固定B及独立审计完成，科学不确定，整体方法尚未完成**。实际执行/clean Linux54项全通过SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`；B完整入口45.803秒、首chunk8960点通过、完整state/来源/源码不变，独立CPU审计最大差1.67e−16及keys/选择/分类一致。主BC-MSE与真实选择均按原优先门 **MC-inconclusive**，停止此B，不追加路径/seed/H/样本或读blind/启gate/训练；不等于方法有效或整体路线阴性。证据/限制/资源见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md)，研究解释见RESEARCH/DL-27。
 
 B只用sv3物理GPU4独占一张A100、约.013GPUh、采样峰2505MiB；CPU独审0GPU。00:51:19.592302北京时间终点核查4–7各0MiB、无compute/pmon，本B GPU4已释放、5–7未用；此为带时间快照。已有模型诊断1卡串行足够/2卡仅独立并行，完整剩余GPU小时和新训练显存未定。d685研究分支已push核验、未main，仅sv3 clean隔离目录执行；server canonical clean d9be557不变、本机canonical main595e982f及原dirty两docs保留、sv1/sv2未同步。后续结果文档提交/远端状态以最终Git收据为准，不冒充执行SHA。首选继续当前完整授权chat，0GPU审定共同历史下新增可见信息及normal active rep损伤的独立因果诊断；第二信号/gate保护/替代解释/性能尚未完成。**以下带日期条目均为历史快照，早期“未执行”不构成重跑安排。**

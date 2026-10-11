@@ -2,6 +2,8 @@
 
 更新日期：2026-10-12。
 
+**最新DL推进（2026-10-12）**：已采用 [DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) 的 `DL-natural-reset-calibration-r1` 有限CPU对象，实施及确定版本验收中；仅正确production八cal的正常reset0、原七控制/幅度.25/H20/δ.2，2400物理transition上限/180秒/0GPU，不开24blind、不执行模型/gate/训练。实际结果须以随后运行记录为准；此协议不是方法有效。必要性与后续建议见DL-28。上一轮06448d687526395cb231eff86b3c2af1a4550e97已补推并远端核验，main仍595e982f；B保持停止与MC-inconclusive。
+
 **DL 当前进展（2026-10-12）**：固定 `DL-production-reward-r1` B诊断、确定版本Linux工程验收及独立CPU审计已完成，实际SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`。主误差与真实选择均为 **MC-inconclusive**，按原门停止本B；不是方法有效或整体路线阴性。实测sv3物理GPU4单卡入口45.803秒、约.013GPUh、采样峰2505MiB；CPU审计0GPU，完整剩余GPU预算仍未定。完整证据和下一问题见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md) 与本文DL-27；下面早期“未实现/执行”及“本轮未核资源”均是各节注明日期时的历史状态。整体预验证授权仍有效，正式M2协议不变。
 
 **2026-10-10 新增研究候选：DtLatch（奖励闩）**。用户授权将本轮理论讨论归档、由助手命名并更新日志；这不等于确认采用方法、超参数或扩展实验。完整产出见本文末“DtLatch”章节，记录版本为研究候选 r0。已确认 v1 继续有效，新增候选不覆盖其方法、四组对照或实验协议。
@@ -852,3 +854,13 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **资源事实与建议**：B只使用sv3物理GPU4独占一张A100-SXM4-80GB，父完整入口45.802874845秒、外部终点45.843115024秒，约.0127GPUh；采样显存峰2505MiB/约2.45GiB。1800秒/.5GPUh是本对象硬上限，非整体ETA；独审父2.807秒/0GPU。00:51:19.592302北京时间终点快照4–7各0MiB、无compute/pmon作业，GPU4已释放，5–7未用于本B，不保证以后空闲。已有规模诊断1卡串行足够，2卡仅用于独立环节并行，无需全占4–7；完整剩余GPU小时及新训练显存仍未定，本项峰值不能作为训练保证。
 
 **工作假设、尚无证据的推测及下一问题**：可能存在相对共同历史新增、后验可学习、且受正常active rep压缩损害的决策信息；现有A/B证据尚不能共同建立这条因果链。第二信号对D的独立增量、保护收益及最终性能仍无足够证据。首选继续当前完整授权chat，以0GPU协议分析明确共同历史与合法信息干预、观测可获取性、独立外部动作成本、normal rep损伤的必要/充分证据、唯一有限对象及停止规则，再审定是否执行；不得按D/K/head结果挑状态。配对可见cue、压缩/保护、强度与conditional-shuffle/reward-only/OOD及学习性能都是未完成事项，不把候选写成已获支持的方法。
+
+### DL-28 正常reset作为当前信息来源的有限验证（2026-10-12）
+
+**源码事实与待验条件**：官方quadruped_walk正常reset随机化姿态；RSSM在is_first时清零deter/stoch/prevaction后构建h/prior，encoder排除reward/flags，proprioFalse时当前编码来源为RGB。因此正常reset有望建立共同历史下的新增观测对象，无需新torque/teleport。但实际h/prior及p sample跨状态同字节、RGB可获取、有限控制需要和q可学习性都尚未实测，不把源码推导称通过；trained p不能假定uniform。原主张的q相对同h/prior可利用信息，和完整真实历史不可预测的更强命题须区分，不能未经论证将后者变成所有路径的必要停止门。
+
+**授权内Agent已采用的下一对象**：[DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) 冻结 `DL-natural-reset-calibration-r1`，仅正确f2生产来源八cal reset0；官方seed实际reset前置和原0→20记录参考160步、新七控制H20主1120步及stored-applied复放1120步，CPU180秒/0GPU/一次完整对象。原source F32reward/flags/mapping exact及state1e−8，与新主复放F64reward/fullstate byteexact分别验收。外部门为至少一对跨episode closed Aδ不交且两state range≥δ，仅证明指定七控制中无法同时δ近优；不称统计覆盖充分或图像/信号/压缩已验证。整八ep/28对联报，无增H/幅度/样本/seed，门不足也停止本对象，不读blind或自动进入model/gate/训练。这是Agent自主诊断设计，非用户逐项确认的新算法。
+
+**工作假设、建议及反例**：正常reset可能提供先验无法接收、后验可学习的有限决策信息；cost差异但同一控制始终近优、RGB不可辨、错误posterior、D漏检和inactive rep均是反例。后续一个建议是共享q/p等权的action-centered readout F，以预测有限库regret `Fq(argmax Fq)−Fq(argmax Fp)`为第二来源；它不需在线真实counterfactual标签，但非负来自argmax，不能证明q正确或信号已有效。必须另审定独立真实U、同容量D-only/D+K/D+S及S-only、合法nuisance/错误依赖/加性reward、训练/留出和停止。rawK有更新尺度/活跃性用途，却不普遍定义任务价值。
+
+**normal压缩的未决接口与下一问题**：原first65/context1会排掉reset0，不能验该帧的direct rep作用；真实terminal context＋新reset0–63是待工程验证的合法候选，dummy或context0不能冒充原配置。正常full-loss B与停止新增rep梯度R须继承同一完整optimizer/norm/counters及历史momentum，更新后重建history和重新拟合读出，排除prior追上/坐标漂移。B绝对净改善但R更好仍可支持有限rep抑制；仅KL下降或梯度恒等式不足。先完成本校准和独审，再决定下一完整模型/信号/机制规范，完整五项目标保持未完成，不因reset门或新协议存在宣布可正式实验。
