@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-11 18:07 DL反馈实际尝试**：科学DL-feedback-r1不变；bd0af3a47ac0861d932a4a08af2dd1ce84754dbe clean server CPU27项及独立审计器synthetic自检通过。GPU4 attempt01在32actual size50m源策略oracle字节精确通过后、首次反馈前因source scalar/0D数组容器接口失败exit1，无utility产物，未通过闭环验收。工程r2必要容器修复及物理7项/两代理复核通过，须确定提交CPU后新attempt02同32状态/4paired/H100/GPU4/3600s复验。完整失败证据及资源/版本见DL_VALIDATION_LOG和DL_FEEDBACK_DIAGNOSTIC第10节；已释放GPU4，不构成方法或训练结论，下方早期“尚未启动”均为历史。
+
 **2026-10-11 DL反馈当前阶段**：有限正常反馈科学协议 `DL-feedback-r1` 已由Agent在完整授权内冻结，`DL-feedback-engineering-r1` 实现及CPU检查见 [DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md) 第9节。GPU未启动、独立runner与artifact审计尚待补齐；只有GPU4单卡3600秒有限诊断范围，不是正式训练或方法效果证据。此前“未冻结候选”是13:09阶段历史。方法仍需第二信号增量、active gate/压缩、替代解释及条件训练，不修改M2正式协议。
 
 **2026-10-11 13:09后DL来源结果**：正确production source-r1已在f2d24da1831da2ffca22d313e7f534c96fc0d3eb完成真实32ep采集/原计划8+24/512政策位置核对；独立artifact及八calibration CPU physics12800步审计passed。GPU4单卡440.142416秒/2585MiB、零optimizer，已释放。结果、实际SHA/配置/资源/哈希及失败历史见 [DL_PRODUCTION_SOURCE_RESULTS.md](DL_PRODUCTION_SOURCE_RESULTS.md)。这是来源工程验收，不是信号/gate/方法结论；[DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md)只为未冻结候选，不改M2协议或启动短训练。最低1卡串行/2卡并行独立工作/现有4卡足够，当前总训练费用未冻结。下方较早运行状态须按该结果更新解释。

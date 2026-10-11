@@ -1,6 +1,6 @@
 # DL 单次观测省略与正常反馈：冻结协议
 
-版本 `DL-feedback-r1`，2026-10-11。**状态：在用户完整前验证授权内，由 Agent 经内部理论与工程交叉审查冻结的科学协议；`DL-feedback-engineering-r1` 已实现，CPU／确定提交／独立 runner 审查与真实模型验收仍在进行，反馈 GPU 运行尚未启动。** 不是用户逐项确认的新方法。只论证正确生产动作接口上的有限控制机会，不修改 DtLatch/gate、D/e/K、alpha/rho、free-nats、训练损失或正式 M2 协议，不授权训练。旧 `DL-predictive-MC-r1` 仍按原门停止、裁决 `MC-inconclusive`；不能借新对象或新来源改写旧产物。
+版本 `DL-feedback-r1`，2026-10-11。**当前状态：科学协议保持冻结；工程r1在确定提交 `bd0af3a47ac0861d932a4a08af2dd1ce84754dbe` 的27项server CPU检查与32个实际size50m源策略oracle通过，首个GPU尝试在反馈开始前因单帧数组容器接口失败，无utility产物。工程r2只修复该容器并增加反例测试，须确定提交server CPU复验后以新attempt继续。** 这是用户完整前验证授权内的Agent设计，不是用户逐项确认的新方法。只论证正确生产动作接口上的有限控制机会，不修改 DtLatch/gate、D/e/K、alpha/rho、free-nats、训练损失或正式 M2 协议，不授权训练。旧 `DL-predictive-MC-r1` 仍按原门停止、裁决 `MC-inconclusive`；不能借新对象或新来源改写旧产物。
 
 根 Agent 实际核查，新的 `DL-source-r1` attempt01 在 `bb78e8c625c141d862293d26fc32d5ca64a598cb` 因host BF16隐式传输检查失败且没有有效产物；只修显式device_put的 attempt02 已在确定提交 `f2d24da1831da2ffca22d313e7f534c96fc0d3eb` 于2026-10-11 13:00:42–13:08:22完成。source完整收据与独立artifact/八calibration CPU physics审计passed，见 [DL_PRODUCTION_SOURCE_RESULTS.md](DL_PRODUCTION_SOURCE_RESULTS.md)。冻结时根 Agent 与本科学审查未查看新 source 收益、D/K/C/e/U，也未读取新 blind 数组；数值沿用原候选及内部审查，未按结果修订。来源通过不能替代反馈实际policy/key/F64 reward语义验收；科学协议冻结不等于工程或科研验收。
 
@@ -115,9 +115,11 @@ lower95>0只是**平均机会的探索充分门，不是选择性保护的必要
 
 所有输出保持 `training_authorized=false`、`proceed_short_training=false`、`eligible_method_training=false`、`method_effectiveness_established=false`。即使平均机会阳性，仍需真正未见数据、独立目标子集标签、第二信号相对D的增量、背景/OOD/actor能力等对照、真实rep压缩和条件训练。真物理状态只作诊断证据，不作为vision64/propriofalse部署gate输入。
 
-本轮交付为科学协议冻结、模型／物理／runner 实现及必要 CPU 反例测试；source complete与独立审计已完成，反馈工程验收尚未闭环、GPU尚未启动。首选继续当前完整授权任务：补齐下节所列独立审查和确定版本验收，再完成32个实际B1 source oracle、fresh资源核查、有界反馈诊断及独立产物审计；不另选gate或启动训练。形成可正式实验方法仍未完成，也不保证本对象找到有效方法。
+本轮交付为科学协议冻结、模型／物理／runner 实现及必要 CPU 反例测试；source complete与独立审计已完成。反馈工程验收尚未闭环，首个GPU尝试及必要容器修复见下节。首选继续当前完整授权任务：完成工程r2确定提交CPU复验、fresh资源核查、新attempt有界反馈诊断及独立产物审计；不另选gate或启动训练。形成可正式实验方法仍未完成，也不保证本对象找到有效方法。
 
 ## 9. DL-feedback-engineering-r1 实现与当前验收边界
+
+本节较早CPU与额度中断记录保留为历史阶段；当前实际验收以第10节及验证日志为准。
 
 入口为 `scripts/dl_feedback.py`，模型适配器 `scripts/dl_feedback_model.py`，物理记录／复放 `scripts/dl_feedback_physics.py`。模型只在受锁保护的 JIT trace 中替换首次 `obslogit` 为同 h 的实际 `_prior(h)`，保留生产 `_observe`、cast、unimix、latent／Normal 采样及原 NJ 消费顺序；退出时恢复 Python 方法。纯调用禁止状态创建／写入，原参数及全部 counters 冻结。模型额外 receipts 对真实 size50m 图的字节一致性仍未验证，tiny 通过不能替代32源位置 oracle。
 
@@ -132,3 +134,15 @@ runner 先完成全部32源RGB／carry／eval-key oracle，再生成反馈收益
 独立runner审查与产物审计器的schema接线在代理额度限制时中断；已完成的模型／物理文件和统计反例保留。ignored `analysis/outputs/dl-feedback/independent_feedback_audit.py` 的五项synthetic自检通过，但 `audit_artifacts()` 仍明确 `NotImplementedError`，**不能称独立产物审计ready**。根Agent没有以自审代替这项独立验收，不启动GPU。后续先完成独立runner/hard-budget检查、补齐此审计器与篡改自检，再做确定提交server CPU验收；恢复工作不重复申请已经有效的sv3 GPU4–7授权。
 
 **17:56恢复进展**：额度恢复后独立runner审查及replay反例复核完成，无已知阻断；审阅runner SHA256 `eb57fb0e00bf6f3d9befad85f09558dbdd383c556615e0111a2c39c5e500f71b`。首次decode前核source/runtime七项依赖版本；每adapter首次render前核source／实际F64动作bounds。replay隔离且拒绝carry/obs/key输入变更，并检查raw完整shape；新的四项synthetic tests独立通过4项/9subtests。Linux监督及真实size50m条件尚未验，artifact独立审计schema接线继续进行。GPU仍未启动，不把“审阅通过”当控制价值或方法通过。
+
+## 10. 首次实际尝试与必要工程r2（18:07后）
+
+实际执行和测试SHA为 `bd0af3a47ac0861d932a4a08af2dd1ce84754dbe`，已推送并独立核远端研究分支，未合入main；仅sv3新增clean detached worktree，canonical repo保持干净 `d9be5574878d2c3f117cc6667be844f9a527eb84`。server CPU统计9、actual tiny BF16模型2、真实quad/wrapper物理6、synthetic replay4、监督6，共27项全部通过，含Linux真实process-group超时和失败leader后代清理；pip check及source七依赖/32artifact hash/只解码8calibration检查通过。fixture/小模型通过不是实际收益或方法验收。
+
+独立artifact审计器r1已完成，纯NumPy/stdlib，不import生产分析器或pickle解码；server CPU五项基础、三套完整synthetic产物及24类重新hash篡改自检通过。它核数值数组、源pins/keys、F64/F32编码、实际动作映射、完整性/监督退出及独立signed统计/CI分类；不独立执行真实model、renderer或physics。只接受完整exit0产物，不把残留result当完成。未对本次失败产物作科学审计。
+
+GPU4 attempt01目录 `/data/Policy_Discrepancy/runs/dl-feedback-20261011-bd0af3a/cp300000-attempt01/`；18:06:29–18:07:30北京时间，父监督worker实测38.720526秒、exit1、非超时，PID1828665已终止并请求清理自身group；1秒采样37点峰值2501MiB。32个预定源RGB/carry/eval-key上未改公共policy及适配器q的raw/after-carry逐字节oracle全部通过；随后 `source_observation()` 的NumPy scalar reward/flags无法满足物理入口要求的0D ndarray，在首次fresh render和反馈分支前失败。无feedback NPZ、F64收益、result/complete，最终整诊断参数冻结检查未到达；不能称闭环或utility验收。完整日志/plan/budget/资源收据留server，本机小文件镜像 `analysis/outputs/dl-feedback/bd0af3a/cp300000-attempt01/`。
+
+必要修复 `DL-feedback-engineering-r2`：单帧索引改为 `np.asarray(...).copy()`，保留全部dtype/shape/bytes，恢复生产wrapper的0D容器；物理精确检查、模型/RNG、state/key/carry、科学r1和预算不变。runner修复SHA256 `255bb4edfede73608636973902c79caf15c26ab83311665655207014F9A3F3A5`（十六进制大小写等价），两代理独立复核转换及实际模型 `_obs` B1字节相等；新增真实quad-wrapper源数组到初始化接口整合反例，全部7项物理CPU测试通过2.077秒。r2独立审计器只更新工程版本，原r1不可变副本保留；新SHA256 `b3a18990f3e9c29606e60216ea06fa5d022169ea1c8cae3f3bc39f39c47c6cbc`，同一五基础/三完整/24篡改自检通过5.07秒。仍须新SHA/server CPU及新attempt实际验收，不复用失败attempt作完成证明。
+
+18:07:40北京时间fresh query/pmon确认GPU4–7各0MiB无compute作业，GPU0/2未知作业未干扰；GPU4已释放，这是时间快照。最低1张独占A100串行；本对象只用GPU4/3600秒，授权四卡无需占满。总方法验证GPU小时尚未冻结，过去2.5–6.5GiB峰值不能保证其他显卡/训练资源。

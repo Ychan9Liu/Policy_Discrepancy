@@ -228,6 +228,48 @@ class FeedbackPhysicsTest(unittest.TestCase):
     with self.assertRaises(ValueError):
       f.prepare_initial_observation(self.adapter, bad, original)
 
+  def test_source_array_index_to_root_observation_to_actual_prepare_contract(self):
+    from scripts.dl_feedback import source_observation
+    # Same array construction as a source trajectory, generated locally from
+    # actual quad/production wrappers. No real source artifact is opened.
+    current, _ = self.adapter.step(np.linspace(-1.5, 1.5, 12, dtype=np.float32))
+    snapshot = self.adapter.snapshot()
+    data = {key: np.stack([self.obs[key], current[key]]) for key in f.OBS_KEYS}
+    original = {key: (value.dtype, value.shape, value.tobytes())
+        for key, value in data.items()}
+    # NumPy indexing returns scalars for the saved reward and flags. The r1
+    # helper's scalar .copy() could not satisfy the explicit 0D-array boundary.
+    self.assertIsInstance(data['reward'][1], np.float32)
+    self.assertIsInstance(data['is_first'][1], np.bool_)
+    indexed = {key: data[key][1].copy() for key in f.OBS_KEYS}
+    with self.assertRaisesRegex(ValueError, 'production reward'):
+      f.prepare_initial_observation(self.adapter, snapshot, indexed)
+    observed = source_observation(data, 1)
+    for key in f.OBS_KEYS:
+      self.assertIsInstance(observed[key], np.ndarray)
+      expected = np.asarray(data[key][1])
+      self.assertEqual(observed[key].dtype, expected.dtype)
+      self.assertEqual(observed[key].shape, expected.shape)
+      self.assertEqual(observed[key].tobytes(), expected.tobytes())
+      self.assertFalse(np.shares_memory(observed[key], data[key]))
+    self.assertEqual(observed['reward'].shape, ())
+    self.assertEqual(observed['reward'].dtype, np.float32)
+    for key in f.OBS_KEYS[2:]:
+      self.assertEqual(observed[key].shape, ())
+      self.assertEqual(observed[key].dtype, np.bool_)
+    fresh, proof = f.prepare_initial_observation(self.adapter, snapshot, observed)
+    self.assertEqual(proof['fresh_render_count'], 1)
+    self.assertEqual(proof['maximum_state_error'], 0)
+    for key in f.OBS_KEYS[1:]:
+      self.assertEqual(fresh[key].dtype, observed[key].dtype)
+      self.assertEqual(fresh[key].shape, ())
+      self.assertEqual(fresh[key].tobytes(), observed[key].tobytes())
+    observed['image'][0, 0, 0] ^= np.uint8(1)
+    observed['reward'][...] = np.float32(-1)
+    for key, value in data.items():
+      self.assertEqual((value.dtype, value.shape, value.tobytes()), original[key])
+    self.assertEqual(f.source.state_error(self.adapter.snapshot(), snapshot), 0)
+
 
 if __name__ == '__main__':
   unittest.main()

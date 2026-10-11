@@ -23,7 +23,7 @@ from scripts import dl_diagnostic as d
 from scripts import dl_predictive_mc as pinned
 
 VERSION = 'DL-feedback-r1'
-IMPLEMENTATION = 'DL-feedback-engineering-r1'
+IMPLEMENTATION = 'DL-feedback-engineering-r2'
 PRIVATE_SEED, STAT_SEED = 20261018, 20261019
 EPISODES, POSITIONS, PAIRS, HORIZON, BUDGET = 8, 4, 4, 100, 3600
 POSITION_INDICES = (0, 5, 10, 15)
@@ -237,7 +237,9 @@ def supervise(command, output, seconds=BUDGET):
 
 
 def source_observation(data, position):
-  return {key:data[key][position].copy() for key in
+  # Source indexing returns NumPy scalar flags/reward; actual wrappers return
+  # zero-dimensional arrays. Restore the container, preserving dtype/bytes.
+  return {key:np.asarray(data[key][position]).copy() for key in
       ('image','reward','is_first','is_last','is_terminal')}
 
 

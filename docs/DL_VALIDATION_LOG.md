@@ -1,5 +1,15 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 18:07首个反馈尝试失败与工程r2
+
+- 实际确定测试/运行SHA `bd0af3a47ac0861d932a4a08af2dd1ce84754dbe`，已push/远端独立核验，remote main仍 `595e982f1a3939775879728009e2105ee516e86d`，未main合并；只同步sv3 clean detached `/data/Policy_Discrepancy/dl-worktrees/bd0af3a`，canonical repo干净d9be557保持。git bundle SHA256 `36342d166a2e3a671dd335b7acdbf8506b8802843185ec322f0c406d37dd3721`。
+- clean server CPU27项全部pass（statistics9/model2/physics6/replay4/supervisor6），全流程含Linux实际own-group timeout/failed-leader-descendant清理、pip check、source七runtime版本/32artifact hashes/只解码8calibration。证据 `/data/Policy_Discrepancy/runs/dl-feedback-20261011-bd0af3a/cpu/summary.json` 及五logs，本机镜像 `analysis/outputs/dl-feedback/bd0af3a/cpu/`。独立auditor r1 SHA256 `923d998acd9856790db11a109a265761772090a3e427d1735785bb8137ad6cfe`，server五基础/三完整fixture/24重新hash篡改自检exit0；不执行真实model/render/physics，不能称科学产物已验。
+- 启动前18:05:55北京时间完整query/XML/pmon记录4–7空闲；CUDA/EGL probe物理GPU4、UUID `GPU-9c070d5a-ac68-4c26-9522-a790ad874b23`，进程内cuda:0、`MUJOCO_EGL_DEVICE_ID=4`。任务为300k baseline seed0/size50m/vision64/propriofalse/camera2/repeat1，private20261018/stat20261019，8cal×4固定位置×4paired RNG×q/p×H100，科学DL-feedback-r1，zero optimizer/gate，父预算3600s；没有alpha/c/shuffle新训练设置。
+- attempt01完整目录 `/data/Policy_Discrepancy/runs/dl-feedback-20261011-bd0af3a/cp300000-attempt01/`，launcher SHA256 `258b20396eb0ca97853e307d5e601b327d333764a875aeca23267b2fdb0038ae`，18:06:29–18:07:30北京时间；worker1828665/38.720526秒/exit1/非超时/terminal/own-group cleanup requested。GPU采样37点峰2501MiB，非连续显存上界。budget SHA256 `c7501b2695b2b745ddc449cef8b70f93ec6c3dd437079136f6c6a116b093522e`。所有小文件、日志、XML/资源/samples已镜像 `analysis/outputs/dl-feedback/bd0af3a/cp300000-attempt01/`。
+- 32个actual size50m源策略oracle全部byte-exact通过，plan收据齐全。单帧source数组索引返回NumPy scalar reward/flags，而物理初始化严格要求0D ndarray；首次fresh render和反馈前报production reward错误。无feedback NPZ/F64效用/result/complete，最终参数检查未到达；仅有限源policy事实可验，不发布utility裁决。
+- 必要工程r2只把source_observation索引包为 `np.asarray(...).copy()`，保留dtype/shape/bytes与实际 `_obs` B1模型输入、所有科学/key/精确门不变。runner SHA256 `255bb4edfede73608636973902c79caf15c26ab83311665655207014f9a3f3a5` 经两Agent只读复核。新增真实quad/wrapper源数组→helper→prepare接口反例，物理7项本机pass2.077秒；仅stub render/model，无真实反馈验收。独立auditor r2 SHA256 `b3a18990f3e9c29606e60216ea06fa5d022169ea1c8cae3f3bc39f39c47c6cbc` 只更新工程版本，同一自检pass5.07秒，原r1不可变副本保留。
+- 18:07:40北京时间fresh完整核查4–7各0MiB无compute，本项目GPU4释放，0/2未知作业不碰。下一步新确定SHA/clean server CPU28项及auditor r2自检后fresh核GPU4，同科学r1/同预算用attempt02重跑；不覆盖失败、不追加窗口/样本/RNG/checkpoint或放宽容差。最低1独占A100串行即可，完整研究费用未冻结；独立信号、gate/压缩、替代解释与条件训练仍未完成。
+
 ## 2026-10-11 正常反馈协议冻结与CPU实施
 
 **17:56代码独立审查更新**：额度恢复后runner和replay独立审阅完成，runner SHA256 `eb57fb0e00bf6f3d9befad85f09558dbdd383c556615e0111a2c39c5e500f71b`，未见阻断。source/runtime七版本及实际F64bounds前置强校验补齐。独立反例发现缓存RGB可被callback修改、samebytes raw reshape可被放行；root补obs/key隔离和carry/obs/key hash/byte守卫、raw.shape，4项/9subtests独立复核通过0.03秒；本机0.013秒。未改变RNG／容差／收益或科学门，旧3项通过只为此前范围。artifact审计接线仍进行，GPU未启动；下述中断是历史阶段，不能作为当前永久阻塞。

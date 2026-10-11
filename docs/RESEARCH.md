@@ -729,6 +729,6 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 
 **工作假设及反例**：新增当前RGB信息可被现有actor利用，且收益在后续正常观测下仍部分保留；先验已足够、未来RGB快速补偿、actor未利用、物理clip消除raw差异、prior/actor表征错配或随机路径主导均可反证有限对象。平均lower95>0只为探索充分门，不是稀有目标子集或选择性保护必要门；四RNG不提供精确state标签，首位置t=1短历史贡献必须联报，不能删点求阳性。
 
-**已验证工程事实与限制**：实施 `DL-feedback-engineering-r1` 的模型适配器、真实物理记录／复放、私有key、有限统计与父监督。CPU统计9项、actual tiny BF16模型2项、真实quadruped/wrapper物理6项、synthetic cached-policy replay4项通过；监督Windows4通过、Linux2项待server验。模型／物理／统计文件经分工审查，完整runner独立审查和产物审计schema尚未完成。独立统计审计器五项synthetic自检通过，artifact入口仍显式未实现；代理因额度中断，根Agent继续测试／文档，不把自审或partial程序当独立通过。无反馈GPU、收益、信号增量、gate／训练或性能结果。
+**已验证工程事实与限制（18:07更新）**：确定提交 `bd0af3a47ac0861d932a4a08af2dd1ce84754dbe` 的server clean CPU27项、含Linux真实process-group监督、source绑定及pip检查通过；runner独立审查和独立artifact审计器已完成，五基础/三完整synthetic/24重新hash篡改自检通过，历史额度中断已解除。GPU4首个反馈attempt01的32actual size50m源策略oracle逐字节通过；其后source reward/flags scalar与物理0D ndarray接口不符，在首次fresh render/反馈前失败，无收益/result/complete。必要工程 `DL-feedback-engineering-r2` 只恢复容器，dtype/shape/bytes、实际模型输入、科学r1/随机流/精确门不变，经两代理复核及新增真实quad-wrapper接口反例，物理7项本机通过；须确定提交server CPU和新attempt实际验收。当前仍无闭环效用、独立信号增量、gate／训练或性能结果；细节与失败范围见DL_FEEDBACK_DIAGNOSTIC第10节及DL_VALIDATION_LOG。
 
-**尚未采用建议与下一问题**：补齐独立runner及auditor，确定提交server CPU检查后，先做32实际size50m source oracle，再在GPU4固定预算内执行反馈及条件复放／独立审计。资源最低1张独占A100可串行，2张可并行独立环节，当前4张授权足够；已有约2.5–6.5GiB峰值仅为过去A100单项，剩余总GPU小时未冻结。科学对象完成后仍需真正未见目标子集、第二信号相对D增量、背景／OOD／actor对照、active rep压缩及S/P/W/reward-only对照与条件训练；不能将机会检查替换整体科研目标。
+**下一问题与尚未采用方法**：完成工程r2确定提交server CPU检查后，以新attempt在GPU4固定预算内重验反馈及条件复放／独立审计，保留attempt01失败证据，不改变冻结样本/窗口/RNG/统计。资源最低1张独占A100可串行，2张可并行独立环节，当前4张授权足够；已有约2.5–6.5GiB峰值仅为过去A100单项，剩余总GPU小时未冻结。科学对象完成后仍需真正未见目标子集、第二信号相对D增量、背景／OOD／actor对照、active rep压缩及S/P/W/reward-only对照与条件训练；不能将机会检查替换整体科研目标，尚未采用新的gate或训练。
