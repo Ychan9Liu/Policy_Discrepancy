@@ -33,7 +33,9 @@
 
 实现复用既有独立CPU物理审计器的authority/restore/statecompare，并绑定其脚本hash。因此本查询是派生实现，不是第二后端或新增独立物理审计。仅恢复状态的自检不替代后续真实动作对照。
 
-已冻结ignored脚本 `analysis/outputs/dl-feedback/task_semantics_v1.py`，SHA256 `ddf89d47521965387da680e5b0cd2bea455e2e5ec42f50022ac13812bc93ea64`；依赖 `independent_feedback_physics_audit.py` SHA256 `54e5b5a24fc9971ef8f454979a1ee9a9bc47c536f52bcac42b4c50efd96ef1ab`。本机官方quad synthetic active snapshot的九项selftest通过0.438秒，包括query写入单ULP和消费task RNG的反例；不执行reset/step/render，不是自然状态验收。实际入口另用外部 `timeout 120` 覆盖import和写盘，保留内部POSIX/monotonic检查。
+已冻结查询器 [dl_task_semantics.py](../analysis/dl_task_semantics.py)，SHA256 `ddf89d47521965387da680e5b0cd2bea455e2e5ec42f50022ac13812bc93ea64`；依赖 [dl_feedback_physics_audit_v1.py](../analysis/dl_feedback_physics_audit_v1.py) SHA256 `54e5b5a24fc9971ef8f454979a1ee9a9bc47c536f52bcac42b4c50efd96ef1ab`。两份源码与此前ignored原件字节一致，纳入Git以使后续查询可复现；后者只是归档既有审计器，不新增独立审计结论。新代码不改变Dreamer或gate。
+
+本机官方quad synthetic active snapshot的九项selftest通过0.438秒，包括query写入单ULP和消费task RNG的反例；不执行reset/step/render，不是自然状态验收。实际入口另用外部 `timeout 120` 覆盖import和写盘，保留内部POSIX/monotonic检查。
 
 ## 3. 后续决定需要什么证据
 
