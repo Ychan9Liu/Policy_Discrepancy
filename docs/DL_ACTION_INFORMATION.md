@@ -1,6 +1,6 @@
 # DL 有限第一动作与接口信息诊断
 
-版本 **`DL-action-information-r1`**，2026-10-11。**Agent在完整授权内交叉审查后冻结的下一诊断；尚未实现、测试或运行。** 它不修改原M2协议，不扩大或翻案已停止的H100平均反馈对象，不采用gate，不授权方法训练或读取24blind。原结果见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)，前置语义及即时/学习路径区分见 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)。
+版本 **`DL-action-information-r1`**，2026-10-11。**Agent在完整授权内交叉审查后冻结的下一诊断；实现及本机反例测试已完成，真实对象尚未运行。** 它不修改原M2协议，不扩大或翻案已停止的H100平均反馈对象，不采用gate，不授权方法训练或读取24blind。原结果见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)，前置语义及即时/学习路径区分见 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)。
 
 ## 1. 必要性、对象与边界
 
@@ -70,4 +70,8 @@ LOEO训练集重叠；bootstrap固定cross-fitted episode差只有**校准名义
 
 ## 6. 实现与验收入口
 
-当前只有冻结协议，没有运行收益或readout结果。下一任务在本机实现DL版本的CPU runner与必要反例测试，提交并同步sv3 clean worktree；先验收动作名称/生产mapping、完整恢复/F64 reward、feature/episode隔离、mean-vs-sum ridge、退化/tie、deadline及完整产物，再运行一次固定对象。产物置于 `/data/Policy_Discrepancy/runs/dl-action-information-<date>-<SHA>/` 新attempt，小收据镜像ignored `analysis/outputs/dl-action-information/`。完成后审计字节、配置、步骤预算、判据和范围，按AGENTS报告完整SHA、实际测试SHA/差异、资源状态和下一交接。
+当前没有真实运行收益或readout结果。实现见 `scripts/dl_action_information.py`、`scripts/dl_action_information_physics.py`、`scripts/dl_action_information_stats.py`；测试见 `tests/test_dl_action_information_runner.py`、`tests/test_dl_action_information_physics.py`、`tests/test_dl_action_information_stats.py`。科学r1不变，工程初版分别为runner/physics/stats-r1。
+
+本机Python3.12.14/NumPy1.26.4、单线程CPU共29项测试，27通过、两项Linux真实process-group验证跳过，1.592秒。统计包括nλ、train-only/整episode隔离、sample选择次序、closedδ与微小winner反例；官方suite物理包括真实H20/完整activation与state、F64一ULP且同F32篡改拒绝、terminal/clock及任务恢复。独立审查发现restore会覆盖task，已在主执行和复放restore后重新核实际task/model，反例通过；没有放宽科学门或容差。BF16接口测试用size50m形状的合成数据，不执行Dreamer，也不是真实模型验收。以上测试发生在未提交的新文件上，不将其称已部署提交。
+
+下一步确定提交并同步sv3 clean worktree，在Linux完成全部29项及依赖检查，再运行一次固定CPU对象。产物置于 `/data/Policy_Discrepancy/runs/dl-action-information-<date>-<SHA>/` 新attempt，小收据镜像ignored `analysis/outputs/dl-action-information/`。独立数值审计须核完成链、来源特征字节、原数组成本/δ集合/selected reward/bootstrap/分类，另用kernel eigendecomposition复算readout；它不新增模型、render或独立physics。完成后按AGENTS报告完整SHA、实际测试SHA/差异、资源状态和下一交接。
