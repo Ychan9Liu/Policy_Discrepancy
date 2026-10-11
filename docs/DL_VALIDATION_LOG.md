@@ -1,5 +1,11 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 03:21：联合主入口完成，独审02接口失败待修复
+
+主实际SHA `c030e26f688ed227aa43866bd68dcf4352a073e3`，clean Linux76项全过54.734秒及pip check通过。03:13:28–03:21:53外CLI505.437680秒/exit0，九phase均exit0/owned终止；B/R各128完整更新，全部cal封口后24blind一次联评，物理7200步主＋复放/参考。单sv3物理4，采样峰6629MiB≈6.47GiB；入口占卡上界.140399GPUh，连原失败89.785934秒合计.165340GPUh。GPU worker精确时长与占卡上界另在结果报告区分；尚无已验收科研结论。03:24:26资源终点4–7各0MiB/no compute/pmon，本次4已释放、5–7未使用，0–2仍未知作业未干扰。
+
+独审02外CLI0.265011秒/exit1，在物理/统计审计前因期待旧external `timed_out/elapsed_external_seconds/output`而拒绝真实launcher的`worker_terminal/elapsed_cli_seconds/command` schema；不当科研阴性或审计通过。原primary/terminal和02失败保留。audit-only工程r2严格认证固定实际launcher字节29f21e81c2c8238ac344d0c4ca6502cba5433fce63c7812e12506abbc5f4253a、完整20argv、主parent PID、正常终止/exit0及≤3600秒、固定GPU4 UUID；不改旧terminal、不默认缺字段、不放宽科学守卫或改19生产文件。Agent联合34项33pass/1POSIXskip、7.541秒；待新audit-only确定SHA/Linux及新独审03，0GPU，不重跑已经封口的科学对象。
+
 ## 2026-10-12 03:02：联合诊断首次工程停止，blind未开
 
 实际SHA `348a5fc4ba3feee1e6f3167dc4a539431152205e`，clean Linux57项全过46.370秒及pip check通过。sv3物理4/A100独占，03:00:33启动前4–7各0MiB/无作业；0–2已有作业标未知，未干扰。03:01:03–03:02:33外CLI89.785934秒/exit1，baseline GPU worker54.086秒成功；B在30.504秒加载后、任何完整train更新前被optimizer step守卫拒绝，R/freeze/24blind尚未进入。没有科学效果结论。采样峰2501MiB只反映加载/提取，不是训练显存；此次单卡外入口约.02494GPUh为占卡时间上界。03:02:43 GPU4回0MiB/无本对象作业。

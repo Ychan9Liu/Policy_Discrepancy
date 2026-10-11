@@ -141,6 +141,56 @@ class JointAuditTest(unittest.TestCase):
       self.assertEqual(len(value['supervisor']['phases']),9)
       self.assertEqual(value['pins']['external_cli_terminal'],m.sha(terminal))
 
+  def test_actual_launcher_schema_has_no_legacy_timeout_or_output_fields(self):
+    with tempfile.TemporaryDirectory() as d:
+      root=Path(d);engineering=root/'engineering';engineering.mkdir()
+      launcher=engineering/'launch-primary02.py'
+      # Self-contained generic bytes; no ignored launcher artifact is required
+      # by fixtures deployed to a clean Linux checkout. Production pin stays fixed.
+      self.assertEqual(m.PRIMARY_LAUNCHER_SHA,'29f21e81c2c8238ac344d0c4ca6502cba5433fce63c7812e12506abbc5f4253a')
+      payload=b'"""Synthetic engineering launcher fixture only."""\n'
+      pin=hashlib.sha256(payload).hexdigest()
+      launcher.write_bytes(payload);terminal=engineering/'primary-terminal02.json'
+      primary=root/'primary-attempt02';primary.mkdir()
+      command=list(m.PRIMARY_LAUNCHER_COMMAND);command[command.index('--output')+1]=str(primary)
+      external=dict(actual_git_sha=m.PRIMARY_LAUNCHER_GIT,exit_code=0,worker_pid=123,
+          launcher_pid=122,worker_terminal=True,elapsed_cli_seconds=505.437680,command=command,
+          physical_gpu=4,gpu_uuid=m.PRIMARY_GPU_UUID,launcher_sha256=pin)
+      m.write_json(terminal,external)
+      with (mock.patch.object(m,'PRIMARY_LAUNCHER_PATH',launcher),
+          mock.patch.object(m,'PRIMARY_LAUNCHER_SHA',pin),
+          mock.patch.object(m,'PRIMARY_LAUNCHER_COMMAND',tuple(command))):
+        receipt=m.external_authority(terminal,external,primary,m.PRIMARY_LAUNCHER_GIT,123)
+        self.assertFalse(receipt['external_timed_out_flag_recorded'])
+        self.assertTrue(receipt['normal_terminal_verified'])
+        self.assertEqual(receipt['launcher_sha256'],pin)
+        for field,value in (('exit_code',False),('exit_code',124),('worker_terminal',False),
+            ('worker_pid',124),('launcher_pid',123),('elapsed_cli_seconds',3600.1),
+            ('elapsed_cli_seconds',0),('launcher_sha256','0'*64),('physical_gpu',5),
+            ('gpu_uuid','GPU-wrong')):
+          bad=copy.deepcopy(external);bad[field]=value
+          with self.subTest(field=field,value=value),self.assertRaises(ValueError):
+            m.external_authority(terminal,bad,primary,m.PRIMARY_LAUNCHER_GIT,123)
+        for field in ('elapsed_cli_seconds','worker_terminal','launcher_sha256','command'):
+          bad=copy.deepcopy(external);del bad[field]
+          with self.subTest(missing=field),self.assertRaises((ValueError,KeyError)):
+            m.external_authority(terminal,bad,primary,m.PRIMARY_LAUNCHER_GIT,123)
+        bad=copy.deepcopy(external);bad['command'][-1]+='-changed'
+        with self.assertRaises(ValueError):m.external_authority(terminal,bad,primary,m.PRIMARY_LAUNCHER_GIT,123)
+        bad=copy.deepcopy(external);bad['command']+=['--worker-phase','statistics']
+        with self.assertRaises(ValueError):m.external_authority(terminal,bad,primary,m.PRIMARY_LAUNCHER_GIT,123)
+        launcher.write_bytes(payload+b'\n# tamper')
+        with self.assertRaises(ValueError):m.external_authority(terminal,external,primary,m.PRIMARY_LAUNCHER_GIT,123)
+
+  def test_actual_primary_cannot_fall_back_to_legacy_missing_launcher(self):
+    with tempfile.TemporaryDirectory() as d:
+      root=Path(d);launcher=root/'launch-primary02.py';launcher.write_bytes(b'not actual')
+      terminal=root/'primary-terminal02.json';m.write_json(terminal,dict(exit_code=0))
+      legacy=dict(actual_git_sha=m.PRIMARY_LAUNCHER_GIT,exit_code=0,timed_out=False,
+          elapsed_external_seconds=500.,output=str(root))
+      with mock.patch.object(m,'PRIMARY_LAUNCHER_PATH',launcher):
+        with self.assertRaises(ValueError):m.external_authority(terminal,legacy,root,m.PRIMARY_LAUNCHER_GIT,123)
+
   def test_partial_exit_bool_exit_external_timeout_or_wrong_output_fail(self):
     for mutate in (
         lambda p,t:rewrite(p/'supervisor_complete.json',lambda x:x['phases'].pop()),

@@ -73,6 +73,21 @@ CAL_PINS = {'result.json':'9a11da123f9743f3815f6a36bf3da26641900217708990830ef15
     'natural_reset_complete.json':'678451d9a2b94807016e1be9bd84469d74941a5ba1d68b3df9740e4007b4f774',
     'audit':'c76a6473617ecf10824efc0bcd8eebb4042075354cfcf74e4e0d65546d3ae7f0',
     'external':'09339ceea9ef507b172f020a57058fe7ce99b616ff9b4c3ab6ad01ad36ed38da'}
+PRIMARY_LAUNCHER_PATH = Path('/data/Policy_Discrepancy/runs/dl-reset-joint-20261012-c030e26/engineering/launch-primary02.py')
+PRIMARY_LAUNCHER_SHA = '29f21e81c2c8238ac344d0c4ca6502cba5433fce63c7812e12506abbc5f4253a'
+PRIMARY_LAUNCHER_GIT = 'c030e26f688ed227aa43866bd68dcf4352a073e3'
+PRIMARY_GPU_UUID = 'GPU-9c070d5a-ac68-4c26-9522-a790ad874b23'
+PRIMARY_LAUNCHER_COMMAND = (
+    '/data/Policy_Discrepancy/envs/dreamer/bin/python','scripts/dl_reset_joint.py',
+    '--dataset','/data/Policy_Discrepancy/runs/dl-production-source-20261011-f2d24da/cp300000-attempt02/collection',
+    '--artifact-audit','/data/Policy_Discrepancy/runs/dl-production-source-20261011-f2d24da/cp300000-attempt02/independent-source-audit-r1.json',
+    '--physics-audit','/data/Policy_Discrepancy/runs/dl-production-source-20261011-f2d24da/cp300000-attempt02/independent-physics-source-audit-v1.json',
+    '--cal-reset','/data/Policy_Discrepancy/runs/dl-natural-reset-20261012-aa9fb7f/calibration-attempt01',
+    '--checkpoint','/data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/sources/cp300000-agent.pkl',
+    '--config','/data/Policy_Discrepancy/runs/dl-prevalidation-bootstrap-20261010-ae8372e/sources/config.yaml',
+    '--output','/data/Policy_Discrepancy/runs/dl-reset-joint-20261012-c030e26/primary-attempt02',
+    '--expected-git',PRIMARY_LAUNCHER_GIT,
+    '--resource-record','/data/Policy_Discrepancy/runs/dl-reset-joint-20261012-c030e26/engineering/primary02-resource.json')
 
 
 def require(condition, message):
@@ -180,6 +195,48 @@ def successful_exit(value,limit,elapsed_key):
       'Whole-entry elapsed budget differs')
 
 
+def external_authority(terminal,external,primary,primary_git,parent_pid):
+  """Two explicit receipt schemas; no absent timeout/output field defaults.
+
+  The actual launcher02 records normal terminal/PID and CLI elapsed instead
+  of a timed_out flag. Its fixed byte-authenticated implementation plus the
+  successful primary whole-entry chain authenticate the deadline semantics.
+  The recorded primary terminal is never rewritten into the legacy schema.
+  """
+  if primary_git == PRIMARY_LAUNCHER_GIT or 'elapsed_cli_seconds' in external or 'launcher_sha256' in external:
+    launcher=PRIMARY_LAUNCHER_PATH.resolve(strict=True)
+    terminal=Path(terminal).resolve(strict=True)
+    require(terminal == launcher.parent/'primary-terminal02.json', 'Known actual external launcher/terminal path differs')
+    hash_payload(launcher,PRIMARY_LAUNCHER_SHA)
+    require(external['launcher_sha256'] == PRIMARY_LAUNCHER_SHA and
+        external['actual_git_sha'] == primary_git == PRIMARY_LAUNCHER_GIT,
+        'Known launcher byte identity/primary Git differs')
+    require(type(external['exit_code']) is int and external['exit_code'] == 0 and
+        external['worker_terminal'] is True and type(external['worker_pid']) is int and
+        external['worker_pid'] == parent_pid and type(external['launcher_pid']) is int and
+        external['launcher_pid'] > 0 and external['launcher_pid'] != parent_pid,
+        'Known outer CLI lacks normal successful primary-parent terminal')
+    elapsed=external['elapsed_cli_seconds']
+    require(type(elapsed) in (int,float) and math.isfinite(elapsed) and 0 < elapsed <= 3600,
+        'Known outer CLI exceeded actual bounded elapsed')
+    require(type(external['command']) is list and all(type(x) is str for x in external['command']) and
+        tuple(external['command']) == PRIMARY_LAUNCHER_COMMAND,
+        'Actual launcher complete static command differs')
+    args=dict(zip(external['command'][2::2],external['command'][3::2]))
+    require(Path(args['--output']).resolve() == primary and args['--expected-git'] == primary_git and
+        type(external['physical_gpu']) is int and external['physical_gpu'] == 4 and
+        external['gpu_uuid'] == PRIMARY_GPU_UUID,'Actual launcher output/version/resource binding differs')
+    return dict(schema='fixed_actual_launch-primary02',launcher_path=str(launcher),
+        launcher_sha256=PRIMARY_LAUNCHER_SHA,actual_primary_parent_pid=parent_pid,
+        normal_terminal_verified=True,external_timed_out_flag_recorded=False,
+        timeout_authority='successful primary 3600s owned-entry chain plus known launcher CLI elapsed')
+  successful_exit(external,3600,'elapsed_external_seconds')
+  require(external['actual_git_sha'] == primary_git and
+      Path(external['output']).resolve() == primary,'Legacy external CLI terminal does not bind primary')
+  return dict(schema='explicit_legacy_output_and_timed_out',external_timed_out_flag_recorded=True,
+      normal_terminal_verified=True)
+
+
 def primary_authority(primary,terminal,code_pins):
   primary=Path(primary).resolve(strict=True)
   for name in ('late-supervisor.json','late-provisional-supervisor.json','supervisor-receipt-pending.json'):
@@ -203,9 +260,7 @@ def primary_authority(primary,terminal,code_pins):
       supervisor['result_sha256'] == sha(primary/'result.json') and
       supervisor['method_effectiveness_established'] is False and
       supervisor['independent_audit_complete'] is False,'Primary complete chain differs')
-  successful_exit(external,3600,'elapsed_external_seconds')
-  require(external['actual_git_sha'] == primary_git and
-      Path(external['output']).resolve() == primary,'External CLI terminal does not bind primary')
+  cli=external_authority(terminal,external,primary,primary_git,budget['parent_pid'])
   phases=supervisor['phases']
   require(len(phases) == 9 and [x['phase'] for x in phases] == list(PHASES),'Partial/reordered primary phases')
   for phase in phases:
@@ -237,7 +292,7 @@ def primary_authority(primary,terminal,code_pins):
     pins[name+'-exit.json']=sha(primary/(name+'-exit.json'))
   pins['external_cli_terminal']=sha(terminal)
   return dict(budget=budget,supervisor=supervisor,frozen=frozen,seal=seal,result=result,
-      primary_git=primary_git,pins=pins)
+      primary_git=primary_git,pins=pins,external_cli_authority=cli)
 
 
 def authenticate_source(binding):
@@ -708,6 +763,9 @@ def audit(args):
     require(sha(path) == pin,'Previously audited cal truth chain changed at endpoint')
   for path,pin in device_pins.items():
     require(sha(path) == pin,'Actual CUDA/EGL mapping proof changed at endpoint')
+  cli=authority['external_cli_authority']
+  if cli['schema'] == 'fixed_actual_launch-primary02':
+    require(sha(cli['launcher_path']) == cli['launcher_sha256'],'Known actual primary launcher changed at endpoint')
   for name,pin in authority['pins'].items():
     path=Path(args.primary_cli_terminal) if name == 'external_cli_terminal' else primary/name
     require(sha(path) == pin,'Primary generated/exit artifact changed at endpoint: '+name)
@@ -717,6 +775,7 @@ def audit(args):
       auditor_git_sha=args.expected_git,primary_git_sha=primary_git,primary=str(primary),
       primary_cli_terminal=str(Path(args.primary_cli_terminal).resolve()),
       primary_cli_terminal_sha256=authority['pins']['external_cli_terminal'],
+      primary_cli_authority=authority['external_cli_authority'],
       primary_json_and_generated_sha256=authority['pins'],source_files_sha256=code,
       authenticated_recorded_device_proofs_sha256=device_pins,
       source_binding=truth['source_binding'],original_source_archives_decoded=0,original_blind_arrays_read=False,
