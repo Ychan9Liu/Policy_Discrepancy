@@ -50,3 +50,4 @@ analysis/dl_reset_joint_numeric_audit.py text eol=lf
 tests/test_dl_reset_joint_numeric_audit.py text eol=lf
 scripts/dl_reset_joint_audit.py text eol=lf
 tests/test_dl_reset_joint_audit.py text eol=lf
+analysis/dl_reset_signal_error.py text eol=lf
