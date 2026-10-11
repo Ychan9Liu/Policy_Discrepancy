@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。
+
 **DL启动前工程（2026-10-12 04:45）**：四组Windows必要契约37通过、1项Linux进程组待验，无真实对象执行或fresh资源核查。新增A128及0/B/A正常native评价实现冻结，主7200秒/单GPU4上限与CPU独审1200秒保持；实际吞吐/显存待测。确定提交Linux/pip与设备核查通过后再启动，完整记录 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
 
 **DL下一有限对象（2026-10-12 04:27，尚未执行）**：[DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) r1已在完整授权内由Agent交叉审采用：全窗口当前rep-stop A128对认证复用B128，0解释；固定新32seed×1000步正常posterior nativeactor，主A−B真实闭环return。实施和确定版本工程验收仍待，不新增F/第二信号/gate。sv3物理4单A100、主7200秒≤2GPUh、CPU独审1200秒0GPU，单次硬限不作实际ETA/显存保证或正式训练总预算；新render/设备和完整96k复放链待实测。当前未核资源、未启动科学GPU作业，正式M2保持。

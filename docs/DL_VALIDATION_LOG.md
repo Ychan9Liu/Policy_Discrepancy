@@ -1,5 +1,11 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 04:57：确定版本Linux验收、设备映射及单卡主流程运行中
+
+**DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。
+
+38项工程测试40.602秒/外40.817279秒，pip0；实际A128 owned143.612114秒/exit0、Optimizer74493→74621。零动作probe11.403533秒、61401MiB单独记录，退出释放；主04:49:15启动，04:57快照GPU4本项目C+G2843MiB，5–7无进程/各1MiB。全部96k主/独审尚未验收，不作局部回报裁决；代码只sv3隔离checkout，canonical/sv1/sv2保持。研究branch两次网络失败，未确认GitHub新SHA、未合main；终点完整SHA及文档差异以Git报告为准。
+
 ## 2026-10-12 04:45：native有限对象工程冻结，Windows必要契约通过
 
 新增A全窗口rep helper、currentparams native actor、主7200秒owned父入口、独立1200秒CPU审计及四组测试均已冻结；科学r1、旧19生产文件、原M2保持。实际Windows基底 `06f5413ba36232d4be3e8a37458e64c2c9c73ea2` 加新文件：A/native联合13项全过20.656秒；主driver8项7过/1 Linux进程组跳过.290秒；独审17项全过3.132秒。实际官方tiny RSSM/Optimizer/embodiedJAXAgent用于梯度、采样、公共policy oracle、完整state/counter守卫；fakephysics/filesystem只验字节、完整性、统计、预算和退出，不是实际physics或size50m。ignored `analysis/outputs/dl-rep-native/engineering/windows-precommit-receipt.json` 记录原字节hash与测试边界。

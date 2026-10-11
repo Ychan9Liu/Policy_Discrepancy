@@ -1,5 +1,7 @@
 # 研究问题与方法
 
+**DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。
+
 **DL工程证据（2026-10-12 04:45）**：已采用native有限对象r1的A/native/主driver/独审必要Windows契约37通过、1 Linux进程组待验；旧19文件和M2不改，无真实source/checkpoint/学习/模型/GPU/physics结果。源码工程通过不升级为策略收益、机制或方法有效；下一确定提交Linux/设备验收及原冻结对象执行，见 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
 
 **DL当前（2026-10-12 04:27，实施中未科学运行）**：Agent在完整授权内交叉审查后采用 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) `DL-rep-native-assay-r1`，128次匹配学习的全窗口当前rep停止A对已审B，0只解释；新seed1024–1055各1000步的native posterior actor真实闭环回报为主，不新增A-F或第二信号拟合。sv3物理4独占一A100、单次主完整入口7200秒/≤2GPUh，CPU独审1200秒/0GPU；不是总ETA或显存保证，设备probe另记录。源码/构造验收在实施中，确定版本Linux和真实source/device/完整执行尚未完成，未启动GPU、当前占用未核。全窗口干预不是拟部署方法或selective gate上界，原M2不变；科学边界见DL-32。04:04信号误差诊断及独立866项算术已通过，旧对象裁决保持。

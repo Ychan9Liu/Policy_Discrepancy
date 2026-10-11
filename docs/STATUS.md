@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。
+
 **DL工程进展（2026-10-12 04:45，真实对象未启动）**：新r1四组必要Windows契约共38项，37通过、1待Linux进程组；源码和科学规范已冻结，下一确定提交clean Linux组合验收与fresh sv3物理4/CUDA/EGL检查。没有新source/checkpoint/GPU/physics访问；旧M2保持、完整目标active。资源需求仍1独占A100、单次主7200秒≤2GPUh上限，CPU独审1200秒0GPU；不是全科研总ETA或新显存保证。详情 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
 
 **DL当前（2026-10-12 04:27）**：全窗口rep到nativeactor有限对象科学r1已采用，工程实施/CPU构造检查中，尚未真实读取本对象source/checkpoint或启动GPU。规范 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md)；A128匹配原B完整输入/keys，旧B认证复用、0解释，新32seed1024–1055各1000步/0-B-A共96k真实transition，主A−B闭环F64回报，不新增F/信号/gate。仅sv3物理4独占一A100/主7200秒≤2GPUh；CPU独审1200秒0GPU，probe/失败实际成本另记，总剩余GPU小时及新显存未定。当前未核GPU占用、5–7无本对象计划。工程验收不能当真实actor、机制或方法有效，M2不改、完整目标active。下一继续现chat确定版本Linux验收和完整科学执行；04:04主/独立算术诊断已验收。以下带时间为历史。
