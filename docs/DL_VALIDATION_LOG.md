@@ -8,6 +8,8 @@
 
 工程r2仅上述官方key/严格计数守卫及收据元数据修复，VERSION保留，不改变stepid、batch、随机流或科学协议。Windows59项58pass/1Linux-only skip，32.149秒，日志 `analysis/outputs/dl-reset-joint/engineering/windows-primary59.log`；含实际官方Optimizer/Ninjax tiny叶名和step递增、错误格式及漏optimizer更新的拒绝例。尚需新确定SHA的clean Linux再测。3600秒/≤1GPU小时是每个完整父入口的硬上限，工程失败已耗费时间另计，不能把重跑前额外成本隐藏成单次预算。
 
+完整CPU独审实现另冻：`scripts/dl_reset_joint_audit.py` / 对应17项fixtures，root17项16pass/1POSIXskip，1.421秒；和numeric联合32项31pass/1skip、7.749秒。日志 `analysis/outputs/dl-reset-joint/engineering/windows-independent17.log`。其300秒owned父入口认证完整9phase/CLI退出/封口/源码/all32原bytes、BF16派生共同先验、128实际计数/key/pressure，以及既有cal数值真值链；独立direct kernel统计、fsum边界及新3360 stored-applied官方CPU复放。原source/RGB/检查点只hash不decode，不重复optimizer/模型/freshreset/source参考，明确认证复用。这是工程实现待实测，不宣布科学审计已完成；default Dreamer/正式M2没有改动。
+
 ## 2026-10-12：正常reset联合读出与完整学习诊断实施中
 
 授权内Agent交审采用 `DL-reset-joint-assay-r1`，见 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md)。八cal的0/B128/R128完整state、同容量共享F/唯一λ0、固定D/K/S回归程序全冻结才一次24blind；R只停止reset新rep梯度，B/R原完整optimizer/forward和历史momentum保持，明确reset富集离线串接context1。单sv3物理4/A100顺序执行，整个对象3600秒/≤1GPU小时硬限；不是整体剩余预算或ETA。02:44:16北京时间只读快照4–7各0MiB/无作业，0–2进程标未知且未干扰；快照不当启动保证。尚未真实source模型或新blind/未启动学习。
