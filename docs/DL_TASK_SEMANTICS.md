@@ -1,6 +1,6 @@
 # DL 固定状态的任务语义与机制边界
 
-版本 `DL-task-semantics-r1`，2026-10-11。本文是完整前验证授权内的Agent设计与证据记录，不是用户逐项确认的新方法，也不改正式M2协议。当前先冻结只读CPU查询对象，实际结果待下文补记。科学来源和此前负结果见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)。完整方法目标仍未完成。
+版本 `DL-task-semantics-r1`，2026-10-11。本文是完整前验证授权内的Agent设计与证据记录，不是用户逐项确认的新方法，也不改正式M2协议。**固定32初态的实际CPU查询与自检已通过，零环境动作/模型/GPU；它只核任务语义，不证明关键信息或方法效果。** 科学来源和此前负结果见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)。完整方法目标仍未完成。
 
 ## 1. 两条需要分开检验的路径
 
@@ -25,9 +25,9 @@
 | 官方任务 | `quadruped.walk`，原suite/任务RNG、step/reset及完整MuJoCo integration snapshot |
 | 操作 | `mj_setState`、`forward`和查询；不执行环境transition、控制、模型、渲染或优化器 |
 | 查询 | torso upright、局部三维速度、desired speed、官方upright/move reward分量、乘积与task reward、物理time、step count和remaining clock |
-| 完整性 | 包版本及官方task模块hash；restore/查询前后完整integration、task/RNG、clock/reset不变；非有限或输入不符失败 |
+| 完整性 | 包版本及官方task模块hash；restore与保存snapshot按原1e−8匹配（实测0），查询前后完整integration/task/RNG/clock/reset严格字节不变；非有限或输入不符失败 |
 | 资源 | sv3 CPU，GPU使用0；120秒POSIX硬限加monotonic核查，只终止自身进程 |
-| 输出 | 新的 `task-semantics-qa01/` 目录；保留32连续量、来源/hash和限制；已有目录拒绝覆盖 |
+| 输出 | launcher要求新的 `task-semantics-qa01/` 目录；查询器拒绝已有output文件，允许同一目录保存selftest；保留32连续量、来源/hash和限制 |
 
 这是看到原负结果之后的探索性语义核查，不宣称独立科学重复或预注册验证。对象按原固定坐标完整查询，不按D/K/e/U或图像外观筛点，不设critical/fallen/should-protect阈值。privileged physics量只供离线诊断，不能悄悄加入vision-only gate输入。
 
@@ -39,11 +39,11 @@
 
 ## 3. 后续决定需要什么证据
 
-下一项首选对象是独立的有限动作关键性诊断，先冻结动作集合、后续控制定义、真实成本、配对规则、预算和停止规则，再执行。当前尚未冻结，不因逻辑可能存在正子集而消耗blind。
+下一项是有限动作与接口信息诊断，交叉审查后的冻结规格见 [DL_ACTION_INFORMATION.md](DL_ACTION_INFORMATION.md)。当前尚未实现或运行，不因逻辑可能存在正子集而消耗blind。
 
 需要分别回答：
 
-1. 同一有限动作集合的真实排序或代价是否随可辨识任务状态改变？低奖励、姿态差异或控制敏感性本身都不足以定义关键线索。
+1. 同一有限动作集合的真实排序或选择相关代价是否随可辨识任务状态改变？若所有控制奖励同比缩放、同一动作始终近优，仍不证明需要辨别状态；低奖励、姿态差异或控制敏感性本身不足以定义关键线索。
 2. 合法64×64 RGB及正常历史能否获得该区别？当前RGB相对已有历史是否有新增信息？单帧看见本体不证明速度或隐含状态可辨。
 3. q latent是否保存该信息、现有actor是否利用？信息可学习性与当前actor能力分开裁决，不把一次q/p样本收益当精确标签。
 4. 若actor已利用，是否有active rep造成能力损伤的实际学习证据？若actor未利用但信息可学，是否值得另立学习介导对象？两者都不能直接沿用旧失败gate或短训练入口。
@@ -52,4 +52,44 @@
 
 ## 4. 实际执行与结果
 
-待实际CPU查询及完整性审查后填写。方法有效、当前信息增量、actor能力和压缩学习作用当前均未由本查询建立。
+实际执行和Linux自检SHA均为 `57270c7b92b8fd9da2bce5d1d6d9f377229564e2`；两份tracked查询源码与原ignored脚本字节相同。仅部署sv3 clean独立工作区 `/data/Policy_Discrepancy/dl-worktrees/57270c7`。canonical repo保持clean `d9be5574878d2c3f117cc6667be844f9a527eb84`，旧0d49c58执行工作区未改动，sv1/sv2未同步。
+
+2026-10-11 19:20:16–19:20:29北京时间，launcher exit0。Linux selftest九项通过0.435633秒，完整查询32状态通过12.221363秒；外部timeout120及内部POSIX/monotonic启用，未超时。全部256分支初态绑定、32官方reward分量及F32初obs编码通过；restore/query最大integration误差均0，查询前后完整integration/task/RNG/clock/reset字节不变。GPU/环境transition/reset/control/render/model调用均0。root另核输出字节hash、完整episode/position顺序、clock、所有32前后hash及退出/clean状态；这是收据审查，不是第二次官方查询执行。
+
+本次结果目录：
+
+```text
+/data/Policy_Discrepancy/runs/dl-feedback-20261011-0d49c58/cp300000-attempt02/task-semantics-qa01/
+  task-semantics-v1.json / selftest.json
+  query.log / selftest.log / input-sha256.txt / code-sha256.txt
+  git-sha.txt / git-status-after.txt / python-version.txt
+  start.txt / end.txt / exit-code.txt / output-sha256.txt
+```
+
+小收据完整镜像在ignored `analysis/outputs/dl-feedback/0d49c58/cp300000-attempt02/task-semantics-qa01/`。结果JSON SHA256 `61a6edbad985f033601bc4f6242e13c07fbb1b0d307840c874f8fe543459217a`；Linux selftest `52c792ba5003ffe473329a97f70d0d78a14b6ad1ac37f5df3284c94da72daf51`；launcher `f09bdd6ce432248cb01234174d012e9d00e5a351315dcb443c84f1cda8c762ef`。launcher独立比对既有plan/result/complete的公布hash，再调用查询器，不只依赖metadata中写着旧SHA。增量Git bundle SHA256 `9b05341899ac36fa2a49c3117ef919cb998c0a994ca25bf2decc41f5bf582dae` 已核传输/verify；无需GitHub可完成确定版本的sv3同步。
+
+全32点连续量范围：torso upright `[-0.999956434,0.999024578]`，local vx `[-0.192920138,1.598224940]`，task reward `[0.000014827,0.999512289]`。固定顺序 `[1,300,600,900]` 的部分主要量如下；完整三维速度、分量、snapshot/hash以JSON为准。
+
+| episode | 四位置torso upright（显示六位） | 四位置local vx（显示六位） |
+| --- | --- | --- |
+| 9 | .685144 / .994375 / .993971 / .942463 | −.048034 / .125946 / .701067 / .218448 |
+| 14 | .676010 / .994603 / .933644 / .985232 | −.032405 / .620582 / .551375 / .909640 |
+| 15 | −.651412 / −.991529 / −.999956 / −.755085 | −.001795 / .224438 / .180652 / .737531 |
+| 18 | .927596 / .975004 / .997398 / .978901 | .081596 / .598911 / .490167 / .772117 |
+| 20 | .070724 / −.971125 / −.892356 / −.882815 | −.118559 / .102062 / .066771 / .141407 |
+| 24 | .593561 / .969891 / .999025 / .966037 | −.081466 / .825526 / 1.598225 / .771280 |
+| 30 | −.621252 / −.988113 / −.999506 / −.983853 | −.008518 / .188399 / −.022481 / −.192920 |
+| 31 | .121756 / −.940907 / −.837295 / −.998686 | .090422 / −.073530 / .083600 / .077221 |
+
+**有限事实**：覆盖同时包含接近正立、局部前向速度达到walk目标的状态，以及torso z轴接近朝向世界负z的状态；后者与此前图像的反转外观一致。不能由这些量判断足部接触、可恢复性、正确动作或当前信息增量。也不能把整个checkpoint概括成“actor不会任务”，或把低reward状态直接当保护目标。
+
+**执行命令**（W为上述57270c7工作区，F为上述原feedback目录，R为新task-semantics-qa01，P为 `/data/Policy_Discrepancy/envs/dreamer/bin/python`）：
+
+```bash
+CUDA_VISIBLE_DEVICES= JAX_PLATFORMS=cpu MUJOCO_GL=disable timeout 120 "$P" "$W/analysis/dl_task_semantics.py" --physics-auditor "$W/analysis/dl_feedback_physics_audit_v1.py" --self-test --output "$R/selftest.json"
+CUDA_VISIBLE_DEVICES= JAX_PLATFORMS=cpu MUJOCO_GL=disable timeout 120 "$P" "$W/analysis/dl_task_semantics.py" --physics-auditor "$W/analysis/dl_feedback_physics_audit_v1.py" --dataset "$F" --expected-feedback-sha 0d49c589b525ba0c26f9f85bf52c23573dc19507 --output "$R/task-semantics-v1.json"
+```
+
+本次没有资源占用查询，未申请GPU；上一张19:06:18北京时间快照的GPU4–7均空闲不作为持续保证。科学目标、信息readout、有限动作诊断和学习机制仍未验收。新动作/读出规格已交叉审查冻结，尚未实现或运行。
+
+为保持上述源码SHA256，新增 `.gitattributes` 仅对两份新归档Python文件指定 `text eol=lf`。实际Windows `core.autocrlf=true/core.eol=crlf` 下用checkout-index导出到新ignored目录，两个hash均与公布值一致；不全仓库renormalize，不改执行代码或科学语义。

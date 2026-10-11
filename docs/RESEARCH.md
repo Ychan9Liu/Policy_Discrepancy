@@ -746,3 +746,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **下一阶段具体问题**：首选继续当前完整授权聊天完成独立关键性/可见性/actor前置和合适目标定义；可立即做现有calibration CPU图像/语义审查，不需GPU。新物理或信号诊断须先由授权内Agent交叉审查冻结完整对象/配置/资源/停止门，不默默移植旧失败gate/短训练入口。形成可正式实验方法的整体目标仍未完成。
 
 **CPU图像前置进展**：完整r2 artifact仅四numeric字段独立导出105PNG/32固定source-fresh pairs，8项synthetic守卫及实际authority/hash通过，root已查看全部总览；无重render/model/U/pickle/blind/GPU。图中可见本体/地面与姿态轮廓，部分足部朝上/侧倾外观是尚未物理核验的目测推测，不当跌倒或actor失败结论。下一可先核官方连续torso orientation/velocity及任务reward语义；这也不替代动作排序/线索可获取/actor利用的因果证据。输出/hash与限制见DL_FEEDBACK_RESULTS。
+
+### DL-18 固定任务语义与两条学习路径（2026-10-11）
+
+**已验证有限事实**：`DL-task-semantics-r1` 在实际SHA `57270c7b92b8fd9da2bce5d1d6d9f377229564e2` 的sv3 clean CPU工作区完成九项自检和固定cal32完整查询（12.221363秒）。零环境transition、模型、render、optimizer和GPU；官方reward分量/初obs编码、32前后状态/task/RNG字节及来源全部通过，最大restore/query误差0。continuous upright范围[−.999956434,.999024578]、local vx[−.192920138,1.598224940]；既有接近正立且达到walk速度的状态，也有torso z朝向接近反转的状态。不能整体判actor无能力，也不生成critical或可恢复性标签。版本、查询源码、hash、结果和限制见 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)。
+
+**理论边界与工作假设**：frozen actor利用当前信息，是即时行为介导对象的前置，不是所有“表示保留→后续actor学习”路线的必要条件。后者仍需外部控制依据、可学信息、正常活跃rep损伤与保护/后续学习证据。actor尚未使用有用latent时D可能为0，乘f(D)的必要门可能漏保；K不能独自解决task/nuisance辨别。纯posterior-head KL下降后固定readout变差可来自可逆坐标漂移，不等于正常训练删掉信息。此前DL-17有关frozen actor前置按即时对象理解，不扩大为完整学习目标的停止门。
+
+**授权内Agent冻结决定，尚未实现/运行**：下一 `DL-action-information-r1` 只用既有cal32/四已存paired sample，七固定首控制＋八actor首动作，共同19步normalized-zero续行H20，CPU最多9600主步＋9600复放，180秒父硬限。独立关键性采用实用margin和跨episode不相交的δ-optimal控制集合，不能只看成本range或微小winner变化。主readout使用实际h＋sampled z、同容量LOEO，不假定已存encoder token，也不把q线性可读增量等同完整历史之外的新RGB信息。参数、ridge目标、bootstrap、停止分叉及必要测试见 [DL_ACTION_INFORMATION.md](DL_ACTION_INFORMATION.md)。本诊断不重审H100、不读blind、不启用新gate或训练；正式方法仍未形成。

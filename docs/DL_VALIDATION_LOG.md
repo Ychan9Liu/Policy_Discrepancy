@@ -1,5 +1,14 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11：只读任务语义完成，冻结下一有限动作/接口对象
+
+- 实际查询/clean Linux selftest SHA `57270c7b92b8fd9da2bce5d1d6d9f377229564e2`。本机tracked同字节查询器selftest九项0.406秒；sv3九项0.435633秒，cal32 query12.221363秒，19:20:16–19:20:29北京时间/exit0/未超时。GPU使用0；完整cal8/每state8共同初态、task模块/依赖/hash、F64分量/F32初obs编码及查询前后完整state/task/RNG/clock/reset字节通过，最大restore/query误差0。root核完整镜像hash/顺序/只读及exit/clean收据。
+- tracked归档 `analysis/dl_task_semantics.py` SHA256 `ddf89d47521965387da680e5b0cd2bea455e2e5ec42f50022ac13812bc93ea64` 与 `analysis/dl_feedback_physics_audit_v1.py` `54e5b5a24fc9971ef8f454979a1ee9a9bc47c536f52bcac42b4c50efd96ef1ab`，均与此前ignored原件及Git blob逐字节一致；不是新算法或新增第二独立物理审计。只部署sv3新clean工作区 `/data/Policy_Discrepancy/dl-worktrees/57270c7`，原0d及canonical d9be557不改，sv1/sv2不部署。增量bundle哈希 `9b05341899ac36fa2a49c3117ef919cb998c0a994ca25bf2decc41f5bf582dae` 传输和Git verify通过。
+- 结果与完整命令在 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)，server旧feedback attempt02下新的 `task-semantics-qa01/`；结果JSON SHA256 `61a6edbad985f033601bc4f6242e13c07fbb1b0d307840c874f8fe543459217a`。固定32点同时包含正立达到walk速度与torso接近反转，不将低reward贴critical标签或整体断言actor弱。
+- 必要字节保全：`.gitattributes`仅给两份新Python源指定LF。Windows core.autocrlf=true/core.eol=crlf的checkout-index真实导出hash仍原样；未全仓库renormalize，不改算法/科学语义，无须重复旧256physics或32查询。
+- Agent交叉审查决定：即时frozen actor利用与表示保留帮助后续actor学习分开；不以原负平均对象替代完整学习目标。纯posterior-head下降/固定readout失效可能只是可逆坐标漂移，不足以归因正常rep训练。
+- 下一 [DL_ACTION_INFORMATION.md](DL_ACTION_INFORMATION.md) 冻结cal32七固定control+八已存actor firstaction、H20共同normalized-zero续行、CPU9600+9600步/180秒；δ-optimal集合分离避免微小winner伪关键性，actual sampled latent同容量LOEO避免rawlogit/gauge及概率信息误作actor接口。**尚未实现、测试或运行，不读blind、不采用gate或训练。** 维持旧H100负裁决和正式M2。完整目标继续。
+
 ## 2026-10-11 18:44反馈工程r2完整运行与独立审计
 
 实际代码及clean server CPU测试SHA `0d49c589b525ba0c26f9f85bf52c23573dc19507`；只sv3新clean detached worktree部署，canonical干净d9be557保持。新bundle SHA256 `01014b14c8e2710ca37caaf6b43695bd993043076536b830d7aae8acec473d34`，CPU外部runner `c44f46db1fd71d212e29f33d20d55eea0318a412ec02ad9492f9b635d78d5b66`，launcher `730e4d36b8413c8162acb53915d385390bcd4b7b676ad639cab558c8708b292c`；均本机保存/SCP后server核hash。CPU28项全pass（9/2/7/4/6，含Linuxgroup两反例无skip），process含import耗时.249423/9.823243/2.048627/.153703/2.296860秒；pip、七依赖/source32hash/仅cal8 decode通过。

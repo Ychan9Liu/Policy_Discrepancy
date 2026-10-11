@@ -2,6 +2,8 @@
 
 更新日期：2026-10-11。
 
+- **2026-10-11 19:20后当前**：DL-task-semantics-r1实际SHA `57270c7b92b8fd9da2bce5d1d6d9f377229564e2` 仅sv3 clean隔离工作区CPU执行，九项selftest/固定32初state query passed，12.221363秒，完整状态/task/RNG严格只读；0transition/model/render/optimizer/GPU。连续task量覆盖正立达到walk速度和反向torso状态，不整体判actor无能力、不生成critical标签。查询器与冻结依赖已入Git，两文件LF属性/Windows checkout字节hash通过；[DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md) 记实际证据。内部交叉审查已冻结下一 [DL_ACTION_INFORMATION.md](DL_ACTION_INFORMATION.md) 的有限第一动作/实际sampled-latent接口诊断（CPU、9600+9600物理步、180秒），**尚未实现或运行**。保持原H100负裁决，不读24blind、不采用gate或训练；即时actor前置不替代后续学习路径。完整方法目标仍未完成。最新GitHub同步以实际push结果为准；未main，canonical本机未改。此CPU执行未重新核GPU占用，19:06:18的4–7空闲快照不作持续保证；下方为带时间历史。
+
 ## DL 当前：正式实验前验证实施中（2026-10-10）
 
 - **2026-10-11 18:44当前**：工程r2确定SHA `0d49c589b525ba0c26f9f85bf52c23573dc19507` server clean CPU28/pip/source绑定通过；GPU4 attempt02完整exit0/537.614524秒/2587MiB，32actual source oracle、256branch/25600动作及同量physics/cached-policy条件复放通过，参数/optimizer/norm/counters冻结。独立artifact/统计和额外official CPU physics25600步审计passed，后者39.280067秒/完整state0/F64/F32/discount bytes。主量−1.004610/CI95[−2.255450,−.173982]，按原门not_supported停止有限平均对象；不追加样本/窗口/checkpoint、不开blind/gate/训练。完整证据及限制见DL_FEEDBACK_RESULTS；原attempt01失败保留。18:31:30北京时间4–7各0MiB无compute、本项目GPU4释放、0–2未知不干扰。0d49修复版本机push三次连接失败，sv3无Github认证，尚未确认远端该提交；已知remote研究分支bd0af3a/main595e982f，后续实际同步状态按Git与验证日志记录，未main。首选继续本聊天，先现有calibration图像/语义及独立关键性/可见性/actor前置；selector/10800s方案仍为未采用建议，完整方法目标未完成。下方为历史。

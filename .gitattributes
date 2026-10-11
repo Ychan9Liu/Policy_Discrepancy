@@ -1,0 +1,3 @@
+# These audit sources have SHA256 byte pins shared by Windows and Linux.
+analysis/dl_task_semantics.py text eol=lf
+analysis/dl_feedback_physics_audit_v1.py text eol=lf
