@@ -783,4 +783,14 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 
 **工作假设与反例**：sparse仅一factor的已知cue可能未被带正则有限样本程序恢复；若teacher确实获得1而q不超过constant .75，构成指定有限测量反例。replicated／history预期检测到信息，identity及history要求q−p exact0；对照性能未达预期须完整报告并缩小解释，不换seed／λ／维数求阳性。合成negative不是p总体无信息，生成noise可有有限偶然相关；正结果也不证明真实q信息或原失败由正则导致。CI只描述人工组，不宣称真实功效。
 
-**验收状态与下一问题**：冻结时源码已实现、真实四case拟合尚未运行；先完成构造／拒绝守卫和真实process-group tests，再在确定clean SHA执行整组及独立数值／退出／hash审计。只允许新输出目录，超时／partial／失败均不发总裁决。完成后停止此assay，保持原H20/H100停止门、不读blind、不进入gate／训练。若指定漏检且强控制成立，首选另立低自由度、整episode内外隔离的真实探针规范；此规范尚未采用，真实第二信号／normal-loss信息损伤与保护／替代解释／后续性能仍未完成。
+**验收状态与下一问题**：冻结时源码已实现、实际四case拟合尚未运行；先完成构造／拒绝守卫和真实process-group tests，再在确定clean SHA执行整组及独立数值／退出／hash审计。只允许新输出目录，超时／partial／失败均不发总裁决。完成后停止此assay，保持原H20/H100停止门、不读blind、不进入gate／训练。若指定漏检且强控制成立，首选另立低自由度、整episode内外隔离的真实探针规范；此规范尚未采用，真实第二信号／normal-loss信息损伤与保护／替代解释／后续性能仍未完成。
+
+### DL-22 合成稀疏测量反例与下一规范约束（2026-10-11）
+
+**已验证有限事实，独立数值审计已通过**：实际执行与clean Linux测试SHA `8b7f7a9daf80bd199b4be5391edad6cb128f2931`；sv3 CPU21项全部通过2.598秒，四case一次固定拟合1.232489020秒／120秒、exit0／workerterminal／全hash链完成，GPU0。feature-only q decoder在sparse／replicated以及共享h decoder在history均获1；原readout sparse q/p/constant同.75、replicated q1/p.75、history两边1、identity两边.75。history／identity输出exact同；只有sparse构成规定的teacher存在而probe无正选择增量对象。全部原始输入／输出与证据在 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)，独立PCG64字节／64kernel-eigh／choice／bootstrap／边界审计已通过（父1.142815秒／120秒，最大连续差3.09752e−14），只有sparse指定反例；原direct-solve weights/dual字节未独立重获，不当模型／真实任务复现。
+
+**解释边界与Agent决定**：有限反例限制固定probe阴性的解释，不推翻旧真实r1，不证明真实后验有信息、λ是主因、normal rep信息删除或方法有效。对p没有指定decoder不是无信息证明，有限noise可偶然相关。审计完成后已停止assay，不追加参数／seed／样本，不读blind，不进入gate／训练；完整方法目标保持未完成。
+
+**审查过但未采用且已撤回首选的方案**：固定sum penalty γ1／λ=1/Nrow曾作为两规则尺度对照；精确复制同样rows k次不增加信息，却会使等效mean λ降k倍并可能翻动作。四MC sample不是独立episode，不能把该行数作为自然样本量；Agent撤回其自然标度理由／首选推荐，不将其作为信息充分检测器。直接去收缩亦可能放大小特征值和nuisance，在高维少样本下插值。
+
+**首选下一问题，规范未冻结**：另立保持episode/state等权、MC内平均及精确复制不变性的有限可学信息探针；固定mean λ范围的依据／共同q/p内层选则／tie／容量／solver等价验收／有限族阴性停止与cal8探索性报告仍待明确。建议整ep outer8、inner7（训练6ep），各fit train-only处理、不强制noncollapse，outer真选择utility与MSE分报；这些仍是Agent建议，未运行或采用新的真实probe。当前准备GPU0，已有规模模型诊断最低1独占A100串行／2可独立并行，分配4–7足够，不保证新训练显存或完整小时；本轮无当前GPU占用核查。

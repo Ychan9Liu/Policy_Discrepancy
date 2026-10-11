@@ -2,6 +2,8 @@
 
 更新日期：2026-10-11。
 
+- **2026-10-11 22:29后合成执行及独立审计已验收**：clean SHA8b7f7a9daf80bd199b4be5391edad6cb128f2931的Linux21项全过2.598秒，四case固定CPU整组1.232489秒／120秒／exit0／full hash链；GPU0。稀疏已知线性cue的teacher reward1而原q=.75=constant；replicated／history对照符合预期、history／identity q=p exact。独立PCG64字节／64kernel-eigh／choice／bootstrap／边界审计通过（父1.142815秒／120秒，max3.09752e−14），停止此assay；有限测量反例不当真实方法证据，不翻案旧H20/H100、不读blind或进入gate／训练。下一规范须复制不变／整ep隔离，sum γ1自然标度理由及首选推荐已撤回；未采用新真实probe。报告 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)，完整目标及总GPU小时未完成／未定，已有规模诊断1卡可串行、2可独立并行。
+
 - **2026-10-11 22:08合成规范冻结**：Agent授权内科学交叉审查冻结 [DL_PROBE_ASSAY.md](DL_PROBE_ASSAY.md) r1，工程源码已实现，四case实际拟合尚未运行；sv3 Linux CPU／0GPU／120秒，固定seed／数组／原λ1算法／停止门不搜索。先确定提交和clean Linux工程验收，再一次完整执行及独立审计。仅判指定合成测量范围，不判真实信息或方法有效；原H20/H100负／零结果、blind封存及不进入gate／训练保持。完整方法未完成，总剩余GPU小时未定、此轮没有当前GPU占用核查；下方为历史。
 
 - **2026-10-11 21:22后当前**：完成本机官方factory-model只读元数据查询（Git上下文182365de…880f／独立源码6309a040…eee1b、.094秒），完整state/task/RNG/clock exact不变；无reset/step/render/真实数据/Dreamer前向/GPU。相机与惯量尺度不足以证明RGB可辨、动作需求或OOD支持；world-y不能直接称自然姿态body pitch。原H20接口零增量及H100负平均保留，未重拟合/blind/gate/训练。Agent理论建议r0已交叉审阅，首选继续当前聊天固定CPU纯合成probe检测范围规范；nested probe／torque均未采用。完整方法目标未完成。报告与资源表见 [DL_CUE_PREFLIGHT.md](DL_CUE_PREFLIGHT.md)、理论见 [DL_CUE_IDENTIFICATION.md](DL_CUE_IDENTIFICATION.md)。当前需求0GPU，已有模型诊断最低1独占A100串行/2可并行，已分配sv3 GPU4–7足够；总剩余GPU小时未定。本轮无GPU占用核查或新GPU作业，只将既有元数据证据同步sv3 bootstrap，server canonical干净d9be557不变，未改本机main或sv1/sv2；最终GitHub同步以本轮Git收据为准。

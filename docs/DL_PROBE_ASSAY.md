@@ -1,6 +1,6 @@
 # DL 合成探针检测能力规范
 
-版本 **`DL-probe-assay-r1`**，工程 **`DL-probe-assay-engineering-r1`**，2026-10-11。**科学方案经内部交叉审查冻结，源码已实现；实际拟合尚未运行，须先确定提交并完成 clean Linux 工程验收。** 这是用户总体前验证授权内的 Agent 决定，不是用户逐项认可的方法。仅允许一次固定四 case 的纯 CPU assay。本规范不授权真实数据重拟合、blind、Dreamer、physics、render、GPU、gate 或训练，不重判已停止的 `DL-action-information-r1`。
+版本 **`DL-probe-assay-r1`**，工程 **`DL-probe-assay-engineering-r1`**，2026-10-11。**科学方案经内部交叉审查冻结，源码已实现；以下为冻结时记录，当时拟合未运行、须先确定提交并完成 clean Linux 工程验收；后续实际结果与独立审计见 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)。** 这是用户总体前验证授权内的 Agent 决定，不是用户逐项认可的方法。仅允许一次固定四 case 的纯 CPU assay。本规范不授权真实数据重拟合、blind、Dreamer、physics、render、GPU、gate 或训练，不重判已停止的 `DL-action-information-r1`。
 
 事实与动机见 [有限动作结果](DL_ACTION_INFORMATION_RESULTS.md)、[原统计协议](DL_ACTION_INFORMATION.md)、[下一对象建议 r0](DL_CUE_IDENTIFICATION.md)。本稿读取的仓库基准为 `53fc13e01d5554292736a1b9e67851530564d976`。
 

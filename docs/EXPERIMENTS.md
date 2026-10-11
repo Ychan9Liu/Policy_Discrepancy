@@ -1,5 +1,9 @@
 # 实验协议与结果索引
 
+**2026-10-11 22:29后DL合成验收**：固定8b7f7a9执行／Linux21test不变，CPU独立PCG64字节＋64kernel-eigh／choice／bootstrap／边界审计通过，父1.142815秒／120秒、max3.09752e−14。指定sparse漏检反例已核，停止此assay、不改真实H20/H100裁决／blind／gate／训练；原weights/dual字节不称独立重获，不能当真实任务／方法效果。详细产物/hash/完整scope见 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)。下一复制不变探针尚未冻结，总体方法未完成、GPU小时未定，M2正式协议保持。
+
+**2026-10-11 22:10后DL合成执行**：clean执行／Linux21项测试SHA8b7f7a9daf80bd199b4be5391edad6cb128f2931，四case CPU整组1.232489秒／120秒、exit0／fullhash，GPU0；sparse teacher1而原q=.75=constant，replicated／history预期检测与identityexact均满足。独立eigh／随机流／边界审计待验，详 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)。仅指定测量反例，不翻真实旧裁决或进入gate／训练／blind；sum γ1自然标度及首选已撤回，新复制不变探针未冻结，M2协议不改。
+
 **2026-10-11 22:08DL合成规范冻结**：Agent授权内 `DL-probe-assay-r1` 科学规范已冻结，见 [DL_PROBE_ASSAY.md](DL_PROBE_ASSAY.md)。固定四case／seed20261022／原λ1统计字节不改，sv3 Linux CPU／0GPU／120秒整组；尚未拟合，需确定提交clean工程及独立数值审计。只能提供指定测量范围证据，不能改旧真实裁决、采用gate／训练或读blind；下述M2正式协议不改。
 
 **2026-10-11 21:22后DL准备更新**：完成官方factory-model CPU只读元数据查询／独立数值审阅，无reset/transition/render/真实数据/Dreamer前向/GPU；它不证明新cue或方法有效。证据、元数据尺度与0／1／2张GPU口径见 [DL_CUE_PREFLIGHT.md](DL_CUE_PREFLIGHT.md)。[DL_CUE_IDENTIFICATION.md](DL_CUE_IDENTIFICATION.md) r0仅为Agent建议，首选先固定纯合成probe检测范围；seed／维数／cost／门未定，nested probe及torque均未采用／运行。不改旧H20/H100停止裁决，不读blind，不启动gate/训练，不改变下述M2正式协议；完整方法目标未完成。

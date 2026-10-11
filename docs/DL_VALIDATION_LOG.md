@@ -1,5 +1,18 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 22:29后：固定合成及独立数值审计验收，停止本assay
+
+- 独立ignored审计源码2d8e9c56…931f与父launcher45eeec43…9129已核hash，sv3 CPU120秒ownedgroup监督／worker1923993 terminal／exit0／完整audit passed true，父CLI terminal1.142815340秒，audit写前1.066235756秒。64独立kernel-eigh无cutoff／fixed abs1e−10，16200连续数值比较max3.09752e−14；输入／mean字节／choice／reward／regret／bootstrap／authority exact，原14文件前后不变。
+- audit正文3b46a84a…db13及父终点2c5f2e06…bed9，四文件已镜像且serverhash同；原weights/dual只核metadata和raw chain，未声称独立byte重获；历史进程只核收据。完整报告DL_PROBE_ASSAY_RESULTS。只有sparse指定counterexample，与strong/history/identity对照吻合，但不归因真实λ／KL、不称方法有效。
+- Agent按冻结规则停止，不重复fit／搜参数／读blind／启动gate或训练。下一首选另立复制不变、state等权／MC均值、整ep嵌套且共同q-p选择的有限探针规范；sum γ1自然标度／首选推荐撤回，lambda范围仍待证据。当前0GPU，无GPU运行／当前占用核查；已有规模诊断1卡可串行、2可独立并行，4–7授权足够，完整小时仍未定。完整方法目标保持active／未完成。
+
+## 2026-10-11 22:10后：四case CPU合成执行完成，独立审计待验
+
+- 规范／源码确定SHA `8b7f7a9daf80bd199b4be5391edad6cb128f2931`，本机21项17pass/4POSIXskip .449秒；sv3 clean Linux21项全部通过2.598秒。源码与冻结docs通过bundle c00a039f…f9237，只同步sv3新隔离worktree；server canonical d9be557干净／本机main595e982f原dirty两docs均未动。
+- 22:10:32–22:10:33北京时间一次完整四case，CPU单线程／NumPy1.26.4／GPU0，父CLI terminal1.232489020秒／120秒，worker1920334 terminal／exit0／无超时／only-ownedgroup cleanup。四组input/result/plan/summary full hash链验收通过，14原始文件镜像与serverhash逐一同。无真实data／blind／model／physics／optimizer／新GPU占用核查。
+- sparse q/p .75=constant而实际feature-only decoder每sample1；replicated q1/p.75、history两边1、identity两边.75，后三个控制符合预期；只有sparse指定有限counterexample。全对象32state/8人工组/168crossgroup组合不增独立单位。独立PCG64/eigh/choice/bootstrap/边界审计正在完成，当前不把运行日志当独立数值验收。详见DL_PROBE_ASSAY_RESULTS。
+- 科学审查撤回sum γ1／λ=1/Nrow的自然标度理由和首选建议：复制rows可无新信息而改变选择。下一新探针仍未冻结，须mean尺度复制不变／state等权／MC内平均／整ep内外隔离／共同q-p规则与明确有限阴性范围。未加fit、未改变旧r1/门/blind/gate或训练，完整目标未完成。
+
 ## 2026-10-11 22:08：固定合成检测范围规范与工程监督审查
 
 - Agent科学交叉审查确认四case／固定随机流F64及int32／feature-only teacher／有限无正选择增量反例／纯合成区间范围；root采用唯一方案 `DL-probe-assay-r1`，不是用户逐项确认。详见DL_PROBE_ASSAY和RESEARCH/DL-21。
