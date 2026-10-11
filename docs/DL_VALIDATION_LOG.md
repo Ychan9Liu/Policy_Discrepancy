@@ -1,5 +1,11 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 22:08：固定合成检测范围规范与工程监督审查
+
+- Agent科学交叉审查确认四case／固定随机流F64及int32／feature-only teacher／有限无正选择增量反例／纯合成区间范围；root采用唯一方案 `DL-probe-assay-r1`，不是用户逐项确认。详见DL_PROBE_ASSAY和RESEARCH/DL-21。
+- 工程审查发现旧父监督前置Git不受wait预算，以及末次收据写盘未覆盖；拆为纯stdlib外层与无nested session的NumPy worker，增加pid／预算／SHA绑定、最终hash链和成功收据写盘超时拒绝。只清本次ownedgroup，失败证据保留；科学参数未改。
+- 冻结时尚未实际拟合，构造及真实process fixtures验收进行中；当前0GPU，无真实NPZ／blind／模型／physics／训练，无当前GPU占用核查。不改M2／原H20/H100停止门，下一确定版本clean Linux及一次120秒CPU整组与独立审计。
+
 ## 2026-10-11 21:22后：零GPU元数据前置与候选识别规范审查
 
 - 查询仓库HEAD `182365de76e5f7742218ef6ebdff417bb790880f`，独立ignored源码6309a040…eee1b（未包含在该提交）；本机NumPy1.26.4／MuJoCo3.15.0／dm-control1.0.48的官方factory quadruped_walk构造／数值查询收据耗时.094秒，不含import及最后写盘。reset／step／render拒绝守卫，完整integration/task/RNG/clock/reset前后hash相同；0真实数据／外力写入／Dreamer前向／GPU。只验证元数据，不当自然state、RGB线索或新physics验收。

@@ -776,3 +776,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **尚未采用替代方案与需要的证据**：新的nested probe须把内层选择规则本身冻结，q/p同容量、整episode隔离；已见cal8的新结果仍为后验探索，不能单独归因λ或宣称独立确认。外部随机cue须C独立历史、同真实p−1正常transition及p carry、独立RGB可获取，并在同历史事件对具有有代价的动作需求差；跨episode不同winner不证明当前新增信息。torque幅度／范围／支持／门／预算未定，不由几何选择可见幅度或按D/K/U挑状态。
 
 **完整目标与资源边界**：独立第二信号增量、normal active rep损伤／保护、强度与条件shuffle/reward-only/OOD对照和后续学习／性能仍未完成。当前准备0GPU，已有模型诊断最低1独占A100串行、2可并行，sv3 GPU4–7现有授权足够；既有约2.5／6.5GiB单项峰值不保证新训练显存，总剩余GPU小时未定。本轮不核当前GPU占用、不启动新GPU运行、不读blind、不采用gate或训练，原M2协议及既有失败保留。下一首选继续当前完整授权聊天完善并审定纯合成规范，不以即时actor前置替代全部学习路径。
+
+### DL-21 固定合成探针检测范围规范（2026-10-11）
+
+**Agent 授权内决定**：内部科学交叉审查后冻结 `DL-probe-assay-r1`／工程r1，规范见 [DL_PROBE_ASSAY.md](DL_PROBE_ASSAY.md)。仅 sv3 Linux CPU、四 case 一次固定、120秒全入口预算、NumPy1.26.4／单线程；8×4人工状态／4sample、h4096／32×32实际onehot、seed20261022两个固定PCG64 child／共同nuisance，七项合成utility与δ.2。原λ1／train-only组RMS／LOEO／bootstrap数值源码逐字节不改；feature-only teacher、history及identity控制和全部原始输出须核验，不调用含actor的原analyze。主张只涉及该测量程序对指定已知线性决策信息的检测范围，不涉及真实Dreamer信息或保护性能。这是Agent总体授权内设计，非用户逐项认可。
+
+**工作假设与反例**：sparse仅一factor的已知cue可能未被带正则有限样本程序恢复；若teacher确实获得1而q不超过constant .75，构成指定有限测量反例。replicated／history预期检测到信息，identity及history要求q−p exact0；对照性能未达预期须完整报告并缩小解释，不换seed／λ／维数求阳性。合成negative不是p总体无信息，生成noise可有有限偶然相关；正结果也不证明真实q信息或原失败由正则导致。CI只描述人工组，不宣称真实功效。
+
+**验收状态与下一问题**：冻结时源码已实现、真实四case拟合尚未运行；先完成构造／拒绝守卫和真实process-group tests，再在确定clean SHA执行整组及独立数值／退出／hash审计。只允许新输出目录，超时／partial／失败均不发总裁决。完成后停止此assay，保持原H20/H100停止门、不读blind、不进入gate／训练。若指定漏检且强控制成立，首选另立低自由度、整episode内外隔离的真实探针规范；此规范尚未采用，真实第二信号／normal-loss信息损伤与保护／替代解释／后续性能仍未完成。

@@ -2,6 +2,8 @@
 
 更新日期：2026-10-11。
 
+- **2026-10-11 22:08合成规范冻结**：Agent授权内科学交叉审查冻结 [DL_PROBE_ASSAY.md](DL_PROBE_ASSAY.md) r1，工程源码已实现，四case实际拟合尚未运行；sv3 Linux CPU／0GPU／120秒，固定seed／数组／原λ1算法／停止门不搜索。先确定提交和clean Linux工程验收，再一次完整执行及独立审计。仅判指定合成测量范围，不判真实信息或方法有效；原H20/H100负／零结果、blind封存及不进入gate／训练保持。完整方法未完成，总剩余GPU小时未定、此轮没有当前GPU占用核查；下方为历史。
+
 - **2026-10-11 21:22后当前**：完成本机官方factory-model只读元数据查询（Git上下文182365de…880f／独立源码6309a040…eee1b、.094秒），完整state/task/RNG/clock exact不变；无reset/step/render/真实数据/Dreamer前向/GPU。相机与惯量尺度不足以证明RGB可辨、动作需求或OOD支持；world-y不能直接称自然姿态body pitch。原H20接口零增量及H100负平均保留，未重拟合/blind/gate/训练。Agent理论建议r0已交叉审阅，首选继续当前聊天固定CPU纯合成probe检测范围规范；nested probe／torque均未采用。完整方法目标未完成。报告与资源表见 [DL_CUE_PREFLIGHT.md](DL_CUE_PREFLIGHT.md)、理论见 [DL_CUE_IDENTIFICATION.md](DL_CUE_IDENTIFICATION.md)。当前需求0GPU，已有模型诊断最低1独占A100串行/2可并行，已分配sv3 GPU4–7足够；总剩余GPU小时未定。本轮无GPU占用核查或新GPU作业，只将既有元数据证据同步sv3 bootstrap，server canonical干净d9be557不变，未改本机main或sv1/sv2；最终GitHub同步以本轮Git收据为准。
 
 - **2026-10-11 20:47后当前**：`DL-action-information-r1` 实际执行／clean Linux CPU SHA `f1ae4d6513e81ed680992b64ba8ebade7d256d52`，29项全通过3.062秒及pip check通过；cal32、固定7+8首动作、zero续行H20完整主9600＋复放9600步，33.910822秒／180秒父硬限、exit0，GPU0／无JAX模型render。独立源BF16特征/raw字节与kernel-eigh数值审计passed（12.720443秒／120秒），最大算术差7.1054e−15，完整state条件复放0。外部动作选择依据成立16state／4ep／18disjoint pairs；q/p/constant全部all-、两增量逐episode0／CI[0,0]，actor q−p .01509419／CI[−.02587985,.05442976]不确定。按原门不推进gate/训练，不扩大冻结对象或读blind。固定OOF只读解释完成，不把MSE微差／收缩几何当成功或归因。详细证据、代码/测试位置与资源见 [DL_ACTION_INFORMATION_RESULTS.md](DL_ACTION_INFORMATION_RESULTS.md)。只同步sv3隔离工作区，canonical server d9be557和本机main未改；首次GitHub push连接失败，最终同步状态按最新Git核验，未main。本轮未核当前GPU占用；GPU需求当前0张，已有模型诊断最低1独占A100串行/2可并行，总剩余小时未定。首选继续当前聊天论证合法可见外部cue与必要性；torque只是未冻结候选，未启动。完整方法目标仍未完成，下方为带时间历史。
