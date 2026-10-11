@@ -1,5 +1,7 @@
 # DL 有限路径MC诊断结果
 
+**2026-10-11 证据范围更正**：本次沿用的 source/固定控制/真实 reward 均属于 `legacy_raw_suite`，绕过生产 Clip/Normalize。原 MC-inconclusive、epsilon/区间/hash/key/概率混合审计及停止门保留，不能裁决生产模型的预测技能。接口差异也不使 MC 变成阳性。见 [DL_ACTION_CONTRACT.md](DL_ACTION_CONTRACT.md)、RESEARCH/DL-14。
+
 版本 `DL-predictive-MC-results-r1`，2026-10-10。**冻结MC-r1裁决为 `MC-inconclusive`，不采用为新gate，不进入短训练。** 原mode诊断未支持必要技能的结果保留；本次不确定也不能写成“边际奖励模型完全没有技能”或“后验保护无效”。形成可正式实验方法的整体目标仍未完成。
 
 协议 [DL_PREDICTIVE_MC.md](DL_PREDICTIVE_MC.md)，实际执行提交 `4fb7e8947f71dce8faf96096e700ab2b1987f8e3`。这是Agent在用户总体授权内选定的有限排除诊断，不是用户逐项确认的新训练算法。仅300k同一训练seed0 checkpoint、原8校准episode/128位置、原六H10控制和已验证真实reward；初始及全部未来latent按实际unimix分布抽样，私有MC seed20261017、四独立block×32路径，先混合概率再求TwoHot CE。历史seed20261012、统计seed20261016、chunk8固定；零新physics/render/optimizer，不读blind数组或原物理snapshot。

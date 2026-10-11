@@ -1,9 +1,10 @@
 # 项目状态
 
-更新日期：2026-10-10。
+更新日期：2026-10-11。
 
 ## DL 当前：正式实验前验证实施中（2026-10-10）
 
+- **2026-10-11 当前解释更新**：独立审查确认旧DL采集/外部后果绕过正式Clip/Normalize动作路径，真实quadruped控制范围非±1；实际CPU wrapper证明两路径产生不同物理状态。旧r1/H100/mode/MC数值与原停止门保留，但科研结论限制为legacy_raw_suite对象，不能据此判生产模型技能/策略信息无价值；工程状态/梯度和统计复算证据继续有效。见 `docs/DL_ACTION_CONTRACT.md`、RESEARCH/DL-14。必要新source-r1选择已冻结：300k原pin、新seed20261020、32完整ep8/24、16预定H100位置、actual DMC+main.wrap_env，保存raw/applied/实际carry和wrapper状态；GPU4/3600秒、零optimizer。本机action-contract3项/source4项通过；clean服务器CPU/独立代码审查、新GPU采集及审计待完成，尚未启动。反馈和新gate未冻结，方法目标仍未完成；下方记录是历史运行快照。
 - 用户已明确授权本任务文档、代码、必要干预和前验证，资源仅 sv3 物理 GPU4–7；本段替代下方 DtLatch 归档时“没有实现/实验授权”的当前解释，历史事实保留。原 M2 v1 作业及协议不变。
 - 当前分支 `codex/dl-prevalidation`，合并基准 `ae8372e42a815824d2e4ec3a527bfb985a81972b`。实施 `DL-code-r1`：detached H1 reward 支持、rep gate、S/P/W 对照、独立诊断及条件短训练入口。当前实际提交/测试 SHA、差异与同步范围以 `docs/DL_VALIDATION_LOG.md` 和实际 Git 为准，不将该基准误称最终运行版。
 - 确定9e6da39上的完整tiny Agent/回归/CPU物理验证已完成。真实300k/1m各32 episode的主诊断也完成：关键正例及cue覆盖不足，活跃释放仅0.12944%/0.22305%，原幅度门未满足，P对照不充分。当前不进入短训练、尚未形成可正式实验的方法。详见 `docs/DL_R1_RESULTS.md` 和小型科学汇总。

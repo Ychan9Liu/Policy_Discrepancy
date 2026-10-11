@@ -1,5 +1,7 @@
 # DL H100 机会诊断结果
 
+**2026-10-11 证据范围更正**：本报告的 source/history 和 H100 控制后果来自 `legacy_raw_suite`，未执行生产 Clip/Normalize。原数值与停止门保留，不能据此判断正常生产策略的信息价值；完整 direct-suite 恢复审计仍有效。见 [DL_ACTION_CONTRACT.md](DL_ACTION_CONTRACT.md)、RESEARCH/DL-14。
+
 版本 `DL-opportunity-r1`，2026-10-10。**H100 分支完成，当前 H1 gate 未获得辨别支持，尚不能进入短训练或正式实验。** 这不是整个研究目标已完成，也不否定所有双信号方法。下一步继续必要的信号修订诊断。
 
 ## 固定范围与证据

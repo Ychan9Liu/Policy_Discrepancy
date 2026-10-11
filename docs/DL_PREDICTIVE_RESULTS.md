@@ -1,5 +1,7 @@
 # DL 固定控制预测诊断结果
 
+**2026-10-11 证据范围更正**：本报告的真实 reward/控制来自 `legacy_raw_suite`，与模型训练时的生产 Clip/Normalize 语义不一致。原数值、mode 未支持的裁决及停止门保留，只适用于该有限旧对象；不能外推生产 reward head 的必要技能。见 [DL_ACTION_CONTRACT.md](DL_ACTION_CONTRACT.md)、RESEARCH/DL-14。
+
 版本 `DL-predictive-results-r1`，2026-10-10。**冻结mode路径的后验特异预测优势未获支持，不采用该多步reward代理。** 不据此判整个reward head无技能、后验没有关键信息或所有候选无效；形成可正式实验方法的目标仍未完成。
 
 协议见 [DL_PREDICTIVE_DIAGNOSTIC.md](DL_PREDICTIVE_DIAGNOSTIC.md)。同一训练seed0的300k checkpoint，仅原8 calibration episode×16预定位置，共128点。六H10控制为原raw float32记录动作及五种策略无关固定控制，四q观测变体/共同p从同h开始mode rollout。没有新采集、blind数组读取、gate拟合或optimizer更新。

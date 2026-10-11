@@ -1,5 +1,13 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 动作接口审查与新来源准备
+
+旧DL采集/外部后果绕过生产动作映射；实际quadruped float64 bounds不是全±1。新CPU动作检查8固定case与实际wrapper逐字节相等、完整物理/task/counters exact，legacy raw有真实qpos/qvel差异；实际tiny Agent raw sample/carry/下一RSSM输入相等，3项本机测试通过5.78秒。测试基底dd7da2ef4b99447e7fa867bec48fe6235655c8ae加新helper/tests；ignored证据 `analysis/outputs/dl-action-contract/cpu-audit-r1-final.json` SHA25648f74482d22fa8f4549b30b21ff4f5c02a8b2acd604c160ebfa0c9057df456ca。详细证据范围/必要修复见 [DL_ACTION_CONTRACT.md](DL_ACTION_CONTRACT.md)；不覆盖旧数值、原门与失败。
+
+新source实现实际DMC+main.wrap_env、raw/applied独立、actualprecarry/evalkey来源、suite+FromDM._done保存/恢复、冻结RGB实际policy/aftercarry重演及H100每transition的F32 reward/完整物理核对。本机source CPU最初3项通过2.426秒；独立审查指出NaN放行及cooperative deadline不足，已修finite/dtype/shape拒绝与完整父监督硬终止、末帧action_executed mask和环境provenance。最终4项通过2.582秒，含真实sleep子进程.15秒期限后终止124。模型/RGB为stub，DMC/wrapper/physics为实际对象，包含1001帧/16×100步与近终止/隐藏_done反例；不是size50m科研通过。两套新检查共7项；确定提交服务器clean验收与实际采集仍待执行。
+
+授权内Agent已选择source-r1，实际配置见RESEARCH/DL-14：仅300k、seed20261020/32ep8+24/16预定H100位置、GPU4/3600秒、0optimizer/0gate。独立代码审查、clean CPU及fresh资源/真实CUDA-EGL通过后才启动。新source不能靠修未来动作或inverse-map旧raw得到；旧科学结果限制于legacy_raw_suite，旧完整模型旁路/梯度和统计验收保持。正常后续观测反馈仍未冻结，完整方法目标未完成。本段没有新GPU启动或现场占用核查；旧GPU快照不得当当前状态。
+
 版本 **DL-engineering-r8 / DL-protocol-r1 / DL-opportunity-r1 / DL-predictive-r1 / DL-predictive-MC-r1**，2026-10-10。整体目标**未完成**：真实size50m五组单步工程验收及独立审计已通过；r1/H100信号与幅度未获支持，有限固定控制下mode后验特异预测技能也未支持。后续一次有限MC是授权内排除诊断，未采用为gate或正式方法。进程exit0、文件完整或工程fixture通过均不等于方法有效。
 
 本日志区分历史证据和当前状态。运行状态依据本轮根 Agent 已核查的收据；本次H100启动前资源快照为 **2026-10-10 18:35:43 北京时间**，GPU4–7各0MiB且无可见作业，不代表持续空闲。GPU0/2有未知其他作业，未触碰。科研定义、冻结分割与筛选标准仍以 [DL_PREVALIDATION.md](DL_PREVALIDATION.md) 和 [DL_PREVALIDATION_REVIEW.md](DL_PREVALIDATION_REVIEW.md) 为准。

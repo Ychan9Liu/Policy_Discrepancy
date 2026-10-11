@@ -700,3 +700,13 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **工作假设，尚无归因证据**：共同模型误差、行为/有限控制偏差、历史已足够、actor未利用新增信息、gray-body仍保留线索和正常后续观测补偿均可能影响结果。MC令平均CE降低不等于后验特异控制信息；当前证据未选定一个为主因。
 
 **首选下一研究建议，未冻结/未执行**：在正常状态下仅省略一次当前RGB，q用当前图像、p用同h真实prior；之后双方各自正常接收环境RGB与更新posterior，私有共同latent/动作噪声，检验有符号真实闭环回报与恢复。它回答当前观测相对历史的局部可利用增量，不等价于持续KL压缩。最小探索规模32状态/8episode、每状态4 paired RNG、H100共25,600动作只是建议；需先定义branch/完整复原/RNG/终止/统计与停止规则，不能当启动配置或旧128点方法验收。替代是合法有界物理挑战，需先排视觉不可辨识、OOD和actor不能利用；不得因挑战正例覆盖自然状态限制。进一步gate须在真正未见数据上证明第二信号相对D增量及替代解释对照；raw K虽便宜，但与D不统计独立、nuisance同时推高两者仍是反例，尚未采用。部署仍vision64/propriofalse，不泄露真物理状态。
+
+### DL-14 动作接口混淆与必要来源重建（2026-10-11）
+
+**已验证源码与 CPU 事实**：旧 `dl_diagnostic.collect/true_consequence` 直接将 raw Gaussian 动作交给 suite；正式训练经 `main.wrap_env` 执行 Clip→CheckSpaces→UnifyDtypes→Normalize→DMC/FromDM。quadruped 的真实 float64 控制范围为 `[-1,-1,-.8]` / `[1,1.1,.8]` 各重复四次；归一化零动作在 lift 对应 .05，extend 比例为 .8。实际生产 wrapper 与逐 dtype helper 逐字节等价，直接 raw 会产生不同真实物理状态。来源训练提交48d71f与当前的动作链文件/关键 policy 方法相同：问题位于 DL 诊断，不是正式模型训练新增的变化。证据与独立审查见 [DL_ACTION_CONTRACT.md](DL_ACTION_CONTRACT.md)。本机实际 tiny Agent 仍保存 raw 到 carry/下一 RSSM 输入；这些是工程事实，不是方法效果。
+
+**旧证据的当前解释**：DL-9至DL-13、r1/H100/mode/MC 中的数值、hash、完整 direct-suite 恢复与原冻结停止裁决均保留，但外部 reward/轨迹/预测技能仅适用于 `legacy_raw_suite` 对象，不能作为正常生产动作接口上的信号/价值结论。MC 仍是不确定，接口问题不使任何失败转为通过。off/logging 的完整状态/梯度等价、TwoHot/概率混合/统计复算等工程证据继续有效。正式 baseline 不由该诊断问题判为无效；本次未重审其整个正式实验。**尚无证据的推测**：此接口差异可能影响旧模型误差及收益覆盖，但其贡献尚未量化，不能保证修复后出现后验优势。
+
+**授权内 Agent 决定**：仅修未来物理动作不足以撤销旧图像/history 与动作语义错配，必须重新采集来源。冻结 `DL-source-r1`：先且仅原300k checkpoint/config、size50m/vision64/proprioFalse/camera2/repeat1；新seed20261020、32完整episode、原算法8 calibration/24 blind、16个预定H100 eligible位置。实际 DMC+main.wrap_env；模型 prevact/source action 留 raw float32，实际 suite 输入另存 action_applied float64。保存选定位置采集时完整 pre-policy carry/eval key来源、after-carry hash及 suite+FromDM._done；逐位置冻结RGB重演实际policy/raw/carry，逐 H100 transition 核对 recorded applied/reward/完整物理与任务/终止状态。新目录/确定提交/新attempt，不修改旧产物；sv3 GPU4单卡、3600秒硬上限，clean CPU/独立代码审查/实际CUDA-EGL绑定通过后才能采集。其余GPU5–7本项不用，零optimizer/新gate。
+
+**尚未完成与下一问题**：本机 action-contract 三项和 source 四项 CPU检查已通过；source检查的模型/RGB为fixture，不能称实际size50m来源已验收。完整状态拒绝NaN/Inf，父进程硬超时覆盖加载/JIT/重放/写盘，末帧占位用action_executed=False明确排除。服务器clean CPU、新生产来源、独立审计尚待执行。正常未来观测下单次省略当前RGB的闭环对象仍未冻结；先完成正确source，再裁决终止、共同latent/actor RNG、统计与预算，不复用旧source后改称正常生产状态。不启动短训练。完整科研目标仍需独立第二信号增量、目标子集/反例、活跃gate与压缩、有效强度/对应/reward-only对照及条件训练；尚未形成可正式实验方法。

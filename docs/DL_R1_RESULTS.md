@@ -1,5 +1,7 @@
 # DL r1 真实诊断裁决
 
+**2026-10-11 证据范围更正**：本报告的轨迹/外部 reward 来自绕过生产 Clip/Normalize 的 `legacy_raw_suite` 对象。数值、原门与失败保留，不能外推生产模型的信号/收益/压缩效果；工程等价性证据仍有效。原因与必要新来源见 [DL_ACTION_CONTRACT.md](DL_ACTION_CONTRACT.md)，当前状态见 RESEARCH/DL-14。
+
 版本：**`DL-r1-results-v1`**，2026-10-10。**当前裁决：尚未形成可正式实验的方法，不进入短训练。** 两个冻结模型的真实r1诊断及独立CPU数组审计已完成；活跃释放幅度门未满足，label/cue覆盖及第二信号增量证据不足，P对应关系对照不充分。背景平均新增保护满足原上界，18个预定校准帧已由root视觉检查，但尾部反例及全数据合法性仍需审查；gray-body干预保留了轮廓/姿态，不能称完整关键运动学信息剥夺。本报告不把工程正确、局部公式或少量高AUROC点解释为方法有效。
 
 本轮配置与判据为授权内Agent自主设计，不是用户逐项确认的科学结论。原协议见 [DL_PREVALIDATION.md](DL_PREVALIDATION.md)，独立理论审查见 [DL_PREVALIDATION_REVIEW.md](DL_PREVALIDATION_REVIEW.md)。本报告及小型精确汇总 [dl_r1_scientific_summary.json](dl_r1_scientific_summary.json) 新增归档，**不覆盖原analysis、score、pilot或失败输出**。

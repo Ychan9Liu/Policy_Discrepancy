@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-11 DL 动作对象更正**：旧 r1/H100/mode/MC 采集及外部控制为 `legacy_raw_suite`，绕过生产 Clip→Unify→Normalize；原数值/科学门/失败保留，不能外推正常生产模型技能。实际CPU动作契约与独立审查见 `docs/DL_ACTION_CONTRACT.md`、RESEARCH/DL-14；正式M2训练动作链未被该独立诊断修改。新 `DL-source-r1` 必须使用 actual DMC+main.wrap_env，300k冻结来源、新seed20261020/32ep8+24/16H100位置、raw/applied/actualcarry与wrapper状态分开记录。CPU和来源验收后才推进另立闭环对象；尚无新科研结果/已采用gate，不启动短训练。完整执行状态/确定SHA见 `docs/DL_VALIDATION_LOG.md`。
+
 ## DL 独立前验证索引（2026-10-10）
 
 DtLatch 当前任务已由用户特许文档、代码、干预和前验证，资源仅 sv3 物理 GPU4–7。独立协议/门槛见 `docs/DL_PREVALIDATION.md`（DL-protocol-r1），理论与代码审查见 `docs/DL_PREVALIDATION_REVIEW.md`，工程证据和运行状态见 `docs/DL_VALIDATION_LOG.md`。两阶段真实32 episode采集/主诊断已完成，裁决见 `docs/DL_R1_RESULTS.md`：信号/cue覆盖不足、活跃释放幅度门未满足、P对照不充分，尚无方法有效证据。真实size50m attempt03有logging严格状态差异，工程修复后另attempt重验，不以tiny CPU通过替代。
