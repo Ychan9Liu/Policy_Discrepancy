@@ -1,5 +1,15 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12：B工程r1、固定数值oracle与GPU资源答复
+
+00:41工程冻结更新：五B脚本/独立auditor及六test共12新增文件已实现并完成不同Agent只读源码交叉审查。root最终Windows54项50pass/4POSIXskip、10.495秒，完整日志 `cpu-release-precommit-r1.log`；audit模块16项合成CPU过，producer完整报表双向接线84,487numeric/4,767exact/212zero-side每向验证，zero差0、固定random差8.881784197001252e−16。actualtiny的27readkeys均dyn/rew前缀。真实数组、checkpoint、GPU尚未读/启动，最终clean Linux/test SHA及实际运行仍待。后续交付只以确定版本CPU和真实完整独审为准，不把此构造证据写成方法有效。
+
+基线HEAD b675965c9e753644f2cb2cd133469717969f86cc加新工程稿：白名单、实际tiny官方imagine/私有nj.seed/attempted-write拒绝、BC-MSE与独立U-stat反例、worker typedstate/axes/point oracle及B stdlib父链已实现。root Windows整组37test、34pass/3POSIXskip、8.523秒，日志 `analysis/outputs/dl-production-reward/engineering/cpu-precommit-r1.log`；后续父新增pre-worker Git-helper超时反例及oracle check JSON链，需要最终整组和Linux确认。三Agent各模块实现与源码科学交叉审已解除24文件pins差异及MC-stable&&positive误判，不改科学r1。独立CPU审计器实施中，最终tested SHA、Linux与真实B状态按后续终点记录。
+
+真实数据前冻结F32native point对F64symmetric oracle `abs≤1e−6+1e−5abs(ref)`、F64 statistics abs1e−10及choices/keys/CI零侧/classification exact。首个near-uniform extreme-bin tiny model未过point gate（保留日志 `model-precommit-oracle-failure.log`，SHA 3ba673aa5c77a72020e901fb12be8b7793a3a12f0e8096c569b654251b0c78ac）；well-conditioned tiny语义检查通过不替代真实size50m。BC公式改用数学等价residual坐标，避免perfect-pred均值浮点微小正残差，独审仍off-diagonal；不截负、不归零、不调科学门。首chunk证据先写再guard，真实失败须保留、不发scientific complete。
+
+本轮server只读runtime/Git元数据在2026-10-12 00:13:33北京时间核：sv3 canonical clean d9be5574878d2c3f117cc6667be844f9a527eb84，Python3.11.16/JAX及jaxlib0.4.33/Ninjax3.6.3/NumPy1.26.4/ml_dtypes0.5.4/Mujoco3.15.0/dm-control1.0.48。没有真实数组/checkpoint读取、新模型/physics/render/optimizer/GPU运行或fresh卡占用核查。GPU资源答复：当前准备0张；本B独占GPU4一张A100/1800秒全入口≤.5GPUh，5–7不占；全目标1卡可串行/2卡可并行独立环节，总GPU小时和新训练显存未定。GitHub最新已验研究分支b675、main595e982f；当前工程稿未提交/同步，canonical main原dirty两docs保留。首选继续本chat完成确定版本Linux工程、fresh GPU4映射与一次有限B/独审；完整方法目标仍active，原停止及M2保留。
+
 ## 2026-10-11：GPU资源答复与B科学协议采用，未执行
 
 基于clean HEAD5035c892e7a197f911f6fbab861f01d3021f2b90，root及三Agent只读审查官方imagine/physical-bin symmetric pred、正确生产f1数值白名单/来源、MC variance偏差和有限停止规则；未读真实NPZ/checkpoint、SSH、测试、模型调用或GPU。本轮仅文档更新：采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) `DL-production-reward-r1`，科学对象cal8/H20/128futurepaths，BC-MSE修正、LOEO常数/真实选择分开、私有seed20261024/stat20261025，一次GPU4/1800s全入口上限。协议是完整授权内Agent设计，非用户逐项认可或工程/方法验收。

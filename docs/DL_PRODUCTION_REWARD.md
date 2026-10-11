@@ -1,6 +1,6 @@
 # DL 生产奖励均值诊断
 
-版本 **DL-production-reward-r1**，2026-10-11。这是用户完整预验证授权内、Agent 科学与源码交叉审查采用的有限诊断协议，**不是用户逐项确认的算法，也未完成工程实现或真实执行**。取代 RESEARCH/DL-24 的 B-r0 建议；旧 A、H20/H100、legacy 原结果与停止门保留，M2 正式协议不变。
+版本 **DL-production-reward-r1**，2026-10-11。这是用户完整预验证授权内、Agent 科学与源码交叉审查采用的有限诊断协议，**不是用户逐项确认的算法**。2026-10-12 工程r1实施中，最终确定SHA/Linux验收及真实执行状态以验证日志为准；规范采用时尚未实现/执行。取代 RESEARCH/DL-24 的 B-r0 建议；旧 A、H20/H100、legacy 原结果与停止门保留，M2 正式协议不变。
 
 ## 问题、必要性与边界
 
@@ -36,7 +36,7 @@ TwoHot 使用 physical symexp bins，原 `.pred()` 是对称求和的概率均�
 BC_MSE(N) = mean_a[(mean_l X[l,a] - Y[a])² - var_l(X[l,a], ddof=1)/N]
 ```
 
-主量使用 N128，**不截断负值**。BC-MSE只估计该条件均值的平方误差，不评价完整奖励分布。不同 q/p future variance 会使 plugin MSE 含不同 Var/N；公共噪声不能消除此偏差。独立审计用等价 off-diagonal U-stat 复算。原 plugin MSE、MC correction、未中心化 level MSE 单列描述。
+主量使用 N128，**不截断负值**。BC-MSE只估计该条件均值的平方误差，不评价完整奖励分布。不同 q/p future variance 会使 plugin MSE 含不同 Var/N；公共噪声不能消除此偏差。F64工程实现先形成 centered residual `E_l=X_l−Y`，再用 `mean(E)^2−var(E,ddof=1)/N`，平移不改科学公式，避免重复均值运算使数学零产生微小残差；不做阈值归零。独立审计用等价 off-diagonal residual U-stat 复算。原 plugin MSE、MC correction、未中心化 level MSE 单列描述。
 
 每初始 z 先计算误差，再四 sample 平均→每 episode 四 state 平均→八 episode 等权，不先平均四初始 sample 后平方。两个必要有符号 gap 为 `BC_MSE_p−BC_MSE_q`、`MSE_constant−BC_MSE_q`。常数是 LOEO 其他七 episode 真 centered 成本向量的均值，无 MC correction，不看留出 episode 标签。whole-episode bootstrap2000、统计 seed20261025、linear percentile95；八 calibration 已观察、仅名义探索性区间，不作独立确认或正式显著性结论。
 
@@ -66,6 +66,10 @@ epsilon = max(abs(g32-g64), abs(g64-g128),
 固定episode/state/initial身份与统计权重不因重复数组行变成更多样本；入口拒绝额外/重复身份。future MC的 BC correction 只对预定独立路径适用：root须按上述域精确重获，拒绝复制future path后增加N；control/branch共用root是唯一预定重复，不当作额外独立路径。
 
 独立审计固定全部 source/hash/完整覆盖、全path F64累计/center/BC-MSE/U-stat、常数/选择/regret、episode统计和有限MC状态；首chunk TwoHot对称点预测单列。实际数值 oracle 容差在工程验收前另固定并注明浮点范围，不借调容差取得科学阳性。
+
+**工程事前容差（2026-10-12、真实B前固定）**：首chunk native F32对称点预测与独立CPU F64对称公式要求 `abs(error)≤1e−6+1e−5×abs(reference)`；纯F64统计独审 absolute1e−10，选择/身份/key bytes/CI零侧/分类 exact。这些工程门不改变科学epsilon或tie。tiny近均匀极大symexp bins可因softmax F32舍入相消超门，此反例须保留，well-conditioned tiny通过不保证真实head稳定；真实超门保留失败，不能据结果调容差。
+
+**工程r1交付与独审范围**：入口 `scripts/dl_production_reward_supervisor.py` → `scripts/dl_production_reward.py`，数值来源、模型、统计分别为同名前缀的 `source/model/stats.py`。`analysis/dl_production_reward_audit.py` 独立实现CPU F64 residual off-diagonal U-stat、完整报表、LOEO/选择/CI/有限MC分类以及私有key枚举，不导入三个生产模块；JAX CPU PRNG primitive复用须声明，不称独立PRNG算法。独审自身120秒完整入口/0GPU；独立parent监督及源/B输入前后hash，成功必须在父完整退出后复算，不给partial科研裁决。相关24源码/测试/规范文件在执行前后核Git blob与工作区字节；依赖JAX/jaxlib0.4.33、Ninjax3.6.3明确记录。生产model metadata说明只复用旧pinned factory/checkpoint loader，不复用legacy预测对象。首chunk原始NPZ与oracle检查JSON先保存再作固定门判断，以保留可能真实浮点失败，失败不写科学result/complete。
 
 ## 保留反例与后续依赖
 

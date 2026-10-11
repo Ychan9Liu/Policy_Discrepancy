@@ -826,3 +826,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **资源事实与建议**：当前理论/已有数组统计/CPU工程验收需要0GPU；后续已有规模模型诊断最低1独占A100串行，2卡仅用于可独立环节并行，现有sv3 GPU4–7足够，无需全占。B已采用预算为物理GPU4单卡、1800秒全入口硬限，即本对象最多.5 GPU小时，未执行，不是整体ETA；新训练显存及完整剩余GPU小时仍未定。历史2.5–6.5GiB是不同单项采样峰，不是新训练保证。本轮没有SSH/GPU占用核查、真实数组或checkpoint读取、新模型调用/实验/算法改动。
 
 **下一具体问题**：继续本聊天实现B六数值白名单、官方私有root imagine适配、BC-MSE/独立U-stat与B独立监督/验链；先确定提交上的CPU工程/小模型/Linux owned-process验收并固定数值oracle容差，再fresh核指定GPU4和实际映射，才执行一次完整B及独审。下一阶段不自动获得blind/gate/训练许可，完整目标缺项仍按DL-24和新协议末节记录。
+
+### DL-26 生产均值工程验证与资源口径（2026-10-12）
+
+**授权内Agent工程决定，科学r1不变**：B白名单、官方只读私有root模型、BC-MSE、独立全入口监督与独立CPU审计实施中。BC-MSE用F64 centered residual坐标保持原数学公式，独审用off-diagonal U-stat；不用clip/阈值归零。真实B前固定native point oracle `1e−6+1e−5×abs(ref)`、统计absolute1e−10以及身份/keys/选择/CI零侧/分类exact，见 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md)。源码交叉审查发现并修复完整来源清单不一致与MC不稳定却允许robust标志的契约错误，不改变原科学epsilon/相对margin/tie或停止门。
+
+**有限工程事实及反例**：Windows构造来源、实际tiny BF16官方imagine、统计偏差修正与worker边界检查已通过，Linux owned-process与最终确定SHA完整审计仍待验；详细数量/版本/证据按验证日志。near-uniform极大symexp bins tiny模型超既定point oracle，说明F32 softmax相消可能造成数值失败；已保留失败日志。well-conditioned tiny通过不证明真实size50m通过，也不证明奖励技能或方法有效。当前尚无本B真实数值结果，未读blind，不进入gate/训练。
+
+**资源答复与完整目标**：理论、构造数据、已有数值统计和独审0GPU。固定本B仅sv3物理GPU4一张独占A100/1800秒完整入口≤0.5GPU小时，不是实测耗时、显存保证或完整剩余总预算；GPU5–7无需占用。已有规模诊断1卡可串行、2卡可做相互独立环节；后续新训练配置/预算仍取决于辨别、正常压缩损伤及保护证据。历史2.5–6.5GiB不当新训练保证。下一继续当前完整授权任务，先完成确定SHA工程验收、fresh指定卡核查及一次B与独审；任何结果均不代替DL-24列出的科学缺项。

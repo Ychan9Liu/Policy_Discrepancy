@@ -1,5 +1,9 @@
 # 项目状态
 
+**2026-10-12 00:41 B工程稿冻结**：12新增工程/审计/测试文件已实现并交叉审，最终Windows54test50pass/4Linux-only skip/10.495秒；独立完整报表接线synthetic max8.88e−16。尚未真实读取B输入/模型或使用GPU；最终确定提交/clean Linux工程验及实际B/独审待执行。此前“审计接线中”是实施阶段记录。本B仍仅sv3物理GPU4/1exclusive A100/1800秒≤.5GPUh，完整方法总预算未定。继续当前chat的授权任务，不以工程代科学，详情验证日志及DL_PRODUCTION_REWARD。
+
+**2026-10-12 B工程r1实施中，真实执行尚未启动**：DL-production-reward-r1科学对象不变；白名单/私有root模型/BC-MSE/独立parent已实现，独立CPU审计器接线中。Windows整组37项34通过/3POSIXskip，之后补充Git-helper超时检查待Linux验；这是b675965c9e753644f2cb2cd133469717969f86cc加未提交工程稿的构造/tiny验证，不是最终SHA或真实方法验收。源码交叉审已修24文件pins与MC-stable&&positive契约。固定point oracle/F64统计容差、数值反例及当前工程范围见 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md)、RESEARCH/DL-26和验证日志。当前准备0GPU；本B物理GPU4一张独占A100/1800秒≤.5GPUh，GPU5–7无需占用，完整总小时/新训练显存仍未定；没有本轮fresh占用核查或新GPU运行。继续现有完整授权chat，先确定提交Linux工程验，再fresh资源/一次B/独审；完整方法缺项不变，下方为历史快照。
+
 - **2026-10-11 资源答复与B科学协议采用（未执行）**：内部交叉审查采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) `DL-production-reward-r1`，正确生产cal8固定H20/128futurepaths，BC-MSE扣MC variance/N，p/LOEO常数对照与真实选择独立判；官方imagine私有root、nativepred、六数值白名单，不读records/blind、不新physics/render/optimizer。工程源码/CPU验收/真实B尚未开始，完整方法目标仍active。最低1独占A100串行/2可独立并行，现有sv3 4–7足够；B预算仅GPU4/1800s/.5GPUh上限，总小时/新训练显存未定。当前0GPU，本轮未SSH/核占用/改算法或运行实验。下一首选继续现chat完成B工程及确定SHA验收，再fresh资源核查、有限执行与独审；旧A及正式M2不变，下方为历史。
 
 更新日期：2026-10-11。

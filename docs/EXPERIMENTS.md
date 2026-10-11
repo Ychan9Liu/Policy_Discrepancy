@@ -1,5 +1,9 @@
 # 实验协议与结果索引
 
+**2026-10-12 00:41工程冻结补记**：B与独立CPU审计已实现，Windows最终54test50pass/4Linux-only skip；完整报表接线在构造数据上通过，最终确定版本Linux与真实B仍未执行。科学对象/配置/停止和资源不变，日志记录工程证据，不能写成方法有效。
+
+**2026-10-12 B工程r1实施中**：科学r1/cal8/H20/128paths/BC-MSE/LOEO/MC停止门不变，规范 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) 已固定工程oracle容差及独审范围；源码、构造/tiny CPU和独立审计接线按验证日志推进，真实B尚未执行。既定资源为sv3物理GPU4独占一张A100/1800秒全入口≤.5GPUh；准备/统计/独审0GPU，完整目标总预算尚未确定、并非正式训练许可。任何tiny/工程通过不构成size50m或方法有效，blind/gate/训练与M2不自动推进，下方为历史。
+
 **2026-10-11 B科学协议采用，尚未执行**：完整授权内Agent交叉审查采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) `DL-production-reward-r1`；正确生产cal8固定H20/128futurepaths，主BC-MSE修正MC bias，p/LOEO常数与真实选择分开裁决。GPU4单卡1800秒全入口/.5GPUh上限，工程源码/验收/真实执行尚未开始；当前0GPU、未核实时占用，总GPU小时及新训练显存未定。当前A已停止，blind/gate/训练与正式M2不自动推进；下方为带时间历史。
 
 **23:14后DL nested对象验收**：实际/Linux39test SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0，一次CPU cal8对象2.216830秒/120秒，独立solve464次/140557比较max1.0658e−14，GPU0。q−p .00392780／q−constant .0156442的名义episode区间>0，只为既有calibration有限所选程序探索性支持；q MSE较高、不作独立确认/当前RGB/压缩/保护/性能结论。停止本对象，旧r1/M2/blind不改，B-r0仍未采用建议；详情 [DL_NESTED_PROBE_RESULTS.md](DL_NESTED_PROBE_RESULTS.md)。
