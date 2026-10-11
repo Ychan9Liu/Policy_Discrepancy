@@ -709,4 +709,16 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 
 **授权内 Agent 决定**：仅修未来物理动作不足以撤销旧图像/history 与动作语义错配，必须重新采集来源。冻结 `DL-source-r1`：先且仅原300k checkpoint/config、size50m/vision64/proprioFalse/camera2/repeat1；新seed20261020、32完整episode、原算法8 calibration/24 blind、16个预定H100 eligible位置。实际 DMC+main.wrap_env；模型 prevact/source action 留 raw float32，实际 suite 输入另存 action_applied float64。保存选定位置采集时完整 pre-policy carry/eval key来源、after-carry hash及 suite+FromDM._done；逐位置冻结RGB重演实际policy/raw/carry，逐 H100 transition 核对 recorded applied/reward/完整物理与任务/终止状态。新目录/确定提交/新attempt，不修改旧产物；sv3 GPU4单卡、3600秒硬上限，clean CPU/独立代码审查/实际CUDA-EGL绑定通过后才能采集。其余GPU5–7本项不用，零optimizer/新gate。
 
-**尚未完成与下一问题**：本机 action-contract 三项和 source 四项 CPU检查已通过；source检查的模型/RGB为fixture，不能称实际size50m来源已验收。完整状态拒绝NaN/Inf，父进程硬超时覆盖加载/JIT/重放/写盘，末帧占位用action_executed=False明确排除。服务器clean CPU、新生产来源、独立审计尚待执行。正常未来观测下单次省略当前RGB的闭环对象仍未冻结；先完成正确source，再裁决终止、共同latent/actor RNG、统计与预算，不复用旧source后改称正常生产状态。不启动短训练。完整科研目标仍需独立第二信号增量、目标子集/反例、活跃gate与压缩、有效强度/对应/reward-only对照及条件训练；尚未形成可正式实验方法。
+**来源准备时的限制与下一问题（实际结果见下方DL-15）**：本机 action-contract 三项和 source 四项 CPU检查已通过；source检查的模型/RGB为fixture，不能称实际size50m来源已验收。完整状态拒绝NaN/Inf，父进程硬超时覆盖加载/JIT/重放/写盘，末帧占位用action_executed=False明确排除。正常未来观测下单次省略当前RGB的闭环对象仍未冻结；先完成正确source，再裁决终止、共同latent/actor RNG、统计与预算，不复用旧source后改称正常生产状态。不启动短训练。完整科研目标仍需独立第二信号增量、目标子集/反例、活跃gate与压缩、有效强度/对应/reward-only对照及条件训练；尚未形成可正式实验方法。
+
+### DL-15 正确来源完成、实测资源与候选边界（2026-10-11）
+
+**已验证事实**：实际采集/测试SHA `f2d24da1831da2ffca22d313e7f534c96fc0d3eb`，source-r1科学计划不变、engineering-r2修host BF16 carry显式device_put。服务器clean source5项10.805秒；GPU4 attempt02完成32完整episode/32000动作、512位置actual policy/raw/carry/key重演与51200物理参考步，exit0、440.142416秒、采样峰值2585MiB、参数和训练counters保持。独立artifact审计及官方CPU physics审计passed；后者仅八calibration、12800步/15.014750秒，声明seed初始/恢复/逐transition完整state误差均0。24 blind只核hash/工程收据，未读数组作科学设计。详情、实际资源映射/失败历史/hash/命令见 [DL_PRODUCTION_SOURCE_RESULTS.md](DL_PRODUCTION_SOURCE_RESULTS.md)。
+
+**证据限制**：独立artifact/CPU physics未独立执行模型或render；collector冻结RGB政策重演不证明完整闭环逐位复现。来源通过不是观测控制价值、信号增量、gate或性能证据。旧失败保持legacy_raw_suite范围；接口修复的贡献尚未量化，不保证新对象阳性。attempt01的BF16 guard失败、exit1/无artifact保留，r2不放宽科学门或工程容差。
+
+**授权内Agent的建议，尚未冻结**：[DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md) 给出一次当前RGB省略、之后双方正常各自反馈的有限对象；32状态/8ep×4 paired RNG/H100、私有key、F64主实际奖励/F32联存、终止/统计/预算均列候选，须完成真实生产policy/key语义与奖励复放规则审查才运行。它优先解决旧H1即时收益/记录续行动未回答的未来反馈补偿及延迟后果，不能称H1必然无用或所有选择性方法的必要门。平均lower95>0只是探索充分条件；平均阴性不否定稀有目标子集，四RNG不提供精确逐state标签。候选尚无结果/新gate，不启动短训练。
+
+**资源事实与建议**：此source约0.12226 GPU小时；完整单步工程6675MiB/668秒是另一单项测量。最低1张独占A100可串行，2张可并行独立环节，已有4张范围足够、不需全占；仅A100环境实测，更小显存卡可行性待验。CPU文档/统计/物理复放不需GPU。13:09:36北京时间GPU4–7无作业、0MiB，GPU4已释放；不是持续状态。每单项3600秒硬上限不是整体ETA，旧20.4 GPU小时外推不得当修订方法总预算。
+
+**下一阶段具体问题**：继续本聊天已授权目标，先裁决并冻结反馈对象的原始key派生、一次真实prior替换/共同h、F64实际reward重演、terminal及有限统计，再完成代码/真实模型语义验收。后续仍须第二信号相对D的增量、真正独立的目标/反例证据、active gate/压缩与充分S/P/W/reward-only对照、未见数据及条件训练；新来源与候选文档不等于可正式实验的方法。整体目标未完成。

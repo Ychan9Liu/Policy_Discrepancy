@@ -1,6 +1,12 @@
 # DL 验证日志与证据索引
 
-## 2026-10-11 动作接口审查与新来源准备
+## 2026-10-11 动作接口审查、来源采集与资源验证
+
+**13:09后实际结果**：source科学版DL-source-r1/工程版r2，实际采集/clean source5项测试完整SHA `f2d24da1831da2ffca22d313e7f534c96fc0d3eb`，服务器五项10.805秒，原action helper/test与bb78相同。已push/ls-remote核验、未main，仅sv3隔离worktree同步；原repo干净d9be557保持。13:00:04 fresh query GPU4–7空闲；launcher自身另存fresh完整库存/pmon，实际CUDA/EGL physical4/UUID9c070d5a通过。GPU4 attempt02于13:00:42–13:08:22北京时间完成，source父监督440.142416秒/exit0，worker PID1752617 terminal，1秒采样426点峰值2585MiB。不是GPU总预算或连续峰值上界。
+
+32完整episode/32000实际动作、512实际source policy/key/carry字节重演、51200 reference physics步全部通过。独立NumPy/stdlib＋ml_dtypes（仅注册BF16 dtype）artifact审计与官方CPU physics128window/12800步审计passed；后者15.014750秒，声明envseed初始/restore/transition完整state/task/RNG/flags/reward检查误差0。两个独立审计只打开8calibration，blind24仅hash/工程收据；未计算D/K/C/U/return统计/新gate或训练。独立审计未运行模型/render，不能称完整闭环独立复现。完整实际版本/配置/资源映射/命令/receipt哈希及失败镜像见 [DL_PRODUCTION_SOURCE_RESULTS.md](DL_PRODUCTION_SOURCE_RESULTS.md)。GPU4已释放，13:09:36 fresh query/pmon确认4–7均0MiB无作业；GPU0/2未知作业未碰，是时间快照。
+
+本次正确source约0.12226GPU小时，CPUphysics无需卡；当前最低1卡串行、2卡可并行独立任务，4卡足够。新 [DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md) 仍为未冻结候选，须先actual B1/key/F64奖励复放语义与工程验收；没有新方法结果或短训练启动。完整剩余GPU小时尚不能可靠冻结，旧20.4外推不应用。下方12:56及更早为历史证据，不作为当前pending状态。
 
 **12:56后执行更新**：确定实现提交bb78e8c625c141d862293d26fc32d5ca64a598cb已push/ls-remote核验；仅sv3隔离worktree部署，原repo干净d9be557不变。clean CPU action3项8.971秒/source4项4.154秒及pip check通过。12:52:37 fresh完整库存/pmon：GPU4–7均0MiB无作业，GPU0/2未知作业不碰。新CUDA/EGL probe核验physical4/UUID9c070d5a；source attempt01于12:53:35启动、12:54:46结束exit1，父监督记录worker50.438587秒/PID1749300。GPU4释放（12:56:00 query为0MiB）；没有source episode artifact/complete或科研结果。
 
@@ -32,6 +38,8 @@
 | `597a3a6374955d9bb31277c1c4678abd709d7369` | r7完整独立loss-and-gradient日志collector、严格只读score；新增calibration-only DL-predictive-r1。sv3 clean CPU 24项通过：dt_latch13项159.810秒、logging1项50.967秒、helper1项16.927秒、rep_probe5项3.537秒、predictive4项7.234秒；pip check通过。21:38后GPU7 attempt06及GPU4/300k预测诊断启动，结果仍待审计 |
 | `be9e32aa018d8b61c0b2931fe44f72a6f480d4b5` | 输入契约修复，源raw Gaussian样本保留；sv3 clean predictive CPU4项7.399秒。GPU4/300k attempt02 exit0、128校准位置原数组审计通过，必要预测方向未支持，停止1m/代理/短训练 |
 | `ab665a850466f0948edc877d5f9a977709905c33` | r8仅修helper嵌套对象hash，生产代码仍r7；sv3 clean helper CPU2项17.539秒及pip check通过。GPU7 attempt07真实五组完整通过，四日志leaf bytes相等、off/logging完整update相等、probe梯度零、N局部缩放及非rep梯度通过；独立summary复核通过 |
+| `bb78e8c625c141d862293d26fc32d5ca64a598cb` | action helper/production source-r1；sv3 clean action3项8.971秒/source4项4.154秒/pip check通过；GPU4 source attempt01因host BF16 carry implicit transfer guard失败，无episode/complete，原目录保留 |
+| `f2d24da1831da2ffca22d313e7f534c96fc0d3eb` | source-engineering-r2显式放置原carry；sv3 clean source5项10.805秒，actual公共tiny BF16 strictguard通过；GPU4 production source attempt02真实32ep及独立artifact/CPUphysics审计通过，440.142416秒/2585MiB；仍无第二信号/gate或方法结果 |
 
 历史attempt03实际SHA为 `55a527c620fb14339ee00f76f045a5dfddc81068`；后续r5/r6/r7的实际版本如上表，不混同。9e之后至55的三个提交未改 `dreamerv3/` 方法代码，也未改科学配置、筛选阈值或精确比较条件。r7改变诊断执行图而保持原optimizer执行图及科学gate；CPU通过不替代CUDA精确状态/特征验收，不能将文档提交或当前HEAD写成所有旧运行的执行版本。
 

@@ -117,8 +117,10 @@ collection 的 eval seed/counter 依法为每 episode 设置和推进，要记�
 
 ## 7. 当前完成边界与下一步
 
-**2026-10-11 实际工程进展**：bb78e8c确定提交的sv3 clean action3/source4项及pip check通过；GPU4 source attempt01在首episode之后的actual policy重演处失败，原host BF16 carry进入 `_stack` 引发implicit transfer guard，exit1且没有complete。root已新增engineering-r2显式按local policy_mirrored放置原dtype carry及实际公共tiny/BF16/strictguard重演测试，本机source5项通过。仍须新clean版本、新attempt、真实source/独立审计验收；不得放宽transfer guard或把旧失败覆盖。当前源协议数字/对象不变，反馈仍未冻结。
+**2026-10-11 13:09后实际结果**：r2执行/测试完整SHA f2d24da1831da2ffca22d313e7f534c96fc0d3eb，clean服务器source5项及GPU4新的32episode来源attempt02完成；独立artifact和八calibration CPU物理12800步审计passed，状态误差0。source440.142416秒/2585MiB、零optimizer，实际CUDA/EGL同物理4，已释放。完整结果/实际来源/失败历史/证据限制与资源见 [DL_PRODUCTION_SOURCE_RESULTS.md](DL_PRODUCTION_SOURCE_RESULTS.md)。反馈详见 [DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md)，仍未冻结/执行；不因来源通过宣布方法有效。下段是12:56时的失败/修复历史，source pending已由本结果解除。
 
-本次裁决是动作契约不匹配及其证据范围，未改任何旧数值、科学门或算法。旧 MC 停止保持；新来源、反馈和新方法均没有结果。不能保证修复接口会找到有效方法，也不能以接口错误抹掉其他已知局限。
+**12:56失败/修复历史**：bb78e8c确定提交的sv3 clean action3/source4项及pip check通过；GPU4 source attempt01在首episode之后的actual policy重演处失败，原host BF16 carry进入 `_stack` 引发implicit transfer guard，exit1且没有complete。root新增engineering-r2显式按local policy_mirrored放置原dtype carry及实际公共tiny/BF16/strictguard重演测试，本机source5项通过；其后f2的新clean测试/attempt/独立审计见上段。没有放宽transfer guard或覆盖旧失败；源协议数字/对象不变，反馈仍未冻结。
 
-首选下一步是在本聊天完成 helper/真实 CPU wrapper 等价与完整恢复审查；通过后由根 Agent 冻结 `DL-source-r1` 的实际入口、SHA、来源计划及资源记录，再执行新的生产来源。随后只依据正确 calibration 来源论证并冻结一个有限反馈对象，不自动重跑全部旧诊断或开启训练。完成后保留工程证据、旧/新 scope 区分、真实失败与未决科学问题，继续推进形成可正式实验方法的原目标。
+本次裁决是动作契约不匹配及其证据范围，未改任何旧数值、科学门或算法。旧 MC 停止保持；新来源工程验收完成，反馈和新方法没有科研结果。不能保证修复接口会找到有效方法，也不能以接口错误抹掉其他已知局限。
+
+首选下一步是在本聊天，以已验收production source和实际carry为前置，论证并冻结一个有限反馈对象，先完成真实policy/key/F64 reward复放语义验收，不自动重跑全部旧诊断或开启训练。平均机会不作为selective保护的必要门；来源通过不等于第二信号或方法有效。保留旧/新scope、真实失败与未决问题，继续推进形成可正式实验方法的原目标。

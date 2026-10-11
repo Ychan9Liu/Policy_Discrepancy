@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-11 13:09后DL来源结果**：正确production source-r1已在f2d24da1831da2ffca22d313e7f534c96fc0d3eb完成真实32ep采集/原计划8+24/512政策位置核对；独立artifact及八calibration CPU physics12800步审计passed。GPU4单卡440.142416秒/2585MiB、零optimizer，已释放。结果、实际SHA/配置/资源/哈希及失败历史见 [DL_PRODUCTION_SOURCE_RESULTS.md](DL_PRODUCTION_SOURCE_RESULTS.md)。这是来源工程验收，不是信号/gate/方法结论；[DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md)只为未冻结候选，不改M2协议或启动短训练。最低1卡串行/2卡并行独立工作/现有4卡足够，当前总训练费用未冻结。下方较早运行状态须按该结果更新解释。
+
 **2026-10-11 DL 动作对象更正**：旧 r1/H100/mode/MC 采集及外部控制为 `legacy_raw_suite`，绕过生产 Clip→Unify→Normalize；原数值/科学门/失败保留，不能外推正常生产模型技能。实际CPU动作契约与独立审查见 `docs/DL_ACTION_CONTRACT.md`、RESEARCH/DL-14；正式M2训练动作链未被该独立诊断修改。新 `DL-source-r1` 必须使用 actual DMC+main.wrap_env，300k冻结来源、新seed20261020/32ep8+24/16H100位置、raw/applied/actualcarry与wrapper状态分开记录。CPU和来源验收后才推进另立闭环对象；尚无新科研结果/已采用gate，不启动短训练。完整执行状态/确定SHA见 `docs/DL_VALIDATION_LOG.md`。
 
 ## DL 独立前验证索引（2026-10-10）
