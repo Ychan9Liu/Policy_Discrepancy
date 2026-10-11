@@ -1,5 +1,11 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11：有限嵌套接口规范与GPU资源答复
+
+Agent内部科学交叉审查冻结 `DL-nested-probe-r1`，详见 [DL_NESTED_PROBE.md](DL_NESTED_PROBE.md)、RESEARCH/DL-23。只有既有cal8数值、四mean λ、整episode outer/inner、共同选则与一次120秒CPU对象；工程实现与有限fixture正在验收，未真实拟合/读取blind/启动GPU或训练。原合成assay/原H20/原H100停止与M2不变，方法目标仍未完成。
+
+用户问GPU资源：当前0张，已有规模模型诊断最低1独占A100串行、2张可并行独立工作，无需占满sv3 GPU4–7；历史2.5–6.5GiB不同单项采样峰不是未来训练保证。正确source440.142秒、feedback537.615秒只作实测，完整剩余GPU小时未确定；本轮未核当前卡空闲。
+
 ## 2026-10-11 22:29后：固定合成及独立数值审计验收，停止本assay
 
 - 独立ignored审计源码2d8e9c56…931f与父launcher45eeec43…9129已核hash，sv3 CPU120秒ownedgroup监督／worker1923993 terminal／exit0／完整audit passed true，父CLI terminal1.142815340秒，audit写前1.066235756秒。64独立kernel-eigh无cutoff／fixed abs1e−10，16200连续数值比较max3.09752e−14；输入／mean字节／choice／reward／regret／bootstrap／authority exact，原14文件前后不变。

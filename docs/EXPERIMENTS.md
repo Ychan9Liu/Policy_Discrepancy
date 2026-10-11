@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL 新有限对象（2026-10-11）**：`DL-nested-probe-r1` 规范已由授权内Agent审查冻结，见 [DL_NESTED_PROBE.md](DL_NESTED_PROBE.md)；仅已认证cal8数值、固定四mean λ、whole-episode内外层及共同选则，CPU120秒/0GPU。实现/小fixture验收中，尚未真实执行，未授权由此直接进入gate/训练或读blind。原实验协议与历史停止不变；该程序阴性不等于整个信息族阴性，完整方法仍待验证。
+
 **2026-10-11 22:29后DL合成验收**：固定8b7f7a9执行／Linux21test不变，CPU独立PCG64字节＋64kernel-eigh／choice／bootstrap／边界审计通过，父1.142815秒／120秒、max3.09752e−14。指定sparse漏检反例已核，停止此assay、不改真实H20/H100裁决／blind／gate／训练；原weights/dual字节不称独立重获，不能当真实任务／方法效果。详细产物/hash/完整scope见 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)。下一复制不变探针尚未冻结，总体方法未完成、GPU小时未定，M2正式协议保持。
 
 **2026-10-11 22:10后DL合成执行**：clean执行／Linux21项测试SHA8b7f7a9daf80bd199b4be5391edad6cb128f2931，四case CPU整组1.232489秒／120秒、exit0／fullhash，GPU0；sparse teacher1而原q=.75=constant，replicated／history预期检测与identityexact均满足。独立eigh／随机流／边界审计待验，详 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)。仅指定测量反例，不翻真实旧裁决或进入gate／训练／blind；sum γ1自然标度及首选已撤回，新复制不变探针未冻结，M2协议不改。
