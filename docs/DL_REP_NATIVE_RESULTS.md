@@ -1,6 +1,35 @@
 # DL-rep-native-r1：运行与GPU资源记录
 
-## 2026-10-12 04:57:02 状态快照
+## 2026-10-12 05:47：primary-attempt01失败，GPU已释放
+
+**状态：已终止、主验收失败，无科学裁决；CPU独审未启动。** 实际执行/测试SHA为 `fc4219f36449783f8751a9890a125cd218a2807f`，原 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) r1的科学设置和精确标准保持，不放宽比对、不拼接产物、不解读本attempt的returns。完整目标仍active，原M2不改。
+
+主入口北京时间 `04:49:15.053030` 至 `05:31:59.490141`，外入口 `2564.437091` 秒/exit1，单卡外入口占用口径为 `.71234363645 GPU·小时`，不是GPU算子累计时间或完整科研总成本。A128学习和0/B/A各32条完整episode已经生成；主工程收据记录共96条episode、96000 transitions、96096 RGB，但这不是完整对象或独审验收通过。
+
+`statistics` worker在 `1.615644589` 秒后exit1，拒绝点为实际版本 `scripts/dl_rep_native.py:467` 的跨组 `reset_receipts` 精确比较。已有小型失败metadata显示相同seed的初始物理snapshot hash相同而初帧RGB hash不同。没有发布 `result.json`，主 `complete_verified=False`，外CLI exit1；父收据elapsed为 `2562.8755269479007` 秒、timed_outFalse，失败不是超时。因此没有A−B统计裁决、压缩机制或模型性能结论。不得从已生成轨迹提取回报、改为非配对统计或忽略RGB条件继续发布成功。
+
+**已核代码事实与未定原因**：初帧SHA在reset后、首次policy/step前立即计算，后续buffer alias不能改写该SHA字符串；native观察和轨迹首帧均copy。现snapshot只包括 `mjSTATE_INTEGRATION`、task、clock/reset及FromDM done，不含mjModel纹理/材质/相机/灯光、派生render data或GL/cache状态。已安装MuJoCo3.15.0的 `randomdot` 使用局部seed42，未见该函数调用全局rand/srand；不能据旧版本资料盲加 `ctypes.srand`，也不能写“纹理随机性/GPU噪声已是根因”。视觉model、derived camera/geom状态、renderer/cache和buffer来源仍待工程诊断。
+
+| 本attempt资源事实 | 范围与限制 |
+| --- | --- |
+| 实际GPU | sv3物理4，一张独占A100；5–7没有本对象任务 |
+| 主显存 | 约2秒采样峰6623MiB（约6.4678GiB）；不是瞬时峰或最低显存保证 |
+| 主预算 | 原完整入口7200秒/单attempt≤2GPU·小时；实际失败成本另记，不能当总剩余预算 |
+| CPU独审 | 原1200秒/0GPU阶段未启动；不把96条轨迹生成写成96000步独立复放完成 |
+| 释放证据 | `05:36:17.595853` 北京时间fresh XML：物理4–7各0MiB，无compute/graphics进程；launcher2059813及parent2059834已不存在，GPU4释放 |
+| 较新只读查询 | `05:47:14.807442` 北京时间memory/compute查询：4–7各0MiB、compute列表无4–7；这次不是完整XML/graphics复核，0–2未知作业未干扰 |
+
+服务器失败证据为run的 `engineering/failure-statistics01.json`，同时保留 `engineering/primary01-terminal.json`、主 `supervisor_complete.json`、`statistics.log` 及所有原phase产物。run为 `/data/Policy_Discrepancy/runs/dl-rep-native-20261012-fc4219f/`，主为 `primary-attempt01/`；本机小型镜像为 `analysis/outputs/dl-rep-native/dl-rep-native-20261012-fc4219f/`。本次五报告归档已核镜像中外terminal、父退出、statistics traceback及05:36资源字段；失败metadata SHA256为 `6cfc2e3847348568bd3d5e92903ae7c934d1a405871f14eef655c36073e519f2`，外terminal为 `befd9e6971ac53719dcdfd6ab82583aef00906d3709b03b4ad123b5bd038369a`。这只是小型证据核对，不是完整产物/模型/optimizer独审；归档未读取episode pickle、图像或回报数组。
+
+**Agent已采用的必要下一步，未执行**：[DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md) / `DL-native-render-identity-r1` 的零动作render输入身份诊断正在工程实施。单sv3物理4、完整入口180秒/≤.05GPU·小时；两个worker各构造两个fresh MuJoCo环境/model，共4 reset、12 RGB，0actor/0checkpoint/0Agent更新/0action/0transition。实际worker只核EGL graphics，历史compute/EGL probe不冒称新CUDA验证。诊断比较即时/保存buffer、compiled visual model、derived render data和同env重复render，只裁决输入/renderer层；未知字段明标，不宣称根因或方法有效。确定版本、CPU契约及fresh资源核查后才执行。
+
+另一个 [DL_REP_OBSERVATION_GUARD.md](DL_REP_OBSERVATION_GUARD.md) 两路径终态对象仍是candidate，未采用、未执行；1800秒/.5GPU·小时是候选单次上限，不是新增总预算。其native成功封口及独审前置尚未满足。额外aux图与终态的等价也不等于整条历史优化轨迹等价；历史未记录的编译环境字段保持unknown。
+
+**Git和同步边界**：当前文档编辑基准HEAD为 `422ae48e9f1c4728c3e5cfe57a48ce6e2e12b10d`，相对实际/tested fc4219f只含此前报告文档差异；本次五报告编辑未提交、未同步服务器，不冒称新代码已测试。422的第3次push也因443连接失败，未确认GitHub新SHA、未进入main。既有隔离checkout及canonical同步范围按下方历史记录保持；整个方法的总剩余GPU小时未定，当前CPU分析0GPU、已有规模诊断一张卡可串行。
+
+## 历史：2026-10-12 04:57:02 状态快照
+
+以下保留当时运行中及其下一步安排，已由上方失败状态取代，不构成当前继续执行或重跑指令。
 
 状态：运行中，完整主/独审未验收，无科学裁决。规范见 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md)，完整目标继续active，原M2不改。
 

@@ -1,6 +1,10 @@
 # 项目状态
 
-**DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。
+**DL最新状态（2026-10-12 05:47）**：native primary-attempt01已失败、终止。实际/tested `fc4219f36449783f8751a9890a125cd218a2807f` 完成A128及0/B/A全部96完整episode生成，statistics1.615644589秒后因跨组初帧RGB不等拒绝，物理snapshot hash相同；无result.json、主complete_verifiedFalse、CPU独审未启动、无科学裁决。主外2564.437091秒/exit1、sv3物理4单卡外入口口径.71234363645GPUh、约2秒采样峰6623MiB。05:36:17.595853 fresh XML确认4–7各0MiB、无compute/graphics，GPU4释放；05:47:14.807442仅memory/compute再核，不冒称完整graphics复核。详细证据、Git与边界见 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。不解读returns、不放宽原比对、不拼接，原M2与旧信号裁决保持，完整目标active。
+
+**Agent下一诊断：已采用、工程实施中、未执行**：[DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md)，单sv3物理4/180秒完整入口≤.05GPUh，4fresh MuJoCo model/12RGB，0actor/checkpoint/action/transition，只检查输入/renderer/buffer/derived状态身份，实际EGL graphics-only。实际3.15.0 randomdot局部seed42，不盲加srand、纹理/GL根因未确定；已有初帧SHA不受后来alias改写。观察图 [DL_REP_OBSERVATION_GUARD.md](DL_REP_OBSERVATION_GUARD.md) 仍candidate未采用/执行，其native成功与独审前置未满足；1800秒/.5GPUh不构成新增总预算。当前HEAD422ae48e9f1c4728c3e5cfe57a48ce6e2e12b10d相对fc仅此前报告文档，第三次push443失败、未GitHub确认/未main；本次五报告未commit或server同步。总剩余GPU时未定，一卡串行即可、CPU分析0GPU。以下为带时间历史。
+
+**历史DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。当时的继续执行安排已由上方失败状态取代。
 
 **DL工程进展（2026-10-12 04:45，真实对象未启动）**：新r1四组必要Windows契约共38项，37通过、1待Linux进程组；源码和科学规范已冻结，下一确定提交clean Linux组合验收与fresh sv3物理4/CUDA/EGL检查。没有新source/checkpoint/GPU/physics访问；旧M2保持、完整目标active。资源需求仍1独占A100、单次主7200秒≤2GPUh上限，CPU独审1200秒0GPU；不是全科研总ETA或新显存保证。详情 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
 

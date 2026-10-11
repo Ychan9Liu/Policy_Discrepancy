@@ -1,6 +1,10 @@
 # 实验协议与结果索引
 
-**DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。
+**DL最新执行结果（2026-10-12 05:47）：工程失败，非科研阴性/阳性**。actual/tested `fc4219f36449783f8751a9890a125cd218a2807f` 的native primary-attempt01已终止；A128及96完整episode/96000 transitions/96096 RGB生成后，statistics在1.615644589秒/exit1因同seed初始物理snapshot相同、RGB hash不同而拒绝。无result.json、主complete_verifiedFalse、CPU独审未启动；不解读returns、不改配对统计或放宽RGB条件、不拼接。主外2564.437091秒/exit1，单sv3物理4外入口占用口径.71234363645GPUh，约2秒采样峰6623MiB。05:36:17.595853 XML确认4–7各0MiB/no compute/graphics、GPU4释放；05:47:14.807442较新查询只覆盖memory/compute。完整 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)，原科学r1/M2与旧裁决保持，完整目标active。
+
+**Agent下一工程对象已采用、未执行**：[DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md) 180秒/单GPU4/≤.05GPUh；4fresh MuJoCo model、4reset/12RGB、0actor/checkpoint/action/transition，实际EGL graphics-only，只裁决输入/renderer身份并明标未知。本次实际3.15.0 randomdot局部seed42和早期SHA保存时机不能证明texture/GL是根因，禁止盲加srand。候选 [DL_REP_OBSERVATION_GUARD.md](DL_REP_OBSERVATION_GUARD.md) 未采用/执行，native成功与独审前置未满足；1800秒/.5GPUh不是新总授权，终态判据不等于整条历史轨迹。当前HEAD422ae48e9f1c4728c3e5cfe57a48ce6e2e12b10d相对fc仅此前报告docs，第三次push443失败未GitHub确认/未main，本次五报告未提交或server同步。完整剩余GPU小时未定，一卡串行足够、CPU0GPU；以下为历史。
+
+**历史DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。当时的继续执行安排已由上方失败状态取代。
 
 **DL启动前工程（2026-10-12 04:45）**：四组Windows必要契约37通过、1项Linux进程组待验，无真实对象执行或fresh资源核查。新增A128及0/B/A正常native评价实现冻结，主7200秒/单GPU4上限与CPU独审1200秒保持；实际吞吐/显存待测。确定提交Linux/pip与设备核查通过后再启动，完整记录 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
 

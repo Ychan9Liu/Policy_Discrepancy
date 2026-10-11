@@ -1,5 +1,17 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 05:47：native主attempt01统计前置失败，资源释放
+
+实际/tested SHA `fc4219f36449783f8751a9890a125cd218a2807f`；clean Linux38项和pip check0的工程证据保留。主北京时间04:49:15.053030–05:31:59.490141，外 `2564.437091` 秒/exit1，sv3物理4单卡外入口占用口径 `.71234363645 GPU·小时`，约2秒采样峰6623MiB。A128及0/B/A全部96完整episode、96000 transitions/96096 RGB已生成，但statistics worker1.615644589秒后在实际 `dl_rep_native.py:467` 因跨组reset_receipts不等拒绝；相同seed的物理snapshot hash相同、初帧RGB hash不同。无result.json、主complete_verifiedFalse、CPU独审未启动；不解读returns、不放宽精确比较、不拼接或发布局部科学结论。完整报告 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)，失败metadata为run `engineering/failure-statistics01.json`。
+
+05:36:17.595853北京时间fresh XML显示GPU4–7各0MiB、无compute/graphics进程，launcher2059813与parent2059834 gone，GPU4释放。05:47:14.807442较新memory/compute查询仍4–7各0MiB、无这些卡的compute；这次不称完整graphics复核，0–2未知作业未干扰。资源快照只描述各自检查时刻，不保证未来启动空闲。
+
+只读源码确认初帧SHA计算早于首次policy/step，后续alias不能改已有SHA；现physics snapshot缺mjModel visual/derived render/GL-cache。实际MuJoCo3.15.0 randomdot为局部seed42，不能盲加srand或将纹理随机性/GPU noise当已证根因。Agent采用下一180秒/物理GPU4单卡≤.05GPU小时的 [DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md) 零动作输入身份诊断，工程准备中、未执行：4fresh MuJoCo model、4reset/12RGB、0actor/checkpoint/action/transition，实际EGL graphics-only。只辨别输入/renderer层，确定SHA及CPU契约、fresh资源核查后再运行；未知明标。候选 [DL_REP_OBSERVATION_GUARD.md](DL_REP_OBSERVATION_GUARD.md) 未采用/执行，1800秒/.5GPUh不构成新总授权；native成功与独审前置未满足，历史环境unknown和终态/逐轨迹证据边界保留。
+
+本次报告基准HEAD `422ae48e9f1c4728c3e5cfe57a48ce6e2e12b10d`，相对fc仅此前文档差异；第三次push也443失败、未GitHub确认/未main。本次五报告未commit或server同步，旧科学spec/19生产文件/M2和失败历史不改；完整目标active，总剩余GPU时未定，一卡串行即可、CPU诊断0GPU。
+
+## 以下为历史运行快照
+
 ## 2026-10-12 04:57：确定版本Linux验收、设备映射及单卡主流程运行中
 
 **DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。

@@ -1,6 +1,10 @@
 # 研究问题与方法
 
-**DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，继续现chat完成原主入口和CPU独审。
+**DL最新状态（2026-10-12 05:47，失败已终止）**：native primary-attempt01在实际/tested SHA `fc4219f36449783f8751a9890a125cd218a2807f` 上完成A128及96条完整episode生成，但statistics因相同seed的初始物理snapshot相同/初帧RGB不同而exit1。无result.json、主complete_verifiedFalse、CPU独审未启动，无A−B或方法结论；不解读returns、不放宽比对、不拼接。外2564.437091秒，单卡外入口口径.71234363645GPUh、采样峰6623MiB；05:36:17.595853 fresh XML确认sv3物理4–7各0MiB/无compute与graphics，GPU4释放，05:47:14.807442仅memory/compute再核。完整 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。
+
+**Agent下一工程诊断，已采用但未执行**：[DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md) 以180秒/单sv3物理4/≤.05GPUh检查4fresh MuJoCo model的12RGB、0actor/checkpoint/action/transition，只辨别输入/renderer身份与buffer/model/derived-cache路径。MuJoCo3.15.0 randomdot局部seed42、后续alias不能改既有初帧SHA均是代码层事实，不证明实际失败根因；不盲加srand或称GPU noise。另 [DL_REP_OBSERVATION_GUARD.md](DL_REP_OBSERVATION_GUARD.md) 仍candidate未采用/执行，其native成功与独审前置未满足；终态等价不证明历史全轨迹、历史环境unknown保留。当前HEAD422ae48e9f1c4728c3e5cfe57a48ce6e2e12b10d相对fc仅此前报告docs，第三次push443失败、未GitHub确认/未main；本次五报告未提交。完整目标active，M2/旧信号裁决保持，总剩余GPU时未定，一卡串行足够、CPU0GPU。下方带时间条目保留历史。
+
+**历史DL运行中（2026-10-12 04:57:02快照）**：实际/tested SHA fc4219f36449783f8751a9890a125cd218a2807f，clean Linux38全过/pip0；旧source/B认证和A128学习完成，eval0为11/32、B/A与CPU独审未完成，无科学裁决。仅sv3物理4单A100/主7200秒≤2GPUh，5–7无本对象任务；主采样峰6623MiB截至快照，非最低显存/总科研核时。完整记录 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。整体目标active、原M2保持，当时下一步为完成原主入口和CPU独审，现已由失败状态取代。
 
 **DL工程证据（2026-10-12 04:45）**：已采用native有限对象r1的A/native/主driver/独审必要Windows契约37通过、1 Linux进程组待验；旧19文件和M2不改，无真实source/checkpoint/学习/模型/GPU/physics结果。源码工程通过不升级为策略收益、机制或方法有效；下一确定提交Linux/设备验收及原冻结对象执行，见 [DL_VALIDATION_LOG.md](DL_VALIDATION_LOG.md)。
 
@@ -913,8 +917,10 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 
 ### DL-32 全窗口学习干预与原actor闭环效用（2026-10-12）
 
-**授权内Agent已采用设计，尚未真实执行**：科学与源码交叉审查后采用 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) r1。A从原300k完整state开始，保留旧B的8cal/terminal context/16×64窗口/128次prepare_batch实际keys、完整optimizer/momentum及其它loss；仅原RSSM.loss一次前向后停止整个当前rep反向项。旧B认证复用，0解释，不冒称本次独立B训练。新32环境seed1024–1055，每0/B/A一完整1000步原native sampled actor episode，正常未来RGB/posterior/carry；固定A−B真实累计F64return为主、whole-episode配对bootstrap及所有signed差。源/source/code/hash/私有root/实际public oracle/physics/render/退出分别验收，尚无新真实回报或机制结论。
+**真实执行补记：失败，无科学裁决**。actual/tested fc4219f上的A128及96完整episode生成后，主statistics精确reset_receipts检查拒绝初帧RGB不等；无result.json/完整主验收，CPU独审未启动。物理snapshot相同不足证明渲染输入相同，不能从returns解释rep、actor或双信号。原科学r1不变，完整失败及资源释放见 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)。下一Agent已采用零动作输入身份诊断，未执行；本节下方保留采用时设计理由。
+
+**历史：授权内Agent采用时设计，执行前记录**：科学与源码交叉审查后采用 [DL_REP_NATIVE_ASSAY.md](DL_REP_NATIVE_ASSAY.md) r1。A从原300k完整state开始，保留旧B的8cal/terminal context/16×64窗口/128次prepare_batch实际keys、完整optimizer/momentum及其它loss；仅原RSSM.loss一次前向后停止整个当前rep反向项。旧B认证复用，0解释，不冒称本次独立B训练。新32环境seed1024–1055，每0/B/A一完整1000步原native sampled actor episode，正常未来RGB/posterior/carry；固定A−B真实累计F64return为主、whole-episode配对bootstrap及所有signed差。源/source/code/hash/私有root/实际public oracle/physics/render/退出分别验收；该采用时记录没有真实回报或机制结论。
 
 **设计理由与反例**：局部R没有涵盖未来rep通路；旧F/参考程序变化没有证明原actor可利用的收益。因此新对象把整个当前rep净作用直接接到原actor的正常任务表现，避免继续用readout改善替代性能。A可能同时删除有益rep；旧momentum和其它loss仍保留，A不是选择性保护的上界，也不定位某个posterior特征。离线reset富集的重复8cal训练仍不是普通replay，单训练seed/cp300k/128更新＋32evalseed不支持跨训练seed结论。即使A阳性，通用正则、actor/value学习等替代解释仍未排除。
 
-**已确认范围、未决和资源**：本对象不新增A-F、独立第二信号、nuisance/错误依赖、gate或正式M2变更；这些仍待后续证据。资源仅sv3物理4一A100，主完整入口7200秒/最多2GPUh、CPU独审1200秒/0GPU；单次上限不保证实际吞吐足够、显存或科研总小时，超时整对象失败而不补样本或延长。GPU5–7不用于本对象；启动前重新核指定卡和实际CUDA/EGL，当前无新GPU核查/作业。首选继续当前完整授权chat完成确定SHA CPU/Linux工程验收、实际完整链及新闭环对象/CPU独审，按预先分支解释结果，不能以工程或单项阳性宣布方法已可正式实验。
+**已确认范围、未决和资源**：本对象不新增A-F、独立第二信号、nuisance/错误依赖、gate或正式M2变更；这些仍待后续证据。原主完整入口7200秒/单sv3物理4/最多2GPUh、CPU独审1200秒/0GPU不是科研总预算；本attempt已因工程前置失败停止，不补样本或拼接。首选继续当前完整授权chat完成已采用的 [DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md) 输入/renderer层诊断，未知原因明标；未来native修复或观察图guard须另有完整认证依据，不用失败产物冒作成功前置。第二信号、正常replay、选择性压缩与性能目标仍未完成。
