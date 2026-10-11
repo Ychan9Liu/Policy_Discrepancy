@@ -766,3 +766,13 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **工作假设**：constant及有限续行／正则／线性族／样本／history充分或模型表示失误都可能限制此门，未作归因；同动作不等于latent无任务信息或后验保护无效。高D/K且RGB不可观测／OOD／错误策略依赖仍可能误保；可学posterior信息尚未被actor使用时D也可能小，乘K不能自动修复D必要门漏检。
 
 **下一建议，未冻结**：两个独立源码／科学Agent一致先定义“历史无法预知、64RGB可获得、真实改变动作选择”的外部cue，不直接启动physical challenge。唯一条件候选为同p−1 complete state和原raw/applied的一次真实transition中施加预定有界torso world-y torque，在p与实际precarry/prevraw对齐，检验camera2侧视pitch。幅度／控制／margin／支持范围／预算未定；速度可能单帧不可辨，姿态teleport／接触异常、trackcom、正负reward对称或视觉可辨需要过大OOD皆为停止反例。不用D/K/U或事后正号选介入、不增力延窗求阳性。此建议不是已采用协议。即时actor收益不是后续学习路线的普遍必要门，但正常loss学习机制仍需独立可学任务信息及active rep作用，不凭纯posterior-head KL下降／固定readout漂移归因信息删除。
+
+### DL-20 诊断器识别范围与零GPU物理元数据前置（2026-10-11）
+
+**已验证有限事实**：本机官方factory quadruped_walk构造／数值查询完成，Git上下文 `182365de76e5f7742218ef6ebdff417bb790880f`、独立ignored源码6309a040…eee1b，.094秒；完整integration/task/RNG/clock/reset前后字节一致，无reset／transition／render／实际数据／外力写入／Dreamer／GPU。camera2为trackcom／FOV45，world-y在相机中有深度分量，不等于相机平面内轴或任意yaw下body pitch；DL-19“侧视pitch”只是先前候选措辞，不是已验证自然姿态线索。惯量及冻结q响应只是尺度，不是finite contact位移界或RGB可辨证据。详细数值、完整hash、证据位置及资源口径见 [DL_CUE_PREFLIGHT.md](DL_CUE_PREFLIGHT.md)。仅同步已有证据至sv3 bootstrap，未server重跑或改checkout。
+
+**Agent建议与授权内准备顺序，未采用新科学协议**：交叉审阅后的 [DL_CUE_IDENTIFICATION.md](DL_CUE_IDENTIFICATION.md) r0首选先固定纯合成probe检测范围规范，再判断是否需要另一真实对象。应显式给已知可学决策信息、history-only／无信号／nuisance对照、同组能量和实用margin，预先确定唯一参数与停止规则。现在seed／维数／cost／门尚未定，未执行assay。合成失败只限制该readout阴性的解释，成功不证明真实模型信息；不改变原λ1／H20接口零增量门。
+
+**尚未采用替代方案与需要的证据**：新的nested probe须把内层选择规则本身冻结，q/p同容量、整episode隔离；已见cal8的新结果仍为后验探索，不能单独归因λ或宣称独立确认。外部随机cue须C独立历史、同真实p−1正常transition及p carry、独立RGB可获取，并在同历史事件对具有有代价的动作需求差；跨episode不同winner不证明当前新增信息。torque幅度／范围／支持／门／预算未定，不由几何选择可见幅度或按D/K/U挑状态。
+
+**完整目标与资源边界**：独立第二信号增量、normal active rep损伤／保护、强度与条件shuffle/reward-only/OOD对照和后续学习／性能仍未完成。当前准备0GPU，已有模型诊断最低1独占A100串行、2可并行，sv3 GPU4–7现有授权足够；既有约2.5／6.5GiB单项峰值不保证新训练显存，总剩余GPU小时未定。本轮不核当前GPU占用、不启动新GPU运行、不读blind、不采用gate或训练，原M2协议及既有失败保留。下一首选继续当前完整授权聊天完善并审定纯合成规范，不以即时actor前置替代全部学习路径。

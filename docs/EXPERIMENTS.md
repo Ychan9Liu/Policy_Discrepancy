@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-11 21:22后DL准备更新**：完成官方factory-model CPU只读元数据查询／独立数值审阅，无reset/transition/render/真实数据/Dreamer前向/GPU；它不证明新cue或方法有效。证据、元数据尺度与0／1／2张GPU口径见 [DL_CUE_PREFLIGHT.md](DL_CUE_PREFLIGHT.md)。[DL_CUE_IDENTIFICATION.md](DL_CUE_IDENTIFICATION.md) r0仅为Agent建议，首选先固定纯合成probe检测范围；seed／维数／cost／门未定，nested probe及torque均未采用／运行。不改旧H20/H100停止裁决，不读blind，不启动gate/训练，不改变下述M2正式协议；完整方法目标未完成。
+
 **2026-10-11 20:47后DL有限动作/接口结果**：`DL-action-information-r1` 实际执行／clean Linux测试SHA `f1ae4d6513e81ed680992b64ba8ebade7d256d52`；CPU29项全过、cal32固定7+8首动作／共同zero H20，主9600＋复放9600步，33.910822秒／180秒父限，GPU0、zero Dreamer/model/render/optimizer。独立源BF16特征／raw／kernel-eigh及cost/LOEO/wholeepCI/裁决审计passed。外部选择依据成立16state/4ep/18cross-ep disjoint δ集合；q/p/constant全部all-、两选择增量8ep exact0/CI0，actor首动作 .01509419/名义CI[−.02587985,.05442976]不确定。按原门不推进gate/train/blind；只读fixed-output结构解释不改λ/H/库/样本或科学门，合法cue候选未冻结/执行，完整方法未完成。全部源码/协议/产物/hash/命令/资源和局限见 [DL_ACTION_INFORMATION_RESULTS.md](DL_ACTION_INFORMATION_RESULTS.md)；原M2正式协议不变，下方早期“下一／尚未实现”是历史。
 
 **DL前验证更新（2026-10-11）**：固定cal32只读任务语义CPU查询已完成，实际SHA `57270c7b92b8fd9da2bce5d1d6d9f377229564e2`，九项selftest和完整query通过12.221363秒，零环境动作/model/render/optimizer/GPU；来源、官方reward分量及严格只读证据见 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)。它不证明动作关键性、actor利用或方法有效。下一有限第一动作/接口信息对象已由Agent交叉审查冻结于 [DL_ACTION_INFORMATION.md](DL_ACTION_INFORMATION.md)，尚未实现/运行；不读取blind、不启动gate/训练、不翻案旧H100停止门、不改变下述正式M2协议。

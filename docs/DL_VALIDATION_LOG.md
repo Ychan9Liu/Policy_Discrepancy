@@ -1,5 +1,13 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 21:22后：零GPU元数据前置与候选识别规范审查
+
+- 查询仓库HEAD `182365de76e5f7742218ef6ebdff417bb790880f`，独立ignored源码6309a040…eee1b（未包含在该提交）；本机NumPy1.26.4／MuJoCo3.15.0／dm-control1.0.48的官方factory quadruped_walk构造／数值查询收据耗时.094秒，不含import及最后写盘。reset／step／render拒绝守卫，完整integration/task/RNG/clock/reset前后hash相同；0真实数据／外力写入／Dreamer前向／GPU。只验证元数据，不当自然state、RGB线索或新physics验收。
+- 查询torso质量67.8584013kg、全模型107.1179058kg、主惯量[1.5322427,1.7643184,2.2108267]；camera2 trackcom／FOV45，world-y在camera为[0,−.4472136,.8944272]，不能称相机平面轴或任意姿态body pitch。冻结q的J_rot M^-1 J_rot^T尺度不证明finite contact上界。独立科学Agent审查修正轴及nested-probe归因措辞，未冻结力矩幅度或新实验。
+- root将既有script／JSON／工程notes副本上传仅sv3 bootstrap的 `cue-model-metadata-182365d/`，21:22:29北京时间核三个hash逐字节一致；JSON d2edd481…dd1e，notes9861929a…33c4e。未server重跑或checkout源码，canonical干净d9be557不变，无sv1/sv2同步。完整hash／命令／证据／限制见 [DL_CUE_PREFLIGHT.md](DL_CUE_PREFLIGHT.md)。
+- [DL_CUE_IDENTIFICATION.md](DL_CUE_IDENTIFICATION.md) r0仍为Agent建议，未采用nested probe／torque；首选先补纯合成检测范围唯一规范（当前seed／维数／cost／门未定），以已知信息反例限制诊断器阴性的解释。不重拟合旧r1、不改原停止结论、不读blind、不推进gate/训练；完整目标未完成。
+- 资源口径：当前0GPU，已有模型诊断最低1张独占A100串行，2张可并行独立工作，sv3 GPU4–7授权足够；既有约2.5／6.5GiB是不同已执行对象采样峰，不承诺新训练上限。剩余总GPU小时未定，旧20.4纯训练外推不是完整预算。本轮没有当前GPU占用核查或新GPU运行。
+
 ## 2026-10-11 20:47后：有限动作接口CPU完成、独立复算通过
 
 - 确定执行／clean Linux测试SHA `f1ae4d6513e81ed680992b64ba8ebade7d256d52`；本机最终29项27pass/2Linuxskip（1.543秒），sv3全部29项3.062秒、两真实owned-group反例无skip、pip check通过。三DL新实现／三测试／限定LF属性已入Git，未改Dreamer算法。独立审查发现完整restore覆盖task后可能改reward定义，已补restore后实际task/model exact守卫和反例，未放宽科学门、dtype、容差或预算。
