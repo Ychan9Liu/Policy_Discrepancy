@@ -1,5 +1,19 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 18:44反馈工程r2完整运行与独立审计
+
+实际代码及clean server CPU测试SHA `0d49c589b525ba0c26f9f85bf52c23573dc19507`；只sv3新clean detached worktree部署，canonical干净d9be557保持。新bundle SHA256 `01014b14c8e2710ca37caaf6b43695bd993043076536b830d7aae8acec473d34`，CPU外部runner `c44f46db1fd71d212e29f33d20d55eea0318a412ec02ad9492f9b635d78d5b66`，launcher `730e4d36b8413c8162acb53915d385390bcd4b7b676ad639cab558c8708b292c`；均本机保存/SCP后server核hash。CPU28项全pass（9/2/7/4/6，含Linuxgroup两反例无skip），process含import耗时.249423/9.823243/2.048627/.153703/2.296860秒；pip、七依赖/source32hash/仅cal8 decode通过。
+
+18:20:49北京时间fresh完整query/pmon GPU4–7各0MiB/无作业，0–2未知作业未碰；launcher另存fresh inventory/XML/pmon及新CUDA/EGLprobe。实际GPU4/UUID9c070d5a/cuda:0/EGL4，worker1835714实际C+G同卡收据18:22:40.779。300k seed0/size50m/vision64/propriofalse/repeat1，32states×4paired×q/p×H100/private20261018/stat20261019/science r1/engineeringr2/zero optimizer，config和四source/audit pins不变。attempt02于18:21:44–18:31:01完成，supervisor537.614524秒/exit0/非timeout/workerterminal/ownedgroup cleanup requested，1秒521sample峰2587MiB。32source oracle及256branch的physics/cached-policy复放通过，参数/optimizer/norm和counters不变，无absorbing padding。
+
+独立artifact/statistics审计exit0/passed，全部8artifact/25600plannedkeys/源pins/数值/退出完整性及原bootstrap分类一致，maxarith差5.684341886080802e−14。额外official CPU physics独立实现exit0/passed，256record/25600steps F64/F32/discount bytes exact、restore/integration0、task/RNG/counter/flags/expected_done exact，39.280067秒/CLI39.317794秒、120s独立CPU硬限/zero GPU；不执行真实FromDM wrapper/model/render、不重新生成source/第二backend。审计器脚本分别b3a18990…c6cbc/54e5b5a2…ef1ab，完整hash/commands/receipts见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)。服务器CPU物理auditor12selftests通过1.127189秒；数组/可信pickle仅cal8，blind未读。
+
+冻结主量−1.0046095186171677/名义95%[−2.255450222882697,−.1739823539403551]，not_supported停止有限平均对象；各8ep/4position/4RNG总体mean均负，四RNG逐state分散不当真值。不开blind/新gate/训练、不追加H/n/RNG/checkpoint；下一步独立key/可见性/actor前置、现有calibration CPU图像语义审查。selector/10800s和posterior-head压缩均未采用建议，完整目标仍未完成。18:31:30 fresh query/pmon 4–7各0MiB无compute、本项目GPU4已释放、0–2未知未干扰，这是时间快照。
+
+完整根 `/data/Policy_Discrepancy/runs/dl-feedback-20261011-0d49c58/cp300000-attempt02/`，本机小证据镜像 `analysis/outputs/dl-feedback/0d49c58/`；三次本机0d49push因连接失败，sv3明示URL/disabled-prompt尝试无认证未推，未确认远端该SHA。已知成功push仍bd0af3a、remote main595e982f，未main合并；后续最终Git同步状态单独记录，不把部署成功冒称Github成功。
+
+**后续CPU图像初查**：独立image-export-r1脚本5a115a66…96a9/SCP后核hash，server八项synthetic通过；新 `calibration-image-qa01` 导出105PNG及frames.json，先核authority/8artifact bytes，仅读取四numeric图像/位置/episode字段，不加载pickle/U/model/blind或重render，GPU0。frames收据5b1a31e3…4329，overview70004862…b222，全部32source/fresh pairs已固定layout目测。部分足部朝上/侧倾外观只是待物理核验推测，不标跌倒或actor失败；不能据图像判关键性/信息增量/动作排序。完整输出/限制见结果文档，下一CPU continuous任务状态核查与外部key方案待论证，不启动新physics/GPU/训练。18:49本机再次push仍连接失败，当前仍未确认0d49 remote，不改变科学状态。
+
 ## 2026-10-11 18:07首个反馈尝试失败与工程r2
 
 - 实际确定测试/运行SHA `bd0af3a47ac0861d932a4a08af2dd1ce84754dbe`，已push/远端独立核验，remote main仍 `595e982f1a3939775879728009e2105ee516e86d`，未main合并；只同步sv3 clean detached `/data/Policy_Discrepancy/dl-worktrees/bd0af3a`，canonical repo干净d9be557保持。git bundle SHA256 `36342d166a2e3a671dd335b7acdbf8506b8802843185ec322f0c406d37dd3721`。

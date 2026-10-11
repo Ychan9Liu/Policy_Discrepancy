@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-11 18:44 DL反馈完整结果**：科学r1/工程r2、实际SHA `0d49c589b525ba0c26f9f85bf52c23573dc19507` CPU28项和GPU4 attempt02完整exit0、537.614524秒/2587MiB、zero optimizer通过；独立artifact统计及official CPU F64 physics25600步审计passed。主量−1.004610/名义95%[−2.255450,−.173982]，冻结裁决not_supported，停止此有限平均对象、不追加H/RNG/样本/checkpoint、不进blind/gate/训练；不否定所有子集或持续压缩保护。完整证据/配置/资源/失败/边界见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)，后续先外部关键性/可见性/actor证据，selector候选和新预算未采用。下方18:07及更早为历史，正式M2协议未变。
+
 **2026-10-11 18:07 DL反馈实际尝试**：科学DL-feedback-r1不变；bd0af3a47ac0861d932a4a08af2dd1ce84754dbe clean server CPU27项及独立审计器synthetic自检通过。GPU4 attempt01在32actual size50m源策略oracle字节精确通过后、首次反馈前因source scalar/0D数组容器接口失败exit1，无utility产物，未通过闭环验收。工程r2必要容器修复及物理7项/两代理复核通过，须确定提交CPU后新attempt02同32状态/4paired/H100/GPU4/3600s复验。完整失败证据及资源/版本见DL_VALIDATION_LOG和DL_FEEDBACK_DIAGNOSTIC第10节；已释放GPU4，不构成方法或训练结论，下方早期“尚未启动”均为历史。
 
 **2026-10-11 DL反馈当前阶段**：有限正常反馈科学协议 `DL-feedback-r1` 已由Agent在完整授权内冻结，`DL-feedback-engineering-r1` 实现及CPU检查见 [DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md) 第9节。GPU未启动、独立runner与artifact审计尚待补齐；只有GPU4单卡3600秒有限诊断范围，不是正式训练或方法效果证据。此前“未冻结候选”是13:09阶段历史。方法仍需第二信号增量、active gate/压缩、替代解释及条件训练，不修改M2正式协议。

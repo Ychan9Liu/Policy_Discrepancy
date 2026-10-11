@@ -1,6 +1,6 @@
 # DL 单次观测省略与正常反馈：冻结协议
 
-版本 `DL-feedback-r1`，2026-10-11。**当前状态：科学协议保持冻结；工程r1在确定提交 `bd0af3a47ac0861d932a4a08af2dd1ce84754dbe` 的27项server CPU检查与32个实际size50m源策略oracle通过，首个GPU尝试在反馈开始前因单帧数组容器接口失败，无utility产物。工程r2只修复该容器并增加反例测试，须确定提交server CPU复验后以新attempt继续。** 这是用户完整前验证授权内的Agent设计，不是用户逐项确认的新方法。只论证正确生产动作接口上的有限控制机会，不修改 DtLatch/gate、D/e/K、alpha/rho、free-nats、训练损失或正式 M2 协议，不授权训练。旧 `DL-predictive-MC-r1` 仍按原门停止、裁决 `MC-inconclusive`；不能借新对象或新来源改写旧产物。
+版本 `DL-feedback-r1`，2026-10-11。**当前状态：科学协议保持冻结；工程r2在确定提交 `0d49c589b525ba0c26f9f85bf52c23573dc19507` 的clean server CPU28项通过，GPU4 attempt02完整运行及两项独立审计通过。平均主量−1.004610/95%区间[−2.255450,−0.173982]，按冻结门not_supported，停止有限平均对象，不启用blind或训练。** 完整结果见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)，r1失败及必要容器修复保留第10节。这是用户完整前验证授权内的Agent设计，不是用户逐项确认的新方法。只论证正确生产动作接口上的有限控制机会，不修改 DtLatch/gate、D/e/K、alpha/rho、free-nats、训练损失或正式 M2 协议，不授权训练。旧 `DL-predictive-MC-r1` 仍按原门停止、裁决 `MC-inconclusive`；不能借新对象或新来源改写旧产物。
 
 根 Agent 实际核查，新的 `DL-source-r1` attempt01 在 `bb78e8c625c141d862293d26fc32d5ca64a598cb` 因host BF16隐式传输检查失败且没有有效产物；只修显式device_put的 attempt02 已在确定提交 `f2d24da1831da2ffca22d313e7f534c96fc0d3eb` 于2026-10-11 13:00:42–13:08:22完成。source完整收据与独立artifact/八calibration CPU physics审计passed，见 [DL_PRODUCTION_SOURCE_RESULTS.md](DL_PRODUCTION_SOURCE_RESULTS.md)。冻结时根 Agent 与本科学审查未查看新 source 收益、D/K/C/e/U，也未读取新 blind 数组；数值沿用原候选及内部审查，未按结果修订。来源通过不能替代反馈实际policy/key/F64 reward语义验收；科学协议冻结不等于工程或科研验收。
 
@@ -115,7 +115,7 @@ lower95>0只是**平均机会的探索充分门，不是选择性保护的必要
 
 所有输出保持 `training_authorized=false`、`proceed_short_training=false`、`eligible_method_training=false`、`method_effectiveness_established=false`。即使平均机会阳性，仍需真正未见数据、独立目标子集标签、第二信号相对D的增量、背景/OOD/actor能力等对照、真实rep压缩和条件训练。真物理状态只作诊断证据，不作为vision64/propriofalse部署gate输入。
 
-本轮交付为科学协议冻结、模型／物理／runner 实现及必要 CPU 反例测试；source complete与独立审计已完成。反馈工程验收尚未闭环，首个GPU尝试及必要容器修复见下节。首选继续当前完整授权任务：完成工程r2确定提交CPU复验、fresh资源核查、新attempt有界反馈诊断及独立产物审计；不另选gate或启动训练。形成可正式实验方法仍未完成，也不保证本对象找到有效方法。
+本轮交付为科学协议冻结、模型／物理／runner 实现及必要 CPU 反例测试；source complete与独立审计已完成。反馈工程及有限对象实际验收、负裁决与证据范围见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)；首个失败尝试与必要容器修复见下节。首选继续当前完整授权任务：从现有calibration建立独立外部关键性、视觉可获取性和actor能力证据，再决定是否另立信号候选；不启用blind或训练。形成可正式实验方法仍未完成，不能将本有限负结果改成全后验保护否定。
 
 ## 9. DL-feedback-engineering-r1 实现与当前验收边界
 
@@ -143,6 +143,6 @@ runner 先完成全部32源RGB／carry／eval-key oracle，再生成反馈收益
 
 GPU4 attempt01目录 `/data/Policy_Discrepancy/runs/dl-feedback-20261011-bd0af3a/cp300000-attempt01/`；18:06:29–18:07:30北京时间，父监督worker实测38.720526秒、exit1、非超时，PID1828665已终止并请求清理自身group；1秒采样37点峰值2501MiB。32个预定源RGB/carry/eval-key上未改公共policy及适配器q的raw/after-carry逐字节oracle全部通过；随后 `source_observation()` 的NumPy scalar reward/flags无法满足物理入口要求的0D ndarray，在首次fresh render和反馈分支前失败。无feedback NPZ、F64收益、result/complete，最终整诊断参数冻结检查未到达；不能称闭环或utility验收。完整日志/plan/budget/资源收据留server，本机小文件镜像 `analysis/outputs/dl-feedback/bd0af3a/cp300000-attempt01/`。
 
-必要修复 `DL-feedback-engineering-r2`：单帧索引改为 `np.asarray(...).copy()`，保留全部dtype/shape/bytes，恢复生产wrapper的0D容器；物理精确检查、模型/RNG、state/key/carry、科学r1和预算不变。runner修复SHA256 `255bb4edfede73608636973902c79caf15c26ab83311665655207014F9A3F3A5`（十六进制大小写等价），两代理独立复核转换及实际模型 `_obs` B1字节相等；新增真实quad-wrapper源数组到初始化接口整合反例，全部7项物理CPU测试通过2.077秒。r2独立审计器只更新工程版本，原r1不可变副本保留；新SHA256 `b3a18990f3e9c29606e60216ea06fa5d022169ea1c8cae3f3bc39f39c47c6cbc`，同一五基础/三完整/24篡改自检通过5.07秒。仍须新SHA/server CPU及新attempt实际验收，不复用失败attempt作完成证明。
+必要修复 `DL-feedback-engineering-r2`：单帧索引改为 `np.asarray(...).copy()`，保留全部dtype/shape/bytes，恢复生产wrapper的0D容器；物理精确检查、模型/RNG、state/key/carry、科学r1和预算不变。runner修复SHA256 `255bb4edfede73608636973902c79caf15c26ab83311665655207014f9a3f3a5`，两代理独立复核转换及实际模型 `_obs` B1字节相等；新增真实quad-wrapper源数组到初始化接口整合反例，全部7项物理CPU测试通过2.077秒。r2独立审计器只更新工程版本，原r1不可变副本保留；新SHA256 `b3a18990f3e9c29606e60216ea06fa5d022169ea1c8cae3f3bc39f39c47c6cbc`，同一五基础/三完整/24篡改自检通过5.07秒。后续确定版本server CPU及attempt02实际验收已完成，见结果文档；不复用失败attempt作完成证明。
 
 18:07:40北京时间fresh query/pmon确认GPU4–7各0MiB无compute作业，GPU0/2未知作业未干扰；GPU4已释放，这是时间快照。最低1张独占A100串行；本对象只用GPU4/3600秒，授权四卡无需占满。总方法验证GPU小时尚未冻结，过去2.5–6.5GiB峰值不能保证其他显卡/训练资源。

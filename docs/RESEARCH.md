@@ -732,3 +732,17 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **已验证工程事实与限制（18:07更新）**：确定提交 `bd0af3a47ac0861d932a4a08af2dd1ce84754dbe` 的server clean CPU27项、含Linux真实process-group监督、source绑定及pip检查通过；runner独立审查和独立artifact审计器已完成，五基础/三完整synthetic/24重新hash篡改自检通过，历史额度中断已解除。GPU4首个反馈attempt01的32actual size50m源策略oracle逐字节通过；其后source reward/flags scalar与物理0D ndarray接口不符，在首次fresh render/反馈前失败，无收益/result/complete。必要工程 `DL-feedback-engineering-r2` 只恢复容器，dtype/shape/bytes、实际模型输入、科学r1/随机流/精确门不变，经两代理复核及新增真实quad-wrapper接口反例，物理7项本机通过；须确定提交server CPU和新attempt实际验收。当前仍无闭环效用、独立信号增量、gate／训练或性能结果；细节与失败范围见DL_FEEDBACK_DIAGNOSTIC第10节及DL_VALIDATION_LOG。
 
 **下一问题与尚未采用方法**：完成工程r2确定提交server CPU检查后，以新attempt在GPU4固定预算内重验反馈及条件复放／独立审计，保留attempt01失败证据，不改变冻结样本/窗口/RNG/统计。资源最低1张独占A100可串行，2张可并行独立环节，当前4张授权足够；已有约2.5–6.5GiB峰值仅为过去A100单项，剩余总GPU小时未冻结。科学对象完成后仍需真正未见目标子集、第二信号相对D增量、背景／OOD／actor对照、active rep压缩及S/P/W/reward-only对照与条件训练；不能将机会检查替换整体科研目标，尚未采用新的gate或训练。
+
+### DL-17 正常反馈负裁决与独立关键对象前置（2026-10-11）
+
+**已验证有限事实**：科学DL-feedback-r1保持原门，工程r2确定执行及clean CPU SHA `0d49c589b525ba0c26f9f85bf52c23573dc19507`；CPU28项、32actual size50m源策略oracle及GPU4 attempt02完整256branch/25600动作通过，两项独立artifact/统计与official CPU F64 physics审计passed。主signed H100累计q−p为−1.0046095186，名义95%episode-bootstrap为[−2.2554502229,−.17398235394]，按冻结门 `exploratory_average_opportunity_not_supported`。八ep和四position/RNG总体均值均负，但四RNG逐state散布大，不当精确正负真值。完整证据、失败保存、SHA/配置/资源、初帧pixel差和独立审计局限见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)。
+
+**授权内Agent决定**：停止这个有限平均对象，不追加窗口/RNG/样本/checkpoint、不启用24blind、不采用新gate、不进入短训练。下一步先用现有calibration核camera/body/contact/正常历史的可见性，再建立与D/K/e及偶然局部正号无关的外部关键对象：有限真实动作排序/代价改变、信息可获取、现actor确实利用。只查看图像不能证明关键性或actor能力；这些前置未满足时不把可能存在子集当大量新rollout的依据。自然状态无对象时才论证合法单transition有界挑战，明确OOD，类型/幅度/动作集合/标签/预算未冻结。
+
+**理论区分与工作假设**：同h及同actor kernel的真正latent边际策略满足KL(Aq||Ap)≤raw KL(q||p)，但当前D是q/p mode的条件Normal对称KL/actiondim，不能套用单向K的界。近tie可K趋0而mode D维持非零，相同mode也可K>0/D=0；K补充分布信息，却与D共享q/p，非统计独立或任务价值证明。背景新奇、prior学习不足或错误策略依赖可共同提高D/K。第二信号增量、关键性、active KL压缩保护及性能仍为待证主张。
+
+**Agent建议、未采用**：新 `DL-signal-increment-r0` 可用连续signed utility比较同自由度D-only非线性、D+K、D+H1 reward支持score，在新冻结后用独立episode留出联报相对增量和selected绝对收益。离线top2/4不是部署gate、不匹配压缩释放，固定ridge、24blind和10800s草案均未采用。最小posterior-head-only压缩学习干预也仅为建议，步数/lr未定；还须证明baseline真压缩任务信息、active free-nats、frozen actor利用及S/P/W/reward-only/OOD对照。有限负平均不否定条件子集或持续学习收益，不以这些可能性改写原裁决。
+
+**下一阶段具体问题**：首选继续当前完整授权聊天完成独立关键性/可见性/actor前置和合适目标定义；可立即做现有calibration CPU图像/语义审查，不需GPU。新物理或信号诊断须先由授权内Agent交叉审查冻结完整对象/配置/资源/停止门，不默默移植旧失败gate/短训练入口。形成可正式实验方法的整体目标仍未完成。
+
+**CPU图像前置进展**：完整r2 artifact仅四numeric字段独立导出105PNG/32固定source-fresh pairs，8项synthetic守卫及实际authority/hash通过，root已查看全部总览；无重render/model/U/pickle/blind/GPU。图中可见本体/地面与姿态轮廓，部分足部朝上/侧倾外观是尚未物理核验的目测推测，不当跌倒或actor失败结论。下一可先核官方连续torso orientation/velocity及任务reward语义；这也不替代动作排序/线索可获取/actor利用的因果证据。输出/hash与限制见DL_FEEDBACK_RESULTS。
