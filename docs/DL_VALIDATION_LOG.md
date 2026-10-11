@@ -1,5 +1,13 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 04:04：冻结信号误差实际CPU执行及独立算术验收完成
+
+实际/Windows及clean Linux算术契约SHA `1a3fa6ddda95d3b71cc8d821fc54dfaab7c98e35`，新analysis模块和 [DL_RESET_SIGNAL_ERROR.md](DL_RESET_SIGNAL_ERROR.md) 科学r1；sv3 clean隔离checkout，canonical仍clean d9be557。父完整入口.23613102594390512秒/120秒/exit0/owned PID2044043终止，内.1864484278485179秒；父覆盖Python import/start/exit，超时owned kill且拒绝完整性。0GPU/0模型/0optimizer/0physics，仅读既有已审派生pickle/JSON前后同hash；完整pickle解码事实与科学数值白名单分别记录。whitelist SHA03707edf…fd0e1、diagnostic SHA8dfe644b…414e及镜像核验、完整命令/退出/代码/输入输出pins在新run engineering与complete.json；独立算术收据待追加。
+
+独审本机math.fsum独立重算，866项比较最大差1.3877787807814457e−17<1e−12，status passed；从冻结参数恢复四头逐ep预测，不fit/解pickle/重演模型或optimizer。ignored engineering/independent-error-audit.json SHA01f1b59b…754c、独立原代码SHA2a51774c…fa1，完整位置见报告。原“待追加”仅记录主入口完成时状态。
+
+新证据：cal的p参考3/8fold不同于fullcal p5，Umean .116656=.015231+.101425参考变化；固定参考后S/U相关仍−.271714，不能归为全部根因。原cal相关−.486839、24已开留出+.469730，冻结S权重负；K在cal MSE已较D-only差。新增位移与残差分解完整联报，不fit/调阈值/重算CI或将固定参考variant替换原target。当前只定位参考/关系转移现象，不证明单一因果根因或信号普遍有效；旧对象及正式M2保持。Agent下一建议合并全窗口rep对照与真实nativeactor闭环效用，候选协议/工程工作稿未采用/未GPU。整体目标继续，没有本轮fresh GPU核查，不冒充03:45卡状态仍实时。
+
 ## 2026-10-12 03:30：联合独审03通过，有限结果与GPU资源归档
 
 **03:48:41.314300 Git补推恢复**：本机clean结果提交 `45045f9017bd2d1ccf768cf5ae3d6bad41854562` 已push成功、ls-remote同SHA核验；远端main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。此前03:00/03:19网络失败不抹去，ignored `engineering/git-sync-final-45045f9.json` 保存恢复收据；本机/server canonical/sv1/sv2和实际tested主/独审代码保持。其后仅同步记录的文档归档，最终SHA由终点Git收据/回复给出，不重复代码测试或科学运行。
