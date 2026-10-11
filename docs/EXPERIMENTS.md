@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**最新DL结果（2026-10-12）**：固定 `DL-production-reward-r1` B与独立CPU审计已完整验收，执行/clean Linux54项SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`；主BC-MSE和真实选择均 **MC-inconclusive**，按原门停止、不追加路径/seed/H/对象，不读blind或推进gate/训练。完整首chunk oracle/源码与checkpoint冻结/独审数值及keys通过不构成方法有效。报告 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md)，冻结规范 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md)。B实际sv3物理GPU4单卡45.803秒/约.013GPUh/采样峰2505MiB，CPU独审0GPU；00:51:19.592302北京时间终点4–7空闲、本B GPU4已释放。完整方法及总GPU预算仍未定；正式M2协议不变，下方均为带日期历史。
+
 **2026-10-12 00:41工程冻结补记**：B与独立CPU审计已实现，Windows最终54test50pass/4Linux-only skip；完整报表接线在构造数据上通过，最终确定版本Linux与真实B仍未执行。科学对象/配置/停止和资源不变，日志记录工程证据，不能写成方法有效。
 
 **2026-10-12 B工程r1实施中**：科学r1/cal8/H20/128paths/BC-MSE/LOEO/MC停止门不变，规范 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) 已固定工程oracle容差及独审范围；源码、构造/tiny CPU和独立审计接线按验证日志推进，真实B尚未执行。既定资源为sv3物理GPU4独占一张A100/1800秒全入口≤.5GPUh；准备/统计/独审0GPU，完整目标总预算尚未确定、并非正式训练许可。任何tiny/工程通过不构成size50m或方法有效，blind/gate/训练与M2不自动推进，下方为历史。

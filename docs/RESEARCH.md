@@ -1,6 +1,8 @@
 # 研究问题与方法
 
-更新日期：2026-10-11。
+更新日期：2026-10-12。
+
+**DL 当前进展（2026-10-12）**：固定 `DL-production-reward-r1` B诊断、确定版本Linux工程验收及独立CPU审计已完成，实际SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`。主误差与真实选择均为 **MC-inconclusive**，按原门停止本B；不是方法有效或整体路线阴性。实测sv3物理GPU4单卡入口45.803秒、约.013GPUh、采样峰2505MiB；CPU审计0GPU，完整剩余GPU预算仍未定。完整证据和下一问题见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md) 与本文DL-27；下面早期“未实现/执行”及“本轮未核资源”均是各节注明日期时的历史状态。整体预验证授权仍有效，正式M2协议不变。
 
 **2026-10-10 新增研究候选：DtLatch（奖励闩）**。用户授权将本轮理论讨论归档、由助手命名并更新日志；这不等于确认采用方法、超参数或扩展实验。完整产出见本文末“DtLatch”章节，记录版本为研究候选 r0。已确认 v1 继续有效，新增候选不覆盖其方法、四组对照或实验协议。
 
@@ -817,6 +819,8 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 
 ### DL-25 生产奖励均值对象与有限 GPU 预算（2026-10-11）
 
+**后续状态**：本节记录协议冻结时的决定，真实执行及独审已完成，最新有限结果见DL-27；不再按“未实现/执行”安排重跑。
+
 **授权内 Agent 已确认诊断设计，未实现/执行**：科学、来源及官方模型源码交叉审查后采用 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md) 的 `DL-production-reward-r1`。原正确生产 cal8/32state/四已存 sampled q/p/七首 normalized 控制＋19zero/H20 不变；实际 official imagine 与 native reward pred，未来固定128 paths，私有seed20261024/统计20261025，0新 physics/render/optimizer，不读 records/blind。这是Agent在完整授权内的设计决定，非用户逐项确认、科研结论或已通过的工程。
 
 **测量修正与停止设计**：主量为逐path控制中心化、扣除 sample variance/N 的 signed BC-MSE，不截负值，排除 q/p future MC variance 差伪装技能；相对p和LOEO常数双gap、八ep等权/2000名义bootstrap。32/64/128、独立half/block固定可靠性epsilon≤源δ²/100=.0004 reward²，并要求20%阳性margin及lower95−epsilon>0；有限epsilon不是严格积分误差界。真实argmax效用独立联报，选择的epsilon_U≤δ/100=.002另判，不以MSE改善代替选择改善。固定一次完整对象，失败/不稳定/阴性/不确定均停止本B，不追加样本、路径、H、seed或checkpoint。
@@ -829,8 +833,22 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 
 ### DL-26 生产均值工程验证与资源口径（2026-10-12）
 
+**后续状态**：工程冻结后已完成确定版本Linux验收、一次真实B及独审，详见DL-27；本节实施中记录和反例保留供追溯。
+
 **授权内Agent工程决定，科学r1不变**：B白名单、官方只读私有root模型、BC-MSE、独立全入口监督与独立CPU审计实施中。BC-MSE用F64 centered residual坐标保持原数学公式，独审用off-diagonal U-stat；不用clip/阈值归零。真实B前固定native point oracle `1e−6+1e−5×abs(ref)`、统计absolute1e−10以及身份/keys/选择/CI零侧/分类exact，见 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md)。源码交叉审查发现并修复完整来源清单不一致与MC不稳定却允许robust标志的契约错误，不改变原科学epsilon/相对margin/tie或停止门。
 
 **有限工程事实及反例**：Windows构造来源、实际tiny BF16官方imagine、统计偏差修正与worker边界检查已通过，Linux owned-process与最终确定SHA完整审计仍待验；详细数量/版本/证据按验证日志。near-uniform极大symexp bins tiny模型超既定point oracle，说明F32 softmax相消可能造成数值失败；已保留失败日志。well-conditioned tiny通过不证明真实size50m通过，也不证明奖励技能或方法有效。当前尚无本B真实数值结果，未读blind，不进入gate/训练。
 
 **资源答复与完整目标**：理论、构造数据、已有数值统计和独审0GPU。固定本B仅sv3物理GPU4一张独占A100/1800秒完整入口≤0.5GPU小时，不是实测耗时、显存保证或完整剩余总预算；GPU5–7无需占用。已有规模诊断1卡可串行、2卡可做相互独立环节；后续新训练配置/预算仍取决于辨别、正常压缩损伤及保护证据。历史2.5–6.5GiB不当新训练保证。下一继续当前完整授权任务，先完成确定SHA工程验收、fresh指定卡核查及一次B与独审；任何结果均不代替DL-24列出的科学缺项。
+
+### DL-27 生产奖励诊断完成、MC不确定与实测算力（2026-10-12）
+
+**已验证有限事实**：实际B与clean Linux工程SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`，54项Linux全通过，原cal8/32state/四固定初始sample/七控制/H20/128futurepaths完整512chunks及首chunk8960点oracle通过；checkpoint全state、输入及源码前后hash不变。独立CPU审计完整84,487数值/4,767exact字段/212零侧条件，最大差1.6653345369377348e−16；全部root/sample keys、选择和分类一致。原真实physics proof只认证复用，本B没有新physics/render/actor/optimizer；不读records/blind。详细来源、工程失败保存、命令、运行链及审计限制见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md)。这些是工程与有限测量事实，不是方法性能结论。
+
+**按既定判据得出的有限结果**：N128的BC-MSE q=.057380511、p=.058090633、LOEO常数=.038067630；p−q=.000710122，名义CI95[−.003302181,.005420749]，epsilon=.001558142；constant−q=−.019312881，CI[−.037593278,−.003038931]，epsilon=.000966221。两epsilon均超过原.0004门，主分类 **MC-inconclusive**。真实选择q−p=−.007974456、q−constant=−.157842881，两epsilon_U约.0124/.0121超过原.002门，选择分类同为MC-inconclusive。常数方向的负区间仅保留为描述性结果，不能越过“任一MC不稳定先判不确定”的停止优先级；既有calibration名义区间不是blind确认。完整子集/block/half和尾值均联报，未筛选有利状态。
+
+**授权内Agent执行决定**：固定一次B及独审已完整完成，按原规则停止；不为寻求阳性追加路径、seed、H、控制、episode或checkpoint，不由此读blind/启gate/训练。这不修改M2或A及旧H20/H100裁决，不是用户逐项确认的新算法。H20开放环RSSM＋reward-head有限对象不确定，既不能支持该信号有效，也不能否定raw latent信息、H1 head整体技能或后续学习路线。
+
+**资源事实与建议**：B只使用sv3物理GPU4独占一张A100-SXM4-80GB，父完整入口45.802874845秒、外部终点45.843115024秒，约.0127GPUh；采样显存峰2505MiB/约2.45GiB。1800秒/.5GPUh是本对象硬上限，非整体ETA；独审父2.807秒/0GPU。00:51:19.592302北京时间终点快照4–7各0MiB、无compute/pmon作业，GPU4已释放，5–7未用于本B，不保证以后空闲。已有规模诊断1卡串行足够，2卡仅用于独立环节并行，无需全占4–7；完整剩余GPU小时及新训练显存仍未定，本项峰值不能作为训练保证。
+
+**工作假设、尚无证据的推测及下一问题**：可能存在相对共同历史新增、后验可学习、且受正常active rep压缩损害的决策信息；现有A/B证据尚不能共同建立这条因果链。第二信号对D的独立增量、保护收益及最终性能仍无足够证据。首选继续当前完整授权chat，以0GPU协议分析明确共同历史与合法信息干预、观测可获取性、独立外部动作成本、normal rep损伤的必要/充分证据、唯一有限对象及停止规则，再审定是否执行；不得按D/K/head结果挑状态。配对可见cue、压缩/保护、强度与conditional-shuffle/reward-only/OOD及学习性能都是未完成事项，不把候选写成已获支持的方法。

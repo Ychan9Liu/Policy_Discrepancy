@@ -1,5 +1,9 @@
 # 项目状态
 
+**当前：2026-10-12 固定B及独立审计完成，科学不确定，整体方法尚未完成**。实际执行/clean Linux54项全通过SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`；B完整入口45.803秒、首chunk8960点通过、完整state/来源/源码不变，独立CPU审计最大差1.67e−16及keys/选择/分类一致。主BC-MSE与真实选择均按原优先门 **MC-inconclusive**，停止此B，不追加路径/seed/H/样本或读blind/启gate/训练；不等于方法有效或整体路线阴性。证据/限制/资源见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md)，研究解释见RESEARCH/DL-27。
+
+B只用sv3物理GPU4独占一张A100、约.013GPUh、采样峰2505MiB；CPU独审0GPU。00:51:19.592302北京时间终点核查4–7各0MiB、无compute/pmon，本B GPU4已释放、5–7未用；此为带时间快照。已有模型诊断1卡串行足够/2卡仅独立并行，完整剩余GPU小时和新训练显存未定。d685研究分支已push核验、未main，仅sv3 clean隔离目录执行；server canonical clean d9be557不变、本机canonical main595e982f及原dirty两docs保留、sv1/sv2未同步。后续结果文档提交/远端状态以最终Git收据为准，不冒充执行SHA。首选继续当前完整授权chat，0GPU审定共同历史下新增可见信息及normal active rep损伤的独立因果诊断；第二信号/gate保护/替代解释/性能尚未完成。**以下带日期条目均为历史快照，早期“未执行”不构成重跑安排。**
+
 **2026-10-12 00:41 B工程稿冻结**：12新增工程/审计/测试文件已实现并交叉审，最终Windows54test50pass/4Linux-only skip/10.495秒；独立完整报表接线synthetic max8.88e−16。尚未真实读取B输入/模型或使用GPU；最终确定提交/clean Linux工程验及实际B/独审待执行。此前“审计接线中”是实施阶段记录。本B仍仅sv3物理GPU4/1exclusive A100/1800秒≤.5GPUh，完整方法总预算未定。继续当前chat的授权任务，不以工程代科学，详情验证日志及DL_PRODUCTION_REWARD。
 
 **2026-10-12 B工程r1实施中，真实执行尚未启动**：DL-production-reward-r1科学对象不变；白名单/私有root模型/BC-MSE/独立parent已实现，独立CPU审计器接线中。Windows整组37项34通过/3POSIXskip，之后补充Git-helper超时检查待Linux验；这是b675965c9e753644f2cb2cd133469717969f86cc加未提交工程稿的构造/tiny验证，不是最终SHA或真实方法验收。源码交叉审已修24文件pins与MC-stable&&positive契约。固定point oracle/F64统计容差、数值反例及当前工程范围见 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md)、RESEARCH/DL-26和验证日志。当前准备0GPU；本B物理GPU4一张独占A100/1800秒≤.5GPUh，GPU5–7无需占用，完整总小时/新训练显存仍未定；没有本轮fresh占用核查或新GPU运行。继续现有完整授权chat，先确定提交Linux工程验，再fresh资源/一次B/独审；完整方法缺项不变，下方为历史快照。

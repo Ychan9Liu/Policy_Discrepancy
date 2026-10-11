@@ -1,5 +1,19 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12：固定B真实执行、独立审计与实测GPU资源
+
+执行及clean Linux工程完整SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`，五B脚本/独立auditor/六测试入Git，未改Dreamer原算法及正式M2协议。Windows54项50pass/4POSIXskip、10.495秒；确定版本Linux54项全过/no skip、19.993秒，pip check与独审selftest通过，CPU工程入口21.489秒/0GPU。前述b675加工程稿及“未启动”记录为历史。
+
+sv3 clean隔离工作区 `/data/Policy_Discrepancy/dl-worktrees/d685a2d`；正确f1来源cal8、四sample/32state/七首控制/H20/128futurepaths完整512chunks。00:45:15.649498北京时间fresh检查GPU4–7各0MiB/无compute/pmon；只安排物理GPU4独占A100，CUDA_VISIBLE_DEVICES为其UUID、进程内0，EGL physical4旧proof已核但本B无新render。B父PID1976247/worker1976253，00:45:47.826572–00:46:33.669653，父全入口45.802874845秒/1800秒硬限、外部terminal45.843115024秒、exit0/无timeout/ownedterminal/完整链；采样显存峰2505MiB，单卡入口约.0127GPUh。5–7未用，0新physics/render/actor/optimizer/records/blind。完整state hash `e666c93929194015303e7138fa0c92414c96482dc2a0dd1de450efec8d532cb4` 前后相同，checkpoint/config及24源码pin不变。实际首chunk8960点全过既定oracle，最大差1.00176481e−7；tiny极大bins失败保留，未放宽门。
+
+独立CPU auditor PID1979800，正文2.568799903秒/父2.807263974秒/外部terminal2.807582287秒/120秒/exit0/完整链。全报告84,487numeric/4,767exact/212零侧条件，最大差1.6653345369377348e−16；327,680root与327,680sample keys、选择/CI零侧/分类完全一致，0GPU/模型/新physics。通用父actual reads/GPU保留unknown，审计正文及verification声明实际八源/八预测数值/0GPU，不将继承planned-GPU1当审计GPU执行。
+
+科学原门：BC-MSE p−q=.000710121936、constant−q=−.019312881435，epsilon .001558142009/.000966220659均>.0004；真实选择q−p=−.007974455525、q−constant=−.157842881330，epsilon_U .012434810575/.012133891436均>.002。两分类 **MC-inconclusive**，任一MC不稳定优先，不被常数负名义CI改判；完整子集/尾值联报。停止本B、不追加L/seed/H/对象或读blind/gate/训练，工程完成不当方法效果或整体路线阴性。完整数值、审计限制、命令/配置及下一独立因果问题见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md) 与RESEARCH/DL-27。
+
+服务器证据 `/data/Policy_Discrepancy/runs/dl-production-reward-20261012-d685a2d/`（cpu、launch/resources、cp300000-attempt01及其independent-audit01）；本机ignored镜像 `analysis/outputs/dl-production-reward/dl-production-reward-20261012-d685a2d/`。31文件逐一hash/size同server，清单SHA `94c63a491ad79d0fca85dff26aba4dc073f1986ee0a61494dc8a3142b3c4046c`，archive SHA `aaf5521d714e1c1cd2e5f7119e169e4a1cda282c8430de3cabc4620d8c1c1225`；原始产物不入Git。
+
+00:51:19.592302北京时间终点fresh快照GPU4–7各0MiB、无compute/pmon，本B GPU4释放、5–7未用，不保证以后持续空闲。研究分支d685已push/远端核验，未main；仅sv3确定版本clean工作区运行，canonical server clean d9be5574878d2c3f117cc6667be844f9a527eb84不动，本机canonical main595e982f1a3939775879728009e2105ee516e86d原dirty RESEARCH/STATUS保留，sv1/sv2未同步。结果文档终点提交与实际测试/执行d685仅文档差异，最终SHA/push/main以本次Git收据核验。资源答复：当前0GPU协议分析可继续；已有模型诊断1独占A100串行/2可独立并行，无需全占4–7；全目标剩余GPU小时和新训练显存仍未定，旧20.4小时外推及本项2.45GiB不当整体预算。整体预验证目标active，下一首选继续当前chat审定共同历史下新增可见信息/normal active rep损伤的有限独立因果协议。
+
 ## 2026-10-12：B工程r1、固定数值oracle与GPU资源答复
 
 00:41工程冻结更新：五B脚本/独立auditor及六test共12新增文件已实现并完成不同Agent只读源码交叉审查。root最终Windows54项50pass/4POSIXskip、10.495秒，完整日志 `cpu-release-precommit-r1.log`；audit模块16项合成CPU过，producer完整报表双向接线84,487numeric/4,767exact/212zero-side每向验证，zero差0、固定random差8.881784197001252e−16。actualtiny的27readkeys均dyn/rew前缀。真实数组、checkpoint、GPU尚未读/启动，最终clean Linux/test SHA及实际运行仍待。后续交付只以确定版本CPU和真实完整独审为准，不把此构造证据写成方法有效。
