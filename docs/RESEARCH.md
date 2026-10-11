@@ -2,6 +2,8 @@
 
 更新日期：2026-10-12。
 
+**最新实测（2026-10-12）**：正常reset有限CPU校准及独审已在确定SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316` 完成，Linux43项全过。八初态/28对只有9与18的闭δ近优集合不交，有限存在性条件成立；主2400＋独审1120真实transition及完整字节/源退出链通过，父入口6.650秒＋4.589秒，实际0GPU。详见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md) 和DL-29。本对象停止，没有打开blind、执行模型/训练或证明RGB/q/双信号/正常压缩；完整目标仍未完成。下一先冻结模型/读出规范，已有规模诊断1卡可串行、2卡可独立并行，完整剩余GPU小时未定。下方“实施中”是本轮执行前状态。
+
 **最新DL推进（2026-10-12）**：已采用 [DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) 的 `DL-natural-reset-calibration-r1` 有限CPU对象，实施及确定版本验收中；仅正确production八cal的正常reset0、原七控制/幅度.25/H20/δ.2，2400物理transition上限/180秒/0GPU，不开24blind、不执行模型/gate/训练。实际结果须以随后运行记录为准；此协议不是方法有效。必要性与后续建议见DL-28。上一轮06448d687526395cb231eff86b3c2af1a4550e97已补推并远端核验，main仍595e982f；B保持停止与MC-inconclusive。
 
 **DL 当前进展（2026-10-12）**：固定 `DL-production-reward-r1` B诊断、确定版本Linux工程验收及独立CPU审计已完成，实际SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`。主误差与真实选择均为 **MC-inconclusive**，按原门停止本B；不是方法有效或整体路线阴性。实测sv3物理GPU4单卡入口45.803秒、约.013GPUh、采样峰2505MiB；CPU审计0GPU，完整剩余GPU预算仍未定。完整证据和下一问题见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md) 与本文DL-27；下面早期“未实现/执行”及“本轮未核资源”均是各节注明日期时的历史状态。整体预验证授权仍有效，正式M2协议不变。
@@ -864,3 +866,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **工作假设、建议及反例**：正常reset可能提供先验无法接收、后验可学习的有限决策信息；cost差异但同一控制始终近优、RGB不可辨、错误posterior、D漏检和inactive rep均是反例。后续一个建议是共享q/p等权的action-centered readout F，以预测有限库regret `Fq(argmax Fq)−Fq(argmax Fp)`为第二来源；它不需在线真实counterfactual标签，但非负来自argmax，不能证明q正确或信号已有效。必须另审定独立真实U、同容量D-only/D+K/D+S及S-only、合法nuisance/错误依赖/加性reward、训练/留出和停止。rawK有更新尺度/活跃性用途，却不普遍定义任务价值。
 
 **normal压缩的未决接口与下一问题**：原first65/context1会排掉reset0，不能验该帧的direct rep作用；真实terminal context＋新reset0–63是待工程验证的合法候选，dummy或context0不能冒充原配置。正常full-loss B与停止新增rep梯度R须继承同一完整optimizer/norm/counters及历史momentum，更新后重建history和重新拟合读出，排除prior追上/坐标漂移。B绝对净改善但R更好仍可支持有限rep抑制；仅KL下降或梯度恒等式不足。先完成本校准和独审，再决定下一完整模型/信号/机制规范，完整五项目标保持未完成，不因reset门或新协议存在宣布可正式实验。
+
+### DL-29 正常reset有限控制需要实测（2026-10-12）
+
+**已验证事实与有限裁决**：在冻结 `DL-natural-reset-calibration-r1` / 实际SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316` 上，八calibration reset0、原七控制/.25/共同zero尾/H20/δ.2全量验收；range≥δ仅9/14/18，28对仅9与18闭Aδ不交，分别为{1,4,5}与{2}。最小共同最坏regret .2404058425460036、减δ余量 .0404058425460036。唯一有限存在性条件成立并停止该对象，不加H/幅度/控制/episode/seed；表格和全部28对见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)。这是指定真实初态/控制库的外部需要，不是总体覆盖、功效或方法有效结论。
+
+**验收依据**：确定提交Linux43项全过；八fresh官方原seed reset/source160参考、主1120＋复放1120，完整source/newstate及原F32/newF64区别通过，实际integration最大误差0。独审另1120 stored-applied官方CPU步、独立fsum/closed集合/余量零侧/分类通过，连续最大差1.7763568394002505e−15；明确复用同一模拟器/restore，原160参考只认证复用。实际0GPU、两父完整入口6.6502385209314525/4.58881506556645秒，源/源码/退出/28文件镜像链完整。未读blind/RGB/carry，未执行model/actor/optimizer。资源快照没有重新核查，不能宣称4–7当前空闲。
+
+**尚待验证与下一建议**：当前RGB可辨、同h/prior及共同p sample、q可学习真实选择增量、第二来源相对D的独立辨别、正常active rep因果作用、选择性保护/替代解释及学习性能均未证实。首选在当前完整授权chat冻结下一完整模型/读出对象，包括合法来源、共享F及D/K对照、whole-episode训练/留出、blind一次启用范围与停止；本轮物理阳性不自动批准下一对象，也不挑9/18作确认集。normal reset训练context/重建history/重新拟合读出/完整optimizer B-R仍是待验证建议。已有规模模型诊断1独占A100可串行、2卡只用于独立并行；新训练配置与完整GPU小时尚未冻结，旧20.4GPUh或B的2.45GiB不能作为整体预算。整体预验证继续，不能以此宣布可正式实验。

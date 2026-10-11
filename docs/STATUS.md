@@ -1,5 +1,7 @@
 # 项目状态
 
+**最新完成：2026-10-12 正常reset CPU校准及独审验收完成**。实际/clean Linux43项SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316`；八初态/28对仅9与18闭δ集合不交，有限控制存在性条件成立并按门停止。主2400＋独审1120真实transition，source/newstate/reward/退出/hash链通过，父入口6.650秒＋4.589秒，实际0GPU；28文件930204字节镜像已核。详见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)。无blind/RGB/model/actor/optimizer/训练，完整方法尚未完成。下一继续本chat冻结实际同h/prior/共享读出/独立信号规范；normal压缩与学习性能仍缺证据。当前未核GPU占用；已有模型诊断1卡串行即可、2卡可独立并行，完整剩余GPU小时未定。aa9仅sv3隔离checkout，canonical/正式M2/sv1/sv2不改；结果文档最终Git状态以后续收据为准。下方“实施中”是执行前状态。
+
 **最新推进：2026-10-12 正常reset CPU校准实施中**。授权内科学交叉审查已采用 [DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) `DL-natural-reset-calibration-r1`：正确f2 source八cal/reset0、原7controls/.25/H20/δ.2，参考160＋主1120＋复放1120步/180秒/0GPU；独立CPU审计另180秒/1120复放。源码和fixtures实施中，尚无本对象科学实测，需确定版本clean Linux验收后一次执行。只证明有限外部控制需要的前置，24blind封存、不执行model/gate/更新，完整方法未完成。06448d6已补推并远端核验、main595e982f不变；上一轮网络失败收据保留，恢复收据在ignored工程目录。首选继续本chat完成本CPU对象及独审，再审定共同h/prior/readout和normal压缩规范。下方B仍科学MC-inconclusive且停止；其资源快照不当当前GPU占用。
 
 **当前：2026-10-12 固定B及独立审计完成，科学不确定，整体方法尚未完成**。实际执行/clean Linux54项全通过SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`；B完整入口45.803秒、首chunk8960点通过、完整state/来源/源码不变，独立CPU审计最大差1.67e−16及keys/选择/分类一致。主BC-MSE与真实选择均按原优先门 **MC-inconclusive**，停止此B，不追加路径/seed/H/样本或读blind/启gate/训练；不等于方法有效或整体路线阴性。证据/限制/资源见 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md)，研究解释见RESEARCH/DL-27。

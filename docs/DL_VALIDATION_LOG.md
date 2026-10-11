@@ -1,5 +1,15 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 01:51：正常reset完整CPU校准及独审完成
+
+科学r1/工程r1执行及clean Linux43项完整SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316`。Windows43项40pass/3POSIXskip，3.081秒；确定Linux43项无skip全过4.547秒、pip check通过，工程日志/完整命令在 `analysis/outputs/dl-natural-reset/dl-natural-reset-20261012-aa9fb7f/engineering/` 镜像。sv3仅新clean隔离checkout，canonical仍d9be557；本机canonical/main及原dirty两doc、sv1/sv2/正式M2未改。
+
+01:51:08–15主父完整6.6502385209314525秒、外部6.722968969028443秒/exit0/ownedterminal/fullchain；源八fresh原seed reset/source160参考及新主1120＋复放1120实际步通过，原source F32与newF64/fullstate契约分别验，integration实测全0。01:51:41–45独审父4.58881506556645秒、外部4.671188522130251秒/exit0/完整链，另1120官方stored-appliedCPU复放及独立fsum通过；连续max1.7763568394002505e−15，δ成员/28对/分类/余量零侧exact。原source160与freshreset独审只认证复用，不称新重演或独立模拟器。实际两对象0GPU/0GPUh，无GPU占用核查、RGB/blind/model/actor/optimizer/训练。
+
+八reset中range≥.2只有9/14/18，28对只有9/18闭Aδ不交，A9={1,4,5}、A18={2}，minimaxregret .2404058425460036、余量 .0404058425460036；有限存在性成立后停止，未用余量新增阈值或只挑成功状态。完整8成本/28对及边界见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)。这只是有限外部控制需要，不证明同h/prior、当前RGB/q、双信号或normal压缩/保护/性能，完整goal继续；下一完整模型/读出规范尚未冻结，原B科学不确定及旧停止保留。
+
+服务器 `/data/Policy_Discrepancy/runs/dl-natural-reset-20261012-aa9fb7f/`，镜像manifest28文件930204字节核通过；本机一次表格打印因GBK unicode减号exit1，改ASCII helper后exit0，不重演科学对象或改门。Git bundle验证/部署成功，aa9 GitHub首次push连接443失败；失败与随后最终同步分别记录，不将server bundle同步称GitHub已推。源码9文件冻结提交后本轮结果改五文档；最终SHA、远端核验以最终收据为准。资源需求当前0卡、已有模型诊断1卡串行/2卡独立并行，完整GPU小时与新训练显存不能由旧20.4GPUh/B峰值外推。
+
 ## 2026-10-12：正常reset对象采用及Git同步恢复
 
 上一goal turn完成B实测/独审/31文件镜像及五doc归档提交06448d687526395cb231eff86b3c2af1a4550e97，归类为实质进展；完整目标未达成。本轮重新读取当前clean版本、授权及现有主张，三Agent只读交叉审查来源/第二信号/normal压缩，发现正常task reset可建立共同history对象，以及first65/context1会排除reset0的工程边界。讨论没有把B MC-inconclusive变成方法或整体路线裁决。
