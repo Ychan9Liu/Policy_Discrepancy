@@ -1,5 +1,7 @@
 # 研究问题与方法
 
+**下一DL对象（2026-10-12，实施中，尚无新实测）**：授权内Agent采用 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) `DL-reset-joint-assay-r1`。正确production八cal上的0/B128/R128完整学习、共享F/唯一λ0及信号程序全部冻结后，才一次启用24blind正常reset；R只停止reset位置新增rep梯度，前向/历史momentum保留。明确离线episode串接/reset富集context1，不冒充自然replay或连续actor证据。首选sv3物理4一独占A100串行，完整3600秒≤1GPU小时为该对象硬上限，不是ETA或剩余总预算；当前未核资源/未启动GPU。原CPU有限物理阳性、B MC-inconclusive及正式M2不改；整个方法仍未完成。
+
 更新日期：2026-10-12。
 
 **最新实测（2026-10-12）**：正常reset有限CPU校准及独审已在确定SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316` 完成，Linux43项全过。八初态/28对只有9与18的闭δ近优集合不交，有限存在性条件成立；主2400＋独审1120真实transition及完整字节/源退出链通过，父入口6.650秒＋4.589秒，实际0GPU。详见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md) 和DL-29。本对象停止，没有打开blind、执行模型/训练或证明RGB/q/双信号/正常压缩；完整目标仍未完成。下一先冻结模型/读出规范，已有规模诊断1卡可串行、2卡可独立并行，完整剩余GPU小时未定。下方“实施中”是本轮执行前状态。

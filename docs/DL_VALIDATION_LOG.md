@@ -1,5 +1,15 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12：正常reset联合读出与完整学习诊断实施中
+
+授权内Agent交审采用 `DL-reset-joint-assay-r1`，见 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md)。八cal的0/B128/R128完整state、同容量共享F/唯一λ0、固定D/K/S回归程序全冻结才一次24blind；R只停止reset新rep梯度，B/R原完整optimizer/forward和历史momentum保持，明确reset富集离线串接context1。单sv3物理4/A100顺序执行，整个对象3600秒/≤1GPU小时硬限；不是整体剩余预算或ETA。02:44:16北京时间只读快照4–7各0MiB/无作业，0–2进程标未知且未干扰；快照不当启动保证。尚未真实source模型或新blind/未启动学习。
+
+当前本机combined41项：40pass/1Linux进程fixture skip，23.013秒；覆盖官方tiny BF16只读/reset common h/prior/sample、完整1001帧合成annotation、官方tiny RSSM原B梯度/forward/参数一致和R mask、128-call完整helper恢复/counter/key协议、共享F/动作顺序/错误q高S/加性reward/coverage/prior追上反例及父worker超时。仅fixtures与tiny工程，不证明真实信息或方法。曾一项人工wrong-q fixture依赖浮点近tie prior固定选0而失败，已改为按该人工例真实aq/ap构造有害Y；科学fit/choice/门未改，失败保留本机工具记录。补接线守卫/独审字段后需确定提交Linux再验收。
+
+最终primary＋numeric audit组合57项：56pass/1Linux进程fixture skip，29.131秒，日志 `analysis/outputs/dl-reset-joint/engineering/windows-primary57.log`。补齐真实B/R完整state reload守卫及独立数值两层审计；总体增量字段不解释成高D条件CI。此前41项为中间工程快照；这57项仍仅工程验收，确定提交Linux全项、实际对象与physics/runtime独审待执行。
+
+默认Dreamer/正式M2源码未改；新增DL私有adapter、standalone学习wrapper、numerical程序及owned联合入口/规范，产物仍不入Git。后续必须以实际完整SHA、运行收据、退出与独立审计报告确认结果；本记录不宣布方法可正式实验。
+
 ## 2026-10-12 01:51：正常reset完整CPU校准及独审完成
 
 科学r1/工程r1执行及clean Linux43项完整SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316`。Windows43项40pass/3POSIXskip，3.081秒；确定Linux43项无skip全过4.547秒、pip check通过，工程日志/完整命令在 `analysis/outputs/dl-natural-reset/dl-natural-reset-20261012-aa9fb7f/engineering/` 镜像。sv3仅新clean隔离checkout，canonical仍d9be557；本机canonical/main及原dirty两doc、sv1/sv2/正式M2未改。

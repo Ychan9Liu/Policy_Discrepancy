@@ -1,5 +1,7 @@
 # 项目状态
 
+**下一DL联合诊断（2026-10-12，实施中）**：已采用 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) 的0/B128/R128校准学习→共享F/λ0/信号全冻结→24blind一次联评规范；源码/数值/真实tiny只读与RSSM梯度fixture验收中，尚未读新blind或启动真实模型/学习。首选sv3物理4单卡串行，整个对象3600秒/≤1GPU小时硬限；不是预计耗时或完整剩余预算。当前未核占用，GPU5–7不需同时占用。原自然reset有限CPU及B停止裁决保留，正式M2不变；整体方法还缺普通时刻/干扰/continuous actor/gate/性能证据。
+
 **最新完成：2026-10-12 正常reset CPU校准及独审验收完成**。实际/clean Linux43项SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316`；八初态/28对仅9与18闭δ集合不交，有限控制存在性条件成立并按门停止。主2400＋独审1120真实transition，source/newstate/reward/退出/hash链通过，父入口6.650秒＋4.589秒，实际0GPU；28文件930204字节镜像已核。详见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)。无blind/RGB/model/actor/optimizer/训练，完整方法尚未完成。下一继续本chat冻结实际同h/prior/共享读出/独立信号规范；normal压缩与学习性能仍缺证据。当前未核GPU占用；已有模型诊断1卡串行即可、2卡可独立并行，完整剩余GPU小时未定。aa9仅sv3隔离checkout，canonical/正式M2/sv1/sv2不改；结果文档最终Git状态以后续收据为准。下方“实施中”是执行前状态。
 
 **最新推进：2026-10-12 正常reset CPU校准实施中**。授权内科学交叉审查已采用 [DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) `DL-natural-reset-calibration-r1`：正确f2 source八cal/reset0、原7controls/.25/H20/δ.2，参考160＋主1120＋复放1120步/180秒/0GPU；独立CPU审计另180秒/1120复放。源码和fixtures实施中，尚无本对象科学实测，需确定版本clean Linux验收后一次执行。只证明有限外部控制需要的前置，24blind封存、不执行model/gate/更新，完整方法未完成。06448d6已补推并远端核验、main595e982f不变；上一轮网络失败收据保留，恢复收据在ignored工程目录。首选继续本chat完成本CPU对象及独审，再审定共同h/prior/readout和normal压缩规范。下方B仍科学MC-inconclusive且停止；其资源快照不当当前GPU占用。

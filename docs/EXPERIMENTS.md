@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**下一DL有限联合诊断（2026-10-12，未启动）**：[DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) 冻结正常reset下0/B128/R128、完整optimizer同key/真实context1、共享F/唯一λ0、D/K/S固定线性对照全部cal-only准备后24blind一次联评。这是授权内Agent诊断，不是正式M2新配置或方法结论。首选sv3物理4单A100串行，完整3600秒/≤1GPU小时上限，独审另CPU300秒；未核当前资源/未启动GPU，实际峰值和用量以后续运行收据为准。
+
 **最新DL有限结果（2026-10-12）**：[DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) 固定CPU对象与独审在实际/clean Linux43项SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316` 验收；八reset0/七控制/H20/δ.2全量报告，28对仅9/18的闭近优集合不交，有限存在性成立后停止。主2400＋独审1120真实transition，原F32/newF64及完整state字节/源终点链通过；实际0GPU，两父6.650秒/4.589秒，未读blind/模型/训练。报告 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)；这是外部有限控制需要，不是RGB/q/双信号/压缩/方法有效。下一完整模型/读出对象未冻结，整体GPU小时未定，正式M2及原B/旧对象裁决不改。下方均为带日期历史。
 
 **最新DL结果（2026-10-12）**：固定 `DL-production-reward-r1` B与独立CPU审计已完整验收，执行/clean Linux54项SHA `d685a2d3fc8b8783f6c2e99e9d57ed8cb6702512`；主BC-MSE和真实选择均 **MC-inconclusive**，按原门停止、不追加路径/seed/H/对象，不读blind或推进gate/训练。完整首chunk oracle/源码与checkpoint冻结/独审数值及keys通过不构成方法有效。报告 [DL_PRODUCTION_REWARD_RESULTS.md](DL_PRODUCTION_REWARD_RESULTS.md)，冻结规范 [DL_PRODUCTION_REWARD.md](DL_PRODUCTION_REWARD.md)。B实际sv3物理GPU4单卡45.803秒/约.013GPUh/采样峰2505MiB，CPU独审0GPU；00:51:19.592302北京时间终点4–7空闲、本B GPU4已释放。完整方法及总GPU预算仍未定；正式M2协议不变，下方均为带日期历史。
