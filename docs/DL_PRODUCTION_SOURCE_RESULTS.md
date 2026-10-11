@@ -101,6 +101,6 @@ MUJOCO_GL=disable CUDA_VISIBLE_DEVICES= /data/Policy_Discrepancy/envs/dreamer/bi
 
 **资源建议**：最低1张独占A100串行；2张可并行确实独立的诊断/工程环节，4张分配足够，无需占满或多卡模型。仅此A100环境已验；更小显存卡可行性未测。CPU文档/统计/物理审计不用GPU。单卡3600秒是每个已冻结source/诊断的硬上限，不是所有前验证耗时；旧20.4 GPU小时是旧条件训练外推，不能用于修订方法当前总预算。
 
-**尚未冻结候选**：[DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md) 论证一次当前RGB省略、未来正常各自闭环。其32状态×4paired RNG/H100、奖励dtype、key派生、terminal规则、统计及3600秒预算尚须根Agent最终审查/冻结与工程验收，不由source通过自动执行。平均机会阳性不替代selective目标和第二信号增量；非正/不确定也不能否定所有后验保护。
+**来源完成时的候选，现已另冻结科学协议**：[DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md) 论证一次当前RGB省略、未来正常各自闭环。其32状态×4paired RNG/H100、奖励dtype、key派生、terminal规则、统计及3600秒预算已在后续RESEARCH/DL-16由Agent完整授权内冻结；工程／独立runner审查尚未闭环，GPU未启动，不由source通过自动执行。平均机会阳性不替代selective目标和第二信号增量；非正/不确定也不能否定所有后验保护。
 
 首选继续本聊天的完整授权任务：先论证并冻结一个确实解决反馈补偿/控制价值缺口的有限对象，再验证其实际policy/RNG/physics语义；同时明确它与独立第二信号辨别之间的证据关系。当前可立即做候选审查，GPU运行依赖确定协议与代码验收；短训练仍依赖目标子集、增量和有效对照证据，不沿用旧门强行启动。总体目标保持未完成。

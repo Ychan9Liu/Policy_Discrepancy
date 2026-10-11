@@ -1,5 +1,17 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 正常反馈协议冻结与CPU实施
+
+**17:56代码独立审查更新**：额度恢复后runner和replay独立审阅完成，runner SHA256 `eb57fb0e00bf6f3d9befad85f09558dbdd383c556615e0111a2c39c5e500f71b`，未见阻断。source/runtime七版本及实际F64bounds前置强校验补齐。独立反例发现缓存RGB可被callback修改、samebytes raw reshape可被放行；root补obs/key隔离和carry/obs/key hash/byte守卫、raw.shape，4项/9subtests独立复核通过0.03秒；本机0.013秒。未改变RNG／容差／收益或科学门，旧3项通过只为此前范围。artifact审计接线仍进行，GPU未启动；下述中断是历史阶段，不能作为当前永久阻塞。
+
+科学版本 `DL-feedback-r1`／工程版本 `DL-feedback-engineering-r1`，详见 [DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md) 第9节及RESEARCH/DL-16。本机基底 `cf6aef82b0296d25fdb5a98f336c1da5372a44d5` 加新增三脚本／五测试；没有改Dreamer算法、既有gate或正式配置。模型adapt只在trace选first prior，实际生产core/cast/采样保留；真实quad/wrapper记录raw/applied/F64/F32与状态，cached-RGB policy和stored-applied physics各自复放。父监督限定自己新建Linux group，失败或超时清理descendant，不操作未知作业。
+
+本机必要CPU：统计9项0.078秒；actual tiny BF16模型2项最终5.690秒；真实quad/wrapper物理6项1.220秒（model/RGB为stub）；synthetic cached-policy replay3项0.009秒；监督6项0.404秒，Windows4passed/Linux2skip。py_compile及diff检查通过。Windows原venv redirector导致Popen PID不同，原失败保留tool输出；pure stdlib fixture改用直接base executable，实际server Linux生产解释器另验，未降低父PID/硬budget检查。finite F64输入累加溢出的反例已fail closed；实际任务reward无溢出结论未由fixture推出。
+
+分工Agent完成模型／物理与统计检查，但完整runner审阅及独立artifact审计器schema未完成时额度中断。ignored `analysis/outputs/dl-feedback/independent_feedback_audit.py` 独立NumPy/stdlib统计和key基础五项synthetic通过，`audit_artifacts()`显式NotImplementedError；不可声称ready或运行独立实际产物审计。根Agent继续完成synthetic replay及failed-replay证据保存，**这些后续修改仍待独立审查**。32actual size50m source oracle/CUDA/EGL/F64主reward/完整反馈尚未运行，不启动GPU或短训练。已有source完成仍是f2实际SHA；当前代码确定提交与server clean CPU随后记录，不能把dirty测试基底称已部署最终版本。
+
+13:43:49北京时间只读sv3query确认GPU4–7均0MiB无compute作业、GPU0/2未知作业不干扰；本阶段仅CPU，不消耗分配GPU。最低1张独占A100串行、2张可并行独立环节、四张授权够；曾测source2585MiB/440.14秒、完整单步6675MiB/668秒仅为不同单项，完整剩余费用未知。反馈拟用GPU4单卡3600秒固定预算，启动仍需独立审查／确定版本检查／fresh完整占用与映射。
+
 ## 2026-10-11 动作接口审查、来源采集与资源验证
 
 **13:09后实际结果**：source科学版DL-source-r1/工程版r2，实际采集/clean source5项测试完整SHA `f2d24da1831da2ffca22d313e7f534c96fc0d3eb`，服务器五项10.805秒，原action helper/test与bb78相同。已push/ls-remote核验、未main，仅sv3隔离worktree同步；原repo干净d9be557保持。13:00:04 fresh query GPU4–7空闲；launcher自身另存fresh完整库存/pmon，实际CUDA/EGL physical4/UUID9c070d5a通过。GPU4 attempt02于13:00:42–13:08:22北京时间完成，source父监督440.142416秒/exit0，worker PID1752617 terminal，1秒采样426点峰值2585MiB。不是GPU总预算或连续峰值上界。

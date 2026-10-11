@@ -722,3 +722,13 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **资源事实与建议**：此source约0.12226 GPU小时；完整单步工程6675MiB/668秒是另一单项测量。最低1张独占A100可串行，2张可并行独立环节，已有4张范围足够、不需全占；仅A100环境实测，更小显存卡可行性待验。CPU文档/统计/物理复放不需GPU。13:09:36北京时间GPU4–7无作业、0MiB，GPU4已释放；不是持续状态。每单项3600秒硬上限不是整体ETA，旧20.4 GPU小时外推不得当修订方法总预算。
 
 **下一阶段具体问题**：继续本聊天已授权目标，先裁决并冻结反馈对象的原始key派生、一次真实prior替换/共同h、F64实际reward重演、terminal及有限统计，再完成代码/真实模型语义验收。后续仍须第二信号相对D的增量、真正独立的目标/反例证据、active gate/压缩与充分S/P/W/reward-only对照、未见数据及条件训练；新来源与候选文档不等于可正式实验的方法。整体目标未完成。
+
+### DL-16 正常反馈对象冻结与工程推进（2026-10-11）
+
+**授权内Agent决定**：将正常反馈候选冻结为 `DL-feedback-r1`，完整协议见 [DL_FEEDBACK_DIAGNOSTIC.md](DL_FEEDBACK_DIAGNOSTIC.md)。仅原300k production source的八calibration IDs `[9,14,15,18,20,24,30,31]`，固定位置 `[1,300,600,900]`、每状态4paired RNG、H100。首次q/p共享实际new h，p用真实prior；之后双方正常各自RGB/posterior/raw-carry。主对象为真实suite F64有符号累计收益，F32联存；episode等权2000次cluster bootstrap。GPU4单卡3600秒硬预算、零optimizer/新gate。以上是用户完整前验证授权内的Agent设计，非用户逐项确认的方法。
+
+**工作假设及反例**：新增当前RGB信息可被现有actor利用，且收益在后续正常观测下仍部分保留；先验已足够、未来RGB快速补偿、actor未利用、物理clip消除raw差异、prior/actor表征错配或随机路径主导均可反证有限对象。平均lower95>0只为探索充分门，不是稀有目标子集或选择性保护必要门；四RNG不提供精确state标签，首位置t=1短历史贡献必须联报，不能删点求阳性。
+
+**已验证工程事实与限制**：实施 `DL-feedback-engineering-r1` 的模型适配器、真实物理记录／复放、私有key、有限统计与父监督。CPU统计9项、actual tiny BF16模型2项、真实quadruped/wrapper物理6项、synthetic cached-policy replay4项通过；监督Windows4通过、Linux2项待server验。模型／物理／统计文件经分工审查，完整runner独立审查和产物审计schema尚未完成。独立统计审计器五项synthetic自检通过，artifact入口仍显式未实现；代理因额度中断，根Agent继续测试／文档，不把自审或partial程序当独立通过。无反馈GPU、收益、信号增量、gate／训练或性能结果。
+
+**尚未采用建议与下一问题**：补齐独立runner及auditor，确定提交server CPU检查后，先做32实际size50m source oracle，再在GPU4固定预算内执行反馈及条件复放／独立审计。资源最低1张独占A100可串行，2张可并行独立环节，当前4张授权足够；已有约2.5–6.5GiB峰值仅为过去A100单项，剩余总GPU小时未冻结。科学对象完成后仍需真正未见目标子集、第二信号相对D增量、背景／OOD／actor对照、active rep压缩及S/P/W/reward-only对照与条件训练；不能将机会检查替换整体科研目标。
