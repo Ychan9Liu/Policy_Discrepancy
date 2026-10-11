@@ -1,6 +1,6 @@
 # 实验协议与结果索引
 
-**DL有限联合诊断最新状态（2026-10-12 03:02）**：[DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) 科学r1保持0/B128/R128、完整optimizer同key/真实context1、共享F/唯一λ0、D/K/S cal-only冻结后24blind一次联评。348a5fc第一次工程执行在B任何train更新前停止；baseline已完成，blind未开，原失败保留，正确官方optimizer key修复后新SHA/newattempt重跑，不改128预算、seed、loss或判据。不是正式M2新配置或方法结论。sv3物理4单A100串行，单次3600秒/≤1GPU小时上限，独审另CPU300秒；已测加载峰2501MiB不当训练显存，完整资源预算未定。
+**DL有限联合诊断最新结果（2026-10-12 03:30独审通过）**：冻结 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) 科学r1，主SHA `c030e26f688ed227aa43866bd68dcf4352a073e3`、独审SHA `d987650c749b8917e2ea80a719d586232088f501`，分别Linux76/34项全过及pip check0。0/B128/R128、全部cal封口后24blind一次联评与CPU独审完整结束并按规则停止；初始有限q增量支持，局部R−B收益未建立，三个第二信号程序增量均负且coverage不足，不能宣布双信号/gate/方法有效。报告 [DL_RESET_JOINT_RESULTS.md](DL_RESET_JOINT_RESULTS.md) 及RESEARCH/DL-30；主7200＋独审3360实际physics，独审不重演模型/optimizer。sv3物理4一A100：成功外CLI505.437680秒/占卡上界.140399GPUh、连失败合计.165340GPUh、采样峰6629MiB；CPU独审0GPU。单attempt3600秒/≤1GPUh上限不等于完整训练预算。原失败保留，24已开启，不再当新blind；正式M2协议和旧对象裁决保持。下方均为带日期历史。
 
 **最新DL有限结果（2026-10-12）**：[DL_NATURAL_RESET.md](DL_NATURAL_RESET.md) 固定CPU对象与独审在实际/clean Linux43项SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316` 验收；八reset0/七控制/H20/δ.2全量报告，28对仅9/18的闭近优集合不交，有限存在性成立后停止。主2400＋独审1120真实transition，原F32/newF64及完整state字节/源终点链通过；实际0GPU，两父6.650秒/4.589秒，未读blind/模型/训练。报告 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)；这是外部有限控制需要，不是RGB/q/双信号/压缩/方法有效。下一完整模型/读出对象未冻结，整体GPU小时未定，正式M2及原B/旧对象裁决不改。下方均为带日期历史。
 

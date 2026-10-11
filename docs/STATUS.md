@@ -1,6 +1,8 @@
 # 项目状态
 
-**DL联合诊断最新状态（2026-10-12 03:02，工程失败待修复）**：348a5fc clean Linux57项全过及pip check通过；sv3物理4独占执行89.786秒/exit1，baseline完成，B首次train前因optimizer state key不符拒绝，R/封口/24blind均未进入。正确key修复及真实tiny官方optimizer fixture验收中，之后新SHA/clean checkout/newattempt重跑；原输出保留。GPU4在03:02:43已回0MiB，加载采样峰2501MiB不是训练显存估计。单次3600秒/≤1GPU小时硬限不变，5–7无需同时占用；完整预算未定。GitHub本轮push/远端核验因连接失败未确认；本机/server canonical、正式M2不改。整体方法仍缺普通时刻/干扰/continuous actor/gate/性能证据。
+**DL联合诊断最新状态（2026-10-12 03:30独审通过，有限对象验收完成）**：主实际/clean Linux76项SHA `c030e26f688ed227aa43866bd68dcf4352a073e3`，独审实际/Linux34项SHA `d987650c749b8917e2ea80a719d586232088f501`，pip均通过。0/B128/R128、封口后24留出一次联评、主7200＋独审3360真实physics步及完整链通过。初始共享有限读出q信息增量成立；局部R−B收益CI跨零；第二信号增量均负、实用正例覆盖不足，整个方法未完成。报告 [DL_RESET_JOINT_RESULTS.md](DL_RESET_JOINT_RESULTS.md)；原两工程失败保留，独审修复未改主19文件/判据、不重跑主。sv3物理4一A100，成功8.424分钟/占卡上界.140399GPUh，含失败.165340GPUh，采样峰6.47GiB，独审0GPU。03:33:53.466867快照4–7各0MiB/no compute/pmon，4已释放、5–7未用；整体训练小时未定。研究分支未main、GitHub连接失败未确认；sv3只隔离checkouts，本机原dirty canonical/server canonical/sv1/sv2/正式M2保持。下一建议当前chat先0GPU定位冻结信号误差，再审定新因果对象；不把已开24点再称blind。**以下是带日期历史快照。**
+
+**补充资源核查（2026-10-12 03:45:00.297989）**：sv3物理4–7仍各0MiB/no compute/pmon，本对象GPU4已释放、5–7未用；0–2未知作业未干扰。新证据 `analysis/outputs/dl-reset-joint/dl-reset-joint-20261012-c030e26/engineering/resource-end04.json`；server canonical仍clean d9be557。本次GPU小时仅联合两attempt新增占用估计，不含复用baseline/source/旧诊断历史成本。以下资源字句仅描述各条当时快照。
 
 **最新完成：2026-10-12 正常reset CPU校准及独审验收完成**。实际/clean Linux43项SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316`；八初态/28对仅9与18闭δ集合不交，有限控制存在性条件成立并按门停止。主2400＋独审1120真实transition，source/newstate/reward/退出/hash链通过，父入口6.650秒＋4.589秒，实际0GPU；28文件930204字节镜像已核。详见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)。无blind/RGB/model/actor/optimizer/训练，完整方法尚未完成。下一继续本chat冻结实际同h/prior/共享读出/独立信号规范；normal压缩与学习性能仍缺证据。当前未核GPU占用；已有模型诊断1卡串行即可、2卡可独立并行，完整剩余GPU小时未定。aa9仅sv3隔离checkout，canonical/正式M2/sv1/sv2不改；结果文档最终Git状态以后续收据为准。下方“实施中”是执行前状态。
 

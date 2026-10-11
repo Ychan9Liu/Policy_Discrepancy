@@ -1,5 +1,17 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 03:30：联合独审03通过，有限结果与GPU资源归档
+
+主实际 `c030e26f688ed227aa43866bd68dcf4352a073e3` /Linux76全过，独审实际 `d987650c749b8917e2ea80a719d586232088f501` /Linux34全过6.103秒，pip check0。03:30:38–03:30:50独审03外CLI12.483071秒/父12.427242秒、exit0/statuspassed，3360官方CPU stored-applied步、0GPU；主19生产文件与既有primary完整链不变。kernel solve独立70次、132472比较max4.619e−14、515exact/78零侧，fsum回报差≤1.777e−15、closedδ/choice/U/CI零侧exact。复用同一模拟器，fresh reset/reference/oldcal/model/optimizer仅认证，不当独立重演；typed metrics digest不从JSON重建。原独审02接口失败和主attempt01 optimizer key失败均保留，不改原terminal/guard/科学判据或再跑主。
+
+新报告 [DL_RESET_JOINT_RESULTS.md](DL_RESET_JOINT_RESULTS.md) 完整记录实际读取范围、源pins、0/B/R与全部24正/零/负例、信号覆盖、计费与限制。初始有限q−p/q−constant正增量；R−B效用CI跨零、三个第二信号留出增量负且coverage不足，不建立保护或双信号机制。固定联合对象停止，整个授权预验证目标仍active，普通replay/nuisance/continuous actor/选择性gate/学习性能缺项保留；下一0GPU误差定位/全窗口因果对照均只为建议，未执行。
+
+资源事实：仅sv3物理4一张A100，成功外CLI505.437680秒=.140399GPUh占卡保守上界，GPU workers合计461.066102秒=.128074GPUh；成功加原89.785934秒工程失败合计.165340GPUh。约2秒采样显存峰6629MiB≈6.474GiB不是瞬时峰或最小足够保证。03:33:53.466867北京时间 `engineering/resource-end03.json`：4–7各0MiB/no compute/pmon，4已释放，5–7未用，0–2未知作业未干扰；sv3 canonical clean d9be557不变。单attempt3600秒/1GPUh是本对象上限；一独占A100串行实测可行、2仅独立并行，整个方法/正式训练总GPU小时未定。
+
+03:45:00.297989资源复核 `engineering/resource-end04.json`：sv3物理4–7各0MiB/无compute/pmon，本次4释放/5–7未用，0–2未知作业未干扰，canonical仍clean d9be557。以上GPU小时仅两次主attempt新增占用估计，不含历史baseline训练/production来源/旧cal诊断，不是总科研累计。独立数值的两个计数为35次共享头拟合与70次kernel solve；CPU测试54.734/6.103为unittest内部计时，对应含helper/pip外计时55.857613/7.187534秒。
+
+本机小镜像02（54文件+manifest）/03（28文件+manifest）逐文件bytecount/hash及tar路径已核，原source/checkpoint/replay未进Git。结果、规范、研究/状态/实验索引/日志归档；生产源码不再改变。03:19:14 push/ls-remote因GitHub连接reset/超时不能确认远端，研究分支未main；最终文档提交及补推以终点Git收据/回复为准。本机canonical原dirty两docs未动、仅sv3隔离执行、未同步sv1/sv2。下方03:21和03:02条目保留为历史故障阶段。
+
 ## 2026-10-12 03:21：联合主入口完成，独审02接口失败待修复
 
 主实际SHA `c030e26f688ed227aa43866bd68dcf4352a073e3`，clean Linux76项全过54.734秒及pip check通过。03:13:28–03:21:53外CLI505.437680秒/exit0，九phase均exit0/owned终止；B/R各128完整更新，全部cal封口后24blind一次联评，物理7200步主＋复放/参考。单sv3物理4，采样峰6629MiB≈6.47GiB；入口占卡上界.140399GPUh，连原失败89.785934秒合计.165340GPUh。GPU worker精确时长与占卡上界另在结果报告区分；尚无已验收科研结论。03:24:26资源终点4–7各0MiB/no compute/pmon，本次4已释放、5–7未使用，0–2仍未知作业未干扰。
