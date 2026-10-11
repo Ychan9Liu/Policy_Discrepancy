@@ -1,5 +1,7 @@
 # 项目状态
 
+**Git最新核验（2026-10-12 03:48:41.314300）**：网络恢复，研究分支 `codex/dl-prevalidation` 已补推并以ls-remote核验到 `45045f9017bd2d1ccf768cf5ae3d6bad41854562`；GitHub/main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。两次工程修复、tested主/独审版本和结果文档均已进入研究分支；03:30段落的连接失败是此前历史状态，原收据保留。证据 `analysis/outputs/dl-reset-joint/engineering/git-sync-final-45045f9.json`；其后仅同步收据文档归档，最终SHA见终点Git回复/收据。
+
 **DL联合诊断最新状态（2026-10-12 03:30独审通过，有限对象验收完成）**：主实际/clean Linux76项SHA `c030e26f688ed227aa43866bd68dcf4352a073e3`，独审实际/Linux34项SHA `d987650c749b8917e2ea80a719d586232088f501`，pip均通过。0/B128/R128、封口后24留出一次联评、主7200＋独审3360真实physics步及完整链通过。初始共享有限读出q信息增量成立；局部R−B收益CI跨零；第二信号增量均负、实用正例覆盖不足，整个方法未完成。报告 [DL_RESET_JOINT_RESULTS.md](DL_RESET_JOINT_RESULTS.md)；原两工程失败保留，独审修复未改主19文件/判据、不重跑主。sv3物理4一A100，成功8.424分钟/占卡上界.140399GPUh，含失败.165340GPUh，采样峰6.47GiB，独审0GPU。03:33:53.466867快照4–7各0MiB/no compute/pmon，4已释放、5–7未用；整体训练小时未定。研究分支未main、GitHub连接失败未确认；sv3只隔离checkouts，本机原dirty canonical/server canonical/sv1/sv2/正式M2保持。下一建议当前chat先0GPU定位冻结信号误差，再审定新因果对象；不把已开24点再称blind。**以下是带日期历史快照。**
 
 **补充资源核查（2026-10-12 03:45:00.297989）**：sv3物理4–7仍各0MiB/no compute/pmon，本对象GPU4已释放、5–7未用；0–2未知作业未干扰。新证据 `analysis/outputs/dl-reset-joint/dl-reset-joint-20261012-c030e26/engineering/resource-end04.json`；server canonical仍clean d9be557。本次GPU小时仅联合两attempt新增占用估计，不含复用baseline/source/旧诊断历史成本。以下资源字句仅描述各条当时快照。

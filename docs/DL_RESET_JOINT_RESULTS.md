@@ -146,6 +146,8 @@ R−B真实选择差只来自 episode1（+.029743984）和28（−.050158075）�
 
 执行版本仅同步sv3隔离clean detached checkouts `/data/Policy_Discrepancy/dl-worktrees/c030e26-reset-joint` 和 `d987650-reset-joint-audit`；未同步sv1/sv2。sv3 canonical仍clean `d9be5574878d2c3f117cc6667be844f9a527eb84`。本机canonical/main仍 `595e982f1a3939775879728009e2105ee516e86d`，原dirty RESEARCH/STATUS保持；研究分支未合main。03:19:14 GitHub push/ls-remote连接失败，不能确认远端收到；最终文档提交及补推状态以最终Git收据/回复为准。本文档归档不改变两个实际tested SHA或生产源码。
 
+03:48:41.314300网络恢复后，`45045f9017bd2d1ccf768cf5ae3d6bad41854562` 已成功补推，并以ls-remote独立核验研究分支完全相同；远端main仍595e982f完整SHA，未合main。原失败收据保留，恢复收据 `analysis/outputs/dl-reset-joint/engineering/git-sync-final-45045f9.json`。之后仅归档此Git恢复记录，最终文档SHA由终点Git收据/回复给出；不将文档提交冒充实际执行/测试版本，服务器不为此重跑或替换canonical。
+
 ## 尚待决定及首选下一问题
 
 **已验有限事实**是0的信息增量、局部R收益未建立、三第二信号程序无增量及覆盖不足；**工作假设**仍是任务有用观测可被正常压缩损害且可选择性保护；**无证据推测**包括把本结果归因于过拟合、线性容量不足、S只是标尺不准、旧momentum或future rep主导。不能把候选根因写成结论。

@@ -2,6 +2,8 @@
 
 ## 2026-10-12 03:30：联合独审03通过，有限结果与GPU资源归档
 
+**03:48:41.314300 Git补推恢复**：本机clean结果提交 `45045f9017bd2d1ccf768cf5ae3d6bad41854562` 已push成功、ls-remote同SHA核验；远端main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。此前03:00/03:19网络失败不抹去，ignored `engineering/git-sync-final-45045f9.json` 保存恢复收据；本机/server canonical/sv1/sv2和实际tested主/独审代码保持。其后仅同步记录的文档归档，最终SHA由终点Git收据/回复给出，不重复代码测试或科学运行。
+
 主实际 `c030e26f688ed227aa43866bd68dcf4352a073e3` /Linux76全过，独审实际 `d987650c749b8917e2ea80a719d586232088f501` /Linux34全过6.103秒，pip check0。03:30:38–03:30:50独审03外CLI12.483071秒/父12.427242秒、exit0/statuspassed，3360官方CPU stored-applied步、0GPU；主19生产文件与既有primary完整链不变。kernel solve独立70次、132472比较max4.619e−14、515exact/78零侧，fsum回报差≤1.777e−15、closedδ/choice/U/CI零侧exact。复用同一模拟器，fresh reset/reference/oldcal/model/optimizer仅认证，不当独立重演；typed metrics digest不从JSON重建。原独审02接口失败和主attempt01 optimizer key失败均保留，不改原terminal/guard/科学判据或再跑主。
 
 新报告 [DL_RESET_JOINT_RESULTS.md](DL_RESET_JOINT_RESULTS.md) 完整记录实际读取范围、源pins、0/B/R与全部24正/零/负例、信号覆盖、计费与限制。初始有限q−p/q−constant正增量；R−B效用CI跨零、三个第二信号留出增量负且coverage不足，不建立保护或双信号机制。固定联合对象停止，整个授权预验证目标仍active，普通replay/nuisance/continuous actor/选择性gate/学习性能缺项保留；下一0GPU误差定位/全窗口因果对照均只为建议，未执行。
