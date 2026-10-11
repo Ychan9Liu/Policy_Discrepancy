@@ -18,6 +18,7 @@ EPISODES = (9, 14, 15, 18, 20, 24, 30, 31)
 UPDATES = 128
 BATCH_SIZE, LOSS_LENGTH, CONTEXT = 16, 64, 1
 FIELDS = ('image', 'reward', 'is_first', 'is_last', 'is_terminal', 'action')
+OPTIMIZER_STEP_KEY = 'opt/step/value'
 
 
 def require(condition, message):
@@ -209,6 +210,22 @@ def _counters(agent):
       eval_seed=int(agent.eval_seed))
 
 
+def optimizer_step(params):
+  """Read the official Ninjax Variable leaf without converting its dtype.
+
+  Optimizer.step is a Variable named 'step'; Variable.read creates the leaf
+  'value'. A sibling opt/step is not this optimizer's counter.
+  """
+  import numpy as np
+  value = params.get(OPTIMIZER_STEP_KEY)
+  require(value is not None, 'Complete original optimizer step required: ' + OPTIMIZER_STEP_KEY)
+  array = np.asarray(value)
+  require(array.shape == () and array.dtype == np.int32 and
+      np.isfinite(array) and int(array) >= 0,
+      'Original optimizer step must be a finite nonnegative int32 scalar')
+  return int(array)
+
+
 def _readonly_features(agent, callback, stage):
   before = tree_digest(agent.save())
   result = callback(agent, stage) if callback is not None else None
@@ -258,10 +275,7 @@ def run_branch(agent, checkpoint, calibration, source_hashes,
       'Full loaded params/optimizer/norm/target state differs')
   expected = {**checkpoint['counters'], 'batches': checkpoint['counters']['updates']}
   require(initial['counters'] == expected, 'Standard Agent.load counter semantics differ')
-  initial_opt_step = initial['params'].get('opt/step')
-  require(initial_opt_step is not None and np.asarray(initial_opt_step).shape == () and
-      np.asarray(initial_opt_step).dtype == np.int32 and int(initial_opt_step) >= 0,
-      'Complete original optimizer step required')
+  initial_opt_step = optimizer_step(initial['params'])
   calibration_digest = tree_digest({str(k): v for k, v in calibration.items()})
   raw, binding = offline_batch(agent, calibration, source_hashes, frozen_context_entries)
   initial_features = _readonly_features(agent, reset_feature_callback, 0)
@@ -318,15 +332,16 @@ def run_branch(agent, checkpoint, calibration, source_hashes,
   require(tree_digest(checkpoint) == checkpoint_digest, 'Input checkpoint mutated')
   require(final['counters'] == {**expected, 'updates': expected['updates'] + UPDATES,
       'batches': expected['batches'] + UPDATES}, 'Final standard counters differ')
-  require(np.asarray(final['params'].get('opt/step')).shape == () and
-      np.asarray(final['params']['opt/step']).dtype == np.int32 and
-      int(final['params']['opt/step']) == int(initial_opt_step) + UPDATES,
+  final_opt_step = optimizer_step(final['params'])
+  require(final_opt_step == initial_opt_step + UPDATES,
       'Complete optimizer did not perform exactly 128 updates')
   return dict(version=VERSION, group=group, updates=UPDATES, binding=binding,
       source_checkpoint_digest=checkpoint_digest, initial_state_digest=tree_digest(initial),
       calibration_arrays_digest=calibration_digest,
       initial_params_digest=tree_digest(initial['params']), final_state_digest=tree_digest(final),
       final_params_digest=tree_digest(final['params']), restored_counters=expected,
+      optimizer_counter=dict(key=OPTIMIZER_STEP_KEY, dtype='int32', shape=[],
+          initial=initial_opt_step, final=final_opt_step, updates=UPDATES),
       saved_source_counters=checkpoint['counters'].copy(), receipts=receipts,
       features={0: initial_features, UPDATES: final_features}, final_checkpoint=final,
       reset_rep_gradient_stopped=(group == 'R'), rep_forward_values_retained=True,

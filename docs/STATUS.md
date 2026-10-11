@@ -1,6 +1,6 @@
 # 项目状态
 
-**下一DL联合诊断（2026-10-12，实施中）**：已采用 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) 的0/B128/R128校准学习→共享F/λ0/信号全冻结→24blind一次联评规范；源码/数值/真实tiny只读与RSSM梯度fixture验收中，尚未读新blind或启动真实模型/学习。首选sv3物理4单卡串行，整个对象3600秒/≤1GPU小时硬限；不是预计耗时或完整剩余预算。当前未核占用，GPU5–7不需同时占用。原自然reset有限CPU及B停止裁决保留，正式M2不变；整体方法还缺普通时刻/干扰/continuous actor/gate/性能证据。
+**DL联合诊断最新状态（2026-10-12 03:02，工程失败待修复）**：348a5fc clean Linux57项全过及pip check通过；sv3物理4独占执行89.786秒/exit1，baseline完成，B首次train前因optimizer state key不符拒绝，R/封口/24blind均未进入。正确key修复及真实tiny官方optimizer fixture验收中，之后新SHA/clean checkout/newattempt重跑；原输出保留。GPU4在03:02:43已回0MiB，加载采样峰2501MiB不是训练显存估计。单次3600秒/≤1GPU小时硬限不变，5–7无需同时占用；完整预算未定。GitHub本轮push/远端核验因连接失败未确认；本机/server canonical、正式M2不改。整体方法仍缺普通时刻/干扰/continuous actor/gate/性能证据。
 
 **最新完成：2026-10-12 正常reset CPU校准及独审验收完成**。实际/clean Linux43项SHA `aa9fb7f777a28e8a82d57c31f9e749b5912af316`；八初态/28对仅9与18闭δ集合不交，有限控制存在性条件成立并按门停止。主2400＋独审1120真实transition，source/newstate/reward/退出/hash链通过，父入口6.650秒＋4.589秒，实际0GPU；28文件930204字节镜像已核。详见 [DL_NATURAL_RESET_RESULTS.md](DL_NATURAL_RESET_RESULTS.md)。无blind/RGB/model/actor/optimizer/训练，完整方法尚未完成。下一继续本chat冻结实际同h/prior/共享读出/独立信号规范；normal压缩与学习性能仍缺证据。当前未核GPU占用；已有模型诊断1卡串行即可、2卡可独立并行，完整剩余GPU小时未定。aa9仅sv3隔离checkout，canonical/正式M2/sv1/sv2不改；结果文档最终Git状态以后续收据为准。下方“实施中”是执行前状态。
 

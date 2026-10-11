@@ -107,7 +107,7 @@ class FixtureAgent:
     self.train_calls += 1
     prepared.pop('seed')
     self.seen_batches.append(learn.tree_digest(prepared))
-    self.params['opt/step'] += np.int32(1)
+    self.params['opt/step/value'] += np.int32(1)
     self.params['opt/momentum'] += np.float32(.01)
     self.n_updates.value += 1
 
@@ -120,7 +120,7 @@ class FixtureAgent:
 
 def checkpoint():
   return dict(params={'enc/kernel': np.array([.1, .2], np.float32),
-      'opt/step': np.array(11, np.int32), 'opt/momentum': np.array([.7], np.float32),
+      'opt/step/value': np.array(11, np.int32), 'opt/momentum': np.array([.7], np.float32),
       'retnorm/lo': np.array(.3, np.float32), 'slowval_count': np.array(11, np.int32)},
       counters=dict(updates=11, batches=19, actions=300000, eval_actions=8, eval_seed=13))
 
@@ -181,6 +181,8 @@ class ResetLearningContracts(unittest.TestCase):
     self.assertEqual((agent.init_calls, agent.train_calls, agent.drain_calls), (128, 128, 128))
     self.assertEqual(result['restored_counters']['batches'], 11)
     self.assertEqual(result['saved_source_counters']['batches'], 19)
+    self.assertEqual(result['optimizer_counter'], dict(key='opt/step/value',
+        dtype='int32', shape=[], initial=11, final=139, updates=128))
     self.assertEqual(result['final_checkpoint']['counters'],
         dict(updates=139, batches=139, actions=300000, eval_actions=8, eval_seed=13))
     self.assertEqual(result['total_loss_positions'], 131072)
@@ -268,6 +270,32 @@ class ResetLearningContracts(unittest.TestCase):
     self.assertNotEqual(learn.tree_digest(np.array([0.], np.float32)),
         learn.tree_digest(np.array([-0.], np.float32)))
 
+  def test_optimizer_variable_leaf_and_scalar_format_guards(self):
+    self.assertEqual(learn.optimizer_step({'opt/step/value': np.array(74494, np.int32)}), 74494)
+    for params in ({'opt/step': np.array(74494, np.int32)}, {},
+        {'opt/step/value': np.array([74494], np.int32)},
+        {'opt/step/value': np.array(74494., np.float32)},
+        {'opt/step/value': np.array(74494, np.int64)},
+        {'opt/step/value': np.array(-1, np.int32)},
+        {'opt/step/value': np.array(np.nan, np.float32)},
+        {'opt/step/value': np.array(np.inf, np.float32)},
+        {'opt/step/value': np.array(1.5, np.float32)},
+        {'opt/step/value': np.array(True)}):
+      with self.subTest(params=params), self.assertRaises(ValueError):
+        learn.optimizer_step(params)
+
+  def test_optimizer_wrong_increment_fails_with_unchanged_agent_counters(self):
+    cal, pins, contexts = inputs()
+    agent = FixtureAgent()
+    train = agent.train
+    def skip_optimizer_step(carry, data):
+      train(carry, data)
+      agent.params['opt/step/value'] -= np.int32(1)
+    agent.train = skip_optimizer_step
+    with self.assertRaisesRegex(ValueError, 'exactly 128'):
+      learn.run_branch(agent, checkpoint(), cal, pins, contexts, 'B')
+    self.assertEqual(agent.train_calls, 128)
+
   def test_true_bfloat16_identity_supported_without_accepting_arbitrary_void(self):
     import ml_dtypes
     values = np.array([0., -0., 1.], dtype=ml_dtypes.bfloat16)
@@ -288,6 +316,7 @@ class ResetLearningContracts(unittest.TestCase):
     self.assertTrue(receipt['nonrep_gradient_exact'])
     self.assertTrue(receipt['reset_rep_gradient_zero'])
     self.assertTrue(receipt['official_tiny_rssm_B_all_parameter_gradients_exact'])
+    self.assertTrue(receipt['official_tiny_optimizer_variable_path_and_int32_exact'])
     self.assertFalse(receipt['actual_source_learning'])
 
 
@@ -384,8 +413,28 @@ def jax_fixture():
   for name, value in original_out[3][4].items():
     exact(value, wrapped_out[3][4][name])
   assert len(original_out[2]) > 0
+  # Use the actual official Optimizer and installed Ninjax Variable, rather
+  # than reproducing their state path in a mock. No source/model data is read.
+  from embodied.jax.opt import Optimizer
+  import optax
+  class TinyParameter(nj.Module):
+    def __call__(self):
+      return self.value('weight', jnp.array, [1.], jnp.float32)
+  tiny = TinyParameter(name='tiny_optimizer_parameter')
+  optimizer = Optimizer(tiny, optax.sgd(.1), name='opt')
+  def optimize():
+    return optimizer(lambda: jnp.square(tiny()).sum())
+  actual_state = nj.init(optimize)({}, seed=root)
+  assert 'opt/step/value' in actual_state and 'opt/step' not in actual_state
+  initial_step = learn.optimizer_step(actual_state)
+  actual_state, metrics = nj.pure(optimize)(actual_state, seed=root)
+  jax.block_until_ready((actual_state, metrics))
+  assert learn.optimizer_step(actual_state) == initial_step + 1
+  assert np.asarray(metrics['opt/updates']).dtype == np.int32
+  assert int(metrics['opt/updates']) == initial_step + 1
   print(json.dumps(dict(rep_forward_exact=True, nonrep_gradient_exact=True,
       reset_rep_gradient_zero=True, official_tiny_rssm_B_all_parameter_gradients_exact=True,
+      official_tiny_optimizer_variable_path_and_int32_exact=True,
       actual_source_learning=False)))
 
 

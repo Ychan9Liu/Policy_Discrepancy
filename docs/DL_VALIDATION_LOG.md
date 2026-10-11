@@ -1,5 +1,13 @@
 # DL 验证日志与证据索引
 
+## 2026-10-12 03:02：联合诊断首次工程停止，blind未开
+
+实际SHA `348a5fc4ba3feee1e6f3167dc4a539431152205e`，clean Linux57项全过46.370秒及pip check通过。sv3物理4/A100独占，03:00:33启动前4–7各0MiB/无作业；0–2已有作业标未知，未干扰。03:01:03–03:02:33外CLI89.785934秒/exit1，baseline GPU worker54.086秒成功；B在30.504秒加载后、任何完整train更新前被optimizer step守卫拒绝，R/freeze/24blind尚未进入。没有科学效果结论。采样峰2501MiB只反映加载/提取，不是训练显存；此次单卡外入口约.02494GPUh为占卡时间上界。03:02:43 GPU4回0MiB/无本对象作业。
+
+根因已由官方Ninjax.Variable代码确认：真实step状态key是 `opt/step/value`，helper/test人工使用 `opt/step` 导致取None；修复保持原int32 scalar/完整state/128递增/随机流/科学配置，不新增float兼容或放宽守卫。失败产物 `/data/Policy_Discrepancy/runs/dl-reset-joint-20261012-348a5fc/primary-attempt01` 与 `engineering/primary-terminal01.json` 保留；修复只能本机测试提交后新clean checkout/newattempt重跑，不补拼第一次baseline。GitHub push及ls-remote两者因443连接失败未确认，server仅sv3隔离目录，canonical clean d9be557不变。原科学r1、正式M2与整个目标均未完成；当前修复仍在验收。
+
+工程r2仅上述官方key/严格计数守卫及收据元数据修复，VERSION保留，不改变stepid、batch、随机流或科学协议。Windows59项58pass/1Linux-only skip，32.149秒，日志 `analysis/outputs/dl-reset-joint/engineering/windows-primary59.log`；含实际官方Optimizer/Ninjax tiny叶名和step递增、错误格式及漏optimizer更新的拒绝例。尚需新确定SHA的clean Linux再测。3600秒/≤1GPU小时是每个完整父入口的硬上限，工程失败已耗费时间另计，不能把重跑前额外成本隐藏成单次预算。
+
 ## 2026-10-12：正常reset联合读出与完整学习诊断实施中
 
 授权内Agent交审采用 `DL-reset-joint-assay-r1`，见 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md)。八cal的0/B128/R128完整state、同容量共享F/唯一λ0、固定D/K/S回归程序全冻结才一次24blind；R只停止reset新rep梯度，B/R原完整optimizer/forward和历史momentum保持，明确reset富集离线串接context1。单sv3物理4/A100顺序执行，整个对象3600秒/≤1GPU小时硬限；不是整体剩余预算或ETA。02:44:16北京时间只读快照4–7各0MiB/无作业，0–2进程标未知且未干扰；快照不当启动保证。尚未真实source模型或新blind/未启动学习。

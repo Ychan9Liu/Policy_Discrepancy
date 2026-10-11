@@ -1,6 +1,6 @@
 # 研究问题与方法
 
-**下一DL对象（2026-10-12，实施中，尚无新实测）**：授权内Agent采用 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) `DL-reset-joint-assay-r1`。正确production八cal上的0/B128/R128完整学习、共享F/唯一λ0及信号程序全部冻结后，才一次启用24blind正常reset；R只停止reset位置新增rep梯度，前向/历史momentum保留。明确离线episode串接/reset富集context1，不冒充自然replay或连续actor证据。首选sv3物理4一独占A100串行，完整3600秒≤1GPU小时为该对象硬上限，不是ETA或剩余总预算；当前未核资源/未启动GPU。原CPU有限物理阳性、B MC-inconclusive及正式M2不改；整个方法仍未完成。
+**DL联合诊断最新状态（2026-10-12 03:02）**：授权内Agent采用 [DL_RESET_JOINT_ASSAY.md](DL_RESET_JOINT_ASSAY.md) 科学r1。实际348a5fc的baseline正常reset提取已完成；B在第一次更新前因人工optimizer key与官方`opt/step/value`不符停止，R/冻结/24blind未进入。工程修复仅正确官方key并保持完整state、随机流和128更新语义，待确定版本新attempt重跑，不补拼失败输出。sv3物理4独占一A100串行，3600秒/最多1GPU小时是单次对象上限，不是剩余完整目标预算；当前尚无本对象信息/压缩/信号科研结论。原CPU有限物理阳性、B MC-inconclusive及正式M2不改，整个方法未完成。
 
 更新日期：2026-10-12。
 
