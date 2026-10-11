@@ -1,5 +1,13 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 23:14后：有限nested CPU对象与独审验收
+
+确定SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0的sv3 Linux39test全过4.770104秒；入口alarm、真worker命令绑定、最终写盘、owned后代/无关sentinel均验，旧synthetic与Dreamer算法未改。仅sv3隔离315工作区；bundle40e484f7…18eaf，canonical d9be557 clean／本机main595e982f原dirty两docs保留，sv1/sv2不动。
+
+23:14:15.920838–23:14:18.140913北京时间，cal8固定四λ/outer8-inner7/H20真cost数值白名单一次完成，终点2.216830279秒/120秒/worker1939562 terminal/exit0/fullchain，GPU0；未读records/blind、model/render/physics/optimizer0。q−p .00392780、q−constant .0156442名义CI均>0，但q MSE较高，仅该程序探索性选择增量；不重判旧r1或启动gate/训练。原14镜像文件完整hash见manifest及 [DL_NESTED_PROBE_RESULTS.md](DL_NESTED_PROBE_RESULTS.md)。
+
+独审源码eb227243…3136c与launcher335c34d4…b352核hash、八小selftest两机passed。实际direct solve464、140557比较max1.0658e−14，choice/λ/digest/CI零侧exact、4Git blob/working bytes及原cost/源6JSON8NPZ/新链前后匹配；父2.025088133秒/120秒/worker1941441 terminal/exit0。正文c934bc2c…f373、父841c3365…feb5；通用父不申明实际8read，真实read/数值事实在独审正文。无eigh/模型/物理独立重演。停止本有限对象，完整目标仍active；B-r0仍建议，现0GPU、已有模型诊断1串行/2独立并行，4–7足够/总小时未定/未核占用。
+
 ## 2026-10-11：有限嵌套接口规范与GPU资源答复
 
 Agent内部科学交叉审查冻结 `DL-nested-probe-r1`，详见 [DL_NESTED_PROBE.md](DL_NESTED_PROBE.md)、RESEARCH/DL-23。只有既有cal8数值、四mean λ、整episode outer/inner、共同选则与一次120秒CPU对象；工程实现与有限fixture正在验收，未真实拟合/读取blind/启动GPU或训练。原合成assay/原H20/原H100停止与M2不变，方法目标仍未完成。

@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**23:14后DL nested对象验收**：实际/Linux39test SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0，一次CPU cal8对象2.216830秒/120秒，独立solve464次/140557比较max1.0658e−14，GPU0。q−p .00392780／q−constant .0156442的名义episode区间>0，只为既有calibration有限所选程序探索性支持；q MSE较高、不作独立确认/当前RGB/压缩/保护/性能结论。停止本对象，旧r1/M2/blind不改，B-r0仍未采用建议；详情 [DL_NESTED_PROBE_RESULTS.md](DL_NESTED_PROBE_RESULTS.md)。
+
 **DL 新有限对象（2026-10-11）**：`DL-nested-probe-r1` 规范已由授权内Agent审查冻结，见 [DL_NESTED_PROBE.md](DL_NESTED_PROBE.md)；仅已认证cal8数值、固定四mean λ、whole-episode内外层及共同选则，CPU120秒/0GPU。实现/小fixture验收中，尚未真实执行，未授权由此直接进入gate/训练或读blind。原实验协议与历史停止不变；该程序阴性不等于整个信息族阴性，完整方法仍待验证。
 
 **2026-10-11 22:29后DL合成验收**：固定8b7f7a9执行／Linux21test不变，CPU独立PCG64字节＋64kernel-eigh／choice／bootstrap／边界审计通过，父1.142815秒／120秒、max3.09752e−14。指定sparse漏检反例已核，停止此assay、不改真实H20/H100裁决／blind／gate／训练；原weights/dual字节不称独立重获，不能当真实任务／方法效果。详细产物/hash/完整scope见 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)。下一复制不变探针尚未冻结，总体方法未完成、GPU小时未定，M2正式协议保持。

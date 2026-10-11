@@ -2,6 +2,8 @@
 
 更新日期：2026-10-11。
 
+- **23:14后有限nested CPU及独审完成**：实际/Linux39全test SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0；一次cal8对象2.216830秒／120秒／exit0／完整链，独立solve464次/140557比较max1.0658e−14，父2.025088秒／120秒，choice/λ/CI零侧exact，GPU0。q−p .00392780／CI[.000515909,.00819541]、q−constant .0156442／CI[.00687072,.02843294]仅本程序名义探索性支持，q的MSE更高；未证明新RGB／KL压缩／保护／性能。停止本对象、不读blind/启gate/训练，不翻旧r1。报告 [DL_NESTED_PROBE_RESULTS.md](DL_NESTED_PROBE_RESULTS.md)。下一首选继续本聊天审定生产reward候选，B-r0/1800s/1GPU仍建议；配对cue/独立信号/active保护及完整目标未完成。资源当前0／1A100串行／2可独立并行，4–7足够不用全占；新训练显存/总小时未定，无GPU当前占用核查。下方为历史。
+
 - **有限嵌套探针规范已冻结，真实执行未开始**：授权内Agent内部交叉审查采用 [DL_NESTED_PROBE.md](DL_NESTED_PROBE.md) r1，原cal8真实数值、mean λ四值、整ep outer8/inner7、q/p共同inner选参、outer仅所选λ；CPU120秒/0GPU。实现与小fixture验收进行中，尚无新真实拟合/信号/gate/压缩/训练证据。阴性仅限制共同选参程序，不否定整个族/latent信息，旧r1及M2保留。资源最低1独占A100可串行后续已有模型诊断、2可并行独立环节，4–7足够无需全占；新训练显存与总GPU小时未定、未核当前卡占用。下一首选完成确定提交Linux检查、一次完整CPU对象及独审，继续当前完整授权聊天；下方为历史。
 
 - **2026-10-11 22:29后合成执行及独立审计已验收**：clean SHA8b7f7a9daf80bd199b4be5391edad6cb128f2931的Linux21项全过2.598秒，四case固定CPU整组1.232489秒／120秒／exit0／full hash链；GPU0。稀疏已知线性cue的teacher reward1而原q=.75=constant；replicated／history对照符合预期、history／identity q=p exact。独立PCG64字节／64kernel-eigh／choice／bootstrap／边界审计通过（父1.142815秒／120秒，max3.09752e−14），停止此assay；有限测量反例不当真实方法证据，不翻案旧H20/H100、不读blind或进入gate／训练。下一规范须复制不变／整ep隔离，sum γ1自然标度理由及首选推荐已撤回；未采用新真实probe。报告 [DL_PROBE_ASSAY_RESULTS.md](DL_PROBE_ASSAY_RESULTS.md)，完整目标及总GPU小时未完成／未定，已有规模诊断1卡可串行、2可独立并行。

@@ -797,6 +797,8 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 
 ### DL-23 单一嵌套接口程序与资源边界（2026-10-11）
 
+**实际结果更新**：科学r1固定对象及独审已在SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0完成，详见下方DL-24；本节“尚未真实执行”是规范冻结时状态。
+
 **授权内 Agent 决定，尚未真实执行**：科学交叉审查后冻结 [DL_NESTED_PROBE.md](DL_NESTED_PROBE.md) r1：原正确生产动作来源 cal8/四位置/四实际onehot sample、七首控制 H20 真成本不变；仅 mean λ `(1,.1,.01,.001)`，whole-episode outer8/inner7、train-only组RMS/截距、q/p共同 pooled utility→global tie内MSE→最强λ选则，outer只算所选λ。数值有限性、整ep隔离、复制不变及λ1数学等价须小fixture与确定提交 Linux 验收。新对象只读认证数值白名单、不解records，CPU120秒整入口、0GPU、一次完整对象并独立审计；不是旧r1重判、blind确认或新gate/训练。以上是用户整体授权内的Agent科研选择，非用户逐项认可。
 
 **工作假设与可证伪对象**：该有限共同选参程序可能得到 q 相对 p/constant 的 heldout 选择增量；双 lower95>0才有本程序探索性支持，任 upper95<=0停止本程序，其余不确定。共同λ不是相同有效自由度，也不是整个线性族完备检验；强λ q/p=.75，而弱λ q=.9/p=.5的反例会被 pooled 选则压掉。因此阴性不能写成 latent 无信息、整个网格无增量或后续学习无价值。当前RGB相对完整历史的因果增量仍无证据。
@@ -804,3 +806,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **仍待解决**：正确生产路径 reward-head 预测技能不能由 legacy 原H1/H10/MC阴性裁决，新分支须另立信号/目标/预算规范；它仅是对应reward-head信号候选的验证，不是全部可学习信息路线的必要条件。配对历史与可见cue、独立第二信号增量、正常活跃rep损伤/保护、强度/shuffle/reward-only/OOD对照和后续actor学习/性能仍待验证，完整方法目标未完成。
 
 **资源事实与建议**：当前CPU探针、统计和文档需要0GPU；既有size50m模型诊断最低1张独占A100串行，2张仅用于互不依赖环节并行，sv3 GPU4–7授权足够、无需全占。历史来源440.142秒/2585MiB、反馈537.615秒/2587MiB、五组单步668秒/6675MiB仅为各单项采样峰与耗时，不保证新训练显存或整体GPU小时。完整剩余总预算未定，单项3600秒硬限及旧20.4小时外推不作整体ETA；本轮未核当前GPU占用。
+
+### DL-24 有限接口增量及生产预测候选（2026-10-11）
+
+**已验证有限事实**：实际与clean Linux39全test SHA315346b2d0df7e3b9d81f3ca7cd46944d5ac8dd0；cal8固定nested一次2.216830秒／120秒，GPU0。独立direct solve464次、140557比较max1.0658e−14／choice/λ/digest/CI零侧exact／源码Git与原truecost bytes一致。q−p .003927799889331143／名义CI[.0005159088678856373,.008195409614653176]，q−constant .0156441998693859／CI[.006870717118694178,.02843293686018337]，仅所选程序探索性支持。q centered MSE较p高；效用微增量不等于整体预测更准、方法性能或当前RGB独立因果信息。八cal已观察、训练折重叠且未包含refit uncertainty，不是blind确认。原λ1/H100裁决不变，停止本有限对象；源/命令/hash/局限见 [DL_NESTED_PROBE_RESULTS.md](DL_NESTED_PROBE_RESULTS.md)。
+
+**Agent建议，未采用/运行**：`DL-production-reward-r0`可从原native h_p及四实际sampled q/p起点，七normalized首控制＋19zero各imagine20次，将每个未来feature的当前physical-bin symexp_twohot `.pred()`求和；不能加当前过去reward、再做一次observe/core或输入applied物理控制，也不能把逐步TwoHot当累计return分布。候选主量是七控制within-state-centered累计预测MSE相对p及train-only常数成本向量，真argmax选择效用独立联报。未来128paths/4block/chunk8、私有seed、MC稳定门、一次1800秒/1A100均为待冻结建议，尚无模型执行证据。H20超过当前imag_length15，失败限联合RSSM＋reward-head有限开放环估计器；不裁决H1 head、rawK或未来actor学习路线。
+
+**下一具体问题**：首选继续本完整授权聊天，以源码/实际phase与shape/key oracle审定B是否有必要且足够、MC误差判据/常数对照/停止/算力，再决定实现；不能只因A阳性进入gate/训练。配对历史的可见cue、第二信号增量、正常active rep损伤与保护、强度/shuffle/reward-only/OOD对照和后续性能仍待证据，完整方法未完成。当前阶段CPU0GPU；后续已有规模诊断1卡可串行、2可独立并行、分配4–7无需全占，总GPU小时与新训练显存未定。
