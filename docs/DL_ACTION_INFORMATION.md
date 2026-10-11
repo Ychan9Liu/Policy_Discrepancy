@@ -1,6 +1,6 @@
 # DL 有限第一动作与接口信息诊断
 
-版本 **`DL-action-information-r1`**，2026-10-11。**Agent在完整授权内交叉审查后冻结的下一诊断；实现及本机反例测试已完成，真实对象尚未运行。** 它不修改原M2协议，不扩大或翻案已停止的H100平均反馈对象，不采用gate，不授权方法训练或读取24blind。原结果见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)，前置语义及即时/学习路径区分见 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)。
+版本 **`DL-action-information-r1`**，2026-10-11。**冻结对象已实现、完成CPU实测与独立数值／源特征审计，结果见 [DL_ACTION_INFORMATION_RESULTS.md](DL_ACTION_INFORMATION_RESULTS.md)。** 外部动作选择依据成立，接口增量未支持、actor首动作不确定，按事前门不推进gate或训练。它不修改原M2协议，不扩大或翻案已停止的H100平均反馈对象，不授权方法训练或读取24blind。原结果见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)，前置语义及即时/学习路径区分见 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)。
 
 ## 1. 必要性、对象与边界
 
@@ -70,8 +70,10 @@ LOEO训练集重叠；bootstrap固定cross-fitted episode差只有**校准名义
 
 ## 6. 实现与验收入口
 
-当前没有真实运行收益或readout结果。实现见 `scripts/dl_action_information.py`、`scripts/dl_action_information_physics.py`、`scripts/dl_action_information_stats.py`；测试见 `tests/test_dl_action_information_runner.py`、`tests/test_dl_action_information_physics.py`、`tests/test_dl_action_information_stats.py`。科学r1不变，工程初版分别为runner/physics/stats-r1。
+实现见 `scripts/dl_action_information.py`、`scripts/dl_action_information_physics.py`、`scripts/dl_action_information_stats.py`；测试见 `tests/test_dl_action_information_runner.py`、`tests/test_dl_action_information_physics.py`、`tests/test_dl_action_information_stats.py`。科学r1不变，工程初版分别为runner/physics/stats-r1。执行及clean Linux测试SHA `f1ae4d6513e81ed680992b64ba8ebade7d256d52`，实际完整结果、源码／配置／产物hash及复现命令见结果文档。
 
 本机Python3.12.14/NumPy1.26.4、单线程CPU共29项测试，27通过、两项Linux真实process-group验证跳过，1.592秒。统计包括nλ、train-only/整episode隔离、sample选择次序、closedδ与微小winner反例；官方suite物理包括真实H20/完整activation与state、F64一ULP且同F32篡改拒绝、terminal/clock及任务恢复。独立审查发现restore会覆盖task，已在主执行和复放restore后重新核实际task/model，反例通过；没有放宽科学门或容差。BF16接口测试用size50m形状的合成数据，不执行Dreamer，也不是真实模型验收。以上测试发生在未提交的新文件上，不将其称已部署提交。
 
-下一步确定提交并同步sv3 clean worktree，在Linux完成全部29项及依赖检查，再运行一次固定CPU对象。产物置于 `/data/Policy_Discrepancy/runs/dl-action-information-<date>-<SHA>/` 新attempt，小收据镜像ignored `analysis/outputs/dl-action-information/`。独立数值审计须核完成链、来源特征字节、原数组成本/δ集合/selected reward/bootstrap/分类，另用kernel eigendecomposition复算readout；它不新增模型、render或独立physics。完成后按AGENTS报告完整SHA、实际测试SHA/差异、资源状态和下一交接。
+sv3 clean工作区29项全部通过3.062秒（两Linux进程组测试实际执行）、依赖检查通过。真实cal32/480record完整主9600＋复放9600步，父33.910822秒／180秒硬限、exit0／GPU0；独立核完成链／BF16特征与actor raw来源、成本／δ集合／selected reward／bootstrap／分类和eigh readout通过，最大算术差7.1054e−15。复放完整state最大误差0，不称新增独立physics。产物位于 `/data/Policy_Discrepancy/runs/dl-action-information-20261011-f1ae4d6/cp300000-attempt01/`；只运行该完整对象一次，没有扩展H／λ／库／位置／checkpoint。
+
+下一步继续当前完整授权目标，先完成合法可见任务cue与完整历史之外增量的理论规范及必要性审查；不直接启动尚未定义的physical challenge、blind、gate或压缩训练。只读固定OOF截距／特征／constant代数解释已完成，不能以MSE或收缩几何更改停止门。完整方法目标未完成；按AGENTS报告实际执行SHA与最终文档SHA的差异及同步范围。

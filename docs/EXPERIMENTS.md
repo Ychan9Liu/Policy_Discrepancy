@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-11 20:47后DL有限动作/接口结果**：`DL-action-information-r1` 实际执行／clean Linux测试SHA `f1ae4d6513e81ed680992b64ba8ebade7d256d52`；CPU29项全过、cal32固定7+8首动作／共同zero H20，主9600＋复放9600步，33.910822秒／180秒父限，GPU0、zero Dreamer/model/render/optimizer。独立源BF16特征／raw／kernel-eigh及cost/LOEO/wholeepCI/裁决审计passed。外部选择依据成立16state/4ep/18cross-ep disjoint δ集合；q/p/constant全部all-、两选择增量8ep exact0/CI0，actor首动作 .01509419/名义CI[−.02587985,.05442976]不确定。按原门不推进gate/train/blind；只读fixed-output结构解释不改λ/H/库/样本或科学门，合法cue候选未冻结/执行，完整方法未完成。全部源码/协议/产物/hash/命令/资源和局限见 [DL_ACTION_INFORMATION_RESULTS.md](DL_ACTION_INFORMATION_RESULTS.md)；原M2正式协议不变，下方早期“下一／尚未实现”是历史。
+
 **DL前验证更新（2026-10-11）**：固定cal32只读任务语义CPU查询已完成，实际SHA `57270c7b92b8fd9da2bce5d1d6d9f377229564e2`，九项selftest和完整query通过12.221363秒，零环境动作/model/render/optimizer/GPU；来源、官方reward分量及严格只读证据见 [DL_TASK_SEMANTICS.md](DL_TASK_SEMANTICS.md)。它不证明动作关键性、actor利用或方法有效。下一有限第一动作/接口信息对象已由Agent交叉审查冻结于 [DL_ACTION_INFORMATION.md](DL_ACTION_INFORMATION.md)，尚未实现/运行；不读取blind、不启动gate/训练、不翻案旧H100停止门、不改变下述正式M2协议。
 
 **2026-10-11 18:44 DL反馈完整结果**：科学r1/工程r2、实际SHA `0d49c589b525ba0c26f9f85bf52c23573dc19507` CPU28项和GPU4 attempt02完整exit0、537.614524秒/2587MiB、zero optimizer通过；独立artifact统计及official CPU F64 physics25600步审计passed。主量−1.004610/名义95%[−2.255450,−.173982]，冻结裁决not_supported，停止此有限平均对象、不追加H/RNG/样本/checkpoint、不进blind/gate/训练；不否定所有子集或持续压缩保护。完整证据/配置/资源/失败/边界见 [DL_FEEDBACK_RESULTS.md](DL_FEEDBACK_RESULTS.md)，后续先外部关键性/可见性/actor证据，selector候选和新预算未采用。下方18:07及更早为历史，正式M2协议未变。

@@ -1,5 +1,14 @@
 # DL 验证日志与证据索引
 
+## 2026-10-11 20:47后：有限动作接口CPU完成、独立复算通过
+
+- 确定执行／clean Linux测试SHA `f1ae4d6513e81ed680992b64ba8ebade7d256d52`；本机最终29项27pass/2Linuxskip（1.543秒），sv3全部29项3.062秒、两真实owned-group反例无skip、pip check通过。三DL新实现／三测试／限定LF属性已入Git，未改Dreamer算法。独立审查发现完整restore覆盖task后可能改reward定义，已补restore后实际task/model exact守卫和反例，未放宽科学门、dtype、容差或预算。
+- 仅sv3新clean工作区 `/data/Policy_Discrepancy/dl-worktrees/f1ae4d6`，Git bundle同步同完整SHA，原repo保持干净d9be557；无sv1/sv2同步。首次Github push连接失败保留，不据bundle认定远端已更新；最终以Git收据／交接为准，未合main。launcher SHA256 `8c4f5871aa94b31079770583252cca322ef4f2d0d5b6da9b3c719f0bfa47412e`。
+- 20:46:59–20:47:33北京时间，CPU单线程，GPU0；原cal8×4state，固定7控制＋8既有actor firstsample，实际生产mapping／H20＋19zero，完整480record，主9600＋stored-applied复放9600步／restore与state0，F64/F32 reward/discount bytes exact。worker1890410 terminal／exit0／未超时，父33.910822秒／180秒，only-owned-group清理；无Dreamer/JAX/render/新actorRNG/optimizer/blind。无新GPU资源核查，不用旧快照当当前。
+- 独审脚本32c610aa…b1579先核五publishedJSON与cal8全NPZ bytes，再解源256record，比对实际BF16 h/z转换／raw，另kernel-eigh复算全部LOEO／选中值／regret／cost／δ集合／wholeepCI／分类；server8 selftest4.005秒（重hash／零侧／轴等反例），实际12.720443秒／120秒Linuxalarm／passed，最大arith7.1054e−15、q/p pred4.9960e−16，动作／分类／CI零侧exact。独审结果cbb99e43…678e5；不解新480record pickle或新增模型／physics，只核其hash/receipts。
+- 外部门支持16state/4ep/18differentep disjoint δ集合；q/p/constant每sample/fold全部all-，两主readout增量8ep全部0／CI0，按门interface_not_supported；actor H20signed .01509419／CI[−.02587985,.05442976]inconclusive。CPU只读fixed-output QA常数26/32nearoptimal、6超过δ，特征降低截距MSE但无选控切换；不扫λ/库/H/位置/CP，不据小MSE差改门。真实结果／hash／完整命令及QA见 [DL_ACTION_INFORMATION_RESULTS.md](DL_ACTION_INFORMATION_RESULTS.md)。有限停止，no gate/train/blind；完整目标未完成。
+- 两独立科学/官方源码Agent一致暂不freeze/run新物理挑战：候选同p−1正常transition中有界torso world-y torque需要64RGB可辨、contacts合法/support/OOD及不同真实近优动作集合；purevelocity不可见/teleport/clock-carry错位/trackcom/奖励对称为反例，参数/预算未定。首选继续当前完整授权聊天做理论规范和必要性审查，不为旧对象求阳性重采或启动正常loss更新。
+
 ## 2026-10-11：只读任务语义完成，冻结下一有限动作/接口对象
 
 - 实际查询/clean Linux selftest SHA `57270c7b92b8fd9da2bce5d1d6d9f377229564e2`。本机tracked同字节查询器selftest九项0.406秒；sv3九项0.435633秒，cal32 query12.221363秒，19:20:16–19:20:29北京时间/exit0/未超时。GPU使用0；完整cal8/每state8共同初态、task模块/依赖/hash、F64分量/F32初obs编码及查询前后完整state/task/RNG/clock/reset字节通过，最大restore/query误差0。root核完整镜像hash/顺序/只读及exit/clean收据。

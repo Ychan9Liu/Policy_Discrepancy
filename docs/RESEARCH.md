@@ -1,6 +1,6 @@
 # 研究问题与方法
 
-更新日期：2026-10-10。
+更新日期：2026-10-11。
 
 **2026-10-10 新增研究候选：DtLatch（奖励闩）**。用户授权将本轮理论讨论归档、由助手命名并更新日志；这不等于确认采用方法、超参数或扩展实验。完整产出见本文末“DtLatch”章节，记录版本为研究候选 r0。已确认 v1 继续有效，新增候选不覆盖其方法、四组对照或实验协议。
 
@@ -754,3 +754,15 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **理论边界与工作假设**：frozen actor利用当前信息，是即时行为介导对象的前置，不是所有“表示保留→后续actor学习”路线的必要条件。后者仍需外部控制依据、可学信息、正常活跃rep损伤与保护/后续学习证据。actor尚未使用有用latent时D可能为0，乘f(D)的必要门可能漏保；K不能独自解决task/nuisance辨别。纯posterior-head KL下降后固定readout变差可来自可逆坐标漂移，不等于正常训练删掉信息。此前DL-17有关frozen actor前置按即时对象理解，不扩大为完整学习目标的停止门。
 
 **授权内Agent冻结决定，尚未实现/运行**：下一 `DL-action-information-r1` 只用既有cal32/四已存paired sample，七固定首控制＋八actor首动作，共同19步normalized-zero续行H20，CPU最多9600主步＋9600复放，180秒父硬限。独立关键性采用实用margin和跨episode不相交的δ-optimal控制集合，不能只看成本range或微小winner变化。主readout使用实际h＋sampled z、同容量LOEO，不假定已存encoder token，也不把q线性可读增量等同完整历史之外的新RGB信息。参数、ridge目标、bootstrap、停止分叉及必要测试见 [DL_ACTION_INFORMATION.md](DL_ACTION_INFORMATION.md)。本诊断不重审H100、不读blind、不启用新gate或训练；正式方法仍未形成。
+
+### DL-19 有限动作接口对象完成与新信息前置（2026-10-11）
+
+**已验证有限事实**：原r1全部cal32／固定7+8首动作／共同zero H20不变，实际执行与clean CPU SHA `f1ae4d6513e81ed680992b64ba8ebade7d256d52`，sv3 CPU29项全过及pip check通过；完整主9600＋stored-applied复放9600步，33.910822秒／180秒硬限，GPU0、exit0、完整state误差0。独立eigh／源BF16 h与sampled z／raw字节、完整退出与产物／cost／δ集合／LOEO／bootstrap审计通过，最大算术差7.1054e−15；不称独立模型或新physics。结果／hash／命令和限制见 [DL_ACTION_INFORMATION_RESULTS.md](DL_ACTION_INFORMATION_RESULTS.md)。DL-18的“尚未实现”是冻结时历史。
+
+外部选择依据成立：16state／4episode／18不同episode不相交closed δ集合。但q／p读出与各fold constant全部选索引2/all-，两项selected-reward增量逐episode严格0／CI[0,0]，按原门接口对象不支持。actor first-action signed mean .01509419、名义CI[−.02587985,.05442976]，仍不确定。固定输出只读QA显示constant在26/32状态近优，另6有>.2库内regret；q/p特征降低截距预测误差但未越过选择margin。固定λ谱收缩是描述几何，不证明它是失败主因；不按MSE微差另改成功指标。
+
+**Agent授权内决定**：停止该有限对象，维持不推进gate或训练、不读blind、不加λ／H／库／样本／checkpoint求通过。原H100负平均与本H20actor不确定分开。尚未形成可正式实验的方法；完整目标的独立第二信号、active正常rep压缩／保护、排替代解释、后续学习及性能仍未完成。
+
+**工作假设**：constant及有限续行／正则／线性族／样本／history充分或模型表示失误都可能限制此门，未作归因；同动作不等于latent无任务信息或后验保护无效。高D/K且RGB不可观测／OOD／错误策略依赖仍可能误保；可学posterior信息尚未被actor使用时D也可能小，乘K不能自动修复D必要门漏检。
+
+**下一建议，未冻结**：两个独立源码／科学Agent一致先定义“历史无法预知、64RGB可获得、真实改变动作选择”的外部cue，不直接启动physical challenge。唯一条件候选为同p−1 complete state和原raw/applied的一次真实transition中施加预定有界torso world-y torque，在p与实际precarry/prevraw对齐，检验camera2侧视pitch。幅度／控制／margin／支持范围／预算未定；速度可能单帧不可辨，姿态teleport／接触异常、trackcom、正负reward对称或视觉可辨需要过大OOD皆为停止反例。不用D/K/U或事后正号选介入、不增力延窗求阳性。此建议不是已采用协议。即时actor收益不是后续学习路线的普遍必要门，但正常loss学习机制仍需独立可学任务信息及active rep作用，不凭纯posterior-head KL下降／固定readout漂移归因信息删除。
