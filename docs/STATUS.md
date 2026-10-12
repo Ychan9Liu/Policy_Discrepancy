@@ -1,6 +1,15 @@
 # 项目状态
 
-更新日期：2026-10-10。
+更新日期：2026-10-12。
+
+## 05 最新：M2 v1 seed0 分析完成（2026-10-12）
+
+- 已只读核对sv2的16条最终审计（2026-10-10 22:59），逐条确认实际训练SHA `48d71f1541721208322442f5a1d5977124f3e888`、外部最终审计SHA `d239c3fb7e5b77ddf205fe994c46c2e5a6acce6a`及部署脚本hash；旧baseline/Dt attempt02源a8b6243另核对。16条全部验收完成并纳入，各100万训练动作、249493成功更新、21点×10完整episode，四个正式c按原始收据S/N复算一致，无工程数据或训练重跑。下面“仍运行/待终点”均为历史快照。
+- 主指标Dt−baseline/constant/shuffle四任务等权分别 `+8.51/+5.21/+10.79`；末段分别 `−60.67/−74.40/−50.42`。walk两指标胜三个对照；run不胜constant；reacher排序混合；hopper Dt回报很低。单seed结果不支持一致的四任务M2主张，不作跨seed显著性/稳定性结论。
+- 门控在活跃位置有实际减弱，Dt全程超额KL减少约5.81%/16.87%/20.75%/10.40%（hopper/run/walk/reacher）；constant窗口系数匹配不等于全程损失/梯度匹配。两quadruped组间0步评价return小差异保留；已知EGL像素边界不能直接当本轮因果解释。未保存逐reward/像素/实际梯度轨迹，不能声称逐transition累计独立复算。
+- 交付报告 `docs/ANALYSIS_M2_V1.md`；输入/运行清单/哈希/六表/门控表/三张PNG与SVG/命令/测试在 `analysis/outputs/m2-v1-seed0-20261012/`，有效结果仅analysis-final。实际分析和19项测试SHA `ad325482a46b0c9dd3c3709cccca6a63bea9ba5d`，真实16条require-complete退出0，任务/总体/差值与04完全一致。最终交付相比分析SHA仅文档；本轮只本机提交，无训练源码变更、不推送或同步服务器，原RESEARCH/STATUS未提交归档隔离保留。
+- 2026-10-12 12:43:45资源只读快照：原16条PID均退出，M2已释放sv2物理GPU0–7；八卡目前为其他目录作业占用（未知项目归属），不能称空闲，本轮未启动任何GPU作业。完整快照CURRENT_RESOURCE.json。
+- 首选由用户继续现有02制定原四组多训练seed复验协议，检验walk正向与hopper负向可重复性；具体seed/任务覆盖/预算/判据/资源尚未批准，条件shuffle及DtLatch也不自动实施。完整02及可选04只读补证prompt见分析报告，不自动创建chat或发送消息。
 
 ## 04 最新：PD_1剩余constant / shuffle已启动（2026-10-10）
 
