@@ -1,5 +1,7 @@
 # DL-native-render-identity-r1：实际结果与资源
 
+**终点同步核验（2026-10-12 12:48）**：研究分支已成功push，并以ls-remote核验到报告SHA `81fa38a216589ec39bbaef3f97b9f008c7da20b4`；GitHub/main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。该报告版相对actual/tested `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 只改7份文档，源码仅sv3隔离checkout同步；后续终点归档提交仍仅文档，最终SHA见Git回复。12:48:52.572099北京时间fresh XML确认sv3物理4–7各0MiB/无compute与graphics，全部新owned PID已不存在；不是持续空闲保证。原native失败、第二信号/保护/性能尚未验证，完整目标active；继续当前chat，不自动创建或发送消息。下方较早push失败及资源快照均保留历史。
+
 更新：2026-10-12。冻结规范见 [DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md)。**这个零动作工程对象验收完成；原 native assay 的失败没有转为成功，整个方法尚未验证成立。**
 
 ## 实际版本与验收

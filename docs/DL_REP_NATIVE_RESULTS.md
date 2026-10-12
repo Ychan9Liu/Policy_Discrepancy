@@ -1,5 +1,7 @@
 # DL-rep-native-r1：运行与GPU资源记录
 
+**终点同步核验（2026-10-12 12:48）**：研究分支已成功push，并以ls-remote核验到报告SHA `81fa38a216589ec39bbaef3f97b9f008c7da20b4`；GitHub/main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。该报告版相对actual/tested `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 只改7份文档，源码仅sv3隔离checkout同步；后续终点归档提交仍仅文档，最终SHA见Git回复。12:48:52.572099北京时间fresh XML确认sv3物理4–7各0MiB/无compute与graphics，全部新owned PID已不存在；不是持续空闲保证。原native失败、第二信号/保护/性能尚未验证，完整目标active；继续当前chat，不自动创建或发送消息。下方较早push失败及资源快照均保留历史。
+
 **DL最新工程补记（2026-10-12 06:05）**：实际/tested SHA `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 的零动作render身份对象验收完成：Linux39全过/pip0，sv3物理4仅EGL、4reset/12RGB/0action/Agent，外45.766849秒/约.012713GPUh/采样峰148MiB。物理snapshot/MJB/已测model与derived相同但RGB不等；scene差仅pre-draw geomorder scratch别名，不能当根因或完整GL等价，原比较保留。06:05:51.747233完整XML核4–7各0MiB/no进程。原native fc4219f attempt01仍失败、无科学裁决/CPU独审，guard candidate未采用，方法未成立/M2不改/完整目标active；首选继续当前chat先0GPU解释renderer有效输入，不放宽或立即重跑。详见 [DL_NATIVE_RENDER_IDENTITY_RESULTS.md](DL_NATIVE_RENDER_IDENTITY_RESULTS.md)。603e913 push connection reset、未GitHub确认/未main，仅sv3隔离代码同步；后续报告版与实际测试版的差异和最终SHA按终点Git核验。下方带时间为历史。
 
 ## 2026-10-12 05:47：primary-attempt01失败，GPU已释放
