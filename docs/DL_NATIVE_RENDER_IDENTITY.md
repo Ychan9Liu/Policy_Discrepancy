@@ -1,5 +1,7 @@
 # DL-native-render-identity-r1：零动作渲染身份诊断
 
+**运行补记（2026-10-12）**：本冻结对象已在 `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 完整执行，见 [DL_NATIVE_RENDER_IDENTITY_RESULTS.md](DL_NATIVE_RENDER_IDENTITY_RESULTS.md)。下方“未执行”是采用时历史记录；对象与标准未改。原native assay仍失败，完整方法尚未成立。
+
 ## 状态与范围
 
 **Agent 在既有完整预验证授权内采用的必要工程诊断，尚未执行。** 本文不是正式 M2 协议，也不是方法有效性、独立第二信号或选择性保护的实验。root 负责冻结提交、Linux 工程验收、实际资源核查与外部 launcher；本文件和实现的 CPU fixtures 不构成服务器/GPU或真实渲染验收。

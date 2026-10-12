@@ -1,5 +1,7 @@
 # DL 验证日志与证据索引
 
+**DL最新工程补记（2026-10-12 06:05）**：实际/tested SHA `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 的零动作render身份对象验收完成：Linux39全过/pip0，sv3物理4仅EGL、4reset/12RGB/0action/Agent，外45.766849秒/约.012713GPUh/采样峰148MiB。物理snapshot/MJB/已测model与derived相同但RGB不等；scene差仅pre-draw geomorder scratch别名，不能当根因或完整GL等价，原比较保留。06:05:51.747233完整XML核4–7各0MiB/no进程。原native fc4219f attempt01仍失败、无科学裁决/CPU独审，guard candidate未采用，方法未成立/M2不改/完整目标active；首选继续当前chat先0GPU解释renderer有效输入，不放宽或立即重跑。详见 [DL_NATIVE_RENDER_IDENTITY_RESULTS.md](DL_NATIVE_RENDER_IDENTITY_RESULTS.md)。603e913 push connection reset、未GitHub确认/未main，仅sv3隔离代码同步；后续报告版与实际测试版的差异和最终SHA按终点Git核验。下方带时间为历史。
+
 ## 2026-10-12 05:47：native主attempt01统计前置失败，资源释放
 
 实际/tested SHA `fc4219f36449783f8751a9890a125cd218a2807f`；clean Linux38项和pip check0的工程证据保留。主北京时间04:49:15.053030–05:31:59.490141，外 `2564.437091` 秒/exit1，sv3物理4单卡外入口占用口径 `.71234363645 GPU·小时`，约2秒采样峰6623MiB。A128及0/B/A全部96完整episode、96000 transitions/96096 RGB已生成，但statistics worker1.615644589秒后在实际 `dl_rep_native.py:467` 因跨组reset_receipts不等拒绝；相同seed的物理snapshot hash相同、初帧RGB hash不同。无result.json、主complete_verifiedFalse、CPU独审未启动；不解读returns、不放宽精确比较、不拼接或发布局部科学结论。完整报告 [DL_REP_NATIVE_RESULTS.md](DL_REP_NATIVE_RESULTS.md)，失败metadata为run `engineering/failure-statistics01.json`。
