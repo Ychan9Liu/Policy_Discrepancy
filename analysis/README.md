@@ -2,6 +2,20 @@
 
 此目录存放可复现的指标整理和绘图代码。输入来自 `docs/EXPERIMENTS.md` 索引的服务器运行目录；大型中间文件及生成图表放在 `analysis/outputs/`，不提交到 Git。
 
+## M2 v1 seed0 终点复核与门控分析
+
+`collect_m2_v1.py` 通过只读 SSH 收集 sv2 正式16条的评价、JSONL、成功更新收据、配置、正式 c、04终点审计及快照小标记；不复制 checkpoint/replay，不写 W&B。小镜像包带原路径/SHA256，采集时只读交叉检查 W&B 精确摘要及资源。固定来源是 `formal-four-groups-pd1-20261010-final-attempt01`，不是启动交接版本。
+
+`analyze_m2_v1.py` 校验镜像与04审计时输入哈希、逐条实际训练/审计SHA、冻结配置、随机流和同任务初始评价、百万动作/完整收据/21点×10episode、正式窗口S/N及先冻结后constant启动，再调用既有统计器 `--require-complete`，以第二种直接算式交叉核对指标，输出运行清单、c表、按阶段门控表及PNG/SVG图。
+
+```sh
+python -m analysis.collect_m2_v1 --output analysis/outputs/NEW_COLLECTION
+python -m analysis.analyze_m2_v1 --inputs analysis/outputs/NEW_COLLECTION/inputs --output analysis/outputs/NEW_ANALYSIS
+python -m unittest tests.test_return_metrics tests.test_m2_analysis -v
+```
+
+采集器仅依赖标准库和SSH，服务器使用现有dreamer环境。绘图需要 Matplotlib 3.10.8 / NumPy 2.4.2；本轮本机独立 `outputs/.../plot_deps` 安装，不修改服务器训练环境。输出必须新目录；失败尝试保留。诊断是每5万动作区间内的成功更新均值，以快照update ID得到实际更新数后加权；D分位数为逐批分位数均值，不能当作阶段合并分位数。仅logging收据持久化S/N，其余组三个matching字段为0是源码约定，不能据此解释为无活跃位置；各组作用取真实 `train/dt/` 日志。活跃区均值是每更新活跃均值的加权平均，不宣称已恢复逐位置梯度。详见 `docs/ANALYSIS_M2_V1.md`。
+
 ## 原始 return 统计
 
 实现为 `analysis/return_metrics.py`，只依赖 Python 标准库；协议依据为 `docs/EXPERIMENTS.md` C/C.1。生产 CLI 固定100万动作预算、21点、每点10完整 episode、指定末段五点、四任务、训练 seed0。它不接受新的预算、seed 或指标参数。`tests/run_return_metrics_fixtures.py` 的两 seed、小预算仅是手算统计 fixture。
