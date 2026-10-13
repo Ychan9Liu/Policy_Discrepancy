@@ -1,5 +1,20 @@
 # DL 验证日志与证据索引
 
+## DL-pilot-r3：用户更正1M，原r2按要求中止（2026-10-13）
+
+用户明确“更正一下，跑1m”，保持sv2/GPU4–7资源；沿用单任务GPU4/quad_walk/N/seed0，
+α20/ρ.5/H1及所有模型/loss/grad不变。r2 real/tested95ea434已共同初始化匹配、0点评价10×1000
+及实际1compute/17graphics全在GPU4通过；约29.8k诊断平均v=.999976681、最小单位置.620753407，
+是update-batch统计，不称独立state覆盖或机制/性能结果。13:19:26.895126核验父命令后按用户更正
+仅SIGTERM本次父668492，其owned group清理全部worker/环境，13:19:28.365921退出；
+最后收据8766/动作37096，0点评价留证，无完整性能结果。父原TimeoutError保存，另
+`dl-pilot-r2-plan-20261013-95ea434/user_budget_correction.json` 标明中止原因，非数值故障。
+13:21:17.533450父/worker均不存在，4–7各0MiB。完整 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。
+
+本机工程r3仅适配1M、21点评价完整性、1M AUC/80–100万tail及16小时whole-entry上限；
+原算法及DL/M2准入不改，新5项CPU中4通过/1Linux待服务器。新规范
+[DL_PILOT_R3.md](DL_PILOT_R3.md)，新确定SHA/clean Linux后从头启动，不恢复或拼接旧状态。
+
 **DL-pilot-r2真实启动补记（2026-10-13 12:54）**：actual/tested `95ea4348b8923d947cbb6e57a4d68dc5029c1fad` 的sv2隔离clean Linux5pilot+13kernel+14protocol，共30通过/2skip，pip0。12:52:11 fresh XML确认GPU4–7各0MiB/无进程；12:52:32父668492启动，probe668500在GPU4实际C+G验证后退出，worker669298实际CUDA只在GPU4并正在JIT；初始化hash/训练/评价尚未验收。完整命令、paths、CPU/版本/设备与限制见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。14400秒整个入口硬上限，不自动延長或新增作业；旧科研裁决保持。本机两次GitHub网络连接失败，95ea434只同步sv2隔离checkout，canonical48干净不改，未确认push/未main。
 
 ## DL-pilot-r2：新100k授权与入口准备（2026-10-13）

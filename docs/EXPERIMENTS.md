@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL-pilot-r3用户预算更正（2026-10-13）**：预算改为1M，sv2/GPU4–7继续，只GPU4跑quadruped_walk/N/seed0，α20/ρ.5/H1不变；每50k×10episode，共21点，对齐PD_1完整B/D的1M AUC/80–100万tail，仍仅探索性历史对照。原100k/r2在37096动作/8767更新按用户更正中止，完整记录保留，不当数值失败或完整性能结果。新协议 [DL_PILOT_R3.md](DL_PILOT_R3.md)；当前新r3未启动，确定提交/clean Linux验收后从头新目录运行，不拼接旧状态。
+
 **DL-pilot-r2运行索引（2026-10-13 12:54）**：已启动、初始化/JIT中，actual/tested `95ea4348b8923d947cbb6e57a4d68dc5029c1fad`；sv2物理GPU4／quadruped_walk／N／seed0／100k。独立计划、run、CPU检查和设备证据见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。完整训练/评价/审计尚未完成，没有新增性能或机制结论；旧正式M2协议不变。
 
 **DL-pilot-r2新100k探索（2026-10-13，准备中）**：用户新授权100k、sv2物理4–7；按此前单任务范围，仅GPU4跑quadruped_walk/N/seed0，α20/ρ.5/H1及原模型损失固定。0/50k/100k各10完整sampled episode，原PD_1 B/D seed0相同前缀作历史对照；不比较1M AUC/tail，不新增c/κ匹配或shuffle。执行规范、source hash与可比性限制见 [DL_PILOT_R2.md](DL_PILOT_R2.md)。旧18条DL门与正式M2-v1保持，native失败不改为通过；本次性能与机制结论尚无。

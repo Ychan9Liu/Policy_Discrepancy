@@ -1,7 +1,7 @@
-"""DL-pilot-r2: separately authorized 100k online DtLatch exploration.
+"""DL-pilot-r3: user-corrected 1M online DtLatch exploration.
 
 The original DL screening gates and M2-v1 runner remain unchanged. Only N,
-quadruped_walk, seed 0 is trained; pinned PD_1 B/D prefixes are historical
+quadruped_walk, seed 0 is trained; pinned PD_1 B/D complete runs are historical
 controls. Preparing imports no agent. The supervisor owns one Linux process
 group and bounds the entire attempt, including initialization and evaluation.
 """
@@ -10,7 +10,7 @@ ENTRY_STARTED = time.monotonic()
 import os
 import signal
 OWNED = set()
-SECONDS = 14400
+SECONDS = 57600
 DEADLINE = ENTRY_STARTED + SECONDS
 
 
@@ -43,9 +43,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.dl_train import digest, git_state, safe_json, write_json
 
-VERSION = 'DL-pilot-r2'
+VERSION = 'DL-pilot-r3'
 TASK, SEED, BUDGET, INTERVAL, EPISODES, ENVS = (
-    'dmc_quadruped_walk', 0, 100000, 50000, 10, 16)
+    'dmc_quadruped_walk', 0, 1000000, 50000, 10, 16)
 HOST = 'lyg0360'
 UUIDS = {
     4: 'GPU-7bf636ec-fa03-aa3f-7314-dd803c1658be',
@@ -132,7 +132,7 @@ def require_idle(gpu):
 
 def overrides(logdir):
   return {
-      'script': 'dl_pilot_r2', 'task': TASK, 'seed': SEED, 'logdir': str(logdir),
+      'script': 'dl_pilot_r3', 'task': TASK, 'seed': SEED, 'logdir': str(logdir),
       'run.action_budget': BUDGET, 'run.eval_every_actions': INTERVAL,
       'run.eval_eps': EPISODES, 'run.envs': ENVS,
       'logger.outputs': ['jsonl'], 'logger.filter': '.*',
@@ -187,8 +187,11 @@ def summarize(rows):
   validate_evaluations(rows)
   values = [r['mean_return_raw'] for r in rows]
   area = math.fsum(.5 * (a + b) * INTERVAL for a, b in zip(values[:-1], values[1:])) / BUDGET
+  tail = [r for r in rows if r['action_step'] >= 4 * BUDGET // 5]
   return dict(grid=[r['action_step'] for r in rows], mean_returns_raw=values,
-      return_auc_per_100k_actions=area, endpoint_return_raw=values[-1])
+      action_budget=BUDGET, return_auc_per_action_budget=area, endpoint_return_raw=values[-1],
+      tail_grid=[r['action_step'] for r in tail],
+      tail_mean_return=math.fsum(r['mean_return_raw'] for r in tail) / len(tail))
 
 
 def control_evidence():
@@ -207,7 +210,7 @@ def control_evidence():
     rows = [json.loads(line) for line in (directory / 'evaluations.jsonl').read_text().splitlines()
         if json.loads(line)['action_step'] <= BUDGET]
     result[group] = dict(directory=str(directory), source_sha256=pins,
-        manifest=manifest, prefix=rows, summary=summarize(rows),
+        manifest=manifest, evaluations=rows, summary=summarize(rows),
         initial_checkpoint=dict(path=str(checkpoint), sha256=INITIAL_CHECKPOINT,
             params_sha256=INITIAL_PARAMS))
   return result
@@ -219,8 +222,8 @@ def prepare(args):
   from scripts.prepare_m2_v1 import resolve
   output = Path(args.output)
   run_root = Path(args.run_root)
-  require(run_root.parent == RUNS_ROOT and run_root.name.startswith('dl-pilot-r2-'),
-      'A distinct DL-pilot-r2 run campaign is required')
+  require(run_root.parent == RUNS_ROOT and run_root.name.startswith('dl-pilot-r3-'),
+      'A distinct DL-pilot-r3 run campaign is required')
   require(not run_root.exists() and not output.exists(), 'Use new plan and attempt directories')
   controls = control_evidence()
   logdir = run_root / TASK / 'N-seed0-attempt01'
@@ -234,7 +237,7 @@ def prepare(args):
       logdir=str(logdir), config_sha256=digest(output / 'config.yaml'),
       controls_sha256=digest(output / 'historical_controls.json'),
       config_differences_from_PD1_B=differences, hard_wall_seconds=SECONDS,
-      authorization='User: run 100k on sv2 GPU4--7; prior scope one DL quadruped_walk seed0.',
+      authorization='User corrected budget to 1m; sv2 GPU4--7; one DL quadruped_walk seed0.',
       hypothesis='Selective rep protection may improve early learning; mechanism unestablished.',
       limitation='Single training seed, historical controls, distinct code SHA; exploratory only.')
   write_json(output / 'RUN_INDEX.json', index)
@@ -447,7 +450,7 @@ def worker(args):
         resource=dict(logical_server='sv2', physical_gpu=gpu, uuid=UUIDS[gpu], logical_cuda=0,
             mujoco_egl_device_id=os.environ['MUJOCO_EGL_DEVICE_ID'], supervisor=str(supervisor),
             startup_sha256=digest(supervisor / 'startup.json')),
-        matching='No constant or shuffle arm; no c/kappa matching in this 100k N run',
+        matching='No constant or shuffle arm; no c/kappa matching in this N run',
         restoration='From scratch only; environment/replay RNG cannot seamlessly resume',
         limitation=index['limitation']))
     batch_steps = config.batch_size * config.batch_length
@@ -547,8 +550,8 @@ def worker(args):
       driver.step_selected(policy, range(min(ENVS, boundary - state.actions)))
       if state.actions == boundary:
         evaluate(boundary)
-    require(state.actions == int(step) == BUDGET and len(state.evaluations) == 3,
-        'Exact 100k budget and three evaluation points required')
+    require(state.actions == int(step) == BUDGET and len(state.evaluations) == len(state.grid),
+        'Exact 1M budget and complete evaluation grid required')
     result = dict(protocol=VERSION, git_commit=args.git_sha, group='N', task=TASK, seed=SEED,
         status='training_ended_pending_audit', train_action_steps=state.actions,
         train_resets=state.resets, updates=state.updates, eval_action_steps=state.eval_actions,
@@ -578,9 +581,10 @@ def audit(index_path, supervisor):
   require(not (directory / 'FAILED.json').exists(), 'Failed artifact cannot pass')
   manifest, final = read_json(directory / 'protocol_manifest.json'), read_json(directory / 'final_state.json')
   require(final['git_commit'] == manifest['git_commit'] == index['git_sha'] and
-      final['train_action_steps'] == BUDGET and final['evaluations'] == 3 and
-      final['eval_action_steps'] == 30000 and final['updates'] == 24493 and
-      final['train_batch_keys'] == final['updates'], 'Final exact counts differ from PD_1 100k prefix')
+      final['train_action_steps'] == BUDGET and final['evaluations'] == BUDGET // INTERVAL + 1 and
+      final['eval_action_steps'] == (BUDGET // INTERVAL + 1) * EPISODES * 1000 and
+      final['updates'] == BUDGET // 4 - 507 and
+      final['train_batch_keys'] == final['updates'], 'Final exact counts differ from PD_1 full budget')
   rows = [json.loads(x) for x in (directory / 'evaluations.jsonl').read_text().splitlines()]
   calculated = summarize(rows)
   require(all(final[k] == v for k, v in calculated.items()), 'Final summary disagrees with raw evaluations')
@@ -591,10 +595,10 @@ def audit(index_path, supervisor):
       'Invalid optimizer receipt')
   for r in rows:
     require((directory / r['snapshot_id'] / 'agent.pkl').is_file(), 'Missing actual evaluation snapshot')
-    require(r['update_id'] == {0: 0, 50000: 11993, 100000: 24493}[r['action_step']],
+    require(r['update_id'] == (r['action_step'] // 4 - 507 if r['action_step'] else 0),
         'Update count at evaluation differs from PD_1')
   fingerprints = [json.loads(x) for x in (directory / 'evaluation_state_audit.jsonl').read_text().splitlines()]
-  require([r['action_step'] for r in fingerprints] == [0, 50000, 100000] and
+  require([r['action_step'] for r in fingerprints] == list(range(0, BUDGET + 1, INTERVAL)) and
       all(r['before'] == r['after'] for r in fingerprints), 'Evaluation mutated training state')
   resources = [json.loads(x) for x in (Path(supervisor) / 'resources.jsonl').read_text().splitlines()]
   devices = [p for r in resources for p in r['actual_devices']]
@@ -606,7 +610,8 @@ def audit(index_path, supervisor):
           ('train_action_steps', 'updates', 'evaluations', 'eval_action_steps')},
       N=calculated, historical={g: controls[g]['summary'] for g in ('B', 'D')},
       differences={g: {k: calculated[k] - controls[g]['summary'][k] for k in
-          ('return_auc_per_100k_actions', 'endpoint_return_raw')} for g in ('B', 'D')},
+          ('return_auc_per_action_budget', 'endpoint_return_raw', 'tail_mean_return')}
+          for g in ('B', 'D')},
       artifact_sha256={name: digest(directory / name) for name in
           ('protocol_manifest.json', 'final_state.json', 'evaluations.jsonl', 'update_receipts.jsonl',
            'evaluation_state_audit.jsonl')},

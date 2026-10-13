@@ -36,9 +36,9 @@ class PilotContract(unittest.TestCase):
 
   def test_declared_differences_and_unapproved_method_change(self):
     config, baseline = baseline_config()
-    config = config.update(pilot.overrides('/data/Policy_Discrepancy/runs/dl-pilot-r2-fixture/N'))
+    config = config.update(pilot.overrides('/data/Policy_Discrepancy/runs/dl-pilot-r3-fixture/N'))
     differences = pilot.validate_config(config, baseline)
-    self.assertIn('run.action_budget', differences)
+    self.assertNotIn('run.action_budget', differences)
     self.assertIn('agent.rep_probe.mode', differences)
     self.assertNotIn('run.eval_every_actions', differences)
     for change in ({'agent.dt_latch.rho': .2}, {'agent.loss_scales.rep': .2},
@@ -49,7 +49,7 @@ class PilotContract(unittest.TestCase):
   def test_historical_rng_namespaces_and_complete_episodes(self):
     from embodied.run.protocol_v1 import seed32, REWARD_SOURCE, RETURN_DEFINITION
     rows = []
-    for point in (0, 50000, 100000):
+    for point in range(0, pilot.BUDGET + 1, pilot.INTERVAL):
       scores = [float(i + point / 10000) for i in range(10)]
       seeds = [seed32(0, pilot.TASK, 'eval_env', point // 50000, i) for i in range(10)]
       details = [dict(complete=True, episode_id=i, environment_seed=seeds[i],
@@ -60,8 +60,11 @@ class PilotContract(unittest.TestCase):
           mean_return_raw=float(np.mean(scores)), reward_source=REWARD_SOURCE,
           return_definition=RETURN_DEFINITION))
     result = pilot.summarize(rows)
-    self.assertEqual(result['return_auc_per_100k_actions'], 9.5)
-    self.assertEqual(result['endpoint_return_raw'], 14.5)
+    self.assertEqual(result['action_budget'], 1000000)
+    self.assertEqual(result['return_auc_per_action_budget'], 54.5)
+    self.assertEqual(result['endpoint_return_raw'], 104.5)
+    self.assertEqual(result['tail_mean_return'], 94.5)
+    self.assertEqual(result['tail_grid'], [800000, 850000, 900000, 950000, 1000000])
     bad = json.loads(json.dumps(rows))
     bad[1]['seeds'][0] = seed32(0, pilot.TASK, 'DL_eval_env', 1, 0)
     with self.assertRaisesRegex(ValueError, 'RNG mapping'):

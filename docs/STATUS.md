@@ -1,5 +1,9 @@
 # 项目状态
 
+**DL预算更正（2026-10-13 13:21，1M准备中）**：用户改为“跑1m”，覆盖100k；sv2物理4–7继续，单任务quadruped_walk/N/seed0/GPU4，α20/ρ.5/H1和原模型/损失不改，21点×10episode对齐PD_1完整B/D。原r2于13:19按用户更正中止，最后37096动作/8767更新，完整证据保留、无数值故障或100k性能结论；父/worker/环境已清理，13:21:17 GPU4–7各0MiB。本机新r3预算/评价完整性/监督上限适配及CPU fixture通过，下一确定SHA的clean Linux复核后新目录从头启动，不续跑。新规范 [DL_PILOT_R3.md](DL_PILOT_R3.md)，中止记录 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。
+
+**DL 100k运行中（2026-10-13 13:03:23快照）**：sv2物理GPU4／quadruped_walk／N／seed0已到13080动作、2763成功更新，初始完整params/optimizer/norm逐字节与PD_1共同状态一致，0点10完整1000步episode通过且不改训练状态；1compute/17graphics实际PID全部仅GPU4，显存8010MiB。实际/clean Linux tested SHA仍 `95ea4348b8923d947cbb6e57a4d68dc5029c1fad`，后来90c83147b0c98ee88c86f667b866f4f53c65b8d7仅4份运行报告文档，执行checkout不移动；100k/终点评价/审计尚未完成。5–7本次未用，无新增已确认push或main合并。继续当前chat完成已授权运行，见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。下方均为带时间历史。
+
 **DL 100k已启动（2026-10-13 12:54，初始化中）**：actual/tested SHA `95ea4348b8923d947cbb6e57a4d68dc5029c1fad`，sv2隔离clean Linux32项中30通过/2skip、pip0；GPU4跑quadruped_walk/N/seed0，α20/ρ.5/H1、100k、50k×10episode，PD_1 B/D前缀历史对照。12:52:11 fresh XML确认4–7空闲，12:52:32父PID668492启动，实际零动作CUDA/EGL同卡probe通过，worker669298正在JIT；未宣称初始化匹配、训练更新/性能完成。5–7未用，当前GPU4未释放。本机GitHub连接失败、新增95ea434未确认push/未main；仅同步sv2隔离代码，canonical48不改。证据/完整命令与状态见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)；以下准备和旧对象记录保留历史。
 
 **DL新100k授权（2026-10-13，准备中）**：用户明确“跑100k吧，sv2，gpu4~7”，执行此前单任务 `dmc_quadruped_walk` / N / seed0；sv2物理GPU4，5–7不增加任务。α20/ρ.5/H1 reward-support、size50m/vision64/repeat1、16env/ratio256、free nats1/dyn1/rep.1/原梯度开关；0/50k/100k各10sampled episode，PD_1原B/D前缀为历史对照。独立 [DL_PILOT_R2.md](DL_PILOT_R2.md) 与入口，不削弱旧DL/M2准入；机制仍未建立，不写旧预验证通过。12:30:36.763999北京时间fresh sv2 XML确认4–7各0MiB/无进程；尚未训练，启动前另核查。本机新入口4项CPU通过、1项Linux进程组待服务器，属于fixture证据。以下为旧对象历史。
