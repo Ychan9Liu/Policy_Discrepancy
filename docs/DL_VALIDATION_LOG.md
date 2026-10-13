@@ -1,5 +1,21 @@
 # DL 验证日志与证据索引
 
+## DL-pilot-r3真实启动与首批更新（2026-10-13 13:37:29）
+
+actual/tested完整SHA13ec72a214b0c03b886b2c7fac52c8f089966dec，sv2隔离clean checkout；
+5项新Linux契约2.917993903秒全过、pip0；相同dreamerv3/embodied源码的95kernel/protocol
+25通过/2skip认证复用，不称当前SHA新跑32项。13ec72a push与远端SHA已核验，main595e982未合。
+13:28:12 fresh XML4–7各0MiB/无作业后启动父673688；probe673693实际CUDA/EGL同GPU4通过，
+worker674490从头初始化实际匹配PD_1完整params/optimizer/norm digest、0点10完整1000步
+episode（mean56.29089345829127）且训练状态不变，之后提交更新。13:37:29收据ID2128，
+10544动作/2129更新，loss25.253709793/grad63.014076233有限；1compute/17graphics全GPU4，
+8010MiB，5–7无进程/1MiB。无失败，尚无1M终点/审计/性能结论。
+
+完整配置α20/ρ.5/H1、模型/loss/grad与源一致，21×10episode/raw return/1M AUC/80–100万tail；
+独立父57600秒whole-entry上限继续当前已授权任务，普通工程故障保留证据后本机修复、新attempt，
+不恢复或拼接旧r2、不新增任务/seed/调参。小型plan/config/历史控制本机ignored镜像完成。
+完整命令、计划/产物/PID/hash、环境提示及验收标准见 [DL_PILOT_R3_RESULTS.md](DL_PILOT_R3_RESULTS.md)。
+
 ## DL-pilot-r3：用户更正1M，原r2按要求中止（2026-10-13）
 
 用户明确“更正一下，跑1m”，保持sv2/GPU4–7资源；沿用单任务GPU4/quad_walk/N/seed0，

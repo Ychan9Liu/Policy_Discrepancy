@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL-pilot-r3运行中（2026-10-13 13:37:29）**：sv2物理GPU4/quadruped_walk/N/seed0/1M，实际/tested13ec72a214b0c03b886b2c7fac52c8f089966dec；原PD_1 B/D全1M历史对照。当前10544动作/2129更新、0点10完整episode/共同初始化和实际GPU4 compute/EGL通过，无失败；余下训练、21点完整网格与终点审计未完成，无方法效果结论。新5项Linux/pip与hash/命令/计划/run/资源见 [DL_PILOT_R3_RESULTS.md](DL_PILOT_R3_RESULTS.md)。原r2为用户更正预算中止，不混入本次曲线。
+
 **DL-pilot-r3用户预算更正（2026-10-13）**：预算改为1M，sv2/GPU4–7继续，只GPU4跑quadruped_walk/N/seed0，α20/ρ.5/H1不变；每50k×10episode，共21点，对齐PD_1完整B/D的1M AUC/80–100万tail，仍仅探索性历史对照。原100k/r2在37096动作/8767更新按用户更正中止，完整记录保留，不当数值失败或完整性能结果。新协议 [DL_PILOT_R3.md](DL_PILOT_R3.md)；当前新r3未启动，确定提交/clean Linux验收后从头新目录运行，不拼接旧状态。
 
 **DL-pilot-r2运行索引（2026-10-13 12:54）**：已启动、初始化/JIT中，actual/tested `95ea4348b8923d947cbb6e57a4d68dc5029c1fad`；sv2物理GPU4／quadruped_walk／N／seed0／100k。独立计划、run、CPU检查和设备证据见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。完整训练/评价/审计尚未完成，没有新增性能或机制结论；旧正式M2协议不变。

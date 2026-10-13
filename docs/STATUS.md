@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL 1M已有效运行（2026-10-13 13:37:29快照）**：实际/tested完整SHA `13ec72a214b0c03b886b2c7fac52c8f089966dec`，sv2物理GPU4 / quadruped_walk/N/seed0 / 1M，α20/ρ.5/H1和原loss/grad不变，21点×10episode。新5项clean Linux通过/pip0，源码相同的旧kernel/protocol认证复用；13ec72a已push/ls-remote核验，main595e982未合。13:28:12启动，父673688/worker674490，共同初始化匹配、0点10完整episode/eval隔离通过，10544动作/2129成功更新且loss/grad有限；1compute/17graphics全在GPU4/8010MiB，5–7无进程/各1MiB。独立监督继续完整预算和终点审计，训练/验收尚未完成，不称方法有效。原100k按用户更正中止并保留，不恢复或拼接。实际路径、命令、hash和后续范围见 [DL_PILOT_R3_RESULTS.md](DL_PILOT_R3_RESULTS.md)。后续报告提交只文档，执行checkout保持13ec72a；以下为历史。
+
 **DL预算更正（2026-10-13 13:21，1M准备中）**：用户改为“跑1m”，覆盖100k；sv2物理4–7继续，单任务quadruped_walk/N/seed0/GPU4，α20/ρ.5/H1和原模型/损失不改，21点×10episode对齐PD_1完整B/D。原r2于13:19按用户更正中止，最后37096动作/8767更新，完整证据保留、无数值故障或100k性能结论；父/worker/环境已清理，13:21:17 GPU4–7各0MiB。本机新r3预算/评价完整性/监督上限适配及CPU fixture通过，下一确定SHA的clean Linux复核后新目录从头启动，不续跑。新规范 [DL_PILOT_R3.md](DL_PILOT_R3.md)，中止记录 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。
 
 **DL 100k运行中（2026-10-13 13:03:23快照）**：sv2物理GPU4／quadruped_walk／N／seed0已到13080动作、2763成功更新，初始完整params/optimizer/norm逐字节与PD_1共同状态一致，0点10完整1000步episode通过且不改训练状态；1compute/17graphics实际PID全部仅GPU4，显存8010MiB。实际/clean Linux tested SHA仍 `95ea4348b8923d947cbb6e57a4d68dc5029c1fad`，后来90c83147b0c98ee88c86f667b866f4f53c65b8d7仅4份运行报告文档，执行checkout不移动；100k/终点评价/审计尚未完成。5–7本次未用，无新增已确认push或main合并。继续当前chat完成已授权运行，见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。下方均为带时间历史。
