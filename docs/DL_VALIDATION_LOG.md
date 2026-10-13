@@ -1,5 +1,25 @@
 # DL 验证日志与证据索引
 
+## DL-pilot-r2：新100k授权与入口准备（2026-10-13）
+
+用户“跑100k吧，sv2，gpu4~7”是本次新增直接训练授权。按此前单任务建议，
+GPU4执行quadruped_walk/N/seed0，5–7不增加作业；α20/ρ.5/H1 reward-support、
+size50m/vision64/repeat1/16env/ratio256及原loss/grad规则固定，0/50k/100k各10完整sampled episode。
+新规范 [DL_PILOT_R2.md](DL_PILOT_R2.md)、独立 `scripts/dl_pilot_train.py` 与必要测试；
+原DL/M2 gate不改，旧失败保留，未把机制或性能假设写成结论。
+
+12:30:36.763999北京时间sv2实际lyg0360完整XML确认4–7各0MiB、无进程。
+原PD_1 canonical clean SHA48d71f1541721208322442f5a1d5977124f3e888复核；B/D完整元数据和
+0/50k/100k每点10ep/1000步可复用。两条0步checkpoint同文件hash6ad6dfae…、
+294叶params digest18199ec5…、counters全0；原replay/env/eval命名空间与更新数已核实。
+这些是对照来源/初始化事实，不等于新DL跑通；不加载旧已训练模型。
+
+本机CPU入口5项中4通过、1项真实Linux进程组暂跳过；实际worker double覆盖精确动作边界、
+reset排除、完整eval/训练状态隔离、NaN optimizer和eval RNG污染失败停止。
+13项原DtLatch kernel检查通过（2个环境限定skip），预期非法signal callback日志保留；
+不是本次真实task或方法验收。下一确定SHA同步sv2隔离工作区，clean Linux/pip检查、
+fresh GPU4 CUDA/EGL零动作probe后启动；当前无新训练或新增sv3访问。
+
 **终点同步核验（2026-10-12 12:48）**：研究分支已成功push，并以ls-remote核验到报告SHA `81fa38a216589ec39bbaef3f97b9f008c7da20b4`；GitHub/main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。该报告版相对actual/tested `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 只改7份文档，源码仅sv3隔离checkout同步；后续终点归档提交仍仅文档，最终SHA见Git回复。12:48:52.572099北京时间fresh XML确认sv3物理4–7各0MiB/无compute与graphics，全部新owned PID已不存在；不是持续空闲保证。原native失败、第二信号/保护/性能尚未验证，完整目标active；继续当前chat，不自动创建或发送消息。下方较早push失败及资源快照均保留历史。
 
 **DL最新工程补记（2026-10-12 06:05）**：实际/tested SHA `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 的零动作render身份对象验收完成：Linux39全过/pip0，sv3物理4仅EGL、4reset/12RGB/0action/Agent，外45.766849秒/约.012713GPUh/采样峰148MiB。物理snapshot/MJB/已测model与derived相同但RGB不等；scene差仅pre-draw geomorder scratch别名，不能当根因或完整GL等价，原比较保留。06:05:51.747233完整XML核4–7各0MiB/no进程。原native fc4219f attempt01仍失败、无科学裁决/CPU独审，guard candidate未采用，方法未成立/M2不改/完整目标active；首选继续当前chat先0GPU解释renderer有效输入，不放宽或立即重跑。详见 [DL_NATIVE_RENDER_IDENTITY_RESULTS.md](DL_NATIVE_RENDER_IDENTITY_RESULTS.md)。603e913 push connection reset、未GitHub确认/未main，仅sv3隔离代码同步；后续报告版与实际测试版的差异和最终SHA按终点Git核验。下方带时间为历史。
