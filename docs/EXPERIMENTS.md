@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL-pilot-r2运行索引（2026-10-13 12:54）**：已启动、初始化/JIT中，actual/tested `95ea4348b8923d947cbb6e57a4d68dc5029c1fad`；sv2物理GPU4／quadruped_walk／N／seed0／100k。独立计划、run、CPU检查和设备证据见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。完整训练/评价/审计尚未完成，没有新增性能或机制结论；旧正式M2协议不变。
+
 **DL-pilot-r2新100k探索（2026-10-13，准备中）**：用户新授权100k、sv2物理4–7；按此前单任务范围，仅GPU4跑quadruped_walk/N/seed0，α20/ρ.5/H1及原模型损失固定。0/50k/100k各10完整sampled episode，原PD_1 B/D seed0相同前缀作历史对照；不比较1M AUC/tail，不新增c/κ匹配或shuffle。执行规范、source hash与可比性限制见 [DL_PILOT_R2.md](DL_PILOT_R2.md)。旧18条DL门与正式M2-v1保持，native失败不改为通过；本次性能与机制结论尚无。
 
 **终点同步核验（2026-10-12 12:48）**：研究分支已成功push，并以ls-remote核验到报告SHA `81fa38a216589ec39bbaef3f97b9f008c7da20b4`；GitHub/main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。该报告版相对actual/tested `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 只改7份文档，源码仅sv3隔离checkout同步；后续终点归档提交仍仅文档，最终SHA见Git回复。12:48:52.572099北京时间fresh XML确认sv3物理4–7各0MiB/无compute与graphics，全部新owned PID已不存在；不是持续空闲保证。原native失败、第二信号/保护/性能尚未验证，完整目标active；继续当前chat，不自动创建或发送消息。下方较早push失败及资源快照均保留历史。

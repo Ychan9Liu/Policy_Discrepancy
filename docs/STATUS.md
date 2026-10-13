@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL 100k已启动（2026-10-13 12:54，初始化中）**：actual/tested SHA `95ea4348b8923d947cbb6e57a4d68dc5029c1fad`，sv2隔离clean Linux32项中30通过/2skip、pip0；GPU4跑quadruped_walk/N/seed0，α20/ρ.5/H1、100k、50k×10episode，PD_1 B/D前缀历史对照。12:52:11 fresh XML确认4–7空闲，12:52:32父PID668492启动，实际零动作CUDA/EGL同卡probe通过，worker669298正在JIT；未宣称初始化匹配、训练更新/性能完成。5–7未用，当前GPU4未释放。本机GitHub连接失败、新增95ea434未确认push/未main；仅同步sv2隔离代码，canonical48不改。证据/完整命令与状态见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)；以下准备和旧对象记录保留历史。
+
 **DL新100k授权（2026-10-13，准备中）**：用户明确“跑100k吧，sv2，gpu4~7”，执行此前单任务 `dmc_quadruped_walk` / N / seed0；sv2物理GPU4，5–7不增加任务。α20/ρ.5/H1 reward-support、size50m/vision64/repeat1、16env/ratio256、free nats1/dyn1/rep.1/原梯度开关；0/50k/100k各10sampled episode，PD_1原B/D前缀为历史对照。独立 [DL_PILOT_R2.md](DL_PILOT_R2.md) 与入口，不削弱旧DL/M2准入；机制仍未建立，不写旧预验证通过。12:30:36.763999北京时间fresh sv2 XML确认4–7各0MiB/无进程；尚未训练，启动前另核查。本机新入口4项CPU通过、1项Linux进程组待服务器，属于fixture证据。以下为旧对象历史。
 
 **终点同步核验（2026-10-12 12:48）**：研究分支已成功push，并以ls-remote核验到报告SHA `81fa38a216589ec39bbaef3f97b9f008c7da20b4`；GitHub/main仍 `595e982f1a3939775879728009e2105ee516e86d`，未合main。该报告版相对actual/tested `603e9132d58cc774865a5a68a512e4c3fe3b8c0c` 只改7份文档，源码仅sv3隔离checkout同步；后续终点归档提交仍仅文档，最终SHA见Git回复。12:48:52.572099北京时间fresh XML确认sv3物理4–7各0MiB/无compute与graphics，全部新owned PID已不存在；不是持续空闲保证。原native失败、第二信号/保护/性能尚未验证，完整目标active；继续当前chat，不自动创建或发送消息。下方较早push失败及资源快照均保留历史。

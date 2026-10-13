@@ -1,5 +1,7 @@
 # DL 验证日志与证据索引
 
+**DL-pilot-r2真实启动补记（2026-10-13 12:54）**：actual/tested `95ea4348b8923d947cbb6e57a4d68dc5029c1fad` 的sv2隔离clean Linux5pilot+13kernel+14protocol，共30通过/2skip，pip0。12:52:11 fresh XML确认GPU4–7各0MiB/无进程；12:52:32父668492启动，probe668500在GPU4实际C+G验证后退出，worker669298实际CUDA只在GPU4并正在JIT；初始化hash/训练/评价尚未验收。完整命令、paths、CPU/版本/设备与限制见 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。14400秒整个入口硬上限，不自动延長或新增作业；旧科研裁决保持。本机两次GitHub网络连接失败，95ea434只同步sv2隔离checkout，canonical48干净不改，未确认push/未main。
+
 ## DL-pilot-r2：新100k授权与入口准备（2026-10-13）
 
 用户“跑100k吧，sv2，gpu4~7”是本次新增直接训练授权。按此前单任务建议，
