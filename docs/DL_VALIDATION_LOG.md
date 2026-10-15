@@ -1,5 +1,16 @@
 # DL 验证日志与证据索引
 
+## DL正式准入与模式代理补充审查（2026-10-15）
+
+不读取运行中R4科学值、不动其5ce源码/规范/停止门。独立五目标矩阵和机制审查整理为
+[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md)：B/N最小完整state配对、S/P/W各自识别范围、
+重新拟合/绝对q/p与真实optimizer作用，跨任务/训练seed最终效果可留正式待检。
+本机0GPU人工输出接口用真实OneHot/Agg与rep_probe、BF16 logits检查4个delta；Dmode约12.5
+而first-slot KL约1.98e−6，actor未用31slot可把总K升至243.25。两个外入口约1.49/1.46秒，
+不是Agent/真实任务/训练验收；仅共同当前action channel实数KL/期望奖励界，F32/Decimal分报。
+独立数学/源码审查纠正单次实现/期望、12维广播、浮点平局及U_act外推边界。全部小证据和SHA
+见新文档；没有以此替代仍在运行的真实诊断或自动采用新gate。
+
 ## DL-r4确定版本Linux通过与真实入口启动（2026-10-15）
 
 实现d61d8ae45b380dd4e54907e5669ce3cb731749f3 clean sv3 Linux51项32.629秒全过/pip0；

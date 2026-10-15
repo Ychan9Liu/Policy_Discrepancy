@@ -1,5 +1,7 @@
 # 研究问题与方法
 
+**DL正式准入与信号解释补充（2026-10-15，0GPU）**：[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 区分五目标已有证据和最小缺口，明确不循环要求先证明全部正式跨任务/多seed结论；正常压缩/保护及有效S/P/W仍缺前置。独立机制审查指出B/N同完整momentum初态能控制初始差异，不应默认清momentum或冻actor/prior；仅匹配loss释放不排除全部gradient/update强度解释。人工实际分布接口构造进一步说明mode D可高而当前抽样边缘策略差很小，另有actor未用latent可抬高K；这不是真实N1M根因或U_act/U_obs界。当前R4规范/实际源码/主比较不改，完整目标active。
+
 **DL-r4执行补记（2026-10-15）**：上述下一真实动作/记忆对象已在实际5ce1d3724ee8c5d01f09c4d687100a2f42f6ac83启动；15:12:06 sv3物理4的原parent/worker实际活跃，N1M完整state与CUDA/EGL mapping通过，尚无完整episode/独审或科研裁决。规范保持 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，运行/证据边界与后续见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。这不是新增训练，仍不能解释早期r3慢学；下方实施中/未执行为启动前历史。
 
 **DL-r4真实动作/记忆诊断（2026-10-15，已采用、实施中）**：Agent在用户完整预验证授权内采用 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，不是用户逐项认可的新算法。冻结N1M模型、新32正常episode/cal8-held24、普通14位置、D-only top2主对象＋固定512辅助、三臂qq/pq/pp、16私有root、H100，分别估计当前动作与总观测的有限真实闭环效用。H1沿source共同实际action/nextreward；不将负actor效用当信息无用。主D+K+e+t对D+K+t，cal-only固定ridge/held整EP统计及零效应控制，覆盖不足或MC/测量不确定不进入保护训练。CPU工程实施不当N1M验收，当前尚无真实科学结果；sv3物理4单卡完整入口21000秒上限（5–7不预占），不是整个方法预算。原M2、旧失败和完整目标缺项保持；下一先完成确定SHA工程验收再fresh核卡执行。下方“尚未采用”是采用前历史。
@@ -948,3 +950,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **理由、工作假设与反例**：采用高技能N1M和普通非reset历史，针对此前旧300k平均对象与reset对象的适用局限；保留H100，不按旧负结果寻窗。D-top2相对高D中可能有不同signed效用，e/K是否有独立增量仍是假设。全部14普通位置保存信号，top2主训练/评估与固定512辅助严格分开；所有predictor共同控制时间，避免选点分布及时间代理混淆。16-root均值、名义t15状态类、24episode bootstrap均有限探索，不是真值、功效或训练seed确认。
 
 **准入与待解决**：真实public q字节、实际subkeys、fullstate冻结、raw/applied/physics与cached-own-RGB分别审计；零效应差不得与实用尺度同量级，cal封口后才开held。首要未决是新入口在N1M实际模型上是否满足这些条件、e/K是否在固定真实U上有增量；正常active rep损伤/选择性保护、强度/shuffle/reward-only对照及跨seed学习性能尚无充分证据。任何本对象结果都不自动批准gate/正式训练。整体目标仍active。
+
+### DL-34 正式准入、最小因果干预与mode解释边界
+
+**已完成的独立审查，非新方法决定**：[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 汇总五目标证据矩阵及R4每类结果的合法后续。当前actor效用、预算内可访问任务信息、保护学习收益必须分别测。B/N最小配对沿普通replay/active rep/同完整state与keys；S、有效P、W分别回答释放总量、位置对应、Dt必要性，所需组取决于要声称的因果命题，不预先启动全套。旧momentum同初态不是初始混杂，停rep不等于冻结posterior或保护上界；重新拟合读出和绝对q/p效用用于区分坐标利用与prior追上。这些是下一实验需求/建议，未采用或启动新训练。
+
+**已执行有限接口反例**：沿真实OneHot/Agg及rep_probe Normal discrepancy，32×32BF16 latent/12动作人工共同actor可保持mode D约12.5，而首slot KL约1.98e−6；再改变actor未用31slot，总rawK约243>1，当前边缘动作差仍由首slot决定。数据处理/TV只给实数共同当前action channel的KL/期望奖励差界，不给单次奖励、R4 H100 U_act/U_obs或未来RSSM/保护界；不是已训练network。源SHA/CPU小证据、F32与Decimal区别、独立数学审查与真实任务局限见新文档。不能据此改运行中D定义或归因r3曲线。
+
+**目标边界与未决**：正式前须有自洽可信候选、接口、有限真实信号/保护机制与有效关键对照以及正式判败协议；正式跨任务/多seed性能可以保留待检，不把已完成正式试验反过来设为启动正式的前提。当前尚未满足准入，R4仍运行；后续只按完整终态/独审决定合法下一分支，不用anchor、U_act或另一个辅助阳性替换既定主比较。

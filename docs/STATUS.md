@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL准入审查补充（2026-10-15）**：[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 已完成独立五目标/最小因果需求审查，区分正式前有限机制准入与留待正式的跨任务/多seed结论。补充0GPU人工实际分布接口反例：高mode D、高rawK不保证大的当前边缘策略变化；不是真实N1M根因或R4 H100效用界。当前真实5ce、cal/held门、主比较、GPU资源与预算不变，没有新训练。15:33:38原job身份继续匹配，episode0–3主完成/episode4开始、无工程错误，尚未cal封口或全对象独审。完整目标仍active。
+
 **DL-r4进度（2026-10-15 15:17:09）**：原parent247014/worker247226身份不变且实际活跃；episode0主生成147份/14700branch步及同量cache/physics复放完成，episode1开始，held尚未生成/无terminal。当前GPU4仅本worker C+G/2587MiB，5–7无进程/各1MiB；GPU4未释放。不是全对象验收/独审/科学结论，actual5ce和协议不变，详见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。继续同chat监督原handle至终态，完整后独审；整体目标active。
 
 **DL-r4已启动（2026-10-15 15:12:06快照）**：actual/tested `5ce1d3724ee8c5d01f09c4d687100a2f42f6ac83`，仅sv3物理GPU4，parent247014/worker247226活跃；N1M完整state load及真实CUDA/EGL同UUID通过，源0/信号文件已生成，尚未整episode验收/独审。三臂16root/H100/cal8-held24、冻结无训练，完整21000秒硬限。基础d61 Linux51全过/pip0；5ce只修管道，相关19全过/无ResourceWarning。研究分支已push、未main，服务器保持5ce clean隔离源码；后续报告版仅docs。见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。先继续监督原handle，不因观察超时重启；完整生成后独审，不中途读held科学值或改协议。整体目标未完成/M2不变；下方为历史。
