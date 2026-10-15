@@ -1,5 +1,19 @@
 # DL 验证日志与证据索引
 
+## DL-r4 cal8测量门停止与CPU取证采用（2026-10-15）
+
+actual5ce原parent247014/worker247226在2622.793269339秒后退出；15:54:43原PID消失，
+sv3物理4–7 XML+pmon无进程、4已释放，单卡入口上界.728554GPUh/probe另记约3.67秒。
+cal0–7八份complete和seal均存在，null_passed=False，末异常精确cal-null measurement failure；
+worker exit1/parent_failureNone，无held或worker_complete。日志0–6而第7complete已写，符合原先封口检查再打印的顺序。
+没有改门、重启、生成held或科学有效性结论。采用[DL_R4_CALIBRATION_AUDIT.md](DL_R4_CALIBRATION_AUDIT.md)
+的新外部capture与独立CPU planned pair0 qq/null复放，生产run不写回，原成功审计不放宽；实际核验仍待确定版本执行。
+15:45已曾成功push/ls-remote核a12928c，main595e982未合；15:54再核connection reset，后续报告同步另记。
+
+并行0GPU只读前置：16:02:35 sv2原N1M replay确有1280 NPZ/11,421,580,553B、16条文件名完整链，
+仅路径/统计/源码/manifest可用性，未hash或解码archive，不宣称原online可恢复或新B/N已采用。
+有限证据与下一严格取证条件见[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md)。
+
 ## DL正式准入与模式代理补充审查（2026-10-15）
 
 不读取运行中R4科学值、不动其5ce源码/规范/停止门。独立五目标矩阵和机制审查整理为

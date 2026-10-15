@@ -45,6 +45,16 @@ R4独审的“独立”只覆盖：完整来源/hash/退出链、stored-applied�
 
 源码依据：`dreamerv3/rssm.py`的dyn=KL(sg(q)||p)、rep=KL(q||sg(p))与free-nats；`dreamerv3/agent.py`仍保留rec/con/reward/replay-value并只替换rep数值；`embodied/jax/opt.py`及Agent._make_opt的实际optimizer链。因此rep缩放不等于冻结posterior，全rep-stop也不是通用保护上界；它不应成为N必须战胜的虚构上界。
 
+**普通replay可用性前置，2026-10-15 16:02:35北京时间，只读0GPU**：sv2原r3根
+`/data/Policy_Discrepancy/runs/dl-pilot-r3-20261013-13ec72a/dmc_quadruped_walk/N-seed0-attempt01/replay`
+仍有1280个NPZ/11,421,580,553字节（约10.64GiB），文件名形成16条无环无分叉链、各80文件、声明总帧1,001,008；
+checkpoint/config/manifest/完成标记存在。只检查文件名与元数据，没有算chunk SHA、CRC或解码schema/content，
+不能写成普通buffer已经验收。末端各有一个未落盘successor，与源码flush后新建空chunk相容，不能仅据此报损坏。
+现有保存链没有当时sampler RNG/online queue/环境状态，故下一候选只能明确定义新的持久化buffer离线抽样对象，
+不能无缝恢复原online流。实际采用前须版本化严格capture全部chunk、验schema/stepid/context与抽样后官方Consec前缀；
+不能用reset富集、零carry或静默跳坏chunk替代。此处仅确认文件仍在，新B/N干预尚未采用或启动；
+当前先完成R4 cal-null停止的[独立CPU核验](DL_R4_CALIBRATION_AUDIT.md)。
+
 ## 模式代理与实际抽样策略的额外辨识边界
 
 **源码事实**：现有D比较q/p categorical mode所条件化的Normal，按scalar action dimension平均对称KL；不是对latent抽样积分后的边缘动作分布KL。将后者的数据处理界直接用于D是不成立的。raw K又可包含当前actor未读取的latent差异，因此“高D且高K”本身也不能保证当前任务依赖。

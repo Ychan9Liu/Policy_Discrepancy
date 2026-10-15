@@ -1,7 +1,30 @@
 # DL-r4 真实动作/记忆诊断运行记录
 
-状态：**运行中，未验收，无科研裁决**。更新：2026-10-15 15:37北京时间。
+状态：**校准 null 门失败，已停止；失败证据待独立 CPU 核验，留出未生成**。更新：2026-10-15 15:56北京时间。
 科学规范 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，版本 DL-r4-utility-r1；正式M2不变。
+
+## 最新终态
+
+2026-10-15 15:54:43北京时间只读核验：原parent247014与worker247226均已退出，8个cal episode0–7都有complete；
+calibration_frozen.json的null_passed=False，最终异常精确为
+`ValueError: Calibration null measurement failed; held remains unopened`。
+supervisor_terminal记录worker_returncode=1、worker_terminal=True、main_generation_complete=False、
+parent_failure=None、owned_worker_group_cleaned=True；没有episode8–31目录、worker_complete或statistics_input。
+第7个episode在封口检查前已写complete，但其episode_complete日志在检查之后，因此日志只有0–6符合原控制流，
+不应误报为少一个cal收据。
+
+主入口实耗2622.793269339秒，即43.7132分钟、单卡占用上界0.728554 GPU小时；另记启动probe约3.67秒。
+不是完整32EP诊断通过，也不支持第二信号有效/无效、信息有用/无用或保护收益的结论。
+15:54:43 XML+pmon核验sv3物理4–7均无进程、0%利用率/各4MiB；本作业GPU4已释放，5–7本次未用。
+15:56:08再次核对terminal/log/第7收据，未重启、未生成held或改变阈值。
+
+下一采用独立的[失败证据核验](DL_R4_CALIBRATION_AUDIT.md)，只用CPU、原run外新输出；
+它不替代原32EP成功审计，不补造worker最终模型seal，也不把失败改成通过。
+整体预验证目标继续active，暂不因此启动新GPU对象。
+
+**同步补记**：15:45曾成功推送并ls-remote核验研究分支到a12928c22ed824e5c6bbcd87f426c3c69b1d6e59，
+main仍595e982f1a3939775879728009e2105ee516e86d；15:54复核又遇connection reset。
+这证明早先报告当时已同步，不保证后续新报告已推；实际生产SHA仍5ce，原服务器源码未改。
 
 ## 版本与工程证据
 

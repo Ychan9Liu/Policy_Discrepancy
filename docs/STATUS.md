@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL-r4终态（2026-10-15 15:56）**：actual5ce在cal8 null门失败退出，8份cal完整/封口null_passed=False，精确cal-null异常、worker exit1/parent_failureNone；无held/worker_complete。主入口2622.793秒≈.728554单卡GPUh，15:54:43原PID均退出、sv3物理4–7 XML+pmon无进程，GPU4已释放。未重启/改门；下一只做[失败证据CPU核验](DL_R4_CALIBRATION_AUDIT.md)，不把partial通过冒称32EP成功或方法阴性。详见[运行记录](DL_R4_UTILITY_RESULTS.md)。此前15:45曾push/核到a12928c，随后网络又reset；下方15:40待推与运行中均为历史。整体目标active/M2不变。
+
 **Git补记（2026-10-15 15:40）**：最新进度文档推送两次遇连接重置/GitHub443不可达，尚未确认同步；最近已成功远端核验95bc9d4812e5248c7a3db58e00f08f50c4f9986c含准入审查，actual5ce已先push/仅sv3执行。未main。真实parent/worker仍原身份活跃，episode5文件增长，无cal封口/held/终态；Git连接故障不是运行停止或重启理由。先继续监督原任务并在网络恢复后补推报告。
 
 **DL准入审查补充（2026-10-15）**：[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 已完成独立五目标/最小因果需求审查，区分正式前有限机制准入与留待正式的跨任务/多seed结论。补充0GPU人工实际分布接口反例：高mode D、高rawK不保证大的当前边缘策略变化；不是真实N1M根因或R4 H100效用界。当前真实5ce、cal/held门、主比较、GPU资源与预算不变，没有新训练。15:33:38原job身份继续匹配，episode0–3主完成/episode4开始、无工程错误，尚未cal封口或全对象独审。完整目标仍active。

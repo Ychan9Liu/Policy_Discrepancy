@@ -1,5 +1,7 @@
 # 研究问题与方法
 
+**DL-r4校准停止（2026-10-15）**：actual5ce真实cal8的重复qq零效应门失败，按原规则未生成held并退出；目前只是测量未获资格，不作第二信号或保护方法的正负裁决。sv3单物理4实耗约.729GPUh并释放，未改门/重跑。采用[独立失败证据CPU核验](DL_R4_CALIBRATION_AUDIT.md)，原32EP成功审计不放宽；完整因果链和正式准入仍未完成，M2不变。实际证据与限制见[DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。
+
 **DL正式准入与信号解释补充（2026-10-15，0GPU）**：[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 区分五目标已有证据和最小缺口，明确不循环要求先证明全部正式跨任务/多seed结论；正常压缩/保护及有效S/P/W仍缺前置。独立机制审查指出B/N同完整momentum初态能控制初始差异，不应默认清momentum或冻actor/prior；仅匹配loss释放不排除全部gradient/update强度解释。人工实际分布接口构造进一步说明mode D可高而当前抽样边缘策略差很小，另有actor未用latent可抬高K；这不是真实N1M根因或U_act/U_obs界。当前R4规范/实际源码/主比较不改，完整目标active。
 
 **DL-r4执行补记（2026-10-15）**：上述下一真实动作/记忆对象已在实际5ce1d3724ee8c5d01f09c4d687100a2f42f6ac83启动；15:12:06 sv3物理4的原parent/worker实际活跃，N1M完整state与CUDA/EGL mapping通过，尚无完整episode/独审或科研裁决。规范保持 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，运行/证据边界与后续见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。这不是新增训练，仍不能解释早期r3慢学；下方实施中/未执行为启动前历史。

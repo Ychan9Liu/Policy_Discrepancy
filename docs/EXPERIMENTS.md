@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL-r4已停止（2026-10-15 15:56）**：actual5ce cal8 null门失败、exit1、无held；主入口2622.793秒，单卡约.728554GPUh，15:54:43 sv3物理4–7无进程/GPU4已释放。按原停止判据保留全部失败，不改门/追加样本或训练。下一[失败证据核验](DL_R4_CALIBRATION_AUDIT.md)仅CPU、新审计SHA和run外fresh输出；不代替原32EP成功验收或产生held增量结论。[实际记录](DL_R4_UTILITY_RESULTS.md)优先于下方运行中历史。
+
 **DL正式准入边界审查（2026-10-15，非新增实验）**：[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 记录五目标证据矩阵、R4各类结果的合法下一分支、B/N与S/P/W因果识别范围及mode/native解释反例。没有修改实际5ce源码/运行规范、读取中途科学值或启动新训练；正式跨任务/多seed效果仍可留正式待检，不能据文档或接口构造宣布准入通过。
 
 **DL-r4运行记录（2026-10-15，未验收）**：[DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md) 记录实际/tested5ce1d37、基础Linux51及修复相关19项、sv3单物理4/真实N1M load与CUDA-EGL、完整命令和原live parent247014/worker247226。15:12:06仍运行、尚无独审或科学结论，保持原三臂/16root/H100及cal-before-held；不是正式训练/M2变更。下一继续原handle至terminal，再独立CPU验收，不把观察超时当失败或改阈值取阳性。
