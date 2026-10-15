@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL普通replay内容核验采用（2026-10-15）**：[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md) 是独立0GPU前置，固定原N1M的1280NPZ/16链/1M计数，双SHA/真实CRC/严格schema与stepid，不用官方loader静默跳坏chunk。小fixture5项已过，实际buffer未执行；只核历史持久化cache，不能恢复online queue/RNG/环境。与此同时下一native路线正形成live随机一次干预方案，保留H100和原H1但解决处理前信号/随机化识别，不把固定控制库当主终点替身；参数和实现尚未封口/未新GPU。原R4失败/M2保持。
+
 **Git同步补记（2026-10-15 16:19:46）**：网络恢复，本轮代码及结果报告已push并ls-remote核验研究分支`codex/dl-prevalidation`到df65c8db64db95cc8990ac48f229e59502024db2；GitHub/main仍595e982f1a3939775879728009e2105ee516e86d，未合main。本条后的收尾提交仅文档同步说明；实际CPU tested仍4ddad2e、生产仍5ce，各服务器checkout不移动。下方16:16推送失败是当时历史，不能当作本轮仍未同步的结论。
 
 **DL-r4 CPU核验完成（2026-10-15 16:16）**：actual/tested审计4ddad2e9a92ddfe95979d104d0f004722c7f7dff Linux40项全过，1205文件双遍capture/23 planned null/4600实际CPU physics步核验通过；1个e2/t64差.00319120049295762>.0025，复现原cal停止。是失败证据完整性通过、测量资格失败，无held增量或保护结论。新增0GPU；16:15:33 sv3物理4–7 XML+pmon无进程/各4MiB，原主采样峰2587MiB。生产5ce/审计4dd各clean不移动；下一当前chat只CPU确定可靠标签及判据，暂不新GPU，整体goal active/M2不变。详见[DL_R4_CALIBRATION_AUDIT.md](DL_R4_CALIBRATION_AUDIT.md)。4dd推送两次连接reset/443不可达，尚未确认GitHub同步/未合main，最后曾核研究分支a129。

@@ -1,5 +1,12 @@
 # DL 验证日志与证据索引
 
+## DL普通buffer内容取证采用（2026-10-15）
+
+前轮cal-null认证属于实质进展，未启动新的GPU对象。Agent现采用[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)：
+独立parser核原N1M 1280NPZ/16链及实际内容，900秒外部CPU限，原run不写回。
+源码明确持久化cache是历史/混合更新年龄，不是在线终点cache；不能恢复RNG/queue/环境。
+新工具5项CPU小fixture通过，真实11.42GB待确定提交/Linux及实际取证；不据此宣称机制或方法通过。
+
 ## DL-r4真实校准停止CPU独审完成（2026-10-15 16:12）
 
 actual/tested4ddad2e9a92ddfe95979d104d0f004722c7f7dff：新capture/audit/tests及文档，原算法/runner/统计/fullauditor不改。
