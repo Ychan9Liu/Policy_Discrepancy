@@ -1,5 +1,45 @@
 # DL 验证日志与证据索引
 
+## 资源答复与CPU清理fixture失败（2026-10-15 23:36）
+
+只读23:32:23–27 XML/pmon：sv3物理5只有原C worker496934、8766MiB，4/6/7无可见作业/0MiB。
+一张独占A10080可串行执行现有已验规模，2卡只是独立并行的建议；R5实际2.580220GPUh，
+C单attempt原上限1GPUh，整个剩余验证及正式实验总GPUh仍未知，不把采样显存当最低要求。
+23:36:03 C原parent/worker身份一致、87record/0最终batch complete、无generation/终态，未读中间科研值。
+
+外部CPU审计控制器新STOP屏障候选9ea875及fixture efe674实际部署至
+`/data/Policy_Discrepancy/runs/dl-nm1-cal-audit-race-fixture-20261015T153512Z/`，一次20秒上限检查
+实际SSH exit1/.953秒，因project Python3.11.16无os.pidfd_open和signal.pidfd_send_signal而拒绝。
+log rawSHA `e5dc7beaa810b218c9955ab452b27fba7fc13ae29185f737528cca1840b6ca15`；
+本机收据`analysis/outputs/dl-nm1-cal-audit-controller-r1/linux-fixture-20261015T153512Z/`。
+这是工程失败，不能接纳控制器；不是C失败或方法阴性。只读核19个已登记原leaf PID均gone，0GPU/未发信号。
+兼容修复仍须保持原身份、STOP全线程及继承组转setsid屏障，另用新目录真实Linux复验；不降低门或延长预算。
+
+## 真实完整标签闭包与N1M初态修复确认（2026-10-15 23:10）
+
+labels actual/tested47db完整512/32/8fit24held、247872官方prefix步/512reset，query只读及全部F64/F32/快照匹配。
+controller797.825030724秒/原900秒、rootSSH实际exit0/798.329秒；原parent497085 gone、owned清理true。
+无NN/render/GPU、未按D/e/Y筛源。labels raw5db0529317c8c9c55674aee80df1ef0258c6bcf4e407ce1b4c74373ec0f46890，
+terminal rawcc0ec4728020290693f866b429de06a47eff3fcd917ba044cad310fee82c4361；
+外层真实执行receipt已独立SCP/noprev overwrite并再次核pin，详[实际结果](DL_NORMAL_LABEL_RESULTS.md)。
+这是真实任务标签验收，不是q信息/actor关键性/保护或性能支持。
+C initial三Agent原完整身份及真实CUDA5在23:03:25均通过；23:11:57同parent496921/worker496934、16batch record，
+无128完整/终态，未读中间科研值、未改预算；[实际C](DL_NM1_CAL_RESULTS.md)继续同handle22265。
+
+## 新修复版Linux通过及真实入口（2026-10-15 22:57）
+
+actual/tested47db6265311bc04dbdcc79439842eb8b6e707097，24模块174项中172pass/2原optional skips，
+unittest275.478秒、完整279.206237810秒/600秒，SSHexit0/0GPU/owned空；254源码+11norm前后同Gitblobs、
+C producer/independent auditor绑定一致，证据/hash见[工程记录](DL_NM1_ENGINEERING.md)。
+原01fb组合单error是fixture进程继承JAX，已只隔离测试，保留原失败；生产CPU要求/科学门不改。
+22:56:47–51物理4–7无GPU进程/各0MiB，新code47db clean。
+C22:57:27实际parent496921/start409861732，sv3物理5/原3600秒、新attempt02/handle22265；
+CPU labels22:57:35实际parent497085/PGID=SID497085/start409862629，整体900秒/handle30869。
+两个入口均尚未完成验收，实际C版本/输入/新控制器rawpin/失败前驱见[执行记录](DL_NM1_CAL_RESULTS.md)。
+labels controller rawSHA `a0d66f8233d2493fa65ea8029cf3145eac1596769595b37503ff38a23415e732`，
+外部launch rawSHA `332d10eda5f8ae5361a67baba4fbc1025d1c18cac5bc3595d79ba0c49e583a22`。
+另完成不改冻结结果的[sham原因审查](DL_R5_SHAM_REVIEW.md)，根因未知，新诊断建议未采用。
+
 ## C首次真实加载失败及正常标签入口采用（2026-10-15 22:34–22:40）
 
 原actual8d63 C/attempt01真实parent exit1/326.670301574秒、SSHexit1/328.578秒，owned清理true。

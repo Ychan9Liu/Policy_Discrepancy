@@ -1,5 +1,10 @@
 # 正常来源当前任务量标签：有限 CPU 工程
 
+**最新真实验收**：actual/tested `47db6265311bc04dbdcc79439842eb8b6e707097`已完成固定512/32，
+247872真实官方prefix步、512reset、全部当前任务量query readonly；整体controller797.825秒/900秒，
+root实际SSHexit0/798.329秒。输出rawpin及内外层退出边界见[实际结果](DL_NORMAL_LABEL_RESULTS.md)。
+下文未执行描述是实现/本机验收时的历史范围，不能覆盖或冒充这次真实完整证据。
+
 2026-10-15，`DL-normal-labels-r1`。这是完整预验证内的必要工程实现与本机 fixture
 验收记录；**尚未激活真实来源执行预算**，不采用 T、GPU 特征执行或任何机制结论。
 本轮没有读取真实 R5、SSH、GPU、学习、提交或运行真实512条标签。

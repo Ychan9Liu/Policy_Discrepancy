@@ -10,6 +10,9 @@ highD主检验DKe相对DK的MSE改善0.04284087923030705，95%CI [-0.01478390528
 这是有限程序结果，不证明所有信号均无效，也没有建立保护/性能结论。
 完整结果及raw pins见[结果](DL_R5_R2_RESULTS.md)和[工程记录](DL_R5_AUDIT_ENGINEERING.md)。
 首次7c dtype审计失败仍保留，不冒充本次成功证据；原数据/科学计划/预算不改。
+[sham只读原因审查](DL_R5_SHAM_REVIEW.md)未发现QQ别名的确定策略/key泄漏；
+adapter未显式关闭suite是生命周期不足，不证明历史干扰或根因。现有512无法区分偶然拒绝与未测运行时标签通道；
+新alias×context诊断仅建议、未采用，不借其改写原检验。
 
 [后续学习只读审查](DL_NM1_T_READINESS.md)保留T1/条件T2建议，未采用U4096/6h或新门。
 须区分B相对0可访问性损伤与N仅促进学习，分别报告N相对0；初态C匹配不能代替学习中S/P/W资格。
@@ -21,6 +24,9 @@ C原8d63于22:28:41在sv3物理5按原128批/3600秒启动，无累计学习，�
 不是R5信号阳性后的学习，也不以R5科研符号更换source，见[实际C记录](DL_NM1_CAL_RESULTS.md)。
 22:34:08该C首次尝试已工程失败，未开始首反事实batch；postload身份检查中save的Python计数器
 被不必要的整树host转为array，正修复保存表示，原身份/科学门不改，不能视为方法阴性。
+修复实际/tested47db6265311bc04dbdcc79439842eb8b6e707097已通过24模块Linux174项中的172项、
+2原optional skip/SSHexit0/279.206秒/600秒。22:57:27同sv3物理5/原3600秒fresh attempt02已启动，
+尚未完成独审；真实三实例加载身份已通过，修复证据限于加载边界，不证明完整干预或方法有效。
 
 **正常当前任务量标签的实际执行采用（Agent决定，2026-10-15）**：
 在已成功完整prior277c物理审计和新labels确定提交clean Linux有限验收后，采用一次固定512/32family、
@@ -29,6 +35,10 @@ C原8d63于22:28:41在sv3物理5按原128批/3600秒启动，无累计学习，�
 这是必要读出目标的工程准备，不是新独立blind数据或策略关键性真值；主标签是torso-local velocity_x，
 upright为辅助，来源/模型/当前快照的完整exact绑定与readonly须全部成立。
 此采用不激活GPU提特征、T4096/6h或任何学习/性能结论，详[标签工程范围](DL_NORMAL_LABEL_ENGINEERING.md)。
+实际/tested47db已于23:10:53完整发布512/32、247872官方prefix步/512reset的当前任务量标签，
+controller797.825秒、root实际SSHexit0/798.329秒/原整体900秒；无NN/render/GPU、无D/e/Y筛选。
+原ID/时间/奖励/完整状态和query readonly闭包通过，详[真实结果](DL_NORMAL_LABEL_RESULTS.md)。
+这不证明q信息、actor关键性或保护；后续reference0特征仍须真实N1M逐帧公共oracle和source/label对齐。
 
 **共同历史特征工程完成（2026-10-15 21:37快照）**：
 [DL-normal-features-r1](DL_NORMAL_FEATURE_ENGINEERING.md)只实现冻结正常条件历史接口，

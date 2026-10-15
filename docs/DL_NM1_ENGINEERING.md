@@ -1,5 +1,26 @@
 # DL-NM1 cal-only工程前置
 
+## 2026-10-15：确定修复版clean Linux验收
+
+actual/tested `47db6265311bc04dbdcc79439842eb8b6e707097`，新clean
+`/data/Policy_Discrepancy/dl-nm1-repair-code-20261015-47db626`；24模块174项中172pass/2原optional skips，
+无新增skip。unittest275.478秒、进程277.706325215秒、完整279.206237810秒/600秒，
+真实SSHexit0/279.812秒、0GPU、owned空；254源码和11norm实际working bytes前后同Git blobs，
+C source_binding/independent git_binding前后一致。原142测试未覆盖的save/load类型边界在新tiny真实路径拒绝反例中执行。
+新labels末帧/真实task prefix与mock512隔离也通过，但尚无真实512数据或N1M校准科学结果。
+第二Agent仅用本机镜像与真实Gitblob独立重核：R5清单254、NM1清单253、额外norm11，
+并集264文件全部吻合；bundle/controller/helper、原日志和SSHexit链一致，未重跑测试或另扫服务器。
+Linux实际alarm/reaped-descendant/symlink测试均执行；字节绑定不意味着所有NN图均被编译或真实N1M已验收。
+
+证据 `/data/Policy_Discrepancy/runs/dl-nm1-repair-cpu-20261015-47db626/attempt01/`，
+本机镜像`analysis/outputs/dl-nm1-repair-cpu-47db626/attempt01/`。
+terminal SHA `347e3ca396d52202e3d8fd95e93b5796036c681b0d46efe0e4bd9ee214e56949`；
+linux-tests.log SHA `84b3debc350aa627ce68ce2686ea57bed1003cd5bee6bf4fb66aa6ca0432ad55`；
+source-binding SHA `6db3fd484b8a6844d4921e7a855e3602fa54390b699867989e2ebf3e0aef72a4`；
+nm1-source-binding SHA `70e63e8c13ad7e0f6346120098edd98683799435e0d8d8668fe6418dd4ec372a`。
+原01fb完整174组合实际exit1的单测试隔离失败保留，不能替代本次成功；生产标签限制不放宽。
+真实C新attempt02实际版本同47db，见[实际执行](DL_NM1_CAL_RESULTS.md)；T未采用。
+
 ## 2026-10-15 22:34：首次真实C失败，完整save类型修复
 
 原actual8d63首次真实C在postload typed hash拒绝，完整外层exit1/326.670301574秒，尚无首batch或校准。

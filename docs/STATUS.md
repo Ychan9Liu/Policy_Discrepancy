@@ -1,5 +1,33 @@
 # 项目状态
 
+**2026-10-15 23:36运行观察**：C原47db parent496921/worker496934身份一致，87/128 batch record，
+尚无generation/内外终态，未读取中间科学数值，原GPU5/3600秒不改。
+23:32:23–27物理5仅本worker C/8766MiB，4/6/7无可见作业/0MiB；这是带时快照。
+当前已执行规模可用一张独占A10080串行；R5实测2.580220GPUh，C单attempt上限1GPUh，
+正常reference0特征及后续学习的完整GPU时数未定，旧T6h未采用。
+另一个0GPU审计清理fixture实际exit1/.953秒：project Python不暴露两个pidfd接口；失败已保留，
+已登记19个原leaf PID只读核均gone，未影响C。兼容修复及真实Linux复验待完成。
+
+**2026-10-15 23:10:53完整CPU标签验收完成**：actual/tested47db完整512/32、8fit24held，
+247872官方连续prefix步骤/512reset及当前任务量query全exact/readonly；无NN/render/GPU。
+真实controller797.825秒/900秒、rootSSHexit0/798.329秒，原parent已gone/owned清理，
+labels rawSHA `5db0529317c8c9c55674aee80df1ef0258c6bcf4e407ce1b4c74373ec0f46890`。
+见[实际结果及外层执行收据](DL_NORMAL_LABEL_RESULTS.md)，不是actor关键性或机制阳性。
+C原同47db parent496921仍运行；23:11:57已16批record、尚无128完整/generation/独审，handle22265。
+23:09:43–47物理5只有本worker496934 C/8766MiB，4/6/7无可见作业/0MiB；带时快照不代表持续占用。
+真实N1M B/rho0/N初态fullstate/params/counters/carry原身份已全通过；C最终作用/系数/资格仍未知。
+下一完成C与CPU独审，正常特征新入口仍工程审查中，无GPU执行预算/T采用，goal active。
+
+**2026-10-15 22:57修复版C及完整CPU标签已启动**：actual/tested
+`47db6265311bc04dbdcc79439842eb8b6e707097`新clean Linux24模块174项中172pass/2原optional skips，
+完整279.206237810秒/600秒、真实SSHexit0/0GPU，254源码/11norm及C独审绑定前后一致。
+原8d C失败及01fb测试隔离失败均保留。22:56:47–51物理4–7空闲/0MiB，fresh核新代码clean。
+22:57:27 C attempt02实际parent496921/start409861732、GPU5/原3600秒，handle22265；
+22:57:35完整CPU labels入口parent497085/start409862629、整体900秒/0GPU，handle30869，固定512/8fit24held。
+两者运行中、尚未完整验收，不以文件/测试/启动当科研结论；T4096/6h未采用。
+见[实际C](DL_NM1_CAL_RESULTS.md)、[标签范围](DL_NORMAL_LABEL_ENGINEERING.md)；继续当前chat完成退出与闭包。
+另完成[sham只读原因审查](DL_R5_SHAM_REVIEW.md)，未见确定策略/key泄漏，关闭语义缺口不是历史根因证明。
+
 **2026-10-15 22:35首次C工程失败/已清理**：actual8d63/attempt01于22:34:08真实parent exit1、
 326.670301574秒/3600秒，SSH exit1/328.578秒，owned组已清理、无generation。
 真实CUDA模型初始化后首B postload完整typed hash失败，尚无首反事实batch或cal科学结果。

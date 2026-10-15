@@ -1,6 +1,6 @@
 # DL-NM1 C 实际执行与资源记录
 
-2026-10-15，版本DL-NM1-cal-r1，状态：**首次尝试工程失败，未完整生成或独审**。
+2026-10-15，版本DL-NM1-cal-r1，状态：**修复版attempt02运行中；首次尝试失败已封存，尚无完整校准或独审**。
 这是Agent在既有完整预验证授权内采用的128批cal-only，不是累计学习或正式实验；
 后续T4096/整阶段6GPUh仍为建议，尚未采用。
 
@@ -103,3 +103,36 @@ supervisor SHA `4a3cbc689648938b00b81742ede3cb7902130a9c1b8d6984ad85ffa428f8daca
 worker.log SHA `a6b47a27d7d747aaf3ca473f5c782efaff2b7bb14414f701f7b41ca36b0fd090`；
 main.log SHA `0bf6745dc082d88025599451631c156909939b85fbf92c40758401cd6e89fcec`。
 实际runtime_before未产生，不能冒称其完整CUDA运行后核验已通过；真实模型初始化日志仅证明到达该加载路径。
+
+## 22:57:27修复版新尝试
+
+`DL-NM1-state-serialization-r1`实际/测试Git
+`47db6265311bc04dbdcc79439842eb8b6e707097`；fresh clean Linux24模块174项中172pass、
+2原optional skips，unittest275.478秒、完整279.206237810秒/600秒，SSHexit0/279.812秒。
+254份实际源码和11份norm前后匹配Git blobs、C producer/independent auditor源码绑定一致，owned均为空。
+前01fb的单个测试隔离失败及其日志保留；没有修改生产labels的纯CPU要求。
+这是有限工程通过，不是真实C成功或科研阳性；确切证据见[工程记录](DL_NM1_ENGINEERING.md)。
+
+22:56:47–51启动前物理4–7完整XML/pmon均无进程/0MiB，新47db代码clean。
+新外部launcher rawSHA `4e2f82ad95f085fee43a9040e375b735184323e790a43b5d45cd159471571128`，
+固定同物理5/UUID、原3600秒/3610失败捕获、全部输入/科学配置不改。
+额外绑定原8d失败terminal/supervisor/worker log三pins并核原parent/worker两个session均gone；
+旧R5 retirement final仍沿原e8b760pin及成功277c审计。外层仅更新Git/路径/attempt标识并加旧失败核验，
+retired/source/discover/cleanup等原函数AST不变；独立只读审查未见剩余确定阻断。
+
+22:57:27.038901实际启动parent496921/PGID=SID496921/start409861732，outer496907。
+实际run `/data/Policy_Discrepancy/runs/dl-nm1-cal-20261015-47db626/attempt02/`；
+外部权威 `/data/Policy_Discrepancy/runs/dl-nm1-cal-inputs-20261015-47db626/`，文件名均attempt02。
+launch rawSHA `3781dc7f14f4d2a9433a99e8abec47d3ddc24503fca08b42cc0e97405d76cf97`。
+本机观测`analysis/outputs/dl-nm1-cal-repair-47db626/`，handle22265。
+**新尝试运行中，未完整生成/独审，未证明真实N1M干预/资格或方法有效**；不再将旧94939视为活跃。
+同时另有纯CPU512当前任务标签入口，不共享或增加GPU，实际闭包待其完整退出。
+
+23:03:25 `runtime_before`认证实际CUDA只在物理5，initial三实例B/rho0/N的完整state4e0d、params cffc、
+五个counter和初始carry均完全匹配原checkpoint。`initial.json`114785B rawSHA
+`f601f895a555e293a0ff94a540a7978a2797813fd7a5bb368453ad8d2f4b581b`；
+`runtime_before.json`2371B rawSHA `bd33cc886a7d5855543357580e15e517fe4c5aac3697aaf4c4704e38793ed0d6`。
+这证明先前保存类型错误已在真实加载边界修复，不证明128批或方法有效。
+23:11:57原parent/worker身份仍匹配，16个batch record，0个最终batch complete、无generation/终态，
+保持原3600秒和未读中间科研值；物理5采样23:09:43–47仅本worker C/8766MiB，4/6/7空闲/0MiB。
+纯CPU标签已独立完整验收，见[结果](DL_NORMAL_LABEL_RESULTS.md)，不替代C审计或新增GPU预算。
