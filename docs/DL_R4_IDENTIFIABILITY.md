@@ -149,6 +149,11 @@ memory effect at p-action = V_pq - V_pp
 U_obs = U_act(q-memory) + memory effect at p-action
 ```
 
+若只同时估计上述`U_act(q-memory)`与`U_obs`，`qq/pq/pp`三臂已充分，
+不需要默认执行第四臂。只有要估计另一memory条件的动作效应，或交互项
+`V_qq-V_pq-V_qp+V_pp`，才需要`qp`第四臂。不能将三臂的参考路径分解说成
+两条机制没有交互，或把四臂设计未经必要性论证就作为默认算力需求。
+
 四臂只是足以分离上述已定义有限路径的建议，不自动成为必须扩大到四臂的执行决定。若研究仅需总的一次信息差，两条对角臂可能足够；若要把总差归因于首动作，则需其它臂或另外论证。memory 固定指当前 latent 状态，**不能把含上一动作的完整 actor carry 机械复制给所有臂**：每臂实际 carry 的 `prevact` 必须写入该臂真实执行的首 action，后续状态按各自真实动作/观测推进。不能偷偷让 p 臂永久失去未来观测，也不能把 future q 观测交叉喂给另一真实状态。
 
 冻结前最少还缺：目标是 U_act 还是 U_obs；当前 actor 使用 q/p 的真实抽样与 carry 契约；窗口/终止/折扣与统计精度为何足以回答该问题；高 D、正负和 nuisance 的独立覆盖依据；独立任务标签与 D/e/K 的逐位置联合记录；校准/留出隔离；普通 replay 与后续压缩效应如何接上。nuisance 损害与有用依赖可以并存，不强制二分；raw K 不作为任务真值。
@@ -174,6 +179,63 @@ U_obs = U_act(q-memory) + memory effect at p-action
 
 正式 M2 不动。sv2 r3 单次探索已结束，不继承为新增训练授权；新的实际资源范围、配置和准入按后续明确记录执行。本轮两项解释为 0 GPU，没有服务器/GPU 分配或占用状态的新事实。完整目标保持未完成，不能以此文档、toy 或算术通过结束整个目标。
 
-## 8. 实际执行与证据（待执行者追加）
+## 8. 实际执行与证据（2026-10-15 14:21）
 
-本节尚无新增执行结果。完成后记录实际实现/测试 SHA、认证输入与输出 hash、完整命令、时间、独立算术核对和限制；区分理论预期、真实固定 N 代数与合成枚举。不得把尚未执行的预期值写成运行验收事实。
+**有限CPU解释验收完成，整个方法仍未完成。** actual/tested完整提交为
+`7fa5054aa64160e91c74b0205f4e57bd32c0017c`。本机Windows/Python3.12.14，
+`CUDA_VISIBLE_DEVICES='' / JAX_PLATFORMS=cpu`；16项CPU检查全部通过（unittest .235秒、
+外入口.391秒），实际解释入口.391秒/exit0。原review、采用时规范和源码按Git原字节认证，
+错误输入SHA/Git两个CLI反例均exit1、未发布结果。本轮没有服务器访问、GPU核查或新作业，
+没有加载模型/环境/physics/render/replay，未改Dreamer算法、原训练配置或旧科学判据。
+
+输入 `analysis/outputs/dl-pilot-r3/review-20261015-a4d9330/review.json` 的SHA256为
+`51a9504ace6dd89ac743f74eb8e78ee77860f1c907dfb8d53bd854d1028ace4c`。
+完整命令、源码pins、Python版本、退出及耗时见
+`analysis/outputs/dl-identifiability/20261015-7fa5054/execution-receipt.json`。
+复现入口（使用该历史clean提交、新输出路径）：
+
+```text
+python analysis/dl_signal_identifiability.py
+  --review analysis/outputs/dl-pilot-r3/review-20261015-a4d9330/review.json
+  --expected-review-sha 51a9504ace6dd89ac743f74eb8e78ee77860f1c907dfb8d53bd854d1028ace4c
+  --expected-git 7fa5054aa64160e91c74b0205f4e57bd32c0017c
+  --output NEW_RESULT.json
+```
+
+实际结果 `analysis/outputs/dl-identifiability/20261015-7fa5054/result.json` 的SHA256为
+`bba5c35447a03a41645523840af9cc5b31ae0d7e7508812349be78a2218e97d2`。
+它保留全部768个world/readout组合的精确分数、最大值见证、两种H1标签和完整输入概率。
+
+| 已执行对象 | 有限结果 | 结论边界 |
+| --- | --- | --- |
+| 原N聚合量的固定输入代数 | A/B=.050622102529511354；ρ=1仍仅为同mask D潜在释放的5.06221025%；所需ρ=19.75421703231363越界 | 实数算术应用于已记录float32 reductions；非逐位置bit-exact重执行、实际D训练强度、正式κ或在线回报预测 |
+| 三world当前actor | delayed q−p依次+.72/0/−.72；共同H1期望.01抵消 | 不是Dreamer、实际Dt或quadruped因果解释 |
+| 全部256读出的最佳值 | q/p为.97/.25、1/1、.99/.75；信息增量+.72/0/+.24 | 当前负actor效用不能直接作为删除信息的依据；未证明真实训练能学到最优读出 |
+| K与孤立rep导数 | K=1.2185938242800805>1，导数log97=4.574710978503382 | 仅固定prior、直接置信参数及单独rep项；不是总optimizer信息损伤 |
+
+独立Agent未调用producer数学函数，从认证原review和精确概率重新计算：
+768读出、49152个cue/latent/H1联合项，3235项比较（3126精确分数、52结构、57浮点）。
+精确分数差0，浮点最大差8.881784197001252e−16（最大5 ULP，预定8 ULP算术核对范围），
+耗时.221189秒/exit0。独立报告为同目录 `independent-review.json`，SHA256
+`b6c3d57f05fa347e3ab773fe12982382c7da839543a27eb4cb2097623a4c25bb`。
+它用80位Decimal核K与解析导数，但未独立重演有限差分字段，也没有科学rollout或独立训练。
+这是算术验收范围，不是修改原科学比较容差。
+
+**支持接近1的解释边界**：令Δ=ell_p−ell_q，有
+`e=u_q*[1-exp(-Δ)]_+`，小Δ时约为`u_q*Δ_+`。
+u接近1时exp的斜率绝对值接近1，并非一般意义的指数衰减饱和；只有单侧上界
+`e<=1-u_p`。原valid位置总体headroom约.03536580，平均e约.00323538，不能从边际均值
+推断高D/关键位置或宣称“饱和导致弱保护”。负支持幅度均值.00210005595、
+绝对支持差均值.00533543869同样只是原位置加权的代数派生。
+
+另修复 `analysis/dl_pilot_plot.py`：原入口仅检查相对AUC，三组同一点共同偏移可漏过；
+新入口认证同份输入字节、完整网格/raw均值、绝对summary与gate分母后才写图。
+8个绘图CPU反例纳入上述16项，真实认证输入产生的新PNG与原正确PNG字节完全相同，
+SHA256仍为`b19901da05d5102eb617005e965a79f25ef770ec5dc3f0b1637e90360391aca4`。
+新图位于原review目录的`figures-validated-20261015/`，已视觉核查；旧图保留，原性能统计不变。
+绘图CLI见`analysis/README.md`，现在必须提供review和points的预期SHA。
+
+本有限对象在此停止，不追加world或调参；下一项仍是第6节真实干预对象的审定。
+动作价值、信息可用性、保护收益的三个命题不能互相代替。第7节未决证据没有被本次CPU通过补齐，
+双信号方法不能据此宣布已可正式实验。最终报告提交相对actual/tested只归档文档，
+完整SHA、GitHub/main及同步范围见终点Git记录。

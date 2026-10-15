@@ -1,5 +1,25 @@
 # DL 验证日志与证据索引
 
+## DL-r4可辨识性与ρ可行域（2026-10-15）
+
+actual/tested `7fa5054aa64160e91c74b0205f4e57bd32c0017c`，本机Windows/Python3.12.14、
+CUDA_VISIBLE_DEVICES为空/JAX_PLATFORMS=cpu。新解释4项、绘图8项、原review回归4项共16项
+全过，unittest .235秒/外入口.391秒；实际解释CLI .391秒/exit0，源码/原review字节绑定，
+错误输入SHA与错误Git两负例均exit1且无result。没有Dreamer/physics/render/replay加载、
+GPU、服务器访问或新训练。数据为已公开r3聚合证据和有限构造，不称确认性留出。
+
+同N批次/原H1 mask的A/B=.050622102529511354，合法ρ最高匹配5.06221025%的D-only潜在
+超额释放；匹配所需ρ19.75421703231363越界，不是正式κ。三world全部256读出/两种H1标签
+保留：当前actor差+.72/0/−.72，最佳latent读出增量+.72/0/+.24，说明负actor差不能作信息
+无用或应压缩的真值。有限categorical D_toy不是实际Dt；孤立rep导数log97不能代表总optimizer。
+详见 [DL_R4_IDENTIFIABILITY.md](DL_R4_IDENTIFIABILITY.md)，原r3和所有旧停止门不改。
+
+产物在 `analysis/outputs/dl-identifiability/20261015-7fa5054/`，含result/执行收据/tests.log；
+result SHA256 `bba5c35447a03a41645523840af9cc5b31ae0d7e7508812349be78a2218e97d2`。
+新绘图输入契约修复共同点偏移仍保持差AUC的反例；认证原points/review后新PNG与既有正确
+PNG同为b19901da05d5102eb617005e965a79f25ef770ec5dc3f0b1637e90360391aca4，旧图未覆盖。
+独立算术核验与最终报告Git状态见新规范执行节；未启动下一真实诊断或任何新训练。
+
 ## DL-pilot-r3终点与独立CPU分析（2026-10-15）
 
 原训练actual/tested13ec72a214b0c03b886b2c7fac52c8f089966dec于10/14 00:58:33.255724北京时间
