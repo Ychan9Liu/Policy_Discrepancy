@@ -1,5 +1,16 @@
 # DL 验证日志与证据索引
 
+## DL-r5确定版本Linux工程完成（2026-10-15 17:29）
+
+actual/tested `f845de0cce297443c28761421ab91a7955b62553`，Windows47项46pass/1skip15.896秒，
+clean sv3 Linux47pass25.092秒（外25.458906/含准备26.345918秒），全部0GPU。
+父与独审真实Git blob source清单一致，原R4统计12项回归通过；Linuxowned family+shadow清理已测。
+新source只部署sv3隔离f845，原算法/M2/R4和canonical不改；HEAD-only bundle首次误指定branch的clone失败已存证，
+新attempt修部署命令后验收，不算科学失败/重跑。完整证据/命令/实际边界见[DL_R5_LIVE_RESULTS.md](DL_R5_LIVE_RESULTS.md)。
+真实512/N1M/GL尚未执行，无信号/保护结论；下一仅GPU4单A100/7200秒≤2GPUh，独审1800秒/0GPU，
+总剩余GPU小时未定，5–7不预留。17:29:31 XML+pmon4–7空/各4MiB/0%；本项目无GPU运行。
+f845已push研究分支、main595e982不变；此后只报告doc提交，执行checkout仍f845，goal保持active。
+
 ## DL普通replay实际完成与r5资源边界（2026-10-15）
 
 普通库存actual/tested7ac29906e9d8953b8b87eb6ba134d3ddcdac9f46，clean sv2 Linux5pass/.195秒，

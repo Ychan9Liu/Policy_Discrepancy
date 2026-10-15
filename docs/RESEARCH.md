@@ -1,5 +1,12 @@
 # 研究问题与方法
 
+**DL-r5工程完成与资源核验（2026-10-15 17:29）**：actual/tested
+`f845de0cce297443c28761421ab91a7955b62553`，clean sv3 Linux47项全过、真实Git blob source manifests一致、0GPU。
+新policy/shadow/family/父入口/统计/CPU独审实现并有限验收，真实512/N1M/GL尚未执行，
+不建立信号增量或保护收益。计划仅物理GPU4一张A100、完整7200秒单次上限，CPU独审另1800秒；
+5–7不预留，总剩余GPU小时未定。17:29:31 XML+pmon4–7空闲，本项目无GPU作业；
+当前chat下一fresh设备核验后执行冻结对象，详见[DL_R5_LIVE_RESULTS.md](DL_R5_LIVE_RESULTS.md)。
+
 **DL-r5新有限诊断与资源（2026-10-15，工程实施中）**：Agent在完整预验证授权内采用
 [DL_R5_LIVE_TRIAL.md](DL_R5_LIVE_TRIAL.md)，原live中随机一次qqA/qqB/pq/pp、处理前共同baseline-q CPU shadow H1、
 32 environment families×16独立policy流/cal128-held384、native H100，不恢复live渲染或要求两条qq路径近乎相等。

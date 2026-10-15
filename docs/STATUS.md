@@ -1,5 +1,14 @@
 # 项目状态
 
+**DL当前（2026-10-15 17:29）**：R5源码actual/tested
+`f845de0cce297443c28761421ab91a7955b62553`已push研究分支，clean sv3 Linux47项全过/25.092秒，
+父与独审真实source manifests一致，0GPU；[工程报告](DL_R5_LIVE_RESULTS.md)。
+真实512/N1M/GL未启动，没有效用/方法裁决。后续只计划sv3物理4单A100、7200秒单次上限≤2GPUh，
+CPU独审0GPU，5–7不预占，完整剩余GPU小时未定。17:29:31 fresh XML+pmon4–7无进程/各4MiB/0%；
+当前无本项目GPU作业，启动前再核。源码只同步sv3新隔离f845，canonical/sv1/sv2不移动；
+GitHub/main仍595e982未合，后续仅文档证据提交的完整SHA/推送以最新Git收据为准。goal仍active，
+下一继续当前chat完成fresh设备核验和冻结R5真实对象，原R4失败/M2不变。
+
 **DL最新（2026-10-15）**：真实普通replay取证已在actual/tested7ac29906e9d8953b8b87eb6ba134d3ddcdac9f46完成，
 sv2 clean Linux5项通过；1280NPZ/11.42GB/16链/1M动作完整内容及双SHA通过，外247.145593秒/0GPU。
 历史cache不等于终点online状态；报告[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)。
