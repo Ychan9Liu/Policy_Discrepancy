@@ -55,3 +55,27 @@ Linux 另须执行真实 reaped-leader/活 descendant 清理用例。fixture 不
 与 producer 提交逐函数 AST 对照：`audit`、`validate_record`、`validate_pretreatment`、`replay`、
 `official_transition`、随机计划/label/key、策略与 bundle 数值检查不变；只改元数据清理、退出认证、
 resource 身份检查入口和 CLI。`analysis/dl_live_statistics.py`、共享物理实现和所有科研阈值不改。
+
+## 确定提交的 Linux 验收
+
+实际测试提交 **7c4affc49d4535b83804cb443471141645fbe658**，sv3 新 clean 隔离目录
+`/data/Policy_Discrepancy/dl-r5-audit-code-20261015-7c4affc`；原 1584 producer checkout 不移动。
+七个 R5/R4 相关模块共 55 项全部通过、无 skip，unittest 24.445 秒、测试进程
+24.750257851 秒、含 clone/checkout/source binding 的完整入口 25.775878075 秒/300 秒。
+实际 SSH exit0、26.375 秒，0 GPU、owned 空；Linux reaped-leader/活 descendant 用例实际执行。
+246 份实际 Git blob 与 working bytes 一致，前后 source manifest 相同，含本工程规范。
+
+证据目录 `/data/Policy_Discrepancy/runs/dl-r5-audit-cpu-20261015-7c4affc/attempt01/`，
+本机 ignored 镜像 `analysis/outputs/dl-r5-audit-cpu-7c4affc/attempt01/`。
+`linux-tests.log` SHA256 `42267ef1da716fb0b3a50e6574c9e97f1985aaaae249bedad728be40f36be57d`；
+`source-binding.json` SHA256 `b83a21d302f7f816f2669522e14a8bbeb8623ed62edd2678a4ecd5bb802e66db`；
+`terminal.json` SHA256 `3fb74e9b6e7f6d4b78e0ea388d07908127649e320a9b728646346ff39e050927`。
+本机 `ssh-terminal.json` SHA256 `92022bf84134cb25b101c083ddc6f31b2c0d4f6b0ad047afcfb526ba7f038678`。
+不读取真实 R5 中间科学值，不构成完整 512 单元/N1M 独审或方法有效结论。
+
+另已准备 CPU 独审外层控制器（ignored，独立静态复核、仅语法编译，尚未真实执行），
+实际 `Popen` 前到退出及 owned 清理固定 1800 秒；脚本自身安装/预核不冒称已包含在此计时。
+终态版本 `DL-r5-audit-launcher-r1`，绑定原 producer launch/terminal 双 raw pins、实际 auditor Git、
+完整 argv、结果原始 pin、真实 returncode/elapsed、原 PID/start_ticks/PGID/SID 及组清空状态。
+退出非零、超时、身份或组未释放都进入 `external_failure`，不凭结果 JSON 单独宣称成功。
+后续 C 的 predecessor retirement 同时绑定完整 audit report 和此退出权威；不使用其中科研统计选分支。

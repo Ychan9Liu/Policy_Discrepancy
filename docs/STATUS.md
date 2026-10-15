@@ -1,5 +1,16 @@
 # 项目状态
 
+**2026-10-15 21:26:46服务器快照 / R5独审工程修复验收**：
+原R5 actual1584、parent341486/start408554660仍活跃，418unit/26family完整，cal封口，
+无generation/内外terminal/完整独审；只读计数/资源，未读中间D/e/Y或科研统计。
+GPU5仅本worker432246 C+G/2587MiB，4/6/7无可见作业/各1MiB，不干预未知或非项目进程。
+新auditor actual/tested7c4affc49d4535b83804cb443471141645fbe658 已在sv3 fresh clean Linux
+七模块55项全过、无skip、24.445秒unittest/25.775878075秒完整入口300秒、真实SSHexit0/0GPU/owned空。
+修复仅外部launch/terminal双pin退出权威和PID/start/PGID/SID认证，统计/物理/科学门不改；
+见[独审工程证据](DL_R5_AUDIT_ENGINEERING.md)。运行中1584及C实际代码8d63均不移动。
+资源答复：一张独占A10080串行即可；当前R5全入口3.5h、随后C独立1h，CPU全审0GPU。
+T全阶段6h仍未采用，完整剩余GPU小时未定。本次无新GPU任务、无真实C或方法有效裁决，goal active。
+
 **2026-10-15 21:00:21（服务器快照）/ C 工程与原数据暂存完成**：
 actual/tested8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0 的 sv3 clean CPU20模块142项，
 140pass/2原optional skip，260.298秒unittest/264.391854秒完整入口300秒、exit0/0GPU/owned[]。

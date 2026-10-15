@@ -1,5 +1,20 @@
 # DL 验证日志与证据索引
 
+## R5独审入口修复、Linux有限验收与资源答复（2026-10-15）
+
+Agent发现旧独审不认证外层真实退出、metadata helper仅PID清理，新增双外部raw pins与
+PID/start/PGID/SID组检查；未改原1584 producer、统计/随机计划/物理复放或科学门。
+实际测试7c4affc49d4535b83804cb443471141645fbe658，sv3 fresh clean Linux七模块55项全部通过/无skip，
+24.445秒unittest、25.775878075秒完整入口/300秒、真实SSHexit0、0GPU、owned空。
+246真实blob/前后manifest一致；真实Linux reaped-leader descendant用例通过。
+完整路径/hash/CLI及限制见[工程报告](DL_R5_AUDIT_ENGINEERING.md)，不是实际512/N1M独审。
+
+21:26:46原R5同parent341486/start408554660仍活跃，418unit/26family完整、cal封口，
+无全生成或终态；GPU5仅本worker432246/2587MiB，4/6/7无可见作业/各1MiB。
+未读中间D/e/Y，没有重启或新GPU任务。当前需要一张独占现有A10080串行；
+R5的3.5h含已用时间、C另1h，T全阶段6h仍建议，CPU审计/统计/标签不需GPU，完整剩余核时未定。
+另准备了R5 CPU外层1800秒退出权威和C外层前驱退役门，仅静态复核/语法编译，尚未实际执行。
+
 ## DL-NM1完整C工程CPU验收及真实源迁移（2026-10-15）
 
 授权内Agent完成DL-NM1-counterfactual-r2/rawK出口、完整128 cal producer、独立CPU audit和

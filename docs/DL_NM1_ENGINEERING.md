@@ -162,15 +162,17 @@ terminal.json SHA `8db61eb55a4fc9c75724a5f317c00131c73ed0070917c93f5fa124e7442e0
 
 ## 下一必要交付
 
-**输入位置缺口，19:49:22服务器只读核查**：sv3上原replay绝对路径与库存路径均不存在；
-真实普通源在sv2，不能因为路径字符串相同就假定sv3已有原对象。
-需要从sv2在新sv3输入目录暂存完整原字节及原inventory raw pin，并独立全SHA核验，
-保留原hostname/源路径与实际暂存路径。当前loader严格要求实际路径等原inventory路径，
-尚未实现显式迁移绑定；不得改写已pin的inventory、猴补路径检查或在sv3伪造旧run来通过。
-此准备不需要GPU，也不是方法失败；源迁移接口及完整cal runner均仍未实现。
+19:49:22发现的sv3原源路径缺口已通过[显式源迁移](DL_REPLAY_STAGE.md)解决，
+完整C runner/900秒独审已在实际8d63代码实现并有限CPU验收（见本页前部），不再作为未实现项。
+真实C仍须经严格cache解码/原schema和真实N1M运行验收；字节迁移和tiny测试不能代替。
 
-先确定提交/clean Linux有限组合与真实Git blob绑定。随后实现完整C的固定128计划、
-原1M只读取批、完整初态反事实、reference F32逐位置记录/F64系数与F32实际释放、
-encoder/posterior原张量证据、分项资格和900秒CPU全审。未实现runner不得启动真实C。
+C外部启动器已准备于本机ignored `analysis/outputs/dl-nm1-cal-preflight-8d63fff/launch.py`，
+实际SHA256 `53edf01e00a99bfe1c56ad99b7376e37c9e678eeded0ec0a9e7df6709536a30b`，
+独立静态复核/语法编译通过，尚未执行。它绑定实际8d63 clean源码、源raw pins、
+3600/3610秒和 `DL-NM1-launcher-r1` 真实退出，不把外层3610当成功预算。
+当前仅实现audited-complete前驱退役：必须绑定原R5成功内外终态、新独审report和
+`DL-r5-audit-launcher-r1` CPU实际exit0/1800秒/owned全释放权威，不靠family间空闲放行。
+失败封存路径保持拒绝，若实际发生须先审查完整封存schema，不猜测/拼接缺失对象。
+
 R5权威终态与完整独审或失败封存完成后，fresh核物理5空闲，才按C独立3600秒上限串行执行。
 失败/不足也是有限结果，不追加cal、降低原free-nats、放大rho或自动采用归一化e追阳性。

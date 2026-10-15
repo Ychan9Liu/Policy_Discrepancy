@@ -102,12 +102,21 @@ driver570.158.01，详细版本与pip freeze保存在外部inputs。驱动/编�
 
 ## 资源答复及下一步
 
+**21:26:46服务器只读快照**：原parent341486/start408554660身份匹配、418unit/26family完整，
+cal封口，无generation/内外terminal；GPU5仅本worker432246 C+G/2587MiB，4/6/7无可见作业/各1MiB。
+未读中间D/e/Y、统计或cal系数，原12600秒/科学门不改，无新增GPU任务。
+
+独审工程前置已用实际新提交 **7c4affc49d4535b83804cb443471141645fbe658** 完成sv3 clean Linux
+55项无skip、25.775878075秒完整入口/0GPU；[外部退出及组身份修复](DL_R5_AUDIT_ENGINEERING.md)
+不改正在运行的1584、统计或物理复放。原run_git与新audit_git分别记录，不能互换。
+
 当前需要**一张独占A100-SXM4-80GB串行**，授权4–7不是四卡并占。
 旧同规格诊断采样峰2587MiB、历史完整训练峰8086MiB，只是实测参考，不能保证较小显存卡可用。
 CPU库存/私有replay/tiny工程/ridge/bootstrap/物理标签和独审不占GPU；真实模型重提特征和正常机制学习需要单卡。
 完整剩余总GPU小时尚未冻结，NM1的4096更新/最多五臂/整阶段6GPUh仍仅建议，不能作为已批准总额。
 
 继续当前chat监督同一parent/handle至权威终态；观察超时不是停止理由，不另开补齐任务。
-只有512完整退出且原进程结束后，才从实际1584 clean代码执行1800秒独立CPU全对象审计并作冻结科学裁决。
+只有512完整退出且原进程结束后，才从新auditor7c4affc clean代码对原run_git1584执行
+1800秒独立CPU全对象审计并作冻结科学裁决；正式CLI必须提供外部launch/terminal双raw pins。
 其前不读取中间科研值；工程通过不等于信号或方法有效。原f845资源失败及缺失触发sample限制保持，
 见[旧运行及失败取证](DL_R5_LIVE_RESULTS.md)。正常压缩及有效S/P/W仍缺证据，完整目标active/M2不变。
