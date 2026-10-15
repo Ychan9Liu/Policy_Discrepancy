@@ -38,6 +38,10 @@ MUJOCO_GL/PYOPENGL_PLATFORM=egl、JAX_PLATFORMS=cuda。模型/协议字段沿规
 快照保存在外部inputs/resource-question-101237.json及同名XML。未读取中间D/e/Y。
 按已观测吞吐，完整512有触及7200秒上限风险；此运行预算不改，超时对象不能拼接为完整成功。
 
+18:24:23北京时间原parent身份继续匹配，162unit/10family完整；cal已封存、held已开始，
+无generation_complete或terminal。fresh完整XML+pmon本worker322060仅物理4 C+G/2587MiB，
+5–7无进程/各1MiB；外部快照resource-cpu-complete-102423.json/XML。没有读取中途科研值。
+
 ## 实际版本与工程证据
 
 实际/tested源码SHA `f845de0cce297443c28761421ab91a7955b62553`。
@@ -91,4 +95,6 @@ Windows coarse monotonic仅在Windows fixture中使用真实perf_counter；Linux
 
 继续当前chat即可：监督当前f845源版本和同一原handle的已冻结单卡对象，
 不扩unit/预算、改门、拼接或把工程证据升级科研支持；完整退出后独立CPU审计，再据结果确定下一机制对象。
-最终文档提交相对f845只记证据/资源和交接，执行checkout保持f845；最终GitHub分支状态见完成报告/最新Git收据。
+R5执行checkout保持f845，运行后不修改其生产文件；研究分支另新增独立CPU私有replay工程，
+actual/tested2ae18a5详见[DL_NORMAL_REPLAY_ENGINEERING.md](DL_NORMAL_REPLAY_ENGINEERING.md)，不把该分支HEAD称为R5实际源码。
+最终GitHub分支状态见完成报告/最新Git收据。

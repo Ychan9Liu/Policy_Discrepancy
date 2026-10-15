@@ -1,5 +1,11 @@
 # 研究问题与方法
 
+**普通私有replay真实工程前置完成（2026-10-15）**：
+[DL_NORMAL_REPLAY_ENGINEERING.md](DL_NORMAL_REPLAY_ENGINEERING.md)记录actual/tested2ae18a5，
+sv2 Linux16项通过及真实1280文件/1M动作/999984合法窗口的CPU导入与合成回写，外286.732秒/0GPU。
+峰主存31.85GiB；不当显存需求、不当多步神经网络学习或保护证据，原混合年龄cache/online不可恢复限制保持。
+下一科研对象仍为下方建议草案，未因此采用训练组数或预算。
+
 **下一机制对象的只读审查（2026-10-15，建议未采用训练）**：
 [DL_NORMAL_MECHANISM_DRAFT.md](DL_NORMAL_MECHANISM_DRAFT.md)汇总普通cache反馈、项目实际同步回写、共同真实历史重提q/p、
 独立物理task量/refit与完整native行为、S/P/W各自必要性的边界。首选局部0/B/N/S不等于整个选择机制完成；

@@ -1,5 +1,15 @@
 # DL 验证日志与证据索引
 
+## DL普通私有replay真实验收（2026-10-15 18:23:39）
+
+actual/tested2ae18a54722ab4e96f1775d64a0884f998f573da，sv2 attempt03 clean Linux16项全过，
+真实1280/1M/999984合法窗口导入与一个合成回写计划通过，exit0/外286.732150秒/0GPU/无owned残留。
+峰RAM34,195,369,984字节；原完整文件SHA/run元数据稳定；JSON b3b4680f…4f7。
+真实计划无重叠，重叠后写覆盖只在fixture验，未做NN更新/学习/效果裁决。
+attempt02错误input路径被入口拒绝（exit1/.215115秒）保留，修外部argv后同源码新attempt03通过；
+未改生产门或覆盖旧失败。完整证据/命令/限制见[DL_NORMAL_REPLAY_ENGINEERING.md](DL_NORMAL_REPLAY_ENGINEERING.md)。
+18:24:23 sv3 fresh XML+pmon原R5仍仅GPU4/162unit/10family，cal封存/held进行，无科学中途读数，5–7不占。
+
 ## DL私有replay Linux fixture竞态修复（2026-10-15 18:16）
 
 b8f14a4 clean sv2 Linux16项15过/1错误；真实alarm返回124、owned无残留，

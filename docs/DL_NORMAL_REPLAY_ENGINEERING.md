@@ -3,6 +3,9 @@
 2026-10-15，版本DL-normal-private-replay-probe-r1。Agent在既有完整预验证授权内采用的必要工程前置；
 不采用[下一机制草案](DL_NORMAL_MECHANISM_DRAFT.md)的训练组数、更新数或科学判据。
 
+**当前结果**：18:23:39 sv2真实1M CPU私有导入及合成回写工程验收完成，actual/tested2ae18a5，
+外286.732秒、峰RAM31.85GiB、0GPU；没有神经网络学习或方法效果结论。下方保留实施过程及两次失败。
+
 ## 固定对象与验收范围
 
 输入为[已核验的真实N1M持久化数据](DL_REPLAY_INVENTORY.md)，固定原run、1280 NPZ、16链、
@@ -50,3 +53,44 @@ fixture覆盖跨三chunk、重叠回写、未知ID/坏cache、输入污染、漏
 linux-tests-terminal.json记录exit1、外2.718362秒、无残留，失败日志不覆盖。
 本机仅修fixture为直接读取stat；若条目已消失仍满足原“已退出或Z/X”判据，读得到时仍严格Z/X。
 不改生产代码、时间/内存/计数或科研语义；新确定提交、新attempt重新完整Linux验收后再真实CPU导入。
+
+### Linux修复后及入口attempt02/03
+
+修复来源`2ae18a54722ab4e96f1775d64a0884f998f573da`已push；sv2 clean Linux16项全过，
+未移动原训练或R5执行checkout。外部launcher生成第二次尝试时误将输入路径的attempt01也替换成attempt02，
+生产入口在inventory认证前拒绝不存在的路径，exit1/外0.215115秒、无残留、未读真实NPZ；
+`/data/Policy_Discrepancy/runs/dl-normal-replay-probe-20261015-2ae18a5/attempt02/`完整保留。
+此为启动参数错误，不归因数据或方法，不改源码/协议来绕过拒绝。
+
+正确原输入路径已逐字核对，attempt03使用同一确定提交的新clean checkout：
+`/data/Policy_Discrepancy/dl-normal-replay-code-20261015-2ae18a5-attempt03`。
+再次Linux16项全过（unittest 2.452秒、外2.718126秒/exit0/owned无残留），
+18:18:52.931858北京时间开始真实CPU probe PID1278439，whole900秒/96GiB保持。
+输出在`/data/Policy_Discrepancy/runs/dl-normal-replay-probe-20261015-2ae18a5/attempt03/`；
+该时点等待其权威终态；后续实际结果见下节，不能把此前fixture通过称为真实1M验收。
+
+## 真实CPU验收完成（2026-10-15 18:23:39）
+
+actual/tested均为`2ae18a54722ab4e96f1775d64a0884f998f573da`，上述sv2 attempt03完整exit0，
+probe外286.732150秒/900秒；含clone、checkout及16项测试的整个控制入口290.344214秒。
+实际私有导入271.240985秒，峰RSS34,195,369,984字节（约31.85GiB），
+RLIMIT_AS实际soft/hard均103,079,215,104字节（96GiB），owned进程无残留。
+
+真实1280 chunks/16链/1,001,008行/1008 reset/1M动作完整导入，官方999,984合法65步起点登记通过；
+一个固定16序列工程计划经官方annotation/Consec得到16×65，合成1024行cache回写后完整65位置独立回读通过，
+所有raw字段逐字节不变、pending已清空。本真实计划1024行均唯一，重叠后写覆盖证据仍只来自有限fixture，
+不冒称此真实计划也碰到了重叠。原1280文件/11,421,580,553字节的末遍原始SHA及run元数据前后均稳定。
+
+probe.json为41,290字节，SHA256
+`b3b4680feb9d54ed7bc69eae89a0e52b9eb15b9554eda92a99d3c04f3acea4f7`。
+外层probe-terminal.json/terminal.json独立记录exit0、时限和owned清理；本机小镜像在ignored
+`analysis/outputs/dl-normal-replay-2ae18a5/attempt03/`。
+第二Agent只读核对该原始JSON/日志SHA、全部230项Git blobs、固定库存及元数据，并独立按filename顺序和seed
+重建16序列计划及999984起点计数，逐项一致；真实计划含一处跨chunk、无重叠。
+此复核没有再次扫描原11.42GB、解码CRC、重演Replay或读取原始XML/pmon，不称第二次独立全量执行。
+自身PID1278439前后XML+pmon均未发现GPU进程；包间接import JAX为true，未请求backend/模型/环境，
+0 optimizer更新、无学习或GPU任务。进程快照不构成独立driver/backend执行证明。
+
+通过的是真实历史普通数据的完整私有导入与一个工程计划的合成回写，
+不是正常神经网络多步学习、信息压缩/保护、第二信号或性能验收；历史cache/online不可恢复限制不变。
+后续仍在当前chat监督原R5，下一机制的科研预算和判据另行冻结，不以本工程通过代替科研依据。
