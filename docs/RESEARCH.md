@@ -1,5 +1,15 @@
 # 研究问题与方法
 
+**2026-10-16正常读出工程与资源边界**：actual/tested
+`dfd6756ad4f38f89de87e17bac7fd0192265979a` fresh Linux13项全过/无skip、
+实际SSHexit0/17.391秒/300秒/0GPU；源码/规范267个不同文件逐Gitblob初末一致。
+这是mock provenance及NumPy/原位BF16解码/完整图phase-view的有限工程验收，未拟合真实特征，
+不证明独立信号、q信息增量、保护或性能。下一真实reference0 CPU固定读出由Agent采用一次whole900秒，
+仍待原真实feature完整退出和512图/双rawpins；详[工程证据及有限采用](DL_NORMAL_READOUT_RUN_ENGINEERING.md)。
+当前C abef/物理5/128/3600秒与reference0 2a/物理4/512/12600秒运行中；
+最低一张现有A10080可串行，已采用两卡并行，两个单attempt上限合计4.5GPUh不是剩余或完整科研预算。
+T组数/更新/native/完整预算仍未采用；不以瞬时显存推更小卡要求，也不把13项fixture写成真实任务验收。
+
 **R5完整独审与有限科学结果（2026-10-15 22:21）**：原1584完整512/32、外层exit0、
 约2.580220 GPUh；修复auditor actual/tested `277c18001d353d9101a3622959351d3994699adb`
 clean Linux77项通过后，完整CPU独审actual exit0/655.220153340秒/1800秒。

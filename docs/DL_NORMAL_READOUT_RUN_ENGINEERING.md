@@ -100,3 +100,48 @@ test `7b6338bba4786d1195bb259bfe3aab249330ccd30f2732e7d930f08cbbd1a30d`。
 root及独立Agent只读核认证顺序、严格phase view、数学/bit解码/输出与拒绝反例，未见阻断。
 下一确定提交的reader9+既有math4项采用一次clean Linux CPU测试整入口300秒上限；
 它不是实际读出执行预算，也不允许读取运行中的reference0或按其结果改数学/标签。
+
+## 确定提交的实际 Linux CPU 验收
+
+actual/tested `dfd6756ad4f38f89de87e17bac7fd0192265979a`，sv3 fresh clean checkout：
+上述reader9与原数学4项共13项全过、无skip，7个必需用例均在真实日志中为ok。
+unittest14.966秒、命令15.148718191秒、整入口16.334839418秒/300秒，
+root实际SSHexit0/17.391秒，无external failure，0GPU、无JAX/Physics/真实数据读取或拟合。
+258份源码+九份规范的267个不同文件实际working bytes前后相同，逐dfd Git原blob认证，
+checkout始终clean、全部本次owned registry为空；五份复用依赖逐整文件等于producer2a。
+root与另一Agent独立核本机小镜像及Git blobs，未再次运行远端测试。
+
+真实run `/data/Policy_Discrepancy/runs/dl-normal-readout-cpu-20261016-dfd6756/attempt01/`；
+code `/data/Policy_Discrepancy/dl-normal-readout-code-20261016-dfd6756`。
+本机小镜像 `analysis/outputs/dl-normal-readout-cpu-dfd6756/attempt01/`，
+外层SSH日志与真实退出收据在其父目录。关键完整raw SHA256：
+
+- terminal：`381c0168f353044a13ddb53ba677a5d2cc8c32a795afbabd91fecdacca5a5a11`；
+- test log：`ef1b78c75110f9cdd8aea273b54139f56f2cf9bbf5c56b978f078c15b3e6c10f`；
+- source binding：`7e5c4bb3c5641a6bcf4f5b776fd35f429935ebeee7ab159d49e734e15d132f8c`；
+- binding before：`8bd426dacedc6ed7364aa5bfd8547db4ebb2840d43dae4a59358cd297dd5af94`；
+- root实际SSH receipt：`84243783b4b07a6e1e870f3fd368ca859ce82f8784d762d261d90227fb5454c5`；
+- root实际SSH log：`829a692f2ad89e2ba68b59f2ee5d290068a3be0c2598633e0d69931f6df03b65`；
+- 部署记录：`6a4a255dccad6acdfbd9104591f420e1b9c1b043f94672c5814248c323282d67`。
+
+部署mkdir/SCP/远端四文件sha256sum均真实exit0；外launcher11788B raw
+`7ada9e599ebcf044bd1ac86463d6379346875be06b9dc1b97f2ec4b6e84443d9`，
+observer `79a2bc43499954d2333417452577b1faa618ff3ac146ca8f3546e2fba2ddea15`，
+原group helper `ec3e0c45e643db875fe7a15619060facc72828cf06c80da094621629db48f6f9`，
+bundle29695291B `fcbb98ccb387a753e800ff20282b4e338bbc6607770669810d1e60251a7f271a`。
+这些是generated/mock provenance、真实NumPy/BF16解码和phase-view有限工程证据；
+不认证真实512特征、标签、NN/Physics或方法有效。
+
+## 下一真实 CPU 读出的有限采用
+
+2026-10-16，Agent在完整预验证授权内采用一次reference0固定读出，actual/tested仍dfd，
+**整个CPU入口900秒、0GPU**，覆盖bootstrap前计时、全图/源码/标签认证、原固定拟合、
+全部数值产物、初末只读检查、落盘、owned清理及实际完整退出。旧600秒候选不采用。
+外部控制器尚在准备；原feature handle37919仍运行，真实controller终态/SSH receipt pins尚未知。
+仅在其真实SSHexit0/whole≤12600、512完整图与原组退场均成立后提供这两个真实raw pins，
+不使用partial、内部成功替代真实退出、不因读出符号更换来源或数学。
+
+fresh输出 `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-20261016-dfd6756/attempt01/`，
+外部inputs `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-inputs-20261016-dfd6756/`。
+900秒是有限成本上限，非完整任务耗时保证；失败保留，不延时或拼接。
+该采用不启动累计学习、不增加GPU，也不采用T4096/6h或新的研究效力门。

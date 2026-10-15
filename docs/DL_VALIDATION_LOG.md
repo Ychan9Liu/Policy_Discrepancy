@@ -1,5 +1,24 @@
 # DL 验证日志与证据索引
 
+## 读出整入口确定提交CPU通过及资源答复（2026-10-16 00:40）
+
+actual/tested dfd6756ad4f38f89de87e17bac7fd0192265979a fresh clean Linux reader9+math4=13项全过，
+无skip/七个必需用例实际ok，unittest14.966、whole16.334839418秒/300，rootSSHexit0/17.391秒/0GPU。
+258源码+九norm的267文件逐原Gitblob初末相同，owned空，五reused整文件等于producer2a；
+root/第二Agent独立小镜像复核，无重跑、无真实512/NN/Physics/label读取或拟合。
+完整rawpins及实际部署/SCP/远端hash证据见[工程记录](DL_NORMAL_READOUT_RUN_ENGINEERING.md)。
+下一真实CPU reference0固定读出采用whole900秒、actual/tested仍dfd；尚未执行，
+等真实feature完整SSHexit0/512闭包/原组退场/真实双pins，不改变数学或T协议。
+
+资源核查server00:40:29–30：物理4仅本feature worker542278 C/2492MiB，
+物理5仅本C worker538639 C/8766MiB，6/7无作业/0MiB，两个源码checkout clean。
+00:40:31原两父子身份均在：C49record/0最终complete、reference0 116unit complete文件，
+均无generation/终态，未读中间科学值；文件计数不是全图或科学验收。
+用户询问资源：最低一张现有A10080串行，已采用两张并行；当前两入口各3.5/1GPUh上限，
+合计4.5不是剩余时间或整体研究预算，6/7暂不需要，T总GPUh尚不能可靠估计。
+本机证据`analysis/outputs/dl-prevalidation-launch-20261016/resources-20261015T164044843562/`及
+`watch-20261015T164047347539.json`；原handles85427/37919继续，未增加GPU作业。
+
 ## 修复版确定提交Linux通过及两项真实启动（2026-10-16 00:15–00:18）
 
 actual/tested abefbb3f1440cd9c95000a5d7f49c0a560a9a550 四模块41项/无skip，六个真实guard/tiny/

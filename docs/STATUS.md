@@ -1,5 +1,21 @@
 # 项目状态
 
+**2026-10-16 00:40资源答复及读出工程验收**：当前最低一张独占A10080可串行，
+已采用两张独立并行：sv3物理4为reference0、物理5为C，每卡一个作业；6/7未用。
+00:40:29–30 XML/pmon核物理4仅本worker542278 C/2492MiB、物理5仅本worker538639 C/8766MiB，
+6/7无可见作业/0MiB；这是瞬时占用，不是峰显存或更小卡的容量验证。
+两个当前单attempt完整入口分别≤3.5与≤1占卡小时，合计≤4.5GPUh，从启动计，
+不含历史失败/未来重跑/T，不能当剩余时间或全部预验证预算。CPU标签/固定读出/独审不占GPU。
+00:40:31原父子身份均真实存活匹配：C49record/无complete，reference0 116/512 unit complete文件；
+都无generation/终态/完整验收，未读中间科学值。
+
+读出入口actual/tested `dfd6756ad4f38f89de87e17bac7fd0192265979a` fresh Linux两模块13项全过/无skip，
+whole16.335秒/300、root实际SSHexit0/17.391秒，267个源码/规范Gitblob初末同/clean/owned空/0GPU。
+见[有限工程证据与真实读出采用](DL_NORMAL_READOUT_RUN_ENGINEERING.md)：不是真实数据拟合或方法结论。
+下一真实CPU读出采用一次whole900秒，仍等完整reference0真实退出/512图/真实双pins；控制器准备中。
+当前C独审控制器已纯元数据/源码独立审查，无启动；须等原handle85427完整成功及真实双pins。
+累计T仍未采用，完整goal active；下一留在当前chat完成两项实际退出和相应CPU验收。
+
 **2026-10-16 00:21:45实际模型路径进展**：原C parent538626/worker538639与reference0 parent539679/
 worker542278均真实存活、原身份匹配。C initial已存在、0record；reference0 source_index/initial已存在，
 5/512 unit complete文件，worker start410358034；均无generation/终态/全图验收。
