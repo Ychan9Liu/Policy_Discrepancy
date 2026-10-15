@@ -1,5 +1,10 @@
 # DL-NM1 cal-only工程前置
 
+**2026-10-16终态补充**：下述cccb真实生成CUDA回归已通过；后续完整C4因GPU5未知作业出现，
+实际SSH1/60.562秒失败、无batch_collected或完整cal。原因是资源guard，不是该回归失败或方法阴性，
+无需据此再改数值/传输/科学门。失败与01:48资源冲突见[实际记录](DL_NM1_CAL_RESULTS.md)；
+当前无本项目GPU作业，等待用户调整独占资源，不启动audit/T或拼接旧尝试。
+
 ## DL-NM1-control-transfer-r2：真实CUDA生成控制回归通过，完整C仍待验
 
 **实际补记，2026-10-16**：actual/tested `cccb392a1a69d948d3aae683ae044e8f60d1d927`，

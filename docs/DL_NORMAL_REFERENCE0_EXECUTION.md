@@ -2,6 +2,15 @@
 
 ## 2026-10-16当前状态：F1失败，F2已采用但未启动
 
+**01:48资源冲突补记**：C4在物理5新未知作业出现后实际SSH1/60.562秒失败；
+原parent/worker及组/session已退场。01:48:19 XML/pmon物理4空、5–7各9未知C作业/约4484MiB，
+F2指定GPU6当前有冲突，不能启动，不推断或干扰未知作业。已按AGENTS请用户调整独占时段/分配，
+未自行换卡或扩卡。资源快照/失败原始证据见[实际C](DL_NM1_CAL_RESULTS.md)。
+F2 metadata/observer已完整准备于 `analysis/outputs/dl-normal-reference0-gpu6-2a15c91/`，
+仅未来stage五份原字节及真实失败收据，producer2a不变；尚未上传/执行。
+新reader r2 actual/tested6654f40bcf927a5eb47e7ce8523a48e88d8c17aa 已真实Linux13项通过、SSH0/17.156秒/300/0GPU，
+见[工程记录](DL_NORMAL_READOUT_RUN_ENGINEERING.md)，不是F2真实提取或读出验收。
+
 F1实际producer仍为 `2a15c91aad16c0e3151fde3943e356dad1fcb69d`，在物理GPU4完成325/512后，
 parent因资源guard主动停止：01:16:01保存的XML与pmon同时记录本worker542278为C、未知574111为C+G，
 allowed仅542278；pmon还记录574111在GPU0为G。**不推断未知作业归属或根因，不干扰该进程。**
@@ -39,7 +48,7 @@ F2 controller/plan/observer仅本机准备并经独立只读peer，**未上传�
 旧dfd reader与已stage的e238读出外层禁止用于失败F1或新F2。
 
 GPU5的cccb生成控制数组回归已有实际SSH0/11.406秒/300秒证据，但无NN、学习或校准资格结论；
-C4已01:43:15在物理5启动、未完整验收，见[当前C记录](DL_NM1_CAL_RESULTS.md)。这些状态不改变F2或T的科研前提。
+C4已于01:43:15在物理5启动，随后资源冲突失败，见[当前C记录](DL_NM1_CAL_RESULTS.md)。这些状态不改变F2或T的科研前提。
 
 ## 原F1采用与执行历史
 

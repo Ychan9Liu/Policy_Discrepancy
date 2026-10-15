@@ -1,5 +1,16 @@
 # 研究问题与方法
 
+**2026-10-16当前终态优先**：C4 actual/tested cccb因物理GPU5出现未知作业而失败，
+root实际SSH1/60.562秒、无batch_collected/generation；不是传输修复或科研反例。
+01:48:19核原父子及组均gone，GPU4空、5–7各9未知作业，F2/GPU6未启动并等待用户调整独占资源；
+不干扰未知作业、不自动切卡，不把失败partial或旧空闲快照升级为验收。
+新reader r2 actual/tested `6654f40bcf927a5eb47e7ce8523a48e88d8c17aa` fresh Linux13/无skip，
+实际SSHexit0/17.156秒/300、267个Gitblob初末一致及镜像独立复核、0GPU。
+有限mock/NumPy工程通过不证明真实特征、独立第二信号、保护或性能。
+详[完整C失败](DL_NM1_CAL_RESULTS.md)、[读出工程证据](DL_NORMAL_READOUT_RUN_ENGINEERING.md)。
+当前仍最低1独占A10080串行、建议2独立并行，当前两对象单attempt上限1+3.5=4.5GPUh，
+完整五目标/T与正式实验预算尚未确定。以下“启动/运行中/待验”保留原时点，不代表当前仍运行。
+
 **2026-10-16 当前证据更新**：局部控制数组传输修复 actual/tested
 `cccb392a1a69d948d3aae683ae044e8f60d1d927` 已完成真实CUDA生成数据回归，rootSSHexit0/11.406秒/300秒。
 旧GPU F32系数闭包D2H故障先重现，新完整S/W/P与旧outer-allow参考逐位相同，正常/异常均恢复全部guard；

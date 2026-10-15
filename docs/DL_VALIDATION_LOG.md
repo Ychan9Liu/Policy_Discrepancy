@@ -1,5 +1,22 @@
 # DL 验证日志与证据索引
 
+## C4资源冲突终态、新reader Linux13通过及资源等待（2026-10-16 01:44–01:48）
+
+C4 actual/tested cccb于01:44:13周期guard发现物理5未知584584 C/501MiB，allowed仅584455；
+只清owned worker，worker−9、parent1/58.599588893秒，root实际SSH1/60.562秒/external_failure=null。
+无batch_collected、worker.log0B、无generation/final/summary，非CUDA修复失败或方法阴性，原3600不改。
+真实rootreceipt4d1fad47…及失败mirror/rawpins见[实际C](DL_NM1_CAL_RESULTS.md)；handle14751已关闭，
+新CPU900准备明确不适用于失败C4、未stage/执行。0GPU取证一次真实SSH0/3.765秒，未读科学数组/发信号。
+01:48:19 XML/pmon及/proc确认原父子/组/session全gone；物理4空、5–7各9未知C作业约4484MiB/卡。
+F2/GPU6亦冲突，保持未上传/启动，已按AGENTS资源规则请用户调整独占时段，不自行挤占/切卡或停止其它作业。
+
+reader r2 actual/tested6654f40bcf927a5eb47e7ce8523a48e88d8c17aa fresh clean Linux reader9+math4=13全过，
+0skip/7required实际ok、unittest14.664秒、controller16.049491666秒/300、root实际SSHexit0/17.156秒/0GPU。
+258源码+9规范267个Gitblob初末一致，owned双registry空；完整10文件SCP及root/第二Agent镜像与Git复核通过，
+无真实F2/labels/NN读取或拟合；详[新工程证据](DL_NORMAL_READOUT_RUN_ENGINEERING.md)。
+GPU需求仍最低1独占A10080串行、建议2独立并行；当前两对象各1h/3.5h是单attempt完整入口上限，不是整体预算/ETA。
+完整五目标active；资源等待期间可继续CPU协议与未来接口准备，T/正式实验尚未采用/启动。
+
 ## C4完整新尝试实际启动，F2仍未启动（2026-10-16 01:43–01:44）
 
 root实际metadata部署成功/1.204秒：仅新inputs的launcher1e5、旧C3实际SSH be4407及真实probe SSH a4f94，

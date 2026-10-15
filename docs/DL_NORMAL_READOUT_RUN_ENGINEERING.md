@@ -3,7 +3,38 @@
 2026-10-16 当前索引，`DL-normal-readout-run-r2`。本文件说明实现与有限工程证据；不新增研究判据、
 训练组、T 或真实读出执行授权。数学定义仍以 [DL_NORMAL_READOUT.md](DL_NORMAL_READOUT.md) 为准。
 
-## 当前状态：F1失败，F2及reader r2尚未执行
+## 当前状态：F1失败，F2未启动，reader r2实际Linux13通过
+
+**实际/测试提交** `6654f40bcf927a5eb47e7ce8523a48e88d8c17aa` 已完成sv3 fresh clean Linux一次整入口验收：
+reader9+math4=13全过、无skip，七个必需用例在真实日志逐项ok；unittest14.664秒、tests14.851875407秒，
+controller16.049491666秒/whole300，root实际SSHexit0/17.156秒/external_failure=null，非320秒成功扩限。
+258源码+9规范的267个不同文件逐实际Gitblob初末一致，owned双registry空，GPU0。
+root实际SCP完整10文件及两个Agent的本地镜像/Git复核通过，未重跑或读取真实feature/labels/NN。
+这是mock provenance、BF16 bits及NumPy数学/接线的有限工程证据，不是真实F2或方法验收。
+
+实际代码 `/data/Policy_Discrepancy/dl-normal-readout-code-20261016-6654f40`；
+CPU run `/data/Policy_Discrepancy/runs/dl-normal-readout-cpu-20261016-6654f40/attempt01`；
+本机 `analysis/outputs/dl-normal-readout-cpu-6654f40/`，包含实际部署/SSH和完整attempt01镜像。
+root SSH receipt SHA `b92a149f357904353ea7c1e6783db4a5f1134d89ff5b8f311f17dfb30d812282`；
+terminal2241B SHA `9599e6fc727779db576bd1fe350f2b915386cb5e0eea1750b597b25a9c64a1b3`；
+tests log2694B SHA `1499f14175adac7a4638f83189a46d4afde6be497cff1aea073331cde902ddba`；
+source-binding84946B SHA `989f37a7a046d264bec8054b9833fac6c60381d0b08c71197aeaf8d62a8f4540`。
+launcher11788B SHA `70f0c8984a62be3739163b3a9062edd4e3a0062bf81e8bce76238d4859d9688f`；
+bundle SHA `e5f14477259c6a3fbcaf9708c7fe317e53ca9e235abb058c99c7149a521df84a`，实际mkdir/SCP/远端readback均exit0。
+
+01:48:19资源快照GPU5–7各9未知作业、GPU4空；F2/GPU6冲突，仍未上传/启动，等待用户调整独占资源。
+C4已因物理5新未知作业失败，非科学裁决；新readout必须等待自己的完整F2成功，不能接失败C4或F1。
+
+对应consumer6654/F2/GPU6的新CPU900外层已在本机准备并经独立只读peer，无确定接线阻断：
+`analysis/outputs/dl-normal-reference0-readout-controller-r2/`，launcher43274B SHA
+`359874d3e037d246057778f469c15c37fd1a2bab1d0393c19ff5fe151b92953c`，manifest SHA
+`324335e0e4cd266580d6e362884de7907743635e85ea86df1ad6741d0cea09bd`。
+原25generic AST、3f helper原bytes、8CLI/900/0GPU保留；264项外层来源覆盖reader260，五复用Gitblob仍等2a。
+16个生成反例及正负数值闭包通过，均未fit/main/读取真实特征；准备不是实际读出或方法验收。
+新inputs计划 `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-inputs-20261016-6654f40`，
+新out `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-20261016-6654f40/attempt02`。
+尚未stage/执行；未来F2完整成功terminal/root退出两个真实SHA仍mandatory runtime参数、当前未知不预造。
+root还须保存读出自身实际SSH0及全入口≤900收据，内部controller terminal不能自证未来完整退出。
 
 原F1物理GPU4在325/512条后因资源guard发现未知574111的C+G占用而失败，真实SSH退出1、
 3553.406秒，小于12600秒；不是超时或feature科学阴性。无完整generation，325条partial不能
@@ -20,7 +51,7 @@ reader r2仅改五项固定绑定：版本、F2 run、F2 inputs、物理6和UUID
 仅生成/mock provenance与NumPy；不是实际feature/labels读出。入口raw SHA256
 `8250e79feb17c788626edf7b66a0febadcf79a99343ae25a087ceb9923c5cd53`，test
 `9030890aa0dcaead92e0f24111f930270feebd67cdb744e1aeae708c66e1de74`。
-新提交及确定SHA的clean Linux验收尚待完成；不得把下述旧dfd验收记成r2验收。
+确定SHA的clean Linux验收已完成如上；不得把下述旧dfd验收记成r2验收。
 旧dfd reader和已部署的e238读出控制器绑定F1/GPU4，**不得执行或复用于F2**。
 新reader尚未执行真实读出，F2未来成功终态/真实外层退出pins尚未产生。
 
@@ -46,7 +77,7 @@ python analysis/dl_normal_readout_run.py
 ```
 
 这些F2真实特征终态及 SSH 退出收据尚未产生，本文件不填假 pin。既有完整CPU入口900秒采用
-保持；新reader提交/Linux验收及控制器重绑定须先完成。入口计时包括 import、认证、Git/raw读取、NumPy 拟合、写盘；不得延时、补 partial、
+保持；新reader提交/Linux验收已完成，外层须采用相应新绑定及真实F2双pins。入口计时包括 import、认证、Git/raw读取、NumPy 拟合、写盘；不得延时、补 partial、
 搜索超参或从输出符号调整来源。成功还需要实际外层退出0及完整 wall 在显式预算内；
 `readout.json`/stdout 自身不能证明进程未来成功退出。
 

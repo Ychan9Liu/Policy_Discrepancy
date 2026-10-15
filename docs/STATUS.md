@@ -1,5 +1,20 @@
 # 项目状态
 
+**2026-10-16 01:48 当前：C4资源冲突失败，F2未启动；等待用户调整独占资源。**
+C4 actual/tested cccb在01:44:13的周期资源检查中检测物理5未知584584 C/约501MiB，
+只清理自身worker；worker−9、parent1/58.599589秒、root实际SSH1/60.562秒，原3600秒未放宽。
+worker.log为空、0 batch_collected、无generation/final/summary，不是CUDA修复失败或科研阴性，
+失败及原始退出链见[实际C](DL_NM1_CAL_RESULTS.md)。原handle14751已终态，不重启/拼接。
+01:48:19只读XML/pmon及/proc核原parent584442、worker584455及组/session均gone；
+物理4空，物理5/6/7各9个未知C作业，均约4484MiB/卡，未知归属不推测/不干扰。
+本轮DL的C/probe/F原作业已全部退出；此4–7快照未见本轮DL的GPU作业，不把5/6的未知作业算作本轮仍占卡。
+F2/GPU6存在冲突，prepared metadata未上传、未启动，未自行切卡；按AGENTS资源规则已向用户请求独占时段/调整分配。
+
+新reader r2 actual/tested `6654f40bcf927a5eb47e7ce8523a48e88d8c17aa` 已fresh clean Linux13全过/无skip，
+root真实SSHexit0/17.156秒/300秒、controller16.049492秒，267个Gitblob初末及镜像独立复核一致、owned空/0GPU。
+这是mock/NumPy工程证据，未拟合真实F2；旧dfd/e238入口仍不可执行，见[读出工程记录](DL_NORMAL_READOUT_RUN_ENGINEERING.md)。
+可立即继续CPU协议/准备；新GPU尝试依赖资源明确、fresh占用核查及新的失败退休链，不能把已失败C4送CPU完整审计。
+
 **2026-10-16 01:44 最新：C4已启动，F2待验/未启动；原两完整尝试均失败。**
 01:42:57–58 XML/pmon物理4–7空闲、cccb/2a源码clean、旧四PID gone后，
 C4于01:43:15.298008在sv3物理5以actual/tested cccb启动：parent584442/start410856558，

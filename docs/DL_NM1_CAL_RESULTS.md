@@ -1,8 +1,30 @@
 # DL-NM1 C 实际执行与资源记录
 
-2026-10-16，版本DL-NM1-cal-r1，状态：**attempt01/02/03工程失败已封存，尚无完整校准或独审**。
+2026-10-16，版本DL-NM1-cal-r1，状态：**attempt01/02/03工程失败、attempt04资源冲突失败已封存，尚无完整校准或独审**。
 这是Agent在既有完整预验证授权内采用的128批cal-only，不是累计学习或正式实验；
 后续T4096/整阶段6GPUh仍为建议，尚未采用。
+
+**终态优先：attempt04已资源冲突失败，非科研阴性。**
+actual/tested cccb、原物理5/128/3600秒；01:44:13.645764资源记录发现未知584584 C/501MiB，
+allowed仅自身worker584455，guard只清owned worker。worker−9、parent1/58.599588893秒，
+supervisor58.532640619秒、root真实SSH1/60.562秒/external_failure=null；handle14751已关闭。
+worker.log 0B、无batch_collected及generation/final/summary，不能审核为完整C或拼接旧128。
+这是资源冲突，不要求再修改传输修复/算法、放宽guard或科研门；生成CUDA回归的有限证据仍成立。
+
+本机失败镜像 `analysis/outputs/dl-nm1-cal-transfer2-cccb392/failed-attempt04/`，
+controller terminal26734B SHA `d4bbaf3e7dc3b98dfc95b347fd56f75487ac8a8c13fb4b100afefdd32bbb38e5`，
+supervisor1283B SHA `1ca599ddc123add5af4397ea1c63c5db50d58cfb1c224c1e129776e7e51c9971`，
+resources4660B SHA `828c87d5b359b160ba3f9a0798a6e68cd0e679e4b4bbe1fa3561403b94be1bbe`，
+root SSH1913B SHA `4d1fad47ddc8186b28ab572db69407a120e0090427ce2a72563abdbb93697cc0`；
+失败investigation SHA `e1c71ad1ee8ea424c9ed4a3a9fb5838dd462c173f1c026e92b6719d735b7b5d8`。
+root核元数据/退出/log与同一镜像rawpins；取证Agent仅一次只读SSH，无NN/数组读取或信号。
+01:48:19确认原parent/worker及PGID/SID无成员；物理4空，5–7各9个未知C作业/约4484MiB，
+F2指定6亦冲突。等待用户调整独占资源，不能将旧空闲快照当继续启动依据。
+
+新CPU900 audit准备包 `analysis/outputs/dl-nm1-cal-audit-cccb392-controller/` 明确
+`UNUSED_NOT_APPLICABLE_C4_FAILED`，未stage/执行；29generic/38生成反例不代表实际审计。
+下一真实新attempt及其外层必须先认证本次完整失败/退场链，不覆盖attempt04或填假成功pins。
+以下保留启动时记录。
 
 **最新：attempt04已于2026-10-16 01:43:15.298008北京时间启动，尚未完整验收。**
 root实际stage三份原字节并读回SHA、code clean；01:42:57–58 fresh XML/pmon物理4–7无作业/0MiB，旧四PID gone。

@@ -11,14 +11,15 @@
 - C 原8d63 attempt01、47db attempt02均工程失败，不能作科研阴性。当前实际/测试代码
   `abefbb3f1440cd9c95000a5d7f49c0a560a9a550` 的 attempt03 已在128采集后的CUDA闭包常量D2H处**工程失败**，
   仍无完整校准资格或CPU独审；原128批/3600秒、sv3物理GPU5不变。局部传输修复后cccb生成CUDA回归已实际SSH0/11.406秒/300秒，
-  只证明生成控制数组路径，不是NN或C128验收；C4已01:43:15启动、尚未完整验收，见[实际记录](DL_NM1_CAL_RESULTS.md)。
+  只证明生成控制数组路径，不是NN或C128验收；C4因01:44未知GPU5作业而实际SSH1/60.562秒失败，
+  无batch_collected/generation，非科研阴性。01:48 GPU5–7冲突，等待用户调整资源，见[实际记录](DL_NM1_CAL_RESULTS.md)。
 - reference0 F1实际/测试代码 `2a15c91aad16c0e3151fde3943e356dad1fcb69d` 已**资源冲突失败**：
   GPU4上325/512后guard记录未知574111 C+G与本worker并存，实际SSH1/3553.406秒/12600秒；不归因、不干扰未知作业，
   原产物与失败收据完整保留，partial不能拼接。新F2已采用物理GPU6/UUID70db、fresh全量attempt02，
-  producer2a/512/32/8fit/24held/12600秒及科学对象不变，最多两卡C5/F6；F2尚未启动，仍须fresh资源核查，
+  producer2a/512/32/8fit/24held/12600秒及科学对象不变，最多两卡C5/F6；F2尚未上传/启动，指定6亦冲突，等待用户调整独占资源，
   见[执行采用](DL_NORMAL_REFERENCE0_EXECUTION.md)。该提特征预算不授权T学习。
-- [reader r2](DL_NORMAL_READOUT_RUN_ENGINEERING.md)仅五个固定路径/资源/版本绑定改变；本机生成/mock+NumPy的13项通过，
-  新提交的Linux验收待完成，真实读出未执行。旧dfd reader与已stage的e238外层不得用于失败F1或新F2。
+- [reader r2](DL_NORMAL_READOUT_RUN_ENGINEERING.md)仅五个固定路径/资源/版本绑定改变；actual/tested6654新clean Linux13项通过，
+  实际SSH0/17.156秒/300/0GPU，仅生成/mock+NumPy，真实读出未执行。旧dfd reader与已stage的e238外层不得用于失败F1或新F2。
 - 原R5 producer `1584ef31c322fc3371ea9ce220c06fe7e654b23a` 已完整512/32并退出；
   auditor `277c18001d353d9101a3622959351d3994699adb` 完整CPU独审通过。
   highD主检验未支持预期信号增量，sham保留implementation concern且根因未定，

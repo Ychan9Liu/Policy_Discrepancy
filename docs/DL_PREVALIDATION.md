@@ -10,7 +10,7 @@
 | 研究主张与判据 | 已成文；[科学审查](DL_PREVALIDATION_REVIEW.md)和后续规范区分了信号、机制、对照与性能主张，成文不等于实证通过。 |
 | 最小探针正确性 | 必要 fixture 与真实 checkpoint 上已有有限工程证据；[R5 完整独审](DL_R5_R2_RESULTS.md)、[当前 C 记录](DL_NM1_CAL_RESULTS.md)各有适用范围，不能据此称全部探针与机制验收完成。 |
 | 独立信号判别 | 未建立。[R5 主检验未支持预期增量，sham 保留 implementation concern、原因未知](DL_R5_R2_RESULTS.md)；区间跨零不是信号无效的反例，也不能用后续 T1 阳性覆盖该缺口。 |
-| gate 与压缩作用 | [C 校准](DL_NM1_CAL_RESULTS.md)第三次工程失败；cccb生成CUDA回归已通过但无C128资格，C4已01:43启动、未完整验收。[reference0 F1](DL_NORMAL_REFERENCE0_EXECUTION.md)资源冲突失败、325partial不可拼接；同512/12600的F2已采用GPU6，尚未启动，安排最多两卡C5/F6。[reader r2](DL_NORMAL_READOUT_RUN_ENGINEERING.md)本机13项通过，新提交Linux待验，旧dfd/e238不可执行。T未采用，尚无普通累计学习损伤、保护或native收益证据。 |
+| gate 与压缩作用 | [C 校准](DL_NM1_CAL_RESULTS.md)前三次工程失败、C4资源冲突失败；cccb生成CUDA回归已通过但无C128资格。[reference0 F1](DL_NORMAL_REFERENCE0_EXECUTION.md)资源冲突失败、325partial不可拼接；同512/12600的F2已采用GPU6、未启动，当前5–7未知作业冲突，等待用户调整独占资源。[reader r2](DL_NORMAL_READOUT_RUN_ENGINEERING.md)actual/tested6654 Linux13通过、0GPU，旧dfd/e238不可执行；尚无真实固定读出。T未采用，尚无普通累计学习损伤、保护或native收益证据。 |
 | 排除替代解释 | S/P/W 对照资格及学习中匹配、对应关系与行为证据尚未全闭合；[NM1 草案](DL_NM1_TRIAL.md)和 [T 采用前检查](DL_NM1_T_READINESS.md)明确其必要条件与有限解释，不能把初态校准或 fixture 当作替代解释已排除。 |
 
 普通更新损伤与候选缓解的有限存在性问题可以与独立信号问题分开研究，但 T1 即便阳性，
