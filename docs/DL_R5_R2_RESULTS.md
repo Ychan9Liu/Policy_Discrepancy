@@ -102,6 +102,11 @@ driver570.158.01，详细版本与pip freeze保存在外部inputs。驱动/编�
 
 ## 资源答复及下一步
 
+**21:37:07更新**：原parent341486/start408554660身份匹配、452unit/28family完整，cal封口，
+无全生成/内外terminal；GPU5仅本worker438660 C+G/2587MiB，4/6/7无可见作业/各1MiB。
+只核计数和资源，没有读取中间科学值或增加GPU作业。独立的正常特征CPU窄接口五项通过，
+不读取真实R5且不认证source/N1M；实际1584/12600秒/科学门不改。
+
 **21:26:46服务器只读快照**：原parent341486/start408554660身份匹配、418unit/26family完整，
 cal封口，无generation/内外terminal；GPU5仅本worker432246 C+G/2587MiB，4/6/7无可见作业/各1MiB。
 未读中间D/e/Y、统计或cal系数，原12600秒/科学门不改，无新增GPU任务。

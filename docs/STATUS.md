@@ -1,5 +1,16 @@
 # 项目状态
 
+**2026-10-15 21:37:07服务器快照 / 正常特征窄接口CPU完成**：
+R5原parent341486/start408554660身份匹配，452unit/28family完整、cal封口，无generation/内外terminal；
+GPU5仅本worker438660 C+G/2587MiB，4/6/7无可见作业/各1MiB。未读中间科学值，原12600秒不改。
+新DL-normal-features-r1 actual/tested c84995c5cbf243b7182a1c21f687dc159f695d70，
+sv3 fresh clean Linux两模块5项全过/无skip，unittest22.008秒/完整23.219545016秒/300秒，
+真实SSHexit0/0GPU/owned空，248源码及feature规范的working bytes前后核同并最终Git clean。
+见[接口与有限证据](DL_NORMAL_FEATURE_ENGINEERING.md)。仅共同外部历史条件特征，非native闭环，
+不认证真实source/N1M/物理标签/学习/性能，也未采用T或增加GPU预算。
+下一继续原R5至完整退出，用实际新auditor7c4affc全审和真实退出权威；之后C实际8d63在GPU5 fresh串行。
+当前一张独占A10080；4–7是可用范围，C另1h，T6h仍建议，整体剩余GPUh未定、goal active。
+
 **2026-10-15 21:26:46服务器快照 / R5独审工程修复验收**：
 原R5 actual1584、parent341486/start408554660仍活跃，418unit/26family完整，cal封口，
 无generation/内外terminal/完整独审；只读计数/资源，未读中间D/e/Y或科研统计。

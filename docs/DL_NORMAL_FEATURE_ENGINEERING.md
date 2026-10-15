@@ -47,3 +47,23 @@ counter/prevraw/内部 carry、公共输出/计数篡改和 NJ state 写入均�
 实际生产还需要来源/完整退出认证、source frame/prefix 身份与特征/标签对齐、官方 CPU
 全部物理复放标签及外部产物闭包。这些由调用层另行实现；本模块不以几何或 fixture
 通过取代它们。实际模型特征执行及 T 仍须相应采用与资源安排。
+
+## 有限 CPU 验收
+
+本机新三项测试全部通过，5.565 秒，无 skip、0GPU；使用
+`C:/Users/97370/AppData/Local/Codex/dl-validation-env/Scripts/python.exe`，
+本次未设置或需要 `DL_DLL_DIRECTORY`。独立源码审查未见改变上述工程含义的阻断。
+
+actual/tested **c84995c5cbf243b7182a1c21f687dc159f695d70**，sv3 fresh clean
+`/data/Policy_Discrepancy/dl-normal-features-code-20261015-c84995c`。
+新 features 与原 live_policy 两模块共五项全部通过、无 skip：unittest 22.008 秒，
+测试进程22.145737461秒，含 clone/checkout/source binding 的完整入口23.219545016秒/300秒；
+真实 SSH exit0/23.781秒、0GPU、owned空。248份源码和本规范的实际 working bytes
+在测试前后均匹配真实 Git blobs，最终 Git clean；未移动原R5 producer1584或C代码8d63。
+
+证据 `/data/Policy_Discrepancy/runs/dl-normal-features-cpu-20261015-c84995c/attempt01/`，
+本机ignored镜像 `analysis/outputs/dl-normal-features-cpu-c84995c/attempt01/`。
+`linux-tests.log` SHA256 `07dfb5f438407f51655d2b2713dbbf3cc94fb0fbe6d8e3353b7b605052b697c3`；
+`source-binding.json` SHA256 `7f86ab9ff76020f3b0da07e371ff502ae04f3996313d097595cd8f79d92b6ff0`；
+`terminal.json` SHA256 `21b79f1c1b40cbdd9897bdd65dadcf490d819e74a1b3151f460b12f35e83264c`。
+测试中的原接口回归与真实tiny BF16不是真实来源/N1M/读出/性能验收，不激活T或额外GPU预算。

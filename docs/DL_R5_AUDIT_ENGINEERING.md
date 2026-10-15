@@ -73,9 +73,20 @@ resource 身份检查入口和 CLI。`analysis/dl_live_statistics.py`、共享�
 本机 `ssh-terminal.json` SHA256 `92022bf84134cb25b101c083ddc6f31b2c0d4f6b0ad047afcfb526ba7f038678`。
 不读取真实 R5 中间科学值，不构成完整 512 单元/N1M 独审或方法有效结论。
 
+独立复核重算全部246个实际Git blobs、bundle/controller/helper pins与日志相符。
+精确边界：原测试前核working bytes，测试后的manifest再次来自Git blobs；
+21:31:26另做一次0GPU postcheck，逐246份working bytes核同、Git clean、owned空，0.205502872秒/120秒。
+该记录是后来补核，不追称为原测试时的工作区末遍检查。外部
+`/data/Policy_Discrepancy/runs/dl-r5-audit-cpu-20261015-7c4affc/postcheck.json`
+SHA256 `468317e6f72d7082322a63a32e20d5088250c22c72b3043e2cb09f3e42898470`。
+
 另已准备 CPU 独审外层控制器（ignored，独立静态复核、仅语法编译，尚未真实执行），
 实际 `Popen` 前到退出及 owned 清理固定 1800 秒；脚本自身安装/预核不冒称已包含在此计时。
 终态版本 `DL-r5-audit-launcher-r1`，绑定原 producer launch/terminal 双 raw pins、实际 auditor Git、
 完整 argv、结果原始 pin、真实 returncode/elapsed、原 PID/start_ticks/PGID/SID 及组清空状态。
 退出非零、超时、身份或组未释放都进入 `external_failure`，不凭结果 JSON 单独宣称成功。
 后续 C 的 predecessor retirement 同时绑定完整 audit report 和此退出权威；不使用其中科研统计选分支。
+准备后的控制器已仅复制至
+`/data/Policy_Discrepancy/runs/dl-r5-audit-inputs-20261015-7c4affc/launch.py`，
+raw SHA256 `72d98c21161c4372b21981b20a59a1d040914e30ee40892cae7c128a49ec565f`；
+未执行，须等原R5完整终态后传真实producer terminal raw SHA，不能以准备状态冒称审计启动。

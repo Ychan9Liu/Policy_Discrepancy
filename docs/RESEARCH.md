@@ -1,5 +1,15 @@
 # 研究问题与方法
 
+**共同历史特征工程完成（2026-10-15 21:37快照）**：
+[DL-normal-features-r1](DL_NORMAL_FEATURE_ENGINEERING.md)只实现冻结正常条件历史接口，
+真正reset、每模型自己的h/z、原EVAL、官方unimix概率；先公共oracle比native完整输出，
+再仅把prevraw换为source实际raw，避免把模型新动作带入共同历史。
+actual/tested c84995c5cbf243b7182a1c21f687dc159f695d70，sv3 clean Linux新旧接口5项全过，
+完整23.219545016秒/0GPU；248源码与规范实际bytes前后一致。生成tiny BF16不认证真实source/N1M。
+来源闭包、实际模型提特征、官方物理标签和读出闭包仍待完成；没有采用T/性能门或新增GPU预算。
+21:37:07原R5仍同parent活跃，452unit/28family完整、cal封，无全生成或终态，
+GPU5仅本worker438660/2587MiB，4/6/7无可见作业；未读中间科研值。
+
 **R5 独审入口修复与资源答复（2026-10-15 21:26，北京时间）**：
 Agent 在完整预验证授权内补齐[外部启动/退出权威及进程身份检查](DL_R5_AUDIT_ENGINEERING.md)，
 新 auditor actual/tested **7c4affc49d4535b83804cb443471141645fbe658** 在 sv3 clean Linux

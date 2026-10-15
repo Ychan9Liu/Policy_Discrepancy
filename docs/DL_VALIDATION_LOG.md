@@ -1,5 +1,21 @@
 # DL 验证日志与证据索引
 
+## 正常共同历史特征接口及CPU验收（2026-10-15）
+
+Agent采用的必要工程接口DL-normal-features-r1；本次不实现来源认证，不启动真实提特征，也不采用T预算。
+新增FrozenNormalFeatures：真public init、原EVAL/own q历史、官方unimix q/p，先public native oracle
+再source prevraw host override及完整原态封口；旧R4/R5和算法不改。独立源码审查未见阻断。
+本机3项全过/5.565秒/无skip；actual/tested c84995c5cbf243b7182a1c21f687dc159f695d70
+sv3 fresh clean Linux新features+旧live_policy五项全过/无skip，22.008秒unittest、完整23.219545016秒/300秒，
+真实SSHexit0/0GPU/owned空，248源码+规范实际bytes前后与Gitblob相同、最终clean。
+路径/hash和生成tiny BF16适用范围见[接口工程记录](DL_NORMAL_FEATURE_ENGINEERING.md)；
+不当真实source/N1M、独立标签、native轨迹或方法收益。原R5实际1584、C8d63均未移动。
+
+21:37:07原R5同parent活跃，452unit/28family/cal封口，无全生成/终态；
+GPU5本worker438660/2587MiB，4/6/7无可见作业/各1MiB。无中间科研值读取或新GPU任务。
+旧7c CPU source末遍措辞已精确区分原Gitblob复核和21:31:26另补working bytes检查；
+postcheck0.205502872秒/0GPU，见[独审工程记录](DL_R5_AUDIT_ENGINEERING.md)。
+
 ## R5独审入口修复、Linux有限验收与资源答复（2026-10-15）
 
 Agent发现旧独审不认证外层真实退出、metadata helper仅PID清理，新增双外部raw pins与
