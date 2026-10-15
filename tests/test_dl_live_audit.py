@@ -29,6 +29,29 @@ from scripts import dl_live_policy as live
 from tests.test_dl_live_family import FakePolicy,stub_rgb
 
 
+class R2MetadataTests(unittest.TestCase):
+  def test_independent_engineering_binding_rejects_old_budget_and_missing_norm(self):
+    source={a.ENGINEERING_NORM:dict(bytes=20,sha256='d'*64)}
+    budget=dict(engineering_version='DL-r5-engineering-r2',seconds=12600,
+        physical_gpu=5,gpu_uuid='GPU-79704918-e096-92b4-252c-e3244497a8b3',
+        source_files=source,engineering_norm=dict(path=a.ENGINEERING_NORM,**source[a.ENGINEERING_NORM]))
+    a.engineering_identity(budget,source)
+    self.assertEqual(a.SECONDS,1800)
+    for field,value in (('seconds',7200),('physical_gpu',4),('gpu_uuid','old GPU4 UUID'),
+        ('engineering_version','DL-r5-engineering-r1'),('engineering_norm',{}),('source_files',{})):
+      with self.subTest(field=field),self.assertRaisesRegex(ValueError,'engineering'):
+        a.engineering_identity(dict(budget,**{field:value}),source)
+    for field in ('engineering_version','engineering_norm'):
+      missing=dict(budget);del missing[field]
+      with self.subTest(missing=field),self.assertRaisesRegex(ValueError,'engineering'):
+        a.engineering_identity(missing,source)
+    with self.assertRaisesRegex(ValueError,'norm Git blob'):
+      a.engineering_identity(budget,{})
+    changed=copy.deepcopy(source);changed[a.ENGINEERING_NORM]['sha256']='e'*64
+    with self.assertRaisesRegex(ValueError,'norm/source binding'):
+      a.engineering_identity(budget,changed)
+
+
 class KernelDouble(FakePolicy):
   """Actual tensor schema and hash contract, never an executed Dreamer model."""
   def initial(self,key):

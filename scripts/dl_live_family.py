@@ -312,7 +312,7 @@ def worker(args):
       'DL-r5 GPU worker requires the assigned sv3 Linux host')
   require(type(args.family) is int and 0 <= args.family < 32 and
       os.getpgrp() == os.getpid(), 'Require one fresh owned family process group')
-  from scripts.dl_live_trial import verify_budget
+  from scripts.dl_live_trial import verify_budget, GPU
   budget,check = verify_budget(args.budget,args.expected_git,args.checkpoint,
       args.config,args.resource_record)
   deadline = budget['monotonic_deadline']
@@ -336,14 +336,15 @@ def worker(args):
       r4.DEADLINE = deadline
       from scripts.dl_resources import refresh,verify_runtime
       resource = refresh(read_json(args.resource_record))
-      require(resource['physical_gpu'] == 4 and resource['gpu_uuid'] == budget['gpu_uuid'],
-          'Family resource changed the assigned physical GPU4')
+      require(resource['physical_gpu'] == GPU and resource['gpu_uuid'] == budget['gpu_uuid'],
+          'Family resource changed the assigned physical GPU5')
       agent,metadata = r4.load_agent(args.checkpoint,args.config,output)
       from scripts.dl_live_policy import LivePolicy
       from scripts.dl_feedback_physics import FeedbackEnvironment
       from scripts import dl_diagnostic as diagnostic
       policy = LivePolicy(agent)
       write_json(output/'model_authenticated.json',dict(version=FAMILY_VERSION,
+          engineering_version=budget['engineering_version'],engineering_norm=budget['engineering_norm'],
           metadata=metadata,resource=resource,authenticated_monotonic=time.monotonic()),check)
       for local_unit in range(16):
         check()
@@ -373,6 +374,7 @@ def worker(args):
   # Re-authenticate complete source/input provenance after all work, before success.
   verify_budget(args.budget,args.expected_git,args.checkpoint,args.config,args.resource_record)
   family_complete = dict(version=FAMILY_VERSION,family=args.family,units=units,
+      engineering_version=budget['engineering_version'],engineering_norm=budget['engineering_norm'],
       completed_monotonic=time.monotonic(),policy_receipt=final_policy_receipt,
       shadow=closed,artifacts={name:dict(path=name,sha256=sha(output/name),bytes=(output/name).stat().st_size)
           for name in ('shadow_process.json','shadow_closed.json','model_authenticated.json',

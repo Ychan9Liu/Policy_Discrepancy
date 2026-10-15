@@ -113,3 +113,9 @@ fixture明确用start2→3→4，后批第0context恰为前步actual network out
 不构成真实N1M/BF16/16×65多步学习、gate作用或方法效果。原完整1M CPU验收actual/tested仍2ae18a5，
 本新fixture不替代或改写它。与四项[新读出数学检查](DL_NORMAL_READOUT.md)及旧三组联跑，
 本机21项20pass/1 Linux alarm skip，11.358秒；确定提交Linux验收待执行。
+
+确定源码`e237ed8bef91899258a6d8076d0f29f9e358ef8b`仅同步sv2新隔离clean checkout，
+上述21项Linux全过（unittest17.987秒/外18.288242秒/完整入口19.267469秒，exit0/0GPU/owned无残留）。
+233项源码及三norm前后真实blob一致，独立Agent复核存储Git/日志/收据通过，未二次执行远端测试。
+证据`/data/Policy_Discrepancy/runs/dl-normal-cpu-20261015-e237ed8/attempt01/`，
+服务器canonical/旧实际2ae完整replay与f845 R5源码checkout不移动；不因新tests通过升级旧1M学习范围。

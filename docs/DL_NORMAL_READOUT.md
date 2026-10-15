@@ -57,3 +57,10 @@ B未损坏而N更好称促进学习；p追上且q未降不是posterior损伤；�
 family不等帧数的等权反例、差值/区间方向、相同mode不同概率及坏输入拒绝。
 第二Agent只读核公式、官方概率API和统计方向，无阻断；这不是实际任务数据/模型读出或方法效果验收。
 下一确定提交后Linux同项验收；真实特征/任务标签与native仍未执行，完整goal未完成。
+
+**确定源码Linux补证**：actual/tested `e237ed8bef91899258a6d8076d0f29f9e358ef8b`，
+新sv2 clean checkout联跑正常tiny学习/本数学模块/旧replay三组21项全过，unittest17.987秒，
+测试外18.288242秒、完整入口19.267469秒/300秒、exit0/0GPU/owned无残留。
+233项源码及三份新norm的真实Git blob前后绑定一致；第二Agent只读独立重算blob和日志SHA一致，
+未独立重演远端测试。证据`/data/Policy_Discrepancy/runs/dl-normal-cpu-20261015-e237ed8/attempt01/`，
+小镜像ignored `analysis/outputs/dl-normal-cpu-e237ed8/attempt01/`。这仍是有限算术和tiny工程，非真实任务读出。

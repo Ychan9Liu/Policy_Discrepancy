@@ -58,7 +58,10 @@ VERSION = 'DL-r5-independent-audit-r1'
 SCIENCE, LIVE, FAMILY = 'DL-live-utility-r1', 'DL-r5-live-r1', 'DL-r5-live-family-r1'
 TRAJECTORY, SHADOW = 'DL-r5-live-trajectory-r1', 'DL-r5-live-shadow-r1'
 NAMESPACE = 'DL_R5_LIVE_U1'
-GPU_UUID = 'GPU-9c070d5a-ac68-4c26-9522-a790ad874b23'
+ENGINEERING_VERSION = 'DL-r5-engineering-r2'
+ENGINEERING_NORM = 'docs/DL_R5_LIVE_RETRY.md'
+PRODUCER_SECONDS, GPU = 12600, 5
+GPU_UUID = 'GPU-79704918-e096-92b4-252c-e3244497a8b3'
 CHECKPOINT, CONFIG, PARAMS = primitive.CHECKPOINT, primitive.CONFIG, primitive.PARAMS
 UNIT_FILES = {'shadow_request.pkl', 'shadow_response.pkl', 'pretreatment.pkl',
     'signals_sealed.json', 'assignment.json', 'trajectory.pkl'}
@@ -540,7 +543,7 @@ def source_manifest(git):
   require(type(git) is str and re.fullmatch('[0-9a-f]{40}',git),'Full Git SHA required')
   names=command_output(['git','ls-tree','-rz','--name-only',git]).decode().split('\0')
   selected={name for name in names if name.endswith(('.py','.yaml','.yml','.lock')) or
-      name in ('AGENTS.md','docs/DL_R5_LIVE_TRIAL.md')}
+      name in ('AGENTS.md','docs/DL_R5_LIVE_TRIAL.md',ENGINEERING_NORM)}
   ordered=sorted(selected)
   # Raw blobs, not git archive's possible export/worktree conversions.
   source=io.BytesIO(command_output(['git','cat-file','--batch'],
@@ -555,8 +558,25 @@ def source_manifest(git):
   require(not source.read(),'Unexpected Git blob batch tail')
   require(set(result) == selected and {'analysis/dl_live_audit.py','scripts/dl_live_family.py',
       'scripts/dl_live_trial.py','scripts/dl_live_policy.py','scripts/dl_live_shadow.py',
-      'analysis/dl_live_statistics.py','docs/DL_R5_LIVE_TRIAL.md'} <= selected,'Complete tracked R5 source required')
+      'analysis/dl_live_statistics.py','docs/DL_R5_LIVE_TRIAL.md',ENGINEERING_NORM} <= selected,
+      'Complete tracked R5 source required')
   return result
+
+
+def engineering_identity(budget, source):
+  """Independently bind r2 limits/resources to the actual retry-norm Git blob."""
+  require(budget.get('engineering_version') == ENGINEERING_VERSION and
+      type(budget.get('seconds')) is int and budget['seconds'] == PRODUCER_SECONDS and
+      type(budget.get('physical_gpu')) is int and budget['physical_gpu'] == GPU and
+      budget.get('gpu_uuid') == GPU_UUID, 'R2 engineering budget/resource differs')
+  require(ENGINEERING_NORM in source and isinstance(source[ENGINEERING_NORM],dict),
+      'Actual r2 engineering norm Git blob required')
+  norm=source[ENGINEERING_NORM]
+  require(set(norm) == {'bytes','sha256'} and type(norm['bytes']) is int and norm['bytes'] > 0 and
+      type(norm['sha256']) is str and re.fullmatch('[0-9a-f]{64}',norm['sha256']) and
+      budget.get('source_files') == source and
+      budget.get('engineering_norm') == dict(path=ENGINEERING_NORM,**norm),
+      'R2 engineering norm/source binding differs')
 
 
 def external_pin(value, digest=None):
@@ -593,18 +613,20 @@ def resource_evidence(directory, family, budget, model):
       closed == family['shadow'] and closed['identity'] == spawned['shadow_identity'] and
       closed['returncode'] == 0 and closed['exchanges'] == 16 and closed['eof_sent'] is True,
       'Fresh exec/shadow-before-model/owned closure evidence differs')
-  require(resource['logical_server'] == 'sv3' and resource['physical_gpu'] == 4 and
+  require(resource['logical_server'] == 'sv3' and resource['physical_gpu'] == GPU and
       resource['gpu_uuid'] == resource['compute_uuid'] == resource['egl_uuid'] == uuid and
-      resource['cuda_visible_devices'] == uuid and str(resource['mujoco_egl_device_id']) == '4',
+      resource['cuda_visible_devices'] == uuid and str(resource['mujoco_egl_device_id']) == str(GPU),
       'Recorded assigned CUDA/EGL resource differs')
   for name in ('runtime_cuda_egl.json','runtime_after.json'):
     runtime=read_json(directory/name)
-    require(runtime['physical_gpu'] == 4 and runtime['pid'] == pid and runtime['compute_uuid'] == [uuid] and
+    require(runtime['physical_gpu'] == GPU and runtime['pid'] == pid and runtime['compute_uuid'] == [uuid] and
         runtime['graphics_verified'] is True and runtime['live_state']['gpu_uuid'] == uuid,
         'Runtime actual CUDA/EGL mapping evidence differs')
   telemetry=[decode(line) for line in (directory/'resources.jsonl').read_text().splitlines()]
-  require(telemetry and all(sample['physical_gpu'] == 4 and sample['gpu_uuid'] == uuid and
-      sample['worker_pid'] == pid and all(job['pid'] == pid for job in sample['processes']+sample['pmon_jobs'])
+  require(telemetry and all(sample['physical_gpu'] == GPU and sample['gpu_uuid'] == uuid and
+      sample['worker_pid'] == pid and sample['xml_process_summary'] == sample['processes'] and
+      type(sample['raw_pmon']) is str and bool(sample['raw_pmon']) and
+      all(job['pid'] == pid for job in sample['processes']+sample['pmon_jobs'])
       for sample in telemetry),'Resource telemetry incomplete or unknown GPU job')
   original_inactive(pid,spawned['worker_identity']['starttime_ticks'])
   original_inactive(spawned['shadow_identity']['pid'],spawned['shadow_identity']['starttime_ticks'])
@@ -644,14 +666,16 @@ def authenticate(run, run_git, audit_git):
       ('budget.json','supervisor_terminal.json','generation_complete.json'))
   require(all(x['version'] == SCIENCE and x['git_sha'] == run_git for x in (budget,terminal,generation)),
       'Producer version/Git differs')
-  require(budget['seconds'] == 7200 and budget['logical_server'] == 'sv3' and
-      budget['hostname'].split('.')[0] == 'lyg0326' and budget['physical_gpu'] == 4 and
-      budget['gpu_uuid'] == GPU_UUID and budget['source_files'] == source_manifest(run_git),
+  engineering_identity(budget,source_manifest(run_git))
+  require(all(x.get('engineering_version') == ENGINEERING_VERSION and
+      x.get('engineering_norm') == budget['engineering_norm'] for x in (terminal,generation)),
+      'Producer r2 engineering closure identity differs')
+  require(budget['logical_server'] == 'sv3' and budget['hostname'].split('.')[0] == 'lyg0326',
       'Complete producer source/resource/budget binding differs')
   original_inactive(budget['parent_pid'],budget['parent_start_ticks'])
   require(terminal['parent_failure'] is None and terminal['main_generation_complete'] is True and
       terminal['completed_families'] == 32 and terminal['completed_units'] == 512 and
-      terminal['owned_groups_cleaned'] is True and 0 < terminal['elapsed_seconds'] <= 7200 and
+      terminal['owned_groups_cleaned'] is True and 0 < terminal['elapsed_seconds'] <= PRODUCER_SECONDS and
       terminal['independent_audit_complete'] is terminal['scientific_support_claimed'] is False,
       'Successful bounded producer closure required')
   pin(root,'generation_complete.json',terminal['generation_complete'],stock,absolute=True)
@@ -675,13 +699,15 @@ def authenticate(run, run_git, audit_git):
   statistics.authenticate_frozen(statistics.freeze_calibration(cal['calibration_units']),cal['frozen_models'])
   require(len(generation['family_evidence']) == 32,'Exactly32 family receipts required')
   expected_files=required | {'generation_complete.json','supervisor_terminal.json'}
-  families,units,previous=[],[],budget['monotonic_deadline']-7200
+  families,units,previous=[],[],budget['monotonic_deadline']-PRODUCER_SECONDS
   for f,entry in enumerate(generation['family_evidence']):
     check(); prefix=f'family_{f:02d}'; directory=root/prefix
     require(entry['path'] == prefix+'/terminal.json','Ordered family evidence path differs')
     terminal_path=pin(root,entry['path'],dict(entry,path='terminal.json'),stock)
     ft=read_json(terminal_path)
-    require(ft['version'] == SCIENCE and ft['family'] == f and ft['worker_returncode'] == 0 and
+    require(ft['version'] == SCIENCE and ft.get('engineering_version') == ENGINEERING_VERSION and
+        ft.get('engineering_norm') == budget['engineering_norm'] and
+        ft['family'] == f and ft['worker_returncode'] == 0 and
         ft['failure'] is None and ft['worker_terminal'] is ft['owned_group_cleaned'] is True and
         previous <= ft['started_monotonic'] < ft['ended_monotonic'] < budget['monotonic_deadline'],
         'Family successful serial bounded closure differs')
@@ -690,13 +716,16 @@ def authenticate(run, run_git, audit_git):
     for key,name in (('complete','family_complete.json'),('log','worker.log'),('resources','resources.jsonl'),('process','process.json')):
       pin(root,prefix+'/'+name,ft[key],stock,absolute=True)
     family=read_json(directory/'family_complete.json')
-    require(family['version'] == FAMILY and family['family'] == f and len(family['units']) == 16 and
+    require(family['version'] == FAMILY and family.get('engineering_version') == ENGINEERING_VERSION and
+        family.get('engineering_norm') == budget['engineering_norm'] and
+        family['family'] == f and len(family['units']) == 16 and
         set(family['artifacts']) == FAMILY_FILES and
         ft['started_monotonic'] <= family['completed_monotonic'] <= ft['ended_monotonic'],
         'Fresh complete family graph differs')
     for name,artifact in family['artifacts'].items(): pin(root,prefix+'/'+name,artifact,stock)
     model=read_json(directory/'model_authenticated.json'); metadata=model['metadata']
-    require(model['version'] == FAMILY and metadata['checkpoint_sha256'] == CHECKPOINT and
+    require(model['version'] == FAMILY and model.get('engineering_version') == ENGINEERING_VERSION and
+        model.get('engineering_norm') == budget['engineering_norm'] and metadata['checkpoint_sha256'] == CHECKPOINT and
         metadata['config_sha256'] == CONFIG and metadata['params_sha256'] == PARAMS and
         metadata['checkpoint_path'] == budget['input_pins']['checkpoint']['path'] and
         metadata['config_path'] == budget['input_pins']['config']['path'], 'Actual N1M model pins differ')
@@ -773,6 +802,7 @@ def audit(args):
   require(inventory(run) == auth['inventory'],'Run changed before audit publication')
   check()
   report=dict(version=VERSION,run_git=args.expected_run_git,audit_git=args.expected_audit_git,
+      engineering_version=ENGINEERING_VERSION,engineering_norm=auth['budget']['engineering_norm'],
       run_directory=str(run),complete_units=512,complete_families=32,counts=counts,
       seconds=SECONDS,elapsed_seconds=time.monotonic()-ENTRY_STARTED,
       evidence_authenticated=True,all_physics_and_rewards_byte_exact=True,

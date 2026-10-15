@@ -12,6 +12,10 @@ from unittest import mock
 from scripts import dl_live_trial as r
 
 
+def fixture_source():
+  return {r.ENGINEERING_NORM: dict(sha256='d'*64, bytes=20)}
+
+
 class LiveTrialTests(unittest.TestCase):
   def test_json_overwrite_late_write_and_duplicate_guards(self):
     with tempfile.TemporaryDirectory() as directory:
@@ -52,7 +56,7 @@ class LiveTrialTests(unittest.TestCase):
       names = ('scripts/dl_live_trial.py', 'scripts/dl_live_family.py',
           'scripts/dl_live_policy.py', 'scripts/dl_live_shadow.py',
           'analysis/dl_live_statistics.py', 'analysis/dl_live_audit.py',
-          'docs/DL_R5_LIVE_TRIAL.md', 'AGENTS.md')
+          'docs/DL_R5_LIVE_TRIAL.md', r.ENGINEERING_NORM, 'AGENTS.md')
       for name in names:
         path = root/name
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -71,27 +75,94 @@ class LiveTrialTests(unittest.TestCase):
         self.assertFalse(git('status', '--porcelain'))
         with self.assertRaisesRegex(ValueError, 'Checkout/blob mismatch'):
           r.source_binding(expected)
+        git('update-index', '--no-skip-worktree', 'scripts/dl_live_policy.py')
+        git('checkout', '--', 'scripts/dl_live_policy.py')
+        git('rm', r.ENGINEERING_NORM)
+        git('-c', 'user.name=DL test', '-c', 'user.email=fixture@example.invalid', 'commit', '-m', 'missing norm')
+        missing = git('rev-parse', 'HEAD').decode().strip()
+        with self.assertRaisesRegex(ValueError, 'implementation incomplete'):
+          r.source_binding(missing)
 
   def test_unknown_gpu_process_never_counts_as_owned(self):
-    state = dict(gpu_uuid=r.GPU_UUID, processes=[dict(pid=11, type='C')],
-        pmon_jobs=[dict(pid=11, type='G')])
-    with mock.patch('scripts.dl_resources.live_state', return_value=state):
-      self.assertEqual(r.sample_resource(11)['worker_pid'], 11)
-      with self.assertRaisesRegex(ValueError, 'Unknown work'):
-        r.sample_resource(12)
-    with mock.patch('scripts.dl_resources.live_state', return_value=dict(state, gpu_uuid='other')):
-      with self.assertRaisesRegex(ValueError, 'UUID differs'):
-        r.sample_resource(11)
+    state = dict(physical_gpu=r.GPU, gpu_uuid=r.GPU_UUID, memory_used_mib=2560,
+        processes=[dict(pid=11, type='C')], pmon_jobs=[dict(pid=11, type='G')],
+        raw_pmon='5 11 G actual query row', checked_at_utc='2026-10-15T11:00:00Z')
+    with tempfile.TemporaryDirectory() as directory:
+      path = Path(directory)/'resources.jsonl'
+      with path.open('x', encoding='utf-8') as stream, \
+          mock.patch('scripts.dl_resources.live_state', return_value=state):
+        self.assertEqual(r.sample_resource(11, stream)['worker_pid'], 11)
+        with self.assertRaisesRegex(ValueError, 'Unknown work.*GPU5'):
+          r.sample_resource(12, stream)
+        saved = [json.loads(line) for line in path.read_text().splitlines()]
+        self.assertEqual(len(saved), 2)
+        self.assertEqual(saved[-1]['worker_pid'], 12)
+        self.assertEqual(saved[-1]['raw_pmon'], state['raw_pmon'])
+        self.assertEqual(saved[-1]['xml_process_summary'], state['processes'])
+        with mock.patch('scripts.dl_resources.live_state', return_value=dict(state, gpu_uuid='other')):
+          with self.assertRaisesRegex(ValueError, 'UUID differs'):
+            r.sample_resource(11, stream)
+        self.assertEqual(json.loads(path.read_text().splitlines()[-1])['gpu_uuid'], 'other')
+
+  def test_guard_failure_persists_snapshot_and_post_cleanup_returncode(self):
+    # Real owned child, fake resource query: no model, server, or GPU is used.
+    with tempfile.TemporaryDirectory() as directory:
+      output = Path(directory)
+      budget = output/'budget.json'
+      source = fixture_source()
+      r.write_json(budget, dict(engineering_version=r.ENGINEERING_VERSION, seconds=r.SECONDS,
+          physical_gpu=r.GPU, gpu_uuid=r.GPU_UUID, source_files=source,
+          engineering_norm=r.engineering_pin(source)))
+      args = mock.Mock(expected_git='a'*40, checkpoint='unused', config='unused', resource_record='unused')
+      spawn = r.spawn_owned
+      def sleeper(*args, **kwargs):
+        return spawn([sys.executable, '-c', 'import time; time.sleep(60)'],
+            stdout=kwargs['stdout'], stderr=kwargs['stderr'])
+      state = dict(physical_gpu=r.GPU, gpu_uuid=r.GPU_UUID, memory_used_mib=2560,
+          processes=[dict(pid=999999, type='C')], pmon_jobs=[], raw_pmon='5 999999 C conflict')
+      with mock.patch.object(r, 'spawn_owned', side_effect=sleeper), \
+          mock.patch('scripts.dl_resources.live_state', return_value=state):
+        with self.assertRaisesRegex(ValueError, 'failed/incomplete'):
+          r.run_family(args, output, 0, budget)
+      terminal = r.read_json(output/'family_00/terminal.json')
+      self.assertIsInstance(terminal['worker_returncode'], int)
+      self.assertNotEqual(terminal['worker_returncode'], 0)
+      self.assertIn('Unknown work appeared on assigned GPU5', terminal['failure'])
+      self.assertTrue(terminal['worker_terminal'] and terminal['owned_group_cleaned'])
+      self.assertEqual(terminal['engineering_version'], r.ENGINEERING_VERSION)
+      saved = json.loads((output/'family_00/resources.jsonl').read_text())
+      self.assertEqual(saved['xml_process_summary'], state['processes'])
+      self.assertEqual(saved['raw_pmon'], state['raw_pmon'])
+      self.assertEqual(terminal['resources']['sha256'], r.sha(output/'family_00/resources.jsonl'))
+      self.assertNotIn(saved['worker_pid'], r.OWNED)
+
+  def test_r2_budget_rejects_legacy_resources_version_and_missing_norm(self):
+    source = fixture_source()
+    budget = dict(engineering_version=r.ENGINEERING_VERSION, seconds=12600,
+        physical_gpu=5, gpu_uuid='GPU-79704918-e096-92b4-252c-e3244497a8b3',
+        source_files=source, engineering_norm=r.engineering_pin(source))
+    r.validate_engineering_budget(budget)
+    for field, value in (('seconds', 7200), ('physical_gpu', 4), ('gpu_uuid', 'old GPU4 UUID'),
+        ('engineering_version', 'DL-r5-engineering-r1'), ('engineering_norm', {}),
+        ('source_files', {})):
+      with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'engineering|Engineering'):
+        r.validate_engineering_budget(dict(budget, **{field: value}))
+    for field in ('engineering_version', 'engineering_norm'):
+      missing = dict(budget); del missing[field]
+      with self.subTest(missing=field), self.assertRaisesRegex(ValueError, 'engineering'):
+        r.validate_engineering_budget(missing)
 
   def test_live_parent_budget_rejects_pid_reuse_hash_and_source_tamper(self):
     with tempfile.TemporaryDirectory() as directory:
       path, resource = (Path(directory)/name for name in ('budget.json', 'resource.json'))
       resource.write_text('{}')
       deadline = float(time.monotonic()+100)
-      budget = dict(version=r.VERSION, seconds=7200, git_sha='a'*40,
-          logical_server='sv3', hostname=r.HOST, physical_gpu=4, gpu_uuid=r.GPU_UUID,
+      source_files = fixture_source()
+      budget = dict(version=r.VERSION, seconds=r.SECONDS, git_sha='a'*40,
+          engineering_version=r.ENGINEERING_VERSION, engineering_norm=r.engineering_pin(source_files),
+          logical_server='sv3', hostname=r.HOST, physical_gpu=r.GPU, gpu_uuid=r.GPU_UUID,
           monotonic_deadline=deadline, parent_pid=42, parent_start_ticks=50,
-          parent_pgid=40, source_files={'source': 'pin'}, input_pins={},
+          parent_pgid=40, source_files=source_files, input_pins={},
           resource_record=r.file_pin(resource))
       r.write_json(path, budget)
       identity = dict(pid=42, start_ticks=50, pgid=40, state='S')
@@ -101,7 +172,7 @@ class LiveTrialTests(unittest.TestCase):
           mock.patch.object(r.os, 'getpid', return_value=70), \
           mock.patch.object(r.os, 'getpgid', return_value=70, create=True), \
           mock.patch.object(r, 'process_identity', return_value=identity) as proc, \
-          mock.patch.object(r, 'source_binding', return_value={'source': 'pin'}) as source, \
+          mock.patch.object(r, 'source_binding', return_value=source_files) as source, \
           mock.patch.object(r, 'authenticate_inputs', return_value={}), \
           mock.patch.object(r, 'DEADLINE', deadline), \
           mock.patch.dict(os.environ, DL_R5_PARENT='42', DL_R5_BUDGET_SHA256=r.sha(path)):
@@ -115,7 +186,7 @@ class LiveTrialTests(unittest.TestCase):
         source.return_value = {'source': 'changed'}
         with self.assertRaisesRegex(ValueError, 'source bytes differ'):
           r.verify_budget(path, 'a'*40, 'unused', 'unused', resource)
-        source.return_value = {'source': 'pin'}
+        source.return_value = source_files
         with mock.patch.dict(os.environ, DL_R5_BUDGET_SHA256='b'*64):
           with self.assertRaisesRegex(ValueError, 'budget raw hash differs'):
             r.verify_budget(path, 'a'*40, 'unused', 'unused', resource)
@@ -144,11 +215,11 @@ class LiveTrialTests(unittest.TestCase):
             raise ValueError('fixture cal failure')
           return {'frozen': True}
         with mock.patch.object(r, 'require_host'), \
-            mock.patch.object(r, 'source_binding', return_value={}), \
+            mock.patch.object(r, 'source_binding', return_value=fixture_source()), \
             mock.patch.object(r, 'authenticate_inputs', return_value={}), \
             mock.patch.object(r, 'file_pin', side_effect=lambda p: {'path': str(p), 'sha256': 'c'*64, 'bytes': 0}), \
             mock.patch.object(r, 'process_identity', return_value=dict(start_ticks=1, pgid=2)), \
-            mock.patch('scripts.dl_resources.require_resource', return_value=dict(physical_gpu=4, gpu_uuid=r.GPU_UUID)), \
+            mock.patch('scripts.dl_resources.require_resource', return_value=dict(physical_gpu=r.GPU, gpu_uuid=r.GPU_UUID)), \
             mock.patch.object(r, 'run_family', side_effect=family), \
             mock.patch.object(r, 'family_rows', side_effect=lambda root, index, complete: [dict(f=index, k=k) for k in range(16)]), \
             mock.patch('analysis.dl_live_statistics.freeze_calibration', side_effect=freeze), \
@@ -177,6 +248,7 @@ class LiveTrialTests(unittest.TestCase):
         r.write_json(path, dict(version='DL-r5-live-family-r1', unit=k, unit_row=row))
         entries.append(dict(path=path.name, sha256=r.sha(path), unit=k, unit_row=row))
       complete = dict(version='DL-r5-live-family-r1', family=0, units=entries)
+      complete['engineering_version'] = r.ENGINEERING_VERSION
       self.assertEqual(len(r.family_rows(root, 0, complete)), 16)
       entries[5]['unit_row'] = dict(family_id=0, unit_id=6)
       with self.assertRaisesRegex(ValueError, 'identity differs'):

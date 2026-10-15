@@ -21,9 +21,11 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
   sys.path.insert(0, str(ROOT))
-VERSION, SECONDS = 'DL-live-utility-r1', 7200
-HOST, GPU = 'lyg0326', 4
-GPU_UUID = 'GPU-9c070d5a-ac68-4c26-9522-a790ad874b23'
+VERSION, SECONDS = 'DL-live-utility-r1', 12600
+ENGINEERING_VERSION = 'DL-r5-engineering-r2'
+ENGINEERING_NORM = 'docs/DL_R5_LIVE_RETRY.md'
+HOST, GPU = 'lyg0326', 5
+GPU_UUID = 'GPU-79704918-e096-92b4-252c-e3244497a8b3'
 CHECKPOINT_SHA = 'c6a7d92e24669a515bb44693faf73e442d9868f9fc814eec0e22e069aa594d24'
 CONFIG_SHA = '877f8470cb4f7f45d143e3099fbd3f55a828991afe33779b7b04c4264f6c8377'
 DEADLINE = ENTRY_STARTED + SECONDS
@@ -159,10 +161,10 @@ def source_binding(expected):
       'Clean checkout required')
   names = command_output(['git', 'ls-files', '-z']).decode().split('\0')
   selected = {name for name in names if name.endswith(('.py', '.yaml', '.yml', '.lock')) or
-      name in ('AGENTS.md', 'docs/DL_R5_LIVE_TRIAL.md')}
+      name in ('AGENTS.md', 'docs/DL_R5_LIVE_TRIAL.md', ENGINEERING_NORM)}
   required = {'scripts/dl_live_trial.py', 'scripts/dl_live_family.py', 'scripts/dl_live_policy.py',
       'scripts/dl_live_shadow.py', 'analysis/dl_live_statistics.py', 'analysis/dl_live_audit.py',
-      'docs/DL_R5_LIVE_TRIAL.md'}
+      'docs/DL_R5_LIVE_TRIAL.md', ENGINEERING_NORM}
   require(required <= selected, 'Tracked DL-r5 implementation incomplete')
   # cat-file yields actual Git blobs. git archive can apply checkout newline
   # conversion, which must not silently redefine the authenticated source.
@@ -194,12 +196,33 @@ def authenticate_inputs(checkpoint, config):
   return result
 
 
+def engineering_pin(source):
+  require(isinstance(source, dict) and ENGINEERING_NORM in source,
+      'Tracked r2 engineering norm required')
+  entry = source[ENGINEERING_NORM]
+  require(isinstance(entry, dict) and set(entry) == {'sha256', 'bytes'} and
+      type(entry['bytes']) is int and entry['bytes'] > 0 and
+      isinstance(entry['sha256'], str) and re.fullmatch('[0-9a-f]{64}', entry['sha256']),
+      'Engineering norm Git blob pin differs')
+  return dict(path=ENGINEERING_NORM, **entry)
+
+
+def validate_engineering_budget(budget):
+  require(budget.get('engineering_version') == ENGINEERING_VERSION and
+      type(budget.get('seconds')) is int and budget['seconds'] == SECONDS and
+      type(budget.get('physical_gpu')) is int and budget['physical_gpu'] == GPU and
+      budget.get('gpu_uuid') == GPU_UUID, 'R2 engineering budget/resource identity differs')
+  require(budget.get('engineering_norm') == engineering_pin(budget.get('source_files')),
+      'R2 engineering norm/source binding differs')
+
+
 def verify_budget(path, expected_git, checkpoint, config, resource_record):
   """Direct exec-child authentication before GPU imports; return cooperative check."""
   global DEADLINE
   require_host()
   path = Path(path).resolve(strict=True)
   budget = read_json(path)
+  validate_engineering_budget(budget)
   require(budget['version'] == VERSION and budget['seconds'] == SECONDS and
       budget['git_sha'] == expected_git and budget['logical_server'] == 'sv3' and
       budget['hostname'] == socket.gethostname() and budget['physical_gpu'] == GPU and
@@ -226,16 +249,24 @@ def verify_budget(path, expected_git, checkpoint, config, resource_record):
   return budget, checked
 
 
-def sample_resource(worker_pid):
+def sample_resource(worker_pid, telemetry):
   from scripts.dl_resources import live_state
   state = live_state(GPU)
+  # processes is the actual XML query's parsed process summary, not raw XML.
+  sample = dict(state, monotonic=time.monotonic(), worker_pid=worker_pid,
+      xml_process_summary=state['processes'])
+  telemetry.write(json.dumps(sample, sort_keys=True, allow_nan=False)+'\n')
+  telemetry.flush()
+  os.fsync(telemetry.fileno())
   require(state['gpu_uuid'] == GPU_UUID, 'Actual assigned GPU UUID differs')
   require(all(item['pid'] == worker_pid for item in state['processes']+state['pmon_jobs']),
-      'Unknown work appeared on assigned GPU4; stop only this owned family')
-  return dict(state, monotonic=time.monotonic(), worker_pid=worker_pid)
+      'Unknown work appeared on assigned GPU5; stop only this owned family')
+  return sample
 
 
 def run_family(args, output, family, budget_path):
+  budget = read_json(budget_path)
+  validate_engineering_budget(budget)
   directory = output/f'family_{family:02}'
   directory.mkdir()
   command = [sys.executable, str(ROOT/'scripts/dl_live_family.py'), '--family', str(family),
@@ -253,20 +284,20 @@ def run_family(args, output, family, budget_path):
       with (directory/'resources.jsonl').open('x', encoding='utf-8') as telemetry:
         while child.poll() is None:
           check()
-          sample = sample_resource(child.pid)
-          telemetry.write(json.dumps(sample, sort_keys=True, allow_nan=False)+'\n')
-          telemetry.flush()
+          sample_resource(child.pid, telemetry)
           try:
             child.wait(timeout=min(15, max(.001, DEADLINE-time.monotonic())))
           except subprocess.TimeoutExpired:
             pass
-      result = child.returncode
     except Exception as error:
       failure = repr(error)
     finally:
       cleanup(child)
+      result = child.returncode
   complete_path = directory/'family_complete.json'
-  terminal = dict(version=VERSION, family=family, worker_returncode=result,
+  terminal = dict(version=VERSION, engineering_version=ENGINEERING_VERSION,
+      engineering_norm=budget['engineering_norm'],
+      family=family, worker_returncode=result,
       failure=failure, worker_terminal=child.poll() is not None, owned_group_cleaned=True,
       started_monotonic=started, ended_monotonic=time.monotonic(),
       complete=file_pin(complete_path) if complete_path.is_file() else None,
@@ -282,7 +313,8 @@ def run_family(args, output, family, budget_path):
 
 def family_rows(output, family, complete):
   """Authenticate each compact row from its actual complete artifact, in order."""
-  require(complete['version'] == 'DL-r5-live-family-r1' and complete['family'] == family,
+  require(complete['version'] == 'DL-r5-live-family-r1' and
+      complete['engineering_version'] == ENGINEERING_VERSION and complete['family'] == family,
       'Complete family identity differs')
   require(len(complete['units']) == 16, 'All16 unit artifact entries required')
   rows = []
@@ -305,16 +337,18 @@ def parent(args):
   output = Path(args.output).resolve()
   require(not output.exists(), 'Fresh output directory required')
   output.mkdir(parents=True)
-  failure, receipts, rows, frozen = None, [], [], None
+  failure, receipts, rows, frozen, norm_pin = None, [], [], None, None
   try:
     source = source_binding(args.expected_git)
+    norm_pin = engineering_pin(source)
     inputs = authenticate_inputs(args.checkpoint, args.config)
     from scripts.dl_resources import require_resource
     resource = require_resource(args.resource_record)
     require(resource['physical_gpu'] == GPU and resource['gpu_uuid'] == GPU_UUID,
-        'This fixed object uses only sv3 physical GPU4')
+        'This fixed object uses only sv3 physical GPU5')
     identity = process_identity(os.getpid())
-    budget = dict(version=VERSION, git_sha=args.expected_git, parent_pid=os.getpid(),
+    budget = dict(version=VERSION, engineering_version=ENGINEERING_VERSION,
+        engineering_norm=norm_pin, git_sha=args.expected_git, parent_pid=os.getpid(),
         parent_start_ticks=identity['start_ticks'], parent_pgid=identity['pgid'],
         hostname=socket.gethostname(), logical_server='sv3', seconds=SECONDS,
         monotonic_deadline=float(DEADLINE), source_files=source, input_pins=inputs,
@@ -343,6 +377,7 @@ def parent(args):
     require(source_binding(args.expected_git) == source, 'Source changed during run')
     require(file_pin(args.resource_record) == budget['resource_record'], 'Original resource record changed')
     write_json(output/'generation_complete.json', dict(version=VERSION, git_sha=args.expected_git,
+        engineering_version=ENGINEERING_VERSION, engineering_norm=norm_pin,
         complete_families=32, complete_units=512, family_evidence=receipts,
         fixed_artifact_hashes={name: sha(output/name) for name in ('budget.json',
             'calibration_frozen.json', 'statistics_input.json', 'statistics_provisional.json')},
@@ -352,6 +387,7 @@ def parent(args):
     failure = repr(error)
   complete_path = output/'generation_complete.json'
   write_json(output/'supervisor_terminal.json', dict(version=VERSION, git_sha=args.expected_git,
+      engineering_version=ENGINEERING_VERSION, engineering_norm=norm_pin,
       elapsed_seconds=time.monotonic()-ENTRY_STARTED, parent_failure=failure,
       completed_families=len(receipts), completed_units=len(rows),
       main_generation_complete=complete_path.is_file() and failure is None,

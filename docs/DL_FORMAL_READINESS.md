@@ -1,10 +1,14 @@
 # DL 正式实验准入与因果证据边界
 
+**19:00终态优先**：原R5 f845资源guard失败退出，partial未独审/无科学裁决；
+失败封存及缺口见[运行报告](DL_R5_LIVE_RESULTS.md)，下一仅采用[一次工程r2完整重试](DL_R5_LIVE_RETRY.md)，
+不翻原7200规范或科学门。e237ed8 sv2 Linux21项全过只补tiny多步反馈及数学前置，正常N1M机制/有效对照仍未完成。
+
 **正常机制前置补充（2026-10-15）**：真实1M私有导入/合成回写已2ae18a5 CPU验收，
 新增真实tiny三步反馈和固定读出数学联跑本机21项20pass/1 Linux skip；不等于正常N1M学习或机制支持。
 [分布读出](DL_NORMAL_READOUT.md)及[条件独立来源](DL_NORMAL_REFERENCE.md)为Agent已采用的前置定义，
 后一来源尚未实现/运行；[NM1独立科学提案](DL_NM1_PROTOCOL_REVIEW.md)的训练/对照数值仍未采用。
-原R5 f845同一job继续，18:40:23 216unit/13family/cal封存/held进行，无完整裁决；正式准入尚未达到。
+18:40:23的原R5 f845快照为216unit/13family/cal封存/held进行；其后终态已由上方19:00失败记录取代，正式准入尚未达到。
 
 **当前索引更新（2026-10-15 17:39）**：原R4 cal失败/独审结论保持；普通持久化replay已经7ac完整CRC/schema/双SHA验收，
 见[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)，下方16:02“只盘点未验内容”是当时历史。

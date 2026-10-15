@@ -1,8 +1,40 @@
 # DL-r5 live 随机诊断工程记录
 
 2026-10-15。规范为[DL_R5_LIVE_TRIAL.md](DL_R5_LIVE_TRIAL.md)。
-**当前（17:39:08快照）：真实N1M/GPU诊断运行中；完整生成、独审和科学裁决未完成，完整方法目标仍active。**
+**当前终态（2026-10-15 18:42:31）**：原attempt01因GPU4资源守卫中止，parent exit1，
+全对象失败/未独审、无科学裁决；不是方法阴性。19:00:24 fresh4–7空闲，原本项目PID均已退出。
+下一已采用[工程r2一次完整重试规范](DL_R5_LIVE_RETRY.md)，新GPU5/12600秒、科学内容不变，尚未启动。
 Agent在既有完整预验证授权内采用有限对象，不称用户逐项确认的新算法；原R4失败、M2及旧停止门不变。
+
+## 原attempt01终态、失败封存与证据限制
+
+外部terminal时间18:42:31.635740北京时间，parent returncode1，完整外入口4044.184685104秒，
+按整段独占计费约1.123384635GPUh，probe另记。supervisor接纳13完整family/208unit，
+磁盘223个unit complete包含family13未闭合的15个；没有generation_complete/完整统计或独审。
+family13 terminal.failure明确为`Unknown work appeared on assigned GPU4; stop only this owned family`，
+parent仅清本family组，original parent301006/worker327217/shadow327230等29个原身份已核不存在。
+原7200秒没有耗尽，不将资源中止当超时、模型错误、第二信号阴性或成功。
+
+**原记录缺口**：资源guard先判unknown再写telemetry，故触发sample没有持久化；
+最后保存快照18:42:15.656729仍只有本worker。稍后18:50见330353 C/330414 C+G、proc AccessDenied，
+只能标当时未知作业，不能反推它们就是触发PID或断言作业归属，未干扰/终止它们。
+family13 worker_returncode=None是原supervisor异常前赋值缺口，不能编成worker exit0或任一实际退出码；
+cleanup/主exit1及原PID消失另有证据。r2将先写冲突sample再fail，并在cleanup后写实际returncode，不放宽守卫。
+
+18:58:12.745663完成0GPU失败封存，capture入口到结果7.698292秒/900秒，工具确认exit0：
+`/data/Policy_Discrepancy/runs/dl-r5-failure-review-20261015-f845de0/attempt02/`。
+原run全部1715文件/2,915,484,739字节双遍原始SHA一致，原N1M/config pins及f845的226项真实Git blobs前后匹配，
+29个原parent/worker/shadow身份均不存在；未解trusted pickle、未读cal系数或D/e/Y、未物理/模型复放。
+capture.json 620,367字节，SHA256 `50c47bf96a2b6330fce97ef3a3688623213a700450824c7be4b90021ba0315ae`；
+取证脚本rawSHA `c8156b94b7ad323f082c8c2dd6964f74f4f3d44a5ea4c1075f3e3bf06beae3a2`，
+小镜像在ignored `analysis/outputs/dl-r5-failure-review-f845de0/attempt02/`。
+这是原失败证据稳定性封存，不是完整R5独审、unit有效性/科学统计或另一正常来源验收。
+首次取证准备误将outer inputs目录当checkpoint目录，在首次inventory前FileNotFound退出；
+保留旧脚本/attempt01空目录，attempt02仅更正为原r4-utility-inputs模型路径，不改原run或任何验收门。
+
+19:00:24 fresh完整XML+pmon物理4–7均无进程/各0MiB，原parent不存在；
+外部记录resource-post-failure-110024.json/XML。此前未知GPU4作业已自行退出，未归属或干预；不是持续空闲保证。
+下方运行中记录均为带时间历史，不能据其继续等待已终态的handle53150或重启/拼接原对象。
 
 ## 实际启动与运行快照（2026-10-15）
 
@@ -82,7 +114,7 @@ Windows coarse monotonic仅在Windows fixture中使用真实perf_counter；Linux
 
 ## 资源和下一步
 
-当前对象只需sv3物理GPU4独占一张A100-SXM4-80GB，32fresh family串行，5–7不预留。
+原attempt01使用sv3物理GPU4独占一张A100-SXM4-80GB，32fresh family串行，5–7未预留。
 完整入口7200秒，**单卡最多2小时/≤2GPUh**，包含初始化/编译/512units/统计与清理；不是成功ETA或整个预验证预算。
 完整CPU独审另1800秒/0GPU；工程/统计/replay核验0GPU。
 历史同规格1M完整训练41421.0822秒/11.505856GPUh仅作吞吐参考，不表示每个后续对象均需重训或获新增训练授权。
@@ -93,8 +125,9 @@ Windows coarse monotonic仅在Windows fixture中使用真实perf_counter；Linux
 `analysis/outputs/dl-r5-preflight/resource-final-20261015.txt` SHA256
 `6df899e4a69d816b27f32eaa108e7ea8f7055642a7c64f0eb61fe290eea62f0b`。
 
-继续当前chat即可：监督当前f845源版本和同一原handle的已冻结单卡对象，
-不扩unit/预算、改门、拼接或把工程证据升级科研支持；完整退出后独立CPU审计，再据结果确定下一机制对象。
+继续当前chat即可：按[新r2规范](DL_R5_LIVE_RETRY.md)完成确定源码/相关测试与Linux验收后，
+fresh核GPU5及CUDA/EGL映射，从头执行新完整attempt；不改原科学样本/门或拼接旧对象。
+只有新完整退出才独立CPU全审并裁决；原partial只封存，不称旧失败被新预算修成通过。
 R5执行checkout保持f845，运行后不修改其生产文件；研究分支另新增独立CPU私有replay工程，
 actual/tested2ae18a5详见[DL_NORMAL_REPLAY_ENGINEERING.md](DL_NORMAL_REPLAY_ENGINEERING.md)，不把该分支HEAD称为R5实际源码。
 最终GitHub分支状态见完成报告/最新Git收据。

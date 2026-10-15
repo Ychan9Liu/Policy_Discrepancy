@@ -1,5 +1,18 @@
 # 项目状态
 
+**2026-10-15 19:11工程r2冻结（未启动）**：五文件完成，有限R5本机38项37pass/1 Linux skip、15.490秒；
+双只读审查确认科学流程/公式/原规范不变。待提交后clean Linux组合测试与真实Git blob来源链复核，之后fresh GPU5核查。
+资源需求1张独占A100串行，本次完整主入口12600秒≤3.5GPUh、CPU独审0GPU；
+4–7为授权范围，不需四卡并占，后续正常学习协议尚未采用，整轮剩余总核时仍未定。没有新GPU任务。
+
+**2026-10-15 19:00:24当前**：R5原f845/attempt01已18:42:31因GPU4 unknown资源guard中止，
+parent exit1/4044.184685秒（约1.123385GPUh）、13完整family/208接纳unit、磁盘223complete，无全生成/独审/科学裁决。
+失败1715文件/2.915GB双SHA封存、29原PID不存在；原7200规范不改/不拼partial，记录缺口及证据见[运行报告](DL_R5_LIVE_RESULTS.md)。
+fresh XML+pmon物理4–7此时全空/各0MiB，18:50未知GPU4作业已自行退出，未干预；本项目无GPU作业。
+下一采用[工程r2一次完整重试](DL_R5_LIVE_RETRY.md)：新源码/新目录/GPU5/12600秒、原科学计划不变，未启动。
+同时actual/tested e237ed8bef91899258a6d8076d0f29f9e358ef8b sv2 clean Linux21项全过/19.267469秒全入口/0GPU；
+真实tiny三步反馈和读出数学有限验收，不是N1M学习或方法支持。完整goal active，M2不变。
+
 **2026-10-15正常机制前置更新**：新增真实tiny CPU三步训练/私有cache反馈及固定分布读出，
 本机联跑21项20pass/1 Linux skip（11.358秒），不是N1M/BF16/真实65学习或方法有效。
 [读出定义](DL_NORMAL_READOUT.md)与仅基于R5完整性失败启用的[独立来源规范](DL_NORMAL_REFERENCE.md)由Agent采用，

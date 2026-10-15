@@ -1,5 +1,13 @@
 # 研究问题与方法
 
+**R5资源失败与下一动作（2026-10-15）**：原f845在18:42:31由GPU4 unknown资源guard保护中止，
+无完整独审或科研符号结论，13完整family/208接纳unit、磁盘223partial全部保留不拼。
+失败raw图已双SHA封存，触发sample未保存/worker返回码缺口明示，不能从后续PID猜归属或根因。
+两Agent独立同意后采用[工程r2一次新完整重试](DL_R5_LIVE_RETRY.md)，仅资源5/全入口12600秒和工程记录修复，
+全部科学seed/512/cal/held/H100/统计门不变；未读中间D/e/Y、未启动新GPU，不称旧7200通过。
+优先重试是为完成独立信号辨别，正常source-only不能代替它；NM1科学学习配置仍未采用。
+正常前置代码e237ed8 sv2 Linux21项全过，范围仍为tiny/数学，非真实方法裁决。
+
 **正常机制测量前置收敛（2026-10-15，Agent采用的有限定义）**：
 [DL_NORMAL_READOUT.md](DL_NORMAL_READOUT.md)固定官方q/p概率、cal-only group RMS、ridge .1、独立物理速度主标签及family统计，
 不是actor单sample利用或条件MI；四项数学检查通过，尚无真实读出。

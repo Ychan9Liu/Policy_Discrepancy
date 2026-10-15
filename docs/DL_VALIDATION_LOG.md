@@ -1,5 +1,22 @@
 # DL 验证日志与证据索引
 
+## DL-r5资源失败、封存及工程r2采用（2026-10-15）
+
+原actual/tested f845主入口18:42:31 parent exit1/4044.184685秒，family13资源guard unknown，
+13全family/208主接纳/223磁盘complete，无generation_complete/全独审/科学结论。
+触发sample未写盘、worker_returncode=None原记录缺口明示；29原PID已核不存在。
+外部只读capture脚本rawSHA c8156b94…ae3a2、原f845226blobs/inputs前后一致，1715文件/2,915,484,739B双SHA稳定，
+18:58:12 capture exit0/7.698292秒/0GPU，不解pickle或D/e/Y；JSON 50c47bf9…315ae，详[报告](DL_R5_LIVE_RESULTS.md)。
+19:00:24 fresh XML+pmon4–7全空/各0MiB，未知4作业自行退出、无干预；本项目无GPU作业。
+采用[工程r2](DL_R5_LIVE_RETRY.md)新完整512/原科学不变，GPU5/12600秒一次固定，不改旧7200或拼partial，未新GPU。
+
+## DL-normal有限前置Linux验收（2026-10-15 18:50:44）
+
+actual/tested e237ed8bef91899258a6d8076d0f29f9e358ef8b，sv2新隔离clean，21项全过17.987秒，
+测试外18.288242/完整入口19.267469秒/300、exit0/0GPU/owned无残留。
+233源码blob与三norm pin前后相同；独立Agent存储证据重算Git/日志/terminal一致，未再次执行测试。
+仅真实tiny三步context回写反馈与固定读出数学，非N1M/BF16/真实65多步学习，原完整replay实际2ae不改。
+
 ## DL正常机制前置定义与tiny反馈（2026-10-15）
 
 Agent已采用[固定分布读出](DL_NORMAL_READOUT.md)及仅在R5完整性失败时启用的[独立来源规范](DL_NORMAL_REFERENCE.md)，
@@ -686,6 +703,15 @@ XLA报告driver CUDA12.8比PTX编译器12.9.86旧，关闭并行编译；不改�
 18:35:43北京时间资源预检后启动：GPU4负责300k、GPU5负责1m，各单GPU size50m/vision64/repeat1、32完整episode（8校准/24盲测），seed20261012；评分16预定位置/H100并共用H1/10/50/100 prefix。alpha20/rho.5、原H1 gate不变，不更新optimizer，无c匹配或训练评价。本轮每阶段collection+score硬预算3600秒；launcher `launch-opportunity-5765c89.sh` 存在外部bootstrap目录，实际hash、资源及CUDA/EGL核验每phase独立写入 `O/cp<stage>-<phase>-attempt01/`。两阶段均exit0，32×16位置齐全。20:30:47北京时间再次核查GPU4–7各0MiB且无可见作业。CPU分析使用同clean SHA，输出 `O/cp<stage>-analysis-attempt01.json`，均为limited_opportunity：300k positive139/negative176/useful-cue150/joint93；1m为49/205/62/27，分母各384。300k C AUROC .508、C−D区间跨0。新结果不覆盖原r1；小数组/收据包SHA256 `405df188f0d431d7e7e2022eafde9a88b0911c8a2d58b94b103e021b7591a2b8`，本机镜像在 `analysis/outputs/dl-opportunity/5765c89/`，独立复算仍待完成。
 
 DL-engineering-r5将logging放入独立只读JIT，在相同pre-update参数/batch/seed上重现实际loss的抽样key，完成诊断读取后才允许optimizer donation；默认off和非logging weighting图保留。两层copied context禁止任何状态创建/写入，独立代码审查未发现阻断问题。dirty CPU小模型两次完整更新验证已完成；新增实际helper抽样/只读fixture1项通过8.012秒。helper先前新增audit漏传nested RNG的失败保留在helper-r5-precommit.log，修正为与生产wrapper相同的顶层pure+显式seed，未改生产随机流。真实CUDA验收尚待确定提交后的新attempt04，不能把此项写成DL-B已通过。
+
+## 2026-10-15 R5工程r2源码冻结与资源答复
+
+Agent采用的DL-r5-engineering-r2已完成五文件实现及独立双审，科学代码/原规范未改。
+本机R5有限组合38项37通过、1 Linux-only跳过（15.490秒）；实际测试对象为e237ed8加五文件未提交改动，
+不是新提交的clean Linux验收或真实512对象。新增冲突sample先write/flush/fsync后拒绝，
+异常cleanup后保存真实child.returncode；工程规范真实blob与12600秒/GPU5/UUID绑定贯穿生成及独审。
+下一先提交、clean sv3 CPU验收与真实source_manifest一致性，再fresh GPU5/实际CUDA-EGL核查。
+主单卡硬预算3.5GPUh，CPU独审1800秒；完整后续总GPUh仍未确定，未采用NM1训练提案不作承诺。
 
 ## 待完成清单
 
