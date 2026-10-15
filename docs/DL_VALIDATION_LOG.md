@@ -1,5 +1,12 @@
 # DL 验证日志与证据索引
 
+## DL私有replay Linux fixture竞态修复（2026-10-15 18:16）
+
+b8f14a4 clean sv2 Linux16项15过/1错误；真实alarm返回124、owned无残留，
+但exists/read之间/proc消失导致fixture ProcessLookupError。失败attempt01保留，真实1M未启动。
+仅将fixture改为直接读取并允许原本即已合法的“条目消失”，仍拒绝任何可读活进程；生产逻辑不改。
+详见[工程报告](DL_NORMAL_REPLAY_ENGINEERING.md)，下一新提交/新attempt CPU复验，不新增GPU工作。
+
 ## DL普通私有replay工程r1（2026-10-15）
 
 严格helper及CPU全量probe已完成本机16项15pass/1 Linux skip（2.121秒），

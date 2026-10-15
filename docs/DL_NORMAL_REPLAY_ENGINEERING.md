@@ -40,3 +40,13 @@ fixture覆盖跨三chunk、重叠回写、未知ID/坏cache、输入污染、漏
 下一在本机提交确定源码后，只同步sv2新隔离clean checkout，先Linux16项，再执行真实CPU全量probe。
 截至本段写入尚未执行真实1M私有导入，0新增GPU作业；R5仍仅sv3物理4原f845入口，执行checkout不移动。
 历史cache混合年龄、sampler/queue/env不可恢复的限制即使工程通过也保持。
+
+### Linux attempt01保留失败（2026-10-15 18:16）
+
+确定源码`b8f14a4d9471df2fcf823b7d5f6b540224241b52`已push并仅部署sv2新隔离checkout。
+实际Linux16项中15通过；真实alarm用例已取得exit124、owned进程均退出，
+但fixture先exists再读取/proc时碰到进程刚被reap，抛ProcessLookupError，故整体验收失败、真实1M probe未启动。
+证据在`/data/Policy_Discrepancy/runs/dl-normal-replay-probe-20261015-b8f14a4/attempt01/`，
+linux-tests-terminal.json记录exit1、外2.718362秒、无残留，失败日志不覆盖。
+本机仅修fixture为直接读取stat；若条目已消失仍满足原“已退出或Z/X”判据，读得到时仍严格Z/X。
+不改生产代码、时间/内存/计数或科研语义；新确定提交、新attempt重新完整Linux验收后再真实CPU导入。

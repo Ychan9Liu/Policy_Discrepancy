@@ -107,8 +107,12 @@ time.sleep(60)
     self.assertEqual(run.returncode, 124)
     pid = int(run.stdout.strip())
     status = Path(f'/proc/{pid}/stat')
-    if status.exists():
-      self.assertIn(status.read_text().rsplit(') ', 1)[1].split()[0], ('Z', 'X'))
+    try:
+      state = status.read_text().rsplit(') ', 1)[1].split()[0]
+    except (FileNotFoundError, ProcessLookupError):
+      # Reaping can remove /proc between stat/open/read; absence is exited.
+      return
+    self.assertIn(state, ('Z', 'X'))
 
 
 if __name__ == '__main__':
