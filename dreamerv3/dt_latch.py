@@ -2,6 +2,7 @@
 
 These probes are engineering interfaces, not evidence of task relevance.
 Default off preserves the original model, parameter creation, and random stream.
+DL-NM1 normal_only is an explicit intervention restriction, not a new H1 probe.
 """
 
 import math
@@ -31,6 +32,8 @@ def validate(config, act_space):
     return
   if dl.mode not in MODES:
     raise ValueError(f'Unsupported dt_latch.mode: {dl.mode!r}')
+  if type(getattr(dl, 'normal_only', False)) is not bool:
+    raise ValueError('dt_latch.normal_only must be bool (DL-NM1)')
   for key in ('alpha', 'rho', 'kl_tolerance'):
     value = getattr(dl, key)
     if not isinstance(value, (int, float)) or not math.isfinite(value):
@@ -181,7 +184,8 @@ def probe(agent, repfeat, prior_logit, obs, prevact, alpha=20.0, rho=0.5,
 def calibration_stats(rep_raw, signals, tau):
   """Additive calibration statistics; zero denominator is not calibrated."""
   excess = jnp.maximum(rep_raw - tau, 0)
-  base = jnp.where(signals['m'], excess * signals['f_D'], 0)
+  mask = signals.get('m_intervention', signals['m'])
+  base = jnp.where(mask, excess * signals['f_D'], 0)
   return sg((base * signals['e']).sum()), sg(base.sum())
 
 
@@ -236,17 +240,26 @@ def overlay(agent, repfeat, prior_logit, rep_raw, rep_before, obs, prevact,
   signals = probe(agent, repfeat, prior_logit, obs, prevact,
       config.alpha, config.rho, config.kl_tolerance, signal)
   m, d, e, f = [signals[k] for k in ('m', 'D', 'e', 'f_D')]
+  # DL-NM1: preserve the original H1 m/v/f_D and their validity diagnostics.
+  # Only explicitly enabled intervention/calibration/shuffle eligibility drops
+  # current reset positions; the complete RSSM loss and its mean are untouched.
+  intervention_m, candidate = m, signals['v']
+  if getattr(config, 'normal_only', False):
+    intervention_m = m & ~obs['is_first']
+    candidate, _ = gate(d, e, intervention_m, config.alpha, config.rho)
+    signals = dict(signals, m_intervention=sg(intervention_m),
+        v_intervention=candidate)
   require_valid(~m | (jnp.isfinite(rep_raw) & (rep_raw >= -config.kl_tolerance)))
-  weight = signals['v']
+  weight = candidate
   shuffle_metrics = {}
   if config.mode == 'logging':
     weight = jnp.ones_like(weight)
   elif config.mode == 'strength':
-    weight = sg(1 - m * f32(config.kappa) * f)
+    weight = sg(1 - intervention_m * f32(config.kappa) * f)
   elif config.mode == 'reward_only':
-    weight = sg(1 - m * f32(config.rho) * e)
+    weight = sg(1 - intervention_m * f32(config.rho) * e)
   elif config.mode == 'conditional_shuffle':
-    weight, shuffle_metrics, _ = conditional_shuffle(weight, m, rep_raw, d,
+    weight, shuffle_metrics, _ = conditional_shuffle(weight, intervention_m, rep_raw, d,
         agent.dyn.free_nats, config.d_bins, config.k_bins, seed, step)
   elif config.mode != 'dtlatch':
     raise ValueError(config.mode)
@@ -261,14 +274,18 @@ def overlay(agent, repfeat, prior_logit, rep_raw, rep_before, obs, prevact,
       'signed_support', 'e', 'D')}
   metrics.update(valid_count=m.sum(), unavailable_count=(~m).sum(),
       valid_frac=m.mean(), reward_outside_bins_count=signals['reward_outside_bins'].sum(),
-      candidate_v_mean=signals['v'].mean(), actual_v_mean=weight.mean(),
+      candidate_v_mean=candidate.mean(), actual_v_mean=weight.mean(),
       actual_v_min=weight.min(), actual_v_max=weight.max(),
       active_frac=active.mean(), valid_active_frac=(m & active).mean(),
-      active_protected_frac=(m & active & (weight < 1 - 1e-6)).mean(),
+      active_protected_frac=(intervention_m & active & (weight < 1 - 1e-6)).mean(),
       excess_release_mean=((1 - weight) * excess).mean(),
-      candidate_excess_release_mean=((1 - signals['v']) * excess).mean(),
+      candidate_excess_release_mean=((1 - candidate) * excess).mean(),
       weighted_excess_mean=(weight * excess).mean(),
       rep_before_mean=rep_before.mean(), rep_after_mean=(weight * rep_before).mean(),
       calibration_num=num, calibration_den=den,
       **shuffle_metrics)
+  if getattr(config, 'normal_only', False):
+    metrics.update(intervention_valid_count=intervention_m.sum(),
+        intervention_valid_frac=intervention_m.mean(),
+        intervention_valid_active_frac=(intervention_m & active).mean())
   return sg(weight), {f'dl/{k}': sg(v) for k, v in metrics.items()}, signals

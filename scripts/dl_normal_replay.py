@@ -175,7 +175,7 @@ class PrivateReplay:
     require(uuid in self._counts and 0 <= index < self._counts[uuid],'Unknown/illegal original65 start')
     return uuid,index
 
-  def batch(self,starts):
+  def _assemble_starts(self,starts):
     from embodied.core import streams
     require(not self._poisoned and self._pending is None,'Pending batch must be updated before another batch')
     require(type(starts) in (tuple,list) and len(starts) == BATCH,'Exactly16 planned starts required')
@@ -186,6 +186,19 @@ class PrivateReplay:
     stream=iter(streams.Consec(streams.Stateless(lambda:annotated),length=LENGTH,
         consec=1,prefix=CONTEXT,strict=True,contiguous=True))
     result=next(stream)
+    return result,starts
+
+  def read_batch(self,starts):
+    """DL-NM1: normal annotated batch without sampling counts or pending update.
+
+    Calibration reads the frozen historical cache. It neither pretends to
+    consume a training batch nor writes a synthetic network output back.
+    """
+    result,_=self._assemble_starts(starts)
+    return result
+
+  def batch(self,starts):
+    result,starts=self._assemble_starts(starts)
     self._replay.metrics['samples']+=BATCH
     self._pending=dict(starts=starts,ids=result['stepid'].copy(),batch_sha256=_digest(result))
     return result

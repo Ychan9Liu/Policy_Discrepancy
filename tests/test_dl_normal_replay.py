@@ -99,6 +99,30 @@ class NormalReplayTest(unittest.TestCase):
         self.assertFalse(np.shares_memory(chunk.data[key],right._replay.chunks[uid].data[key]))
     for name,body in self.sourcebytes.items(): self.assertEqual((self.directory/name).read_bytes(),body)
 
+  def test_calibration_read_has_no_pending_counts_or_cache_write(self):
+    cache=self.load();starts=self.starts()
+    before={uid:{k:a.tobytes() for k,a in c.data.items()}
+        for uid,c in cache._replay.chunks.items()}
+    metrics=dict(cache._replay.metrics)
+    first,second=cache.read_batch(starts),cache.read_batch(starts)
+    self.assertIsNone(cache._pending)
+    self.assertEqual(dict(cache._replay.metrics),metrics)
+    for key in first:self.assertEqual(first[key].tobytes(),second[key].tobytes())
+    self.assertTrue(np.all(first['consec'] == 0))
+    self.assertEqual(first['dyn/deter'][0,0,0],130)
+    for uid,chunk in cache._replay.chunks.items():
+      for key in chunk.data:self.assertEqual(chunk.data[key].tobytes(),before[uid][key])
+    # Normal training still requires actual output feedback; a read cannot be
+    # presented as an outstanding train/update, nor bypass a pending update.
+    with self.assertRaisesRegex(ValueError,'outstanding'):
+      cache.strict_update(self.output(first,3),first)
+    submitted=cache.batch(starts)
+    with self.assertRaisesRegex(ValueError,'Pending batch'):cache.read_batch(starts)
+    cache.strict_update(self.output(submitted,8),submitted)
+    later=cache.read_batch(((uuid(1),31),)*16)
+    self.assertEqual(later['dyn/deter'][0,0,0],8)
+    for name,body in self.sourcebytes.items():self.assertEqual((self.directory/name).read_bytes(),body)
+
   def test_full_span_unknown_id_and_bad_cache_refused_before_any_write(self):
     cache=self.load();batch=cache.batch(self.starts());valid=self.output(batch,5)
     baseline={uid:chunk.data['dyn/deter'].tobytes() for uid,chunk in cache._replay.chunks.items()}

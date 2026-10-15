@@ -1,5 +1,13 @@
 # 项目状态
 
+**2026-10-15 NM1 cal前置进展**：仅C已由Agent采用为DL-NM1-cal-r1，
+normal_only默认False/显式True、只读普通batch、独立参考梯度与原_train完整scratch接口及有限CPU验证完成；
+[工程范围](DL_NM1_ENGINEERING.md)不是真实N1M cal，完整128 runner/CPU独审仍待实现。
+后续T4096/6h/性能门未采用。C计划仅sv3物理5/R5终态及全审或失败封存后fresh串行，3600GPU+900CPU，当前未启动。
+19:39:40服务器快照原R5 parent341486身份匹配、65unit/4family完整、cal未封口/无终态；
+仅GPU5本worker351730 C+G/2587MiB，4/6/7无可见作业/各1MiB，未知GPU4作业自行退出未干预。
+原R5 actual1584/12600秒/科学门不改，未读中间D/e/Y，完整goal active。
+
 **2026-10-15 19:22:16（服务器时刻）r2实际运行中**：actual/tested1584ef31c322fc3371ea9ce220c06fe7e654b23a，
 clean sv3 CPU71项全过/234源码身份链一致；19:19:36启动原parent341486/start408554660。
 N1M完整state及实际CUDA/EGL同物理5通过，8unit complete/0family complete、cal未封口/无完整终态，未读中间D/e/Y。

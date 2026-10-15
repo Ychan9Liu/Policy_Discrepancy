@@ -1,5 +1,20 @@
 # DL 验证日志与证据索引
 
+## DL-NM1必要C阶段与有限工程（2026-10-15）
+
+Agent在完整授权内采用[DL-NM1-cal-r1](DL_NM1_TRIAL.md)仅C阶段，128批原普通数据、
+新normal-only干预、真实scratch位移/独立参考梯度及S/P/W资格；3600秒GPU+900秒CPU，
+固定sv3物理5且等原R5终态/全审或失败封存后fresh串行，不自动激活4096学习/6小时/性能门。
+源码normal_only默认False/旧config兼容，原H1 m/v与有效性保留，只排除保护reset位置；
+read_batch无pending/计数/回写；新counterfactual接口完整复制状态调用原_train，禁止JIT后改配置。
+有限CPU证明非零旧moments下scratch_B/B精确重复、公共B单步等scratch、rho0旁路及N_nr有限，
+原状态不变；N_nr active收益未由fixture证明。两个独立源码审查无阻断，实际更新方向与终态夹角已分开。
+本机normal-only相关20项18pass/2原skip，scratch/replay8项全过、后扩rho0/N_nr两项全过及方向反例通过；
+确定提交后的Linux补证待执行，完整128 runner/CPU审计未实现、没有真实N1M cal或新GPU任务。
+详细范围与边界见[工程记录](DL_NM1_ENGINEERING.md)。
+原R5 19:39:40同parent341486活跃、65unit/4family/cal未封，无完整终态；只GPU5本worker，
+4/6/7当时无可见作业，不读中间D/e/Y或改变12600秒/原科学门；完整goal仍active。
+
 ## DL-r5资源失败、封存及工程r2采用（2026-10-15）
 
 原actual/tested f845主入口18:42:31 parent exit1/4044.184685秒，family13资源guard unknown，

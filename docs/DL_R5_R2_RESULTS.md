@@ -73,6 +73,11 @@ cal未封口、无generation_complete/权威终态。GPU5仍仅本worker341564 C
 GPU4未知340867 C及340914 C+G（后者另有GPU0 graphics），不猜其归属或干预；6–7无作业/各1MiB。
 新progress-review.json/XML位于外部inputs，unit只数文件，不读取中间D/e/Y、cal系数或科学统计。
 
+19:39:40.144530同一parent341486/start408554660仍活跃，65unit/4family complete、cal未封口、
+无generation或权威终态。GPU5仅本worker351730 C+G/2587MiB，4/6/7各1MiB无可见作业，
+此前GPU4未知作业自行退出未干预。新外部watch-20261015T113940144530.json/XML只读进程/计数/资源，
+不读中间科研值；没有重启、改预算、选取partial或新GPU任务。
+
 环境prelaunch：Python3.11.16、jax/jaxlib0.4.33、numpy1.26.4、dm-control1.0.48、MuJoCo3.15.0、
 driver570.158.01，详细版本与pip freeze保存在外部inputs。驱动/编译器既有parallel-compile warning不改环境求过门。
 
