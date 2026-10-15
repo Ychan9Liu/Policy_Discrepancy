@@ -1,8 +1,44 @@
 # DL-NM1 C 实际执行与资源记录
 
-2026-10-16，版本DL-NM1-cal-r1，状态：**新attempt03运行中；attempt01/02失败已封存，尚无完整校准或独审**。
+2026-10-16，版本DL-NM1-cal-r1，状态：**attempt01/02/03工程失败已封存，尚无完整校准或独审**。
 这是Agent在既有完整预验证授权内采用的128批cal-only，不是累计学习或正式实验；
 后续T4096/整阶段6GPUh仍为建议，尚未采用。
+
+**最新：attempt03实际工程失败**。actual/tested abefbb3，原handle85427已终态、实际SSHexit1/
+3101.188秒；原parent exit1/3099.069495994秒，supervisor worker1/3099.005093803秒，均在原3600秒内。
+128条batch_collected连续0..127后，首S控制的GPU coefficient被jax.jit作为闭包常量物化，
+`_array_mlir_constant_handler → val._value`隐式device→host被原全局disallow拒绝。
+局部host_to_device许可未涵盖这个真实CUDA编译路径；CPU41测试不证明CUDA编译常量传输通过。
+无generation/final闭包或控制资格，不是方法阴性，不读取frozen结果、不拼接原128继续。
+
+原parent538626/start410327282、worker538639/start410327396均已退场；
+01:07:38–39真实XML/pmon物理5无进程/0MiB、4仅原feature worker542278 C/2492MiB、6/7无作业/0MiB。
+01:07:40 /proc原身份已不存在，reference0原父子仍在/274个unit complete文件、无generation/终态。
+下一仅修局部完整`jax.transfer_guard('allow')`及作用域恢复，不改原数值body、F32系数常量、keys、bins、科学门或预算；
+须先确定提交CPU及生成数据的真实GPU5小回归，重现旧D2H故障、核修复与all-allow参考逐位相同及异常后guard恢复，
+再在原GPU5/128/3600秒fresh完整新尝试，不能再以CPUgreen替代这项CUDA验收。
+
+失败小镜像 `analysis/outputs/dl-nm1-cal-transfer-abefbb3/failed-attempt03/`，
+root实际SSH收据和原log在其父目录。完整rawSHA：
+producer terminal `ac22259b38d31e61447adc32b59f29e8ce9dcbf52ab0b32d3f3a80eeed199bdf`，
+supervisor `9503689d1c7257b91ab5af652473a65f2d6f3dc8062c5544a244d8f5067b503f`，
+worker log `b2b757da6812c5b218299d8c630d9d67fd75d0a8881310d708db8af4821f9388`，
+root SSH receipt `be4407baf4e388520780b5fb33d6c398884cc9b084816af7a8cc615519879755`。
+第二Agent独立核本机日志/终态，不冒称其再次查服务器；root上述/proc和GPU核查另有带时收据。
+
+**2026-10-16独审准备补充，未启动且不得用于失败attempt03**：actual run/audit Git固定abefbb3，
+外部controller38646B rawSHA `9313cb42e847adb6c7802adb3c6de9fc16625d99765f09799f3bcc16cb62ff55`，
+本机包`analysis/outputs/dl-nm1-cal-audit-abefbb3-controller/`；29个原3f通用函数AST未变，
+25个纯元数据拒绝反例及第二Agent只读审核通过。完整负scientific qualification不阻断integrity验收。
+新增强制root实际C SSH退出receipt及rawSHA，保持原900秒、原auditor六CLI、无NN/反传/Adam/GPU重演。
+只读原producer进程退场，不登记或清理其它作业。controller已实际stage至
+`/data/Policy_Discrepancy/runs/dl-nm1-cal-audit-inputs-20261016-abefbb3/launch.py`，读回rawSHA全同、
+实际abef代码clean；未执行。root收据/日志及后续小镜像放
+`analysis/outputs/dl-nm1-cal-audit-abefbb3/`，fresh审计输出
+`/data/Policy_Discrepancy/runs/dl-nm1-cal-audit-20261016-abefbb3/attempt03/`。
+原handle85427真实SSHexit0/whole≤3600、128完整generation及原组gone后，
+才把原SSH receipt bytes放新audit inputs/producer-outer-execution.json并提供两份实际pins启动。
+审计自身还须真实外层SSHexit0/whole≤900；925秒root观察上限不延长成功预算，不用内部terminal自证。
 
 实际运行/有限CPU测试Git为`8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0`，
 clean代码`/data/Policy_Discrepancy/dl-nm1-cal-cpu-code-20261015-8d63fff`，

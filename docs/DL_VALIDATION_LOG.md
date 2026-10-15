@@ -1,5 +1,37 @@
 # DL 验证日志与证据索引
 
+## C第三次工程失败：CUDA闭包常量D2H（2026-10-16 01:07）
+
+原abef attempt03/handle85427实际SSHexit1/3101.188秒，parent1/3099.069495994、worker1/3099.005093803，
+原3600秒不变；连续128采集后首S控制GPU F32 coefficient闭包常量被JIT编译物化，
+隐式device→host被全局disallow拒绝。上次host_to_device局部修复及41项CPUgreen不覆盖这个真实CUDA路径。
+无generation/final/独审/控制资格，不是方法阴性，未读frozen科学值，不从partial补齐。
+失败镜像、真实root退出收据和完整rawpins见[实际C记录](DL_NM1_CAL_RESULTS.md)。
+root01:07:38–40重新核原parent/worker gone、物理5无进程/0MiB；物理4仅原F542278 C/2492MiB，
+6/7空闲，F原父子活跃/274unit complete/无generation；两个源码checkout仍clean。
+证据resources-20261015T170754416812及watch-20261015T170756422397.json。
+下一仅局部完整transfer_guard作用域恢复修复，原数学/F32常量/keys/科学门不变；
+须先生成数组真实GPU5旧故障/修复回归和确定提交CPU验收，再原128/3600秒全新尝试。
+原abef专用审计controller仅准备部署、未调用，不能审核失败C3为完整；F及其待执行CPU读出不受影响。
+
+## 两个独立CPU入口已准备/部署，T取证缺口识别（2026-10-16 01:02）
+
+C attempt03独审controller raw9313cb42e847adb6c7802adb3c6de9fc16625d99765f09799f3bcc16cb62ff55，
+原29个generic AST保留、25个元数据反例拒绝、负科学资格不作integrity门，独立Agent审核通过。
+root只stage确定bytes并核远端abef clean，未启动审计；详[实际C](DL_NM1_CAL_RESULTS.md)。
+reference0 readout900 controller rawe23811bfd67709081ef954f126ea66819066864b1db9b594217f9186c69c287e，
+原25 generic AST保留、16个生成反例拒绝、正负contrast均可接纳，完整JSON/NPZ descriptor及实际reader stdout pin闭包核过。
+launcher/helper两原bytes已stage读回核SHA、dfd clean，未执行/未读真实feature；
+264项controller与260项reader来源集合如实区分，原CPU13的267集合不变，详[读出工程](DL_NORMAL_READOUT_RUN_ENGINEERING.md)。
+两入口仍各900秒/0GPU，必须等各原真实运行成功退出和完整图/原组退场/两真实rawpins；root实际完整外层退出另验。
+
+01:02:05原C父子身份均在/114record，reference0父子均在/242unit complete文件，
+两者无generation/终态，未读中间科学值；证据watch-20261015T170220675843.json。
+原两handles85427/37919继续，不因观察等待或文件计数重启/拼接。
+另外只读核实际train接口：现有F32聚合不等于逐位置F64独审，W缺固定rho=.5 N目标，
+独立reference forward不可冒充当次生产内部值；两种修订方案均未采用，见[T采用前缺口](DL_NM1_T_READINESS.md)。
+全五项目标当前证据索引已补至[总协议顶部](DL_PREVALIDATION.md)，T1有限存在性不能替代独立双信号或完整目标。
+
 ## 读出整入口确定提交CPU通过及资源答复（2026-10-16 00:40）
 
 actual/tested dfd6756ad4f38f89de87e17bac7fd0192265979a fresh clean Linux reader9+math4=13项全过，

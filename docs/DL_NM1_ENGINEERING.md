@@ -1,5 +1,33 @@
 # DL-NM1 cal-only工程前置
 
+## DL-NM1-control-transfer-r2：编译闭包的局部D2H修复，待真实CUDA验收
+
+真实abef attempt03在128采集后首S控制编译处失败，详[失败证据](DL_NM1_CAL_RESULTS.md)。
+GPU上的F32 coefficient被原lambda闭包捕获，JAX MLIR常量物化隐式device→host，
+旧host_to_device-only许可不足；CPU正常值算术测试无法覆盖这条CUDA实现路径。
+只将同一诊断`control_arrays`的context改为公共`jax.transfer_guard('allow')`，
+不在collect/prod/reference外放宽guard；成功/异常均恢复原全局及外层逐方向override。
+恢复context方法名为旧值后整个生产模块AST与真实abef原blob完全相同：
+原F32常量、运算body、PRNG、bins/P、NN、科学门及128/3600秒均无变化。
+
+两文件working rawSHA：script38046B
+`e4a3a93c05023ab7a8e651896dbfe94da222c682b14dc00e7999186419635f4d`，
+test28997B `031f48b389a0f69e13b24a8b72cd000be30bb8b861d789e5f28b158c558cf876`。
+本机非tiny九项8pass/1原Linuxskip、2.006秒；全部原controls dtype/shape/bytes等allow参考，
+新compile-boundary mock验证旧H2D-only拒绝、新完整局部许可、正常/None/编译异常/晚shuffle异常恢复，
+并保留外层D2H=log override。明确CPU_compile_boundary_mock=True、GPU_compile_boundary_validated=False；
+没有据此认证真实CUDA/N1M或完整cal。root与第二Agent只读核diff/整模块AST/测试覆盖，无阻断。
+
+Agent采用下一次**sv3物理GPU5、compute-only、全入口300秒**生成控制数组回归：
+一个fresh GPU worker，CPU parent隐藏CUDA，无Agent/N1M/checkpoint/replay/环境/render/学习。
+先从真实abef Gitblob提取旧函数，在原全局disallow下实际CUDA复现精确F32 scalar D2H错误；
+不得先跑allow参考而让host/JIT缓存掩盖故障。再验新完整S/W/P，与旧函数在outer allow下的
+同一生成输入GPU输出全部dtype/shape/bytes相同，正常/None/异常后guard恢复、外部隐式传输仍拒绝。
+300秒含bootstrap、来源认证、CUDA初始化、全部阶段、写盘/owned清理和真实完整退出；
+启动前fresh XML/pmon核指定5与实际UUID，GPU4原reference0不受影响，不新增/共享其它卡。
+这只是针对已见传输缺口的有限工程验收，未执行；不保证后续完整C或科学资格。
+通过后才在同物理5/原128/3600秒fresh attempt04，不恢复或补拼已失败128条。
+
 ## DL-NM1-control-transfer-r1：局部诊断传输修复
 
 实际47db attempt02的完整失败证据见[执行记录](DL_NM1_CAL_RESULTS.md)。官方Agent setup启用

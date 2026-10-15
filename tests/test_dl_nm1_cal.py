@@ -205,6 +205,10 @@ assert not any(n.split('.')[0] in ('jax','numpy','mujoco','dm_control','OpenGL')
     self.assertTrue(result['original_path_rejected_by_real_disallow'])
     self.assertTrue(result['controls_byte_equal_to_original_allow_path'])
     self.assertTrue(result['guard_restored_after_success_and_exception'])
+    self.assertTrue(result['all_transfer_directions_allowed_only_in_scope'])
+    self.assertTrue(result['host_to_device_only_scope_rejected_by_compile_boundary_mock'])
+    self.assertTrue(result['CPU_compile_boundary_mock'])
+    self.assertFalse(result['GPU_compile_boundary_validated'])
     self.assertTrue(result['zero_denominator_controls_all_none'])
     self.assertFalse(result['real_N1M_calibration'])
 
@@ -268,7 +272,7 @@ def controls_fixture(output):
     jax.config.update('jax_transfer_guard','allow')
     # Removing only the new permission context executes the unchanged original
     # controls body; this does not copy its random or control arithmetic here.
-    with mock.patch.object(jax,'transfer_guard_host_to_device',side_effect=lambda _:nullcontext()):
+    with mock.patch.object(jax,'transfer_guard',side_effect=lambda _:nullcontext()):
       baseline=p.control_arrays(sig,frozen)
       empty_baseline=p.control_arrays(empty,no)
     independent=permutation(a,k,d,frozen['bins']['D_f32'],frozen['bins']['K_f32'])
@@ -276,7 +280,7 @@ def controls_fixture(output):
     # reproduce its transfer policy at the diagnostic controls boundary.
     jax.config.update('jax_transfer_guard','disallow')
     before=guard_state()
-    with mock.patch.object(jax,'transfer_guard_host_to_device',side_effect=lambda _:nullcontext()):
+    with mock.patch.object(jax,'transfer_guard',side_effect=lambda _:nullcontext()):
       require_transfer_rejected(lambda:p.control_arrays(sig,frozen))
     assert guard_state() == before
     arrays,controls,available=p.control_arrays(sig,frozen)
@@ -286,8 +290,42 @@ def controls_fixture(output):
     missing,weights,availability=p.control_arrays(empty,no)
     byte_equal(empty_baseline,(missing,weights,availability))
     assert guard_state() == before
+    # CPU cannot reproduce CUDA's mlir.constant -> device-array materialization.
+    # This mock models that boundary while still running the unchanged real JAX
+    # function/output. It deliberately rejects the previous H2D-only scope.
+    native_jit=jax.jit;compile_states=[];compiler_failure=[False]
+    def compiler_boundary(function,*args,**kwargs):
+      compiled=native_jit(function,*args,**kwargs)
+      captured_coefficient='coefficient' in function.__code__.co_freevars
+      def invoke(*values,**options):
+        state=guard_state();compile_states.append((captured_coefficient,state))
+        if captured_coefficient and state[-1] != 'allow':
+          raise RuntimeError('generated compiler requires device_to_host allow')
+        assert state == ('allow',)*4
+        if compiler_failure[0]:raise RuntimeError('generated compiler materialization exception')
+        return compiled(*values,**options)
+      return invoke
+    with mock.patch.object(jax,'jit',side_effect=compiler_boundary), \
+        mock.patch.object(jax,'transfer_guard',side_effect=jax.transfer_guard_host_to_device):
+      try:p.control_arrays(sig,frozen)
+      except RuntimeError as error:assert str(error) == 'generated compiler requires device_to_host allow'
+      else:raise AssertionError('Previous H2D-only scope passed generated CUDA compiler boundary')
+    assert compile_states == [(True,('disallow','allow','disallow','disallow'))]
+    assert guard_state() == before
+    compile_states.clear()
+    with mock.patch.object(jax,'jit',side_effect=compiler_boundary):
+      byte_equal(baseline,p.control_arrays(sig,frozen))
+      assert len(compile_states) == 3 and sum(item[0] for item in compile_states) == 2
+      assert all(state == ('allow',)*4 for _,state in compile_states)
+      assert guard_state() == before
+      compiler_failure[0]=True
+      try:p.control_arrays(sig,frozen)
+      except RuntimeError as error:assert str(error) == 'generated compiler materialization exception'
+      else:raise AssertionError('Generated compiler failure was not raised')
+      assert guard_state() == before
+    require_transfer_rejected(lambda:jax.random.PRNGKey(0))
     def generated_failure(*args,**kwargs):
-      assert jax.config.jax_transfer_guard_host_to_device == 'allow'
+      assert guard_state() == ('allow',)*4
       raise RuntimeError('generated late control exception')
     with mock.patch('dreamerv3.dt_latch.conditional_shuffle',side_effect=generated_failure):
       try:p.control_arrays(sig,frozen)
@@ -295,6 +333,18 @@ def controls_fixture(output):
       else:raise AssertionError('Generated shuffle exception was not raised')
     assert guard_state() == before
     require_transfer_rejected(lambda:jax.random.PRNGKey(0))
+    # Preserve an outer directional override too, rather than resetting all
+    # directions to the global default after the diagnostic context exits.
+    with jax.transfer_guard_device_to_host('log'):
+      directional_before=guard_state()
+      byte_equal(empty_baseline,p.control_arrays(empty,no))
+      assert guard_state() == directional_before
+      with mock.patch('dreamerv3.dt_latch.conditional_shuffle',side_effect=generated_failure):
+        try:p.control_arrays(sig,frozen)
+        except RuntimeError as error:assert str(error) == 'generated late control exception'
+        else:raise AssertionError('Generated directional-context exception was not raised')
+      assert guard_state() == directional_before
+    assert guard_state() == before
   finally:
     jax.config.update('jax_transfer_guard',original_guard)
   for left,right in (('P_key','key'),('P_priorities','priorities'),('P_perm','perm'),('P_group','group'),('P_counts','counts')):
@@ -308,6 +358,9 @@ def controls_fixture(output):
   Path(output).write_text(json.dumps(dict(real_CPU_JAX_controls=True,
       original_path_rejected_by_real_disallow=True,controls_byte_equal_to_original_allow_path=True,
       guard_restored_after_success_and_exception=True,zero_denominator_controls_all_none=True,
+      all_transfer_directions_allowed_only_in_scope=True,
+      host_to_device_only_scope_rejected_by_compile_boundary_mock=True,
+      CPU_compile_boundary_mock=True,GPU_compile_boundary_validated=False,
       real_N1M_calibration=False)))
   del dll
 

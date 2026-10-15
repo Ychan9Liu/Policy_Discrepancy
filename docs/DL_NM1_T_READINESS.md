@@ -9,8 +9,8 @@
 本次更新依据已发布文档及当前执行方提供的阶段状态，不是新的服务器/资源核查：
 
 - C 原8d63 attempt01、47db attempt02均工程失败，不能作科研阴性。当前实际/测试代码
-  `abefbb3f1440cd9c95000a5d7f49c0a560a9a550` 的完整 attempt03 **RUNNING**，
-  仍为原128批/3600秒、sv3物理GPU5；尚无完整校准资格或CPU独审结果，见[实际记录](DL_NM1_CAL_RESULTS.md)。
+  `abefbb3f1440cd9c95000a5d7f49c0a560a9a550` 的 attempt03 已在128采集后的CUDA闭包常量D2H处**工程失败**，
+  仍无完整校准资格或CPU独审；原128批/3600秒、sv3物理GPU5不变，局部修复/真实CUDA回归后fresh新尝试，见[实际记录](DL_NM1_CAL_RESULTS.md)。
 - reference0 实际/测试代码 `2a15c91aad16c0e3151fde3943e356dad1fcb69d` **RUNNING**，
   固定512/32、8fit/24held、sv3物理GPU4/完整12600秒；真实完整特征、固定读出与实际退出仍待验收，
   见[执行采用](DL_NORMAL_REFERENCE0_EXECUTION.md)。该提特征预算不授权T学习。
@@ -105,6 +105,30 @@ own-state目标匹配不保证不同臂的实际累计释放相等，跨臂累�
 N优于有效S，只说明这个预定义弱D/标量释放规则不足以解释结果，不排除所有非选择性rep减弱或所有全局减压方案。
 有效P仅检验既定A/活跃性/D/K层内的对应关系，W仅检验该e-only规则；
 不能据此证明Dt数学上必要、e识别语义关键性，或全部可能选择机制已识别。W接近N时也不临时加新效力阈值或宣布等效。
+
+## 实际训练取证接口：采用T前待解决
+
+当前public train outs仅含replay；loss内部dense信号及实际weight未由该生产接口保留。
+独立nm1_reference forward的数组不能冒充actual train内部值；另跑相同keys也不能补足这项证据。
+现有N的实际/candidate释放、权重范围与保护比例是生产F32聚合；S在rho=.5时已有自身同forward的实际S与固定.5 N候选释放。
+P已有shuffle candidate/actual释放、protected count与changed fraction，可按protected count池化，不能平均批比例。
+这些收据可认证生产报告的聚合行为，不能CPU逐位置重算E/weight、不同stepid覆盖、protected/changed集合或实际perm。
+将F32归约值转为F64累计，不等于保存实际F32操作数后作逐位置F64 fsum；calibration_num/den也只是解析校准聚合。
+W的candidate使用rho_W，当前没有固定rho=.5的实际N目标；不能用.5/rho_W比例缩放或.5*calibration_num替代，
+因为F32权重减法量化不保证这些量等价。故当前接口尚未兑现草案的逐步dense独审与完整对照资格义务。
+
+两种最小方案**均未采用**：
+
+1. 保留原生产图，只记录现有完整metrics。可以明确收窄为源码认证的F32聚合证据及有限B/N/S问题；
+   必须在T采用前显式变更未采用草案的证据/数值口径，不称原逐位置F64独审已通过，P/W的上述限制仍保留。
+   单纯host记录既有metrics不因此要求重做C，但不补足原来缺失的实际内部张量。
+2. 若坚持dense义务，另立默认off的实际train collect模式，输出当次同节点K/E、mask、实际weight、固定.5 N目标及P实际perm。
+   只转发candidate信号不足以代表S/P/W实际weight；不得改用独立reference值。
+   默认off须保持旧图；开启后保留新输出可能改变JIT融合、舍入或sample，即使无新增随机调用、全stop-gradient也不能假定数值等价。
+   因而启用的实际图须另版采用，并完整取得相应C资格及B/B、rho0恒等控制；旧C资格不自动转移。
+   原候选C失败仍执行原停止规则，不能借collect改图重试求过或回填旧结果。
+
+这是采用T前必须解决的工程/科学证据缺口，不是新增科研门、阈值或自动采用T；不能同时声称原图不变与dense实际值已独审。
 
 ## Native与执行可行性
 

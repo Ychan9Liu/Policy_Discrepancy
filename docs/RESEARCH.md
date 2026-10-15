@@ -1,5 +1,12 @@
 # 研究问题与方法
 
+**2026-10-16 01:07最新限制**：C actual abef attempt03已工程失败，128采集后首诊断控制数组的
+GPU系数闭包常量隐式device→host被全局guard拒绝；实际SSHexit1/3101.188秒，无完整资格或方法阴性。
+局部全方向传输作用域修复、真实CUDA小回归及原128/3600秒fresh尝试待完成，
+不能把此前41项CPUgreen当CUDA编译路径通过；详[实际C](DL_NM1_CAL_RESULTS.md)。
+reference0仍原2a/GPU4/12600秒运行；完整五目标及双信号辨别、保护、替代解释仍未闭合，
+见[当前全目标索引](DL_PREVALIDATION.md)。T实际逐位置取证尚缺，两种修订方案均未采用。
+
 **2026-10-16正常读出工程与资源边界**：actual/tested
 `dfd6756ad4f38f89de87e17bac7fd0192265979a` fresh Linux13项全过/无skip、
 实际SSHexit0/17.391秒/300秒/0GPU；源码/规范267个不同文件逐Gitblob初末一致。

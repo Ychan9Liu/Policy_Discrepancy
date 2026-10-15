@@ -565,8 +565,8 @@ def control_arrays(signal, frozen):
   import jax.numpy as jnp
   from dreamerv3.dt_latch import conditional_shuffle
   from scripts.dl_nm1_counterfactual import host
-  # These diagnostic controls consume host arrays after Agent enables its guard.
-  with jax.transfer_guard_host_to_device('allow'):
+  # Diagnostic inputs and compiler-captured device constants need local transfers.
+  with jax.transfer_guard('allow'):
     a, e, f = (jnp.asarray(signal[k]) for k in ('A','e','f'))
     key = jax.random.fold_in(jax.random.fold_in(jax.random.PRNGKey(0),0x444C),jnp.uint32(STEP))
     arrays = dict(P_key=host(key), P_priorities=host(jax.random.uniform(key,(BATCH*LENGTH,))))

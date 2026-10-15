@@ -145,3 +145,24 @@ fresh输出 `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-20261016
 外部inputs `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-inputs-20261016-dfd6756/`。
 900秒是有限成本上限，非完整任务耗时保证；失败保留，不延时或拼接。
 该采用不启动累计学习、不增加GPU，也不采用T4096/6h或新的研究效力门。
+
+## 外部900秒控制器已准备与部署，尚未执行
+
+外部launcher43274B rawSHA `e23811bfd67709081ef954f126ea66819066864b1db9b594217f9186c69c287e`，
+原generic helper34052B `3f0b8b025128d3280df2120f3987a6f7ad8806054fab5ec2e57b6decfeca28f1`，
+本机准备包 `analysis/outputs/dl-normal-reference0-readout-controller-r1/`。
+25个通用函数AST等于已实际Linux检验的3f版本，不引入C-specific authority、资格或report判据。
+16个纯生成元数据/数值闭包反例拒绝，正负contrast均可接纳；未运行真实拟合、NN或Physics。
+root与第二Agent只读核真实dfd接口、完整2a schema、两未知真实pins、全图初末、全部数值descriptor及实际reader stdout report pin。
+控制器认证264个Git来源，reader自身analysis_binding为260项且全被覆盖；
+这与上述CPU验收258源码+九norm的267个不同文件是不同集合，不为凑数改变范围。
+
+仅上述两个文件已实际部署到本页指定新inputs，单次SSH原bytes写入并逐文件读回SHA全同，
+远端reader仍dfd且clean；部署未执行main、读取真实feature或增加GPU作业。
+实际部署收据 `analysis/outputs/dl-normal-reference0-readout-dfd6756/controller-deployment.json`。
+CPU环境隐藏CUDA/禁用GL，固定PYTHONPATH为已认证CODE、BLAS/OMP线程1。
+launcher两项必填 `--feature-controller-sha`、`--feature-outer-sha`；后者绑定新inputs内
+`feature-outer-execution.json`的原root真实退出bytes，尚未产生，不能填生成正例。
+root另备实际SSH observer，同一900秒成功上限、925秒仅失败观察；真实完成时才产生
+`analysis/outputs/dl-normal-reference0-readout-dfd6756/ssh-terminal.json`，当前不存在。
+内部terminal/读出报告不能证明自身未来完整退出；这些工程准备不表示真实读出或方法通过。

@@ -1,5 +1,23 @@
 # 项目状态
 
+**2026-10-16 01:07 C第三次工程失败/已释放GPU5**：原abef attempt03完整采集0..127后，
+首S控制jax.jit将闭包GPU F32系数常量隐式取回主机，被原device→host disallow拒绝。
+actualSSHexit1/3101.188秒、parent1/3099.069秒/原3600，无generation/final/独审或科学资格；
+失败不作方法阴性，见[完整记录及rawpins](DL_NM1_CAL_RESULTS.md)。原handle85427关闭，不重启它。
+01:07:38–40原parent/worker gone，GPU5无进程/0MiB；GPU4仅原reference0 worker542278 C/2492MiB，
+6/7无作业。reference0父子身份均在、274unit complete文件/无generation，原handle37919继续。
+当前在本机修局部全方向transfer_guard，先真实GPU5生成控制数组回归再原配置fresh C；
+不继续partial、不改科学门或启动T。abef专用CPU审计controller未运行，失败C3不能调用。
+
+**2026-10-16 01:02执行与必要缺口**：原C父子身份均在、114record；reference0原父子均在、
+242/512 unit complete文件，均无generation/终态/完整验收，未读中间科学值。
+两个后续CPU controller已独立源码/纯生成反例审核并stage读回SHA，尚未执行：
+[C独审](DL_NM1_CAL_RESULTS.md)、[reference0固定读出](DL_NORMAL_READOUT_RUN_ENGINEERING.md)，
+各whole900秒/0GPU，等原两handle实际完整成功及真实退出pins，不新增GPU。
+只读发现T实际生产图尚不输出草案要求的dense权重/逐位置证据，W还缺固定.5 N目标；
+保留聚合口径或另版collect重资格两方案均未采用，见[T前检查](DL_NM1_T_READINESS.md)。
+[完整五项目标索引](DL_PREVALIDATION.md)仍未完成，不能把T1存在性问题替代双信号/策略关键性或原准入。
+
 **2026-10-16 00:40资源答复及读出工程验收**：当前最低一张独占A10080可串行，
 已采用两张独立并行：sv3物理4为reference0、物理5为C，每卡一个作业；6/7未用。
 00:40:29–30 XML/pmon核物理4仅本worker542278 C/2492MiB、物理5仅本worker538639 C/8766MiB，
