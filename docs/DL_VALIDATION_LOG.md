@@ -1,5 +1,24 @@
 # DL 验证日志与证据索引
 
+## DL普通replay实际完成与r5资源边界（2026-10-15）
+
+普通库存actual/tested7ac29906e9d8953b8b87eb6ba134d3ddcdac9f46，clean sv2 Linux5pass/.195秒，
+真实1280NPZ/11,421,580,553B/16链/1,001,008行−1008reset=1M动作，247.145593秒/900秒、exit0、0GPU。
+库存SHA3339b71ca033d5fc065130751fe163aca05a684b2f14f570ab2018219a3a706d，独立小JSON/hash/链审通过；
+不是独立第二次解码CRC，不恢复历史online/cache/RNG。完整命令/证据/限制见[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)。
+
+Agent采用新有限[DL_R5_LIVE_TRIAL.md](DL_R5_LIVE_TRIAL.md)：单live随机一次干预、共同q shadow先封口、cal128/held384，
+主ridge增量及二次基底残差辅助已预定；不再要求独立qq近乎相等，不改原R4停止或M2。
+新工程/有限CPU接口验收中，没有真实N1M运行。只计划sv3物理4单A100串行，单次完整7200秒/≤2GPUh，
+独立CPU审计1800秒/0GPU，5–7不预留；不是全部剩余GPU小时或成功完成保证。
+已有N1M原1M训练41421.0822秒/约11.505856GPUh只作同规格吞吐参考，不授权新增训练或假定后续总量。
+完整方法仍需有效信号/正常active压缩与保护/替代控制；goal保持active。
+
+17:16:52北京时间仅只读fresh XML+pmon：sv3物理4–7各A100-SXM4-80GB、0%/4MiB、空process inventory，
+无本项目GPU作业；未进行设备probe或新模型运行。本机ignored资源快照
+`analysis/outputs/dl-r5-preflight/resource-20261015.txt` SHA256
+`bb118263b09bac885ddeeaa8627beb806de5447fa874cef5bef5ca668e3761be2`；不是持续空闲或启动授权替代。
+
 ## DL普通buffer内容取证采用（2026-10-15）
 
 前轮cal-null认证属于实质进展，未启动新的GPU对象。Agent现采用[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)：

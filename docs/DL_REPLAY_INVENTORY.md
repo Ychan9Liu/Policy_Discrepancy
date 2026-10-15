@@ -52,5 +52,19 @@ consec由stream抽样后注入，不应要求NPZ内存在；缓存context和采�
 
 ## 实际结果
 
-新工具5项本机CPU小fixture已过，包含真实CRC/字段/stepid/onehot/16链/双SHA与损坏拒绝；
-实际11.42GB内容尚未验收。确定SHA/Linux结果/实际运行将追加，不把fixture当真实buffer完成。
+实际执行/tested SHA为`7ac29906e9d8953b8b87eb6ba134d3ddcdac9f46`，sv2新隔离clean checkout：
+`/data/Policy_Discrepancy/dl-replay-audit-code-20261015-7ac2990`。
+本机5项CPU fixture通过；同提交clean Linux5项全过（unittest .195秒、外入口.364786秒）。
+
+真实输出`/data/Policy_Discrepancy/runs/dl-replay-inventory-20261015-7ac2990/attempt01/`，
+2026-10-15 16:51:48.905610北京时间终止，exit0、外入口247.14559346297756秒/900秒、0GPU、owned group已清理。
+完整1280 chunks/16链、11,421,580,553字节，1,001,008行含1008 reset，恰好1,000,000动作。
+全CRC/schema/stepid/onehot/flags及两遍全部文件SHA通过，无跳坏文件；16链尾均为唯一未落盘非零successor。
+inventory.json为1,209,489字节，SHA256：
+`3339b71ca033d5fc065130751fe163aca05a684b2f14f570ab2018219a3a706d`。
+独立只读核验库存JSON/terminal、SHA/计数/16链及所有1280文件名无环无合流；
+未独立第二次解码所有CRC，不能把元数据复核称作第二遍独立内容重演。
+本机仅镜像上述小报告到ignored `analysis/outputs/dl-replay-inventory-20261015-7ac2990/`。
+
+已验收的是普通持久化数据可用性；历史混合年龄cache与不可恢复online/RNG限制仍成立，
+尚未开始正常active replay压缩/保护干预，也没有由此产生第二信号或方法有效结论。

@@ -1,5 +1,18 @@
 # 研究问题与方法
 
+**DL-r5新有限诊断与资源（2026-10-15，工程实施中）**：Agent在完整预验证授权内采用
+[DL_R5_LIVE_TRIAL.md](DL_R5_LIVE_TRIAL.md)，原live中随机一次qqA/qqB/pq/pp、处理前共同baseline-q CPU shadow H1、
+32 environment families×16独立policy流/cal128-held384、native H100，不恢复live渲染或要求两条qq路径近乎相等。
+原R4失败不改，新对象识别操作性平均效应及固定预测程序增量，不给单state真值或直接证明保护。
+cal-only主ridge及固定二次基底/残差信号辅助控制已写明，避免将重复列惩罚或有限非线性当新增信息。
+规划仅sv3物理GPU4一张A100串行，完整入口7200秒上限/CPU独审1800秒；5–7不预占，
+这不是全部预验证总小时估计或完成保证。真实N1M未执行，新接口/统计/父流程的有限CPU工程验收不升级为方法证据。
+
+**DL普通replay实际取证完成（2026-10-15 16:51）**：actual/tested7ac2990的clean sv2 Linux5项通过，
+11.42GB/1280NPZ/16链全CRC/严格schema/stepid/双SHA及1M动作计数通过，外247.145593秒/0GPU。
+详见[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)。仅确认历史持久化cache可用，不可恢复原在线队列/RNG/终点cache；
+下一正常active压缩/保护仍须另立受控对象，尚无新学习干预或科研结论。
+
 **DL-r4独立核验（2026-10-15 16:12）**：原5ce cal-null失败已由4ddad2e独立CPU取证/4600物理步核实，23预声明null中e2/t64平均差.00319120049295762超原.0025，原对象保留失败/held未生成；不能删该状态或宽门。该case存储序列frame2图像±1/logit先差、action5 latent/raw/reward后差、frame6积分状态后差；不是独立模型/render根因结论。详见[DL_R4_CALIBRATION_AUDIT.md](DL_R4_CALIBRATION_AUDIT.md)。下一先0GPU明确native闭环测量或有限固定控制标签的估计对象与资格条件（替代建议均未采用）；未建立第二信号增量、压缩保护或正式准入，M2不变。
 
 **DL-r4校准停止（2026-10-15）**：actual5ce真实cal8的重复qq零效应门失败，按原规则未生成held并退出；目前只是测量未获资格，不作第二信号或保护方法的正负裁决。sv3单物理4实耗约.729GPUh并释放，未改门/重跑。采用[独立失败证据CPU核验](DL_R4_CALIBRATION_AUDIT.md)，原32EP成功审计不放宽；完整因果链和正式准入仍未完成，M2不变。实际证据与限制见[DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。

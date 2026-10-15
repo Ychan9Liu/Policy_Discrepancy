@@ -1,5 +1,15 @@
 # 项目状态
 
+**DL最新（2026-10-15）**：真实普通replay取证已在actual/tested7ac29906e9d8953b8b87eb6ba134d3ddcdac9f46完成，
+sv2 clean Linux5项通过；1280NPZ/11.42GB/16链/1M动作完整内容及双SHA通过，外247.145593秒/0GPU。
+历史cache不等于终点online状态；报告[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)。
+下一已采用[DL_R5_LIVE_TRIAL.md](DL_R5_LIVE_TRIAL.md)的新live随机单次干预及处理前CPU shadow，
+工程实施/有限CPU验收中、未真实N1M/GPU执行；主固定预测比较另加二次基底残差对照排除有限重复列解释。
+资源计划只sv3物理4一张A100串行/完整入口2小时上限，5–7不预占；CPU审计0GPU。
+完整预验证总GPU小时仍未定，不能把单次2小时当总预算或完成承诺；原R4失败/M2和完整目标active保持。
+17:16:52北京时间fresh XML+pmon确认sv3物理4–7均无进程/0%/各4MiB，当前无本项目GPU作业；
+这是当时快照，启动前仍重新核查。最终代码SHA/同步以本轮Git收据为准。
+
 **DL普通replay内容核验采用（2026-10-15）**：[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md) 是独立0GPU前置，固定原N1M的1280NPZ/16链/1M计数，双SHA/真实CRC/严格schema与stepid，不用官方loader静默跳坏chunk。小fixture5项已过，实际buffer未执行；只核历史持久化cache，不能恢复online queue/RNG/环境。与此同时下一native路线正形成live随机一次干预方案，保留H100和原H1但解决处理前信号/随机化识别，不把固定控制库当主终点替身；参数和实现尚未封口/未新GPU。原R4失败/M2保持。
 
 **Git同步补记（2026-10-15 16:19:46）**：网络恢复，本轮代码及结果报告已push并ls-remote核验研究分支`codex/dl-prevalidation`到df65c8db64db95cc8990ac48f229e59502024db2；GitHub/main仍595e982f1a3939775879728009e2105ee516e86d，未合main。本条后的收尾提交仅文档同步说明；实际CPU tested仍4ddad2e、生产仍5ce，各服务器checkout不移动。下方16:16推送失败是当时历史，不能当作本轮仍未同步的结论。
