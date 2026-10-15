@@ -30,6 +30,9 @@ C原8d63于22:28:41在sv3物理5按原128批/3600秒启动，无累计学习，�
 23:49:32原attempt02已工程失败：128采集后首控制数组PRNGKey被官方全局transfer_guard拒绝隐式host→device，
 actualparent1/3125.099秒、rootSSHexit1/3126.812秒；无完整generation/final闭包或控制资格，不能作科研阴性。
 仅局部诊断传输许可修复待验，原科学/样本/预算不改，新完整attempt03不补拼旧128记录。
+后续实际/tested abefbb3已通过fresh Linux四模块41项/无skip，原guard下旧故障重现、局部修复结果及恢复成立，
+rootSSHexit0/99.204秒/0GPU；00:15:02在同GPU5启动新完整attempt03，128/3600秒不变。
+00:18:19原parent/worker身份存活已核，尚无完整结果；这是实际运行进度，不是方法或控制资格支持。
 
 **正常当前任务量标签的实际执行采用（Agent决定，2026-10-15）**：
 在已成功完整prior277c物理审计和新labels确定提交clean Linux有限验收后，采用一次固定512/32family、
@@ -50,6 +53,8 @@ SSHexit0/48.078秒/300秒/0GPU，256源码与七norm闭包一致；
 sv3物理GPU4独占/whole12600秒，在原C完整工程退场与fresh资源核查后启动；
 原GPU5保留C必要重跑，两对象可独立并行。该12600是有限上限而非ETA/足够保证，不采用T或新学习预算。
 见[实际采用与验收边界](DL_NORMAL_REFERENCE0_EXECUTION.md)，当前尚未声称完整真实特征或方法阳性。
+该入口于2026-10-16 00:16:49实际启动，原parent539679/start410338164在00:18:19真实存活、CPU认证中；
+actual/tested2a15c91、物理4/固定512/12600秒、原source/标签/数学不改，完整结果和实际外层退出仍待验收。
 
 **共同历史特征工程完成（2026-10-15 21:37快照）**：
 [DL-normal-features-r1](DL_NORMAL_FEATURE_ENGINEERING.md)只实现冻结正常条件历史接口，

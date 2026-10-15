@@ -1,5 +1,20 @@
 # 项目状态
 
+**2026-10-16 00:21:45实际模型路径进展**：原C parent538626/worker538639与reference0 parent539679/
+worker542278均真实存活、原身份匹配。C initial已存在、0record；reference0 source_index/initial已存在，
+5/512 unit complete文件，worker start410358034；均无generation/终态/全图验收。
+未读中间科学值，4/5仍为各自对象保留；数量/文件存在不能替代完整readonly封口或方法结论。
+
+**2026-10-16 00:18:19两项已启动/尚未验收**：C actual/tested abefbb3 四模块Linux41项全过/无skip、
+whole98.490秒/300秒、rootSSHexit0/99.204秒/0GPU；[工程记录](DL_NM1_ENGINEERING.md)。
+00:15:02新C attempt03 parent538626/start410327282、worker538639/start410327396，GPU5/原128/3600秒，handle85427；
+00:16:49 reference0 actual/tested2a15c91、parent539679/start410338164，GPU4/固定512/12600秒，handle37919。
+00:18:19两原parent及Cworker真实存活/身份匹配，C无initial/record，reference0正CPU认证、无source_index/worker；
+都无generation/终态，不以启动当工程或科研验收。GPU4/5分别保留，6/7未用。
+00:16:32–33资源快照物理4–7无可见GPU进程/0MiB，尚无CUDA context不代表GPU4/5可共享。
+详[实际C](DL_NM1_CAL_RESULTS.md)、[reference0采用与实启](DL_NORMAL_REFERENCE0_EXECUTION.md)；继续原两handle观察。
+完整goal仍active；CPU读出入口正在本机工程准备，不拟合真实标签或改冻结数学/T协议。
+
 **2026-10-15 23:49:32 C attempt02工程失败/已释放GPU5**：actual47db原parent exit1/3125.098555552秒，
 rootSSHexit1/3126.812秒/3600秒；128采集后首control_arrays在PRNGKey隐式host→device处被原disallow拒绝。
 无generation/final闭包或独审，非方法阴性；失败证据见[实际C记录](DL_NM1_CAL_RESULTS.md)。

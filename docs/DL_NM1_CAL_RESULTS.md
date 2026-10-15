@@ -1,6 +1,6 @@
 # DL-NM1 C 实际执行与资源记录
 
-2026-10-15，版本DL-NM1-cal-r1，状态：**attempt01/02均工程失败并封存；尚无完整校准或独审**。
+2026-10-16，版本DL-NM1-cal-r1，状态：**新attempt03运行中；attempt01/02失败已封存，尚无完整校准或独审**。
 这是Agent在既有完整预验证授权内采用的128批cal-only，不是累计学习或正式实验；
 后续T4096/整阶段6GPUh仍为建议，尚未采用。
 
@@ -168,3 +168,32 @@ host→device scalar传输触发原JAX全局transfer_guard=disallow，退出码1
 同本机父目录真实SSH收据794B SHA `bac876bac788c750d6ceb99fdd6ff42b39625b4fdab9a20641f6874034abb811`，
 SSHlog1384B SHA `8f06dffa2f46e766d1a301df8b93a72e99654efaf63f58a4511ea46e12183241`。
 第二Agent独立核四份rawpins与128连续日志/源码guard设置，未读中间科学值、未重跑NN或服务器步骤。
+
+## 2026-10-16 00:15:02第三次完整尝试
+
+`DL-NM1-control-transfer-r1`实际/测试Git
+`abefbb3f1440cd9c95000a5d7f49c0a560a9a550`已通过fresh clean Linux四模块41项/无skip，
+整入口98.490317038秒/300秒、rootSSHexit0/99.204秒/0GPU；原key/F32/JIT/公式/NN及配置不变，
+仅局部诊断host→device许可，全部guard反例通过。[工程证据](DL_NM1_ENGINEERING.md)与失败两attempt分别保留。
+
+Agent按原授权执行新的完整128批/3600秒、同物理GPU5/UUID797，未续拼attempt02。
+新code `/data/Policy_Discrepancy/dl-nm1-transfer-code-20261015-abefbb3`，
+run `/data/Policy_Discrepancy/runs/dl-nm1-cal-20261015-abefbb3/attempt03/`，
+inputs `/data/Policy_Discrepancy/runs/dl-nm1-cal-inputs-20261015-abefbb3/`。
+外部launcher `7ed44d26b427cbff10f34e73328852c28ef53a7145b39acd49b8920b73773241`，
+保留原15函数AST及3600/3610/原R5 retirement/8d失败核验，额外绑定47db失败原三pins和真实SSHexit1收据，
+仅更新Git/code/run/inputs/attempt03。两个Agent分别核原函数/main差异及metadata反例，无新增阻断。
+新inputs中previous-outer-execution.json为真实原794B/bac876收据，不自造或修改原失败图。
+
+00:13:27–28物理4–7无GPU作业/各0MiB，两个实际代码目录clean，四个旧C原PID均gone。
+00:15:02.539327实际parent538626/PGID538626/start410327282（outer538610）启动，
+实际worker538639/PGID538639/start410327396，原3600秒不改；本机原handle85427持续观察。
+launch60636B rawSHA `2edecf6a7ef7213f754074d8a6092fcac9c53ddbf5f8a2a05da56231d64c802e`，
+resource1905B `c5a86ddfc6d132185dda68e2a815f8188ab701b105abde69e66163190ec18b38`。
+本机metadata `analysis/outputs/dl-prevalidation-launch-20261016/launch-metadata-20261015T161932/`。
+00:18:19原parent/worker均在/proc核实存活及原身份一致，worker正初始化/读入，0record、无initial/generation/终态；
+未读中间科学数值。物理5即使暂无可见CUDA进程仍为此运行保留，不共享。
+另正常reference0在物理4独立执行，不改本C数据/预算；完整校准、控制资格与方法结论仍待实际退出和独审。
+
+00:21:45原C parent/worker仍在/proc核实存活且身份匹配，initial已存在、0record，
+无generation/终态；未读中间科研值，保持同handle85427/原3600秒。

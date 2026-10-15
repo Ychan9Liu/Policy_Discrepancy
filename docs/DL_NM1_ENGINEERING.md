@@ -20,6 +20,29 @@ test25651B `b85782e0013fcb4385f43b2a7dc96c2731ed585cadab8e41a045f12e1ccf83b8`。
 下一确定提交fresh clean Linux四模块/cal真实tiny及控制数组/独立审计联合验收；
 此本机工程证据不是N1M校准验收。修后新attempt03必须完整128/原3600秒，旧128记录不拼接。
 
+**确定提交Linux实证，2026-10-16**：actual/tested
+`abefbb3f1440cd9c95000a5d7f49c0a560a9a550`，fresh clean
+`/data/Policy_Discrepancy/dl-nm1-transfer-code-20261015-abefbb3`；四模块41项全过、无skip，
+六个真实controls/tiny/Linux descendant/Threefry用例均ok。
+unittest97.173秒、test进程97.362932281秒、整入口98.490317038秒/300秒，
+root实际SSHexit0/99.204秒，0GPU/owned及auditor registry空。
+256份源码+五额外norm前后同真实Git blobs/working bytes且最终Git clean；第二Agent独立核全部镜像/blob与日志。
+实际结果`/data/Policy_Discrepancy/runs/dl-nm1-transfer-cpu-20261015-abefbb3/attempt01/`，
+本机小镜像`analysis/outputs/dl-nm1-transfer-cpu-abefbb3/`。
+terminal raw `c27bf7c9d129080454c844775f46baf3cbf4c71c61485994aad9913ff14461cb`，
+testlog `258b52f2790f75153683ba210124e24d1a067ec8ba7bcbc39dca1a562df07fe9`，
+source-binding `a6437cf92ce680114eebaf339b94bf975b59213caeccd0c98fcb4dfe242aaddf`，
+root成功SSH receipt `b0dbec97cc06448cffb71d8577a5663b8d4060c5ee70ae88eb296518a7a64fb7`。
+CPU controller `31c0dddf7dd6d76a875669f6d05ae4e6fb36389b0c980604f9065d9e3c01f259`，
+原helper ec3e不变、bundle `2314e2d21641beb809a6b2a7045c3df3a50cd4d9653316902e1659d957532673`。
+
+此前SCP断连导致一次SSH exit2/.922秒、launcher文件尚不存在，没有clone/测试开始；
+失败收据另存`ssh-terminal-deployment-failure.json`（raw ffed9062...），不当作tests失败或重跑。
+原目录实核为空后恢复部署；root在实际测试前核远端四份raw SHA吻合，00:13:27–28另一次
+只读核查再次确认完整四pins及两个实际code clean，证据见
+`analysis/outputs/dl-prevalidation-launch-20261016/resources-20261015T161342839714/`。
+这个复核不改变前一次检查的发生时间，也不把独立Agent的镜像复核说成第二次远端执行。
+
 ## 2026-10-15：确定修复版clean Linux验收
 
 actual/tested `47db6265311bc04dbdcc79439842eb8b6e707097`，新clean

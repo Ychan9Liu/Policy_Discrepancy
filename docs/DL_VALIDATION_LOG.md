@@ -1,5 +1,23 @@
 # DL 验证日志与证据索引
 
+## 修复版确定提交Linux通过及两项真实启动（2026-10-16 00:15–00:18）
+
+actual/tested abefbb3f1440cd9c95000a5d7f49c0a560a9a550 四模块41项/无skip，六个真实guard/tiny/
+Linux清理/Threefry用例ok；unittest97.173、whole98.490317038秒/300、真实SSHexit0/99.204秒/0GPU。
+256源码+五norm前后同Gitblob、workingbytes/clean/owned闭包成立，独立Agent仅复核本机镜像/Gitblobs。
+此前部署SCP断连导致一次launcher不存在的SSHexit2/.922秒，无clone/tests，单独失败证据保留；
+恢复部署并核四份远端rawpins后才一次实际验收，00:13只读再次核四pins一致。细节见[工程记录](DL_NM1_ENGINEERING.md)。
+
+00:13:27–28物理4–7无作业/0MiB、旧C四PID gone、actual代码abef/2a均clean。
+00:15:02 C attempt03 parent538626/start410327282/worker538639/start410327396，物理5/128/3600秒/handle85427；
+00:16:49 reference0 parent539679/start410338164，物理4/512/12600秒/handle37919，未采用训练/T。
+00:18:19真实/proc原身份均活跃，C初始化/0record，reference0来源CPU认证/无worker，均无generation/终态。
+未读中间科学值，4/5为本对象保留、6/7未用，尚无GPU显存峰或方法结论。
+新启动metadata/rawpins/配置及范围分别见[实际C](DL_NM1_CAL_RESULTS.md)、[reference0](DL_NORMAL_REFERENCE0_EXECUTION.md)。
+当前任务继续原两handle直至权威退出/全图/独审，不以本日志或新代码存在替代验收。
+00:21:45两原parent与两个worker实际存活/身份匹配，C initial已存在/0record，reference0
+source_index/initial及5unit complete文件；无任一generation/终态，未读中间科学值。
+
 ## C第二次失败与正常reference0执行采用（2026-10-15 23:49–23:55）
 
 原C47db attempt02 parent1/3125.098555552秒/原3600，实际SSHexit1/3126.812秒，handle22265关闭。

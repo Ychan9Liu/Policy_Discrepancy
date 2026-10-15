@@ -77,3 +77,33 @@ root先验证实际外层成功退出、whole wall、原父子及全部owned ses
 任何资源冲突/错误键/carry断链/缺件/非有限/模型身份或逐位oracle失败均拒绝，保留原证据。
 首选在完整特征验收后按已冻结数学程序拟合reference0读出，保留全部h/hq/hp与两标签绝对风险；
 它回答固定读出族的可访问性，后续压缩和保护作用仍需独立学习、匹配对照及native行为证据。
+
+## 2026-10-16实际启动记录：运行中，尚未验收
+
+root与独立Agent已逐项核controller源码/真实2a接口/labels真实metadata与输入pins，无剩余静态阻断；
+本机compile/12个纯schema负例，不冒称完整N1M或真实512执行已通过。
+已核并实际部署外部launcher34350B rawSHA
+`0a2e500cc5bc6b10647f093287e6f30d3b8662c2e3bf7767c718c9d7955ed7f6`，
+execution-plan533B `4b1d2e6517d1b987e8a35dee247bc42a2464787e18e8d78a9f4fc9955efafcd1`，
+generic helper34052B `3f0b8b025128d3280df2120f3987a6f7ad8806054fab5ec2e57b6decfeca28f1`。
+helper只从已核rawbuffer加载通用函数、共享原12600 deadline，不调用C-specific main或资格函数。
+其pidfd/fork→setsid清理已有实际Linux20秒fixture的13leaf/6继承组证据，范围不是任意daemon隔离保证。
+
+00:16:32–33物理4–7均无可见GPU进程/0MiB，两个实际源码目录clean；
+物理5已留给C新尝试（尚未建立CUDA context不表示可共享），本入口仅取物理4。
+外部controller started_at为00:16:49.694137；实际feature parent539679/PGID=SID539679/start410338164，
+outer539664；actual/tested仍2a15c91，本机原handle37919持续观察，整个12600秒不变。
+launch48966B SHA `bff61c4f7fa1e2870fc222f6da6239e642126b6395593b63a6d3616ec0b51d7e`，
+resource19588B `f9a3e2bc52ce38281cf3745e24f49a2277b5e519cae59fa0f1a337906d4045c1`；
+完整metadata在本机`analysis/outputs/dl-prevalidation-launch-20261016/launch-metadata-20261015T161932/`。
+00:18:19原parent在/proc身份匹配/存活，正CPU来源认证，无source_index、GPU worker或首unit，
+未读取中间特征/科学数值。这不是完整特征/吞吐/显存/方法验收，GPU4仍保留至本对象权威退出。
+
+实际外层observer在真正SSH完成后才写receipt，严格采用exactargv/实际2a/GPU4/returncode/whole wall，
+强制成功为exit0、external_failure=null、elapsed≤12600、actual_outer_complete_within12600=true，
+再绑定controller terminal的完整path/bytes/rawSHA。12630只用于失败观察，不能延长成功预算。
+该receipt当前尚未产生；不能用内部supervisor或external terminal自证其未来最终退出。
+
+00:21:45只读观察：原parent539679/worker542278（PGID=SID542278/start410358034）均真实存活且身份匹配，
+source_index及initial已存在，5个unit complete文件；无worker_complete/generation/终态。
+这超出了单纯CPU mock接口，但未作完整单元/全图或科学验收，不从数量推断q信息或方法有效。
