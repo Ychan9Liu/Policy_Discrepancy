@@ -72,6 +72,11 @@ source-binding.json SHA `324955539bbdfd08494bda93314f26a02a5bca4b5da141cf1ab62d3
 terminal.json SHA `8db61eb55a4fc9c75724a5f317c00131c73ed0070917c93f5fa124e7442e044e`。
 原1584 GPU执行checkout未改，CPU测试未读N1M/R5科学值。后续报告提交只记文档，不能冒充此测试SHA。
 
+**Git同步补证**：研究分支已push并ls-remote核验到b6f2ea9e0a233438225c6b5d09480ba25bd37915，
+包括510339实际代码和仅文档结果；main仍595e982f1a3939775879728009e2105ee516e86d，未合并。
+此前连接失败保留为历史，不再当当前未同步。后续文档收尾SHA另核，实际代码只部署sv3新CPU隔离目录，
+没有更新正在运行的1584或canonical/sv1/sv2。
+
 ## cal应保留的前向差异与解释限制
 
 独立源码审查后明确：C必须保存并比较B/N实际生产核心的完整replay outputs。

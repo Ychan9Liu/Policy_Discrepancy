@@ -1,5 +1,13 @@
 # 项目状态
 
+**2026-10-15 19:58:30服务器快照 / Git同步补证**：原R5 parent341486/start408554660仍活跃，
+128unit/8family完整、cal封口存在，无全生成或终态；未读cal系数/D/e/Y。
+物理5处于family切换（1MiB、当时无GPU进程），不代表整个任务释放资源；4有未知370131 C+G，6–7无可见作业。
+GPU5仍留给原12600秒R5，不启动新C或并行共享。最新收据watch-20261015T115830833197.json/XML。
+网络恢复并ls-remote确认研究分支codex/dl-prevalidation已到b6f2ea9e0a233438225c6b5d09480ba25bd37915，
+main仍595e982f1a3939775879728009e2105ee516e86d，未合入main；此前推送失败是历史状态。
+本段后续仅同步收据文档，最终SHA以Git终点核验为准，NM1实际tested510339/R5实际1584不变。
+
 **2026-10-15 NM1 cal前置进展**：仅C已由Agent采用为DL-NM1-cal-r1，
 normal_only默认False/显式True、只读普通batch、独立参考梯度与原_train完整scratch接口及有限CPU验证完成；
 [工程范围](DL_NM1_ENGINEERING.md)不是真实N1M cal，完整128 runner/CPU独审仍待实现。
