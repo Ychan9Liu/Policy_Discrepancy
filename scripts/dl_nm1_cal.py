@@ -435,6 +435,16 @@ def cache_seal(cache):
       metrics_sha256=tree_digest(cache._replay.metrics), pending=cache._pending)
 
 
+def verified_state(agent):
+  """Keep official save's NumPy parameters and Python integer counters intact."""
+  from embodied.run.protocol_v1 import parameter_digest
+  from scripts.dl_reset_learning import tree_digest
+  saved = agent.save()
+  require(tree_digest(saved) == FULL_STATE and saved['counters'] == COUNTERS and parameter_digest(agent) == PARAMS and
+      int(saved['params']['opt/step/value']) == STEP, 'Loaded full state/params/counters differ')
+  return saved
+
+
 def load_variants(args):
   import importlib.metadata
   import pickle
@@ -463,9 +473,7 @@ def load_variants(args):
         actual.batch_size == BATCH and actual.batch_length == LENGTH and actual.replay_context == CONTEXT,
         'Actual normal training config differs')
     agent = agent_from_spaces(actual); agent.load(payload)
-    saved = host(agent.save())
-    require(tree_digest(saved) == FULL_STATE and saved['counters'] == COUNTERS and parameter_digest(agent) == PARAMS and
-        int(saved['params']['opt/step/value']) == STEP, 'Loaded full state/params/counters differ')
+    saved = verified_state(agent)
     ca = agent.init_train(BATCH)
     if carry is None: carry = ca
     else: require(tree_digest(host(ca)) == tree_digest(host(carry)), 'Configured initial carries differ')
@@ -663,12 +671,9 @@ def worker(args):
   write_json(root/'summary.json',summary)
   after=cache_seal(cache);require(after == before and cache._pending is None,'Read-only private cache changed')
   final_seals={}
-  from embodied.run.protocol_v1 import parameter_digest
   for name,probe in variants.items():
-    probe.fence(full=True);state=host(probe.agent.save())
-    require(tree_digest(state) == FULL_STATE,'Original full state changed')
+    probe.fence(full=True);verified_state(probe.agent)
     final_seals[name]=dict(seals[name],pending_clean=True,source_buffers_unchanged=True)
-    require(parameter_digest(probe.agent) == PARAMS,'Original NN params changed')
   source_after=replay.inventory.snapshot(Path(args.replay_directory))
   require(source_after == cache._report['before_inventory'],'Original full source files changed')
   inputs_after=input_pins(args);sources_after=source_binding(args.expected_git)

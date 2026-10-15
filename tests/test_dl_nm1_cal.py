@@ -209,6 +209,9 @@ assert not any(n.split('.')[0] in ('jax','numpy','mujoco','dm_control','OpenGL')
     self.assertTrue(result['source_unchanged'])
     self.assertTrue(result['real_producer_record'])
     self.assertTrue(result['repeat_tamper_rejected'])
+    self.assertTrue(result['official_save_integer_counters_preserved'])
+    self.assertTrue(result['full_tree_host_changes_typed_identity'])
+    self.assertTrue(result['counter_type_value_and_param_tamper_rejected'])
     self.assertFalse(result['real_N1M_calibration'])
 
   def run_fixture(self,option):
@@ -261,8 +264,9 @@ def tiny_fixture(output):
   import jax
   from ruamel.yaml import YAML
   from dreamerv3.agent import Agent
-  from scripts.dl_nm1_counterfactual import Counterfactual
+  from scripts.dl_nm1_counterfactual import Counterfactual, host
   from scripts.dl_reset_learning import tree_digest
+  from embodied.run.protocol_v1 import parameter_digest
   cfg=elements.Config(YAML(typ='safe').load((ROOT/'dreamerv3/configs.yaml').read_text())['defaults'])
   presets=YAML(typ='safe').load((ROOT/'dreamerv3/configs.yaml').read_text())
   cfg=cfg.update(presets['debug'])
@@ -295,6 +299,32 @@ def tiny_fixture(output):
   variants={'B':Counterfactual(b)}
   for name,mode,rho in (('rho0','dtlatch',0.),('N','dtlatch',.5)):
     branch=agent(name,mode,rho);branch.load(initial);variants[name]=Counterfactual(branch)
+  # Exercise the shared production load/final identity path with actual public
+  # save/load trees. Fixture identities replace N1M pins only in this test.
+  with mock.patch.object(p,'FULL_STATE',digest),mock.patch.object(p,'PARAMS',parameter_digest(b)), \
+      mock.patch.object(p,'COUNTERS',initial['counters']), \
+      mock.patch.object(p,'STEP',int(initial['params']['opt/step/value'])):
+    for probe in variants.values():
+      saved=p.verified_state(probe.agent)
+      assert tree_digest(saved) == digest
+      assert all(type(value) is int for value in saved['counters'].values())
+      assert json.loads(json.dumps(saved['counters'])) == initial['counters']
+    converted=host(initial)
+    assert all(type(value) is np.ndarray and value.shape == () for value in converted['counters'].values())
+    assert tree_digest(converted) != digest
+    for case in ('counter_type','counter_value','parameter'):
+      changed={name:dict(value) for name,value in initial.items()}
+      if case == 'counter_type':changed['counters']['updates']=np.asarray(changed['counters']['updates'])
+      elif case == 'counter_value':changed['counters']['updates']+=1
+      else:
+        key=next(k for k in changed['params'] if k.startswith('enc/'))
+        value=changed['params'][key].copy()
+        value.flat[0]=np.nextafter(value.flat[0],np.float32(np.inf))
+        changed['params'][key]=value
+      with mock.patch.object(b,'save',return_value=changed):
+        try:p.verified_state(b)
+        except ValueError as error:assert 'Loaded full state' in str(error)
+        else:raise AssertionError('Typed full-state identity accepted '+case)
   carry=b.init_train(2)
   with mock.patch.object(p,'BATCH',2),mock.patch.object(p,'LENGTH',4),mock.patch.object(p,'STEP',1):
     signal,effects,forward=p.collect_batch(raw,variants,carry,0,chains,Path(output).parent/'batch_000')
@@ -327,7 +357,9 @@ def tiny_fixture(output):
     probe.fence(full=True);assert tree_digest(probe.agent.save()) == digest
   assert all(device.platform == 'cpu' for device in jax.devices())
   Path(output).write_text(json.dumps(dict(source_unchanged=True,real_producer_record=True,
-      repeat_tamper_rejected=True,real_N1M_calibration=False,scope='one generated B2/T4 F32 scratch batch')))
+      repeat_tamper_rejected=True,official_save_integer_counters_preserved=True,
+      full_tree_host_changes_typed_identity=True,counter_type_value_and_param_tamper_rejected=True,
+      real_N1M_calibration=False,scope='one generated B2/T4 F32 scratch batch')))
   del dll
 
 

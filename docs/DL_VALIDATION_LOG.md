@@ -1,5 +1,20 @@
 # DL 验证日志与证据索引
 
+## C首次真实加载失败及正常标签入口采用（2026-10-15 22:34–22:40）
+
+原actual8d63 C/attempt01真实parent exit1/326.670301574秒、SSHexit1/328.578秒，owned清理true。
+无generation/首反事实batch；完整失败和raw pins见[实际记录](DL_NM1_CAL_RESULTS.md)。
+两个独立审查/CPU重现确认host(save)改变Python int counter类型，破坏full typed hash；
+必要修复`DL-NM1-state-serialization-r1`保持官方save完整树，原FULL_STATE/PARAMS/COUNTERS门不变。
+22:35:06–11完整XML/pmon物理4–7无进程/0MiB，GPU5已释放，旧handle94939结束。
+修复需本机/确定提交Linux后新attempt；不是方法阴性，不延原失败预算或拼partial。
+
+正常labels5+官方query7本机12项全过/无skip/2.062秒，源码前后SHA不变，
+实际ancestor fef52c4加当时未提交labels，不能冒充已提交实际版本。真generated64步单record和mock512闭包区分，
+见[工程证据](DL_NORMAL_LABEL_ENGINEERING.md)。Agent采用该工程通过后的单次完整CPU900入口，
+source/index/512prefix/末遍认证共用预算，原source完整性/fixed8fit24held与所有五份authority pins不变，
+不看科研正负筛源、不NN/render/学习/GPU。实际新Git、Linux验收、外层实际退出及完整标签闭包待执行。
+
 ## R5修复版完整独审及资源答复（2026-10-15 22:21–22:28）
 
 actual/tested `277c18001d353d9101a3622959351d3994699adb`，十模块77项Linux有限CPU全过，

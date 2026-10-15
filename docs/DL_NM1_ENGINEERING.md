@@ -1,5 +1,23 @@
 # DL-NM1 cal-only工程前置
 
+## 2026-10-15 22:34：首次真实C失败，完整save类型修复
+
+原actual8d63首次真实C在postload typed hash拒绝，完整外层exit1/326.670301574秒，尚无首batch或校准。
+原142项有限验收只覆盖tiny collect_batch，不覆盖完整真实load_variants身份路径。
+两个独立审查与CPU最小重现确认：对已经host的官方Agent.save整树再次调用host将Python int counters
+变为0维ndarray，破坏原精确typed hash；末尾原态fence同样受影响。
+`DL-NM1-state-serialization-r1`仅修两处save边界，原完整state/params/counter门不放宽；
+修后仍须核真实params等所有条件，不能由and第一条件失败推断其它条件已过。
+失败证据/版本/资源释放及后续新attempt条件见[实际执行记录](DL_NM1_CAL_RESULTS.md)。
+
+修复本机有限CPU：`python -m unittest tests.test_dl_nm1_cal -v`，10项9pass/1原Linux-session skip，
+29.657秒/exit0；真实tiny官方save/load经过生产共用verified_state，原typed hash和JSON整数保留，
+整树host反例、counter类型/值和参数改动均拒绝，原真实scratch/control/core tests保留。
+实际working producer rawSHA `f27976afeb625ab58e6f273c30cb57b2574317f633025d567a800c4027753da9`，
+test rawSHA `e4ea4236797fc1e280c80674fb9c5264984c6fb6ddca298563d2177cd29e6ad2`；
+以上尚不是确定提交或真实N1M修复验收。下一新clean Linux整合24模块，采用600秒整体CPU工程上限，
+依据旧20模块264秒及新增标签/身份回归工作量事前留出余量；不改变真实C3600秒/独审900秒。
+
 ## 2026-10-15：C 入口通过 CPU 验收，真实 C 未运行
 
 `scripts/dl_nm1_cal.py` 与 `analysis/dl_nm1_cal_audit.py` 已实现，独立源码审查无剩余阻断，

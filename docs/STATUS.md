@@ -1,5 +1,14 @@
 # 项目状态
 
+**2026-10-15 22:35首次C工程失败/已清理**：actual8d63/attempt01于22:34:08真实parent exit1、
+326.670301574秒/3600秒，SSH exit1/328.578秒，owned组已清理、无generation。
+真实CUDA模型初始化后首B postload完整typed hash失败，尚无首反事实batch或cal科学结果。
+两个独立检查确认整树host(save)把原Python int计数器变为0维array，充分解释第一个hash门失败；
+params等剩余真实身份仍须修后严格核验。`DL-NM1-state-serialization-r1`不改变任何原身份门或科学配置。
+22:35:06–11 fresh sv3物理4–7无进程/各0MiB，GPU5已释放；旧handle94939已终态。
+继续当前chat完成修复/确定提交CPU验收，再在同物理5/原3600秒新attempt重跑；T未采用。
+见[失败证据与验收范围](DL_NM1_CAL_RESULTS.md)。正常当前标签接口本机12项通过，真实执行另见其采用条件。
+
 **2026-10-15 22:31 C已启动/尚未验收**：原actual/tested
 `8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0`的cal-only于22:28:41.740151启动，
 parent467533/PGID=SID467533/start409689202，sv3物理5单独A10080，无EGL。

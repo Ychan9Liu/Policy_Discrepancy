@@ -1,6 +1,6 @@
 # DL-NM1 C 实际执行与资源记录
 
-2026-10-15，版本DL-NM1-cal-r1，状态：**运行中，尚未完整生成或独审**。
+2026-10-15，版本DL-NM1-cal-r1，状态：**首次尝试工程失败，未完整生成或独审**。
 这是Agent在既有完整预验证授权内采用的128批cal-only，不是累计学习或正式实验；
 后续T4096/整阶段6GPUh仍为建议，尚未采用。
 
@@ -66,9 +66,40 @@ T的6GPUh只是未采用的整阶段建议，不是每臂6h，不是成功ETA或
 
 ## 当前验收边界与下一步
 
-原8d63工程测试和前驱完整性已通过；**C仍运行中，尚未证明真实N1M干预有效、对照匹配或方法有效**。
-当前chat继续同一handle，完整外层真实退出/终态/清理和完整128产物后才启动900秒CPU独审；
+原8d63有限工程测试和前驱完整性已通过；真实C首次尝试失败，尚未证明真实N1M干预有效、对照匹配或方法有效。
+当前chat保留首次失败、完成下述修复和确定提交Linux验收后，在相同物理5/原3600秒/原科学配置下
+使用新的attempt标识从头重跑；不恢复或补齐原partial。完整外层真实退出/终态/清理和完整128产物后才启动900秒CPU独审；
 不可仅凭parent returncode0或中间部分批次宣布通过。失败保留新attempt证据，不改门或延时兜底。
 独审分别报告生产真实位移与独立参考梯度，不能把后者叫生产内部逐叶bit-gradient；
 只验证参考S/W/P权重释放，不冒称各臂真实学习位移。T采用前须结合C实测与完整source/native工作量
 核算整体预算，并满足[T解释及对照资格条件](DL_NM1_T_READINESS.md)。goal保持active。
+
+## 22:34:08首次尝试工程失败及必要修复
+
+原8d63/attempt01外层actual SSH exit1/328.578秒；实际parent exit1/326.670301574秒，
+external_failure=null表示监督器没有额外故障，不表示worker成功。supervisor worker_returncode=1、
+failure=`C worker failed/incomplete`，generation_complete不存在，原parent与owned组已结束/清理。
+22:35:06–11 fresh完整XML/pmon：物理4–7均无进程/0MiB，GPU5已释放。
+旧handle94939现已终态，不再对它续跑或重复启动。
+
+worker已完成replay导入和计划生成、初始化真实size50m CUDA Agent；在第一个B的postload完整身份门失败，
+尚未执行init_train/首批collect_batch或128校准，不能将此工程失败写成方法阴性。
+两个独立源码审查与纯CPU最小重现确认一个充分的表示错误：
+官方`Agent.save()`已device_get所有params并将五个counters显式转为Python int；
+`host(agent.save())`再次将这些int变为零维ndarray。`tree_digest`有意区分两种类型，
+所以数值完全相等、参数子树及parameter_digest完全相同仍会破坏完整typed hash。
+同样错误也在末尾原态fence，且零维counter随后不能直接写JSON。
+
+必要修复标记`DL-NM1-state-serialization-r1`：仅在两处完整save身份边界保留官方树及原标量类型，
+共享精确身份核验；不改FULL_STATE/PARAMS/COUNTERS/STEP、共享host/tree_digest、数据、NN、配置或科学门。
+旧aggregate检查在第一个条件短路，真实参数哈希等剩余条件尚未被该失败证据证明；
+修复后须仍逐项严格认证，若再失败则另存证据，不能以已定位这一错误声称其余身份都已通过。
+旧142项有限测试未走真实load_variants入口，新增回归必须覆盖官方tiny save/load身份及拒绝counter类型/值、参数修改。
+修复本机测试、确定提交clean Linux补验及新的实际版本/启动尚待完成。
+
+原失败完整目录保留；小镜像`analysis/outputs/dl-nm1-cal-8d63fff/failed-attempt01/`。
+outer terminal20556字节，SHA `f98157c6247fd7c31d8b13c425209de83b8259fbc848d38781873f8fee33f49f`；
+supervisor SHA `4a3cbc689648938b00b81742ede3cb7902130a9c1b8d6984ad85ffa428f8daca`；
+worker.log SHA `a6b47a27d7d747aaf3ca473f5c782efaff2b7bb14414f701f7b41ca36b0fd090`；
+main.log SHA `0bf6745dc082d88025599451631c156909939b85fbf92c40758401cd6e89fcec`。
+实际runtime_before未产生，不能冒称其完整CUDA运行后核验已通过；真实模型初始化日志仅证明到达该加载路径。

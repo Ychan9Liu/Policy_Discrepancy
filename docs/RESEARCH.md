@@ -19,6 +19,16 @@ highD主检验DKe相对DK的MSE改善0.04284087923030705，95%CI [-0.01478390528
 当前均是有限CPU接口，未据此建立真实source/N1M读出或保护/性能结论。
 C原8d63于22:28:41在sv3物理5按原128批/3600秒启动，无累计学习，尚未完成/独审；
 不是R5信号阳性后的学习，也不以R5科研符号更换source，见[实际C记录](DL_NM1_CAL_RESULTS.md)。
+22:34:08该C首次尝试已工程失败，未开始首反事实batch；postload身份检查中save的Python计数器
+被不必要的整树host转为array，正修复保存表示，原身份/科学门不改，不能视为方法阴性。
+
+**正常当前任务量标签的实际执行采用（Agent决定，2026-10-15）**：
+在已成功完整prior277c物理审计和新labels确定提交clean Linux有限验收后，采用一次固定512/32family、
+8fit/24held的完整CPU标签入口，整体900秒，含source/index/全prefix连续官方复放/重新认证/落盘。
+不另加source-index预算、不调用NN/render、不用D/e/Y或结果筛源；不完整即失败封存，不拼partial。
+这是必要读出目标的工程准备，不是新独立blind数据或策略关键性真值；主标签是torso-local velocity_x，
+upright为辅助，来源/模型/当前快照的完整exact绑定与readonly须全部成立。
+此采用不激活GPU提特征、T4096/6h或任何学习/性能结论，详[标签工程范围](DL_NORMAL_LABEL_ENGINEERING.md)。
 
 **共同历史特征工程完成（2026-10-15 21:37快照）**：
 [DL-normal-features-r1](DL_NORMAL_FEATURE_ENGINEERING.md)只实现冻结正常条件历史接口，
