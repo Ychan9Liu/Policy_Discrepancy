@@ -143,6 +143,8 @@ def owned_output(command):
   finally:
     if own_group: cleanup(child)
     elif child.poll() is None: child.kill(); child.wait(timeout=5)
+    for pipe in (child.stdout,child.stderr):
+      if pipe is not None: pipe.close()
 
 
 def git_binding(expected):

@@ -105,6 +105,8 @@ def owned_output(command):
       except ProcessLookupError: pass
     elif child.poll() is None: child.kill()
     child.wait(timeout=5); OWNED.discard(child.pid)
+    for pipe in (child.stdout,child.stderr):
+      if pipe is not None: pipe.close()
 
 
 def contained(root, relative):

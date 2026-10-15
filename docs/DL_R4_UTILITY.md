@@ -65,3 +65,5 @@ t仅线性协变量，不排除e代理非线性时间、轨迹质量或阶段；
 Windows六组首轮50项49通过/1 Linux进程组skip，23.726秒；独审新增静态模型身份反例后，最终独审10项单独8.288秒全过（此前全组含9项独审）。真实tiny BF16/实际CPU物理与stub边界如上，不是N1M实际验收。四模块Agent交叉审查已修复F32/F64、观测标量容器、trusted-pickle hash图、bundle输入来源和阶段期限；尚需确定提交Linux全组验收。
 
 2026-10-15 14:58:09北京时间，sv3输入目录 `/data/Policy_Discrepancy/runs/dl-r4-utility-inputs-20261015-0655/` 的checkpoint513050093字节、config4927字节均与上述原SHA匹配，`transfer_verified.json`保存收据；仅复制/hash，未解码或模型执行。15:01:16 XML+pmon确认sv3 GPU4–7各0MiB/无作业，0–2未知作业未干预；这只是准备快照，启动前须重新核查。canonical checkout仍d9be5574878d2c3f117cc6667be844f9a527eb84，没有服务器源码修改。
+
+确定提交 `d61d8ae45b380dd4e54907e5669ce3cb731749f3` 在 sv3 隔离clean checkout的51项Linux检查全部通过32.629秒，pip check0，完整检查34.724秒/0GPU。真实tiny及CPU fixture范围不变。超时反例的两个管道ResourceWarning通过显式close修复，不改变科学语义；修复版确定SHA及相关复验另记录。d61d8ae已推研究分支，main仍595e982f1a3939775879728009e2105ee516e86d；未开始真实GPU诊断。
