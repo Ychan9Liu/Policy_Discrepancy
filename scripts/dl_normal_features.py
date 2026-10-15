@@ -1,9 +1,10 @@
 """Frozen normal-history features; no source loader, runner or GPU authority.
 
 The caller authenticates RGB/raw histories and source keys. This adapter owns
-its newly reset posterior carry. Each step checks the unchanged public policy
-on that same conditional input BEFORE replacing only its outgoing previous
-action with the supplied source raw. This is not a native closed-loop rollout.
+its newly reset posterior carry. Each frame checks the unchanged public policy
+on that same conditional input BEFORE any supplied source-raw override. A final
+feature-only observation needs no outgoing source raw and permits only finish.
+This is not a native closed-loop rollout.
 No checkpoint, source file, environment, label or readout is opened here.
 """
 import contextlib
@@ -15,7 +16,7 @@ import numpy as np
 from scripts.dl_reset_features import counters, host_copy
 from scripts.dl_reset_learning import tree_digest
 
-VERSION = 'DL-normal-features-r1'
+VERSION = 'DL-normal-features-r2'
 KEY_NAMESPACE = 'DL_NORMAL_FEATURES_U1'
 EVAL_TAG = 0x4556414C
 OBS_KEYS = ('image', 'reward', 'is_first', 'is_last', 'is_terminal')
@@ -227,7 +228,8 @@ class FrozenNormalFeatures:
         'True public initial carry must be zero')
     self._carry, self._carry_hash = carry, tree_digest(carry)
     self._episode = dict(source_id=source_id,eval_seed=eval_seed,next_counter=0,
-        reset_observation_sha256=tree_digest(obs),history_sha256=tree_digest(dict(obs=obs,root=key)))
+        reset_observation_sha256=tree_digest(obs),history_sha256=tree_digest(dict(obs=obs,root=key)),
+        feature_only_final=False,next_prev_raw_bound=True,source_command_frames=0)
     self._resets += 1
     return dict(version=VERSION,key_namespace=KEY_NAMESPACE,root_key=key,
         initial_carry_sha256=self._carry_hash,source_authenticated=False)
@@ -260,13 +262,14 @@ class FrozenNormalFeatures:
     return dict(public_policy_calls=1,public_key_byte_exact=True,native_raw_byte_exact=True,
         native_full_after_carry_byte_exact=True,counters_restored=True,before_host_override=True)
 
-  def step(self, obs, source_raw, counter, *, source_prev_raw):
-    """One q step on the common external history; public oracle then override."""
+  def _feature_frame(self, obs, counter, source_prev_raw):
+    """Shared native forward/oracle, without binding any outgoing source raw."""
     require(self._episode is not None, 'Reset a new conditional history first')
+    require(not self._episode['feature_only_final'], 'Feature-only final frame permits only finish')
     require(type(counter) is int and counter == self._episode['next_counter'], 'Contiguous source counter required')
     self.fence()
     require(tree_digest(self._carry) == self._carry_hash, 'Own posterior history carry changed')
-    obs, source_raw, source_prev_raw = observation(obs), raw_action(source_raw), raw_action(source_prev_raw)
+    obs, source_prev_raw = observation(obs), raw_action(source_prev_raw)
     require(bool(obs['is_first']) == (counter == 0), 'Exactly the first source frame must be reset')
     require(counter != 0 or tree_digest(obs) == self._episode['reset_observation_sha256'], 'Reset frame changed')
     require(self._carry[3]['action'][0].tobytes() == source_prev_raw.tobytes(), 'Previous source raw/history differs')
@@ -289,32 +292,66 @@ class FrozenNormalFeatures:
     require(h.shape == (self.shape[0],) and str(h.dtype) == 'bfloat16' and
         qlogits.shape == self.shape[1:] and str(qlogits.dtype) == 'bfloat16', 'Actual BF16 h/q geometry differs')
     require(h.tobytes() == native_after[1]['deter'][0].tobytes(), 'Feature h is not the native posterior carry h')
-    history_after = copy.deepcopy(native_after)
-    history_after[3]['action'][0] = source_raw.copy()
-    require(tree_digest(history_after[:3]) == tree_digest(native_after[:3]), 'Host override changed posterior memory')
     require(tree_digest(self._carry) == before_sha, 'Step changed incoming history')
-    self._carry, self._carry_hash = history_after, tree_digest(history_after)
-    self._episode['next_counter'] += 1;self._steps += 1
-    self._episode['history_sha256'] = tree_digest(dict(previous=self._episode['history_sha256'],
-        counter=counter,obs=obs,source_raw=source_raw,source_prev_raw=source_prev_raw,root_key=key))
-    return dict(version=VERSION,key_namespace=KEY_NAMESPACE,source_id=self._episode['source_id'],
+    frame=dict(version=VERSION,key_namespace=KEY_NAMESPACE,source_id=self._episode['source_id'],
         eval_seed=self._episode['eval_seed'],counter=counter,root_key=key,
         latent_key=trace['latent_key'],actor_key=trace['actor_key'],original_nj_seed_calls=2,
         probability_nj_seed_calls=0,h=h.copy(),qlogits=qlogits.copy(),
         plogits=features['plogits'][0].copy(),q_prob=features['q_prob'][0].copy(),
         p_prob=features['p_prob'][0].copy(),native_raw=native_raw,native_after=native_after,
-        history_after=copy.deepcopy(history_after),source_raw=source_raw,source_prev_raw=source_prev_raw,
-        observation_sha256=tree_digest(obs),before_carry_sha256=before_sha,
-        history_after_sha256=self._carry_hash,source_history_sha256=self._episode['history_sha256'],
+        source_prev_raw=source_prev_raw,observation_sha256=tree_digest(obs),before_carry_sha256=before_sha,
         public_oracle=oracle,source_authenticated=False,real_N1M_authenticated=False,
         conditional_common_history=True,native_closed_loop_trajectory=False,fixture_geometry=self.fixture)
+    return obs,frame
+
+  def step(self, obs, source_raw, counter, *, source_prev_raw):
+    """One q step on the common external history; public oracle then override."""
+    source_raw=raw_action(source_raw)
+    obs,frame=self._feature_frame(obs,counter,source_prev_raw)
+    native_after=frame['native_after']
+    history_after = copy.deepcopy(native_after)
+    history_after[3]['action'][0] = source_raw.copy()
+    require(tree_digest(history_after[:3]) == tree_digest(native_after[:3]), 'Host override changed posterior memory')
+    self._carry, self._carry_hash = history_after, tree_digest(history_after)
+    self._episode['next_counter'] += 1;self._steps += 1
+    self._episode['source_command_frames'] += 1
+    self._episode['history_sha256'] = tree_digest(dict(previous=self._episode['history_sha256'],
+        counter=counter,obs=obs,source_raw=source_raw,source_prev_raw=frame['source_prev_raw'],root_key=frame['root_key']))
+    return dict(frame,history_after=copy.deepcopy(history_after),source_raw=source_raw,
+        source_raw_available=True,feature_only_final=False,next_prev_raw_bound=True,
+        host_source_override_performed=True,history_after_sha256=self._carry_hash,
+        source_history_sha256=self._episode['history_sha256'])
+
+  def observe_current(self, obs, counter, *, source_prev_raw):
+    """Seal a final observed frame whose outgoing source command is unavailable.
+
+    Native after/raw are diagnostics of this model, never a source command.
+    No source-history after-carry exists; only finish is legal afterward.
+    """
+    obs,frame=self._feature_frame(obs,counter,source_prev_raw)
+    self._carry=copy.deepcopy(frame['native_after']);self._carry_hash=tree_digest(self._carry)
+    self._episode.update(feature_only_final=True,next_prev_raw_bound=False)
+    self._episode['next_counter'] += 1;self._steps += 1
+    self._episode['history_sha256']=tree_digest(dict(previous=self._episode['history_sha256'],
+        counter=counter,obs=obs,source_prev_raw=frame['source_prev_raw'],root_key=frame['root_key'],
+        source_raw_available=False))
+    return dict(frame,source_raw=None,source_raw_available=False,feature_only_final=True,
+        next_prev_raw_bound=False,host_source_override_performed=False,history_after=None,
+        history_after_sha256=None,native_after_sha256=self._carry_hash,
+        source_history_sha256=self._episode['history_sha256'])
 
   def finish(self):
     require(self._episode is not None and self._episode['next_counter'] > 0, 'Nonempty conditional history required')
     require(tree_digest(self._carry) == self._carry_hash, 'Own history changed before final seal')
     self.fence(full=True)
+    feature_only=self._episode['feature_only_final']
     result = dict(version=VERSION,key_namespace=KEY_NAMESPACE,episode=copy.deepcopy(self._episode),
-        final_carry_sha256=self._carry_hash,full_state_sha256=self._state,policy_copy_sha256=self._policy,
+        final_carry_sha256=None if feature_only else self._carry_hash,
+        final_native_after_sha256=self._carry_hash if feature_only else None,
+        final_carry_kind='feature_only_native_after' if feature_only else 'source_history_after',
+        feature_only_final=feature_only,source_raw_available=not feature_only,
+        next_prev_raw_bound=self._episode['next_prev_raw_bound'],
+        full_state_sha256=self._state,policy_copy_sha256=self._policy,
         counters=dict(self._counters),full_state_policy_copy_counters_unchanged=True,
         resets=self._resets,steps=self._steps,accessed_keys=sorted(self.accessed_keys),
         source_authenticated=False,real_N1M_authenticated=False,conditional_common_history=True,

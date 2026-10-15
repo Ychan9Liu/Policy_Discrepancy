@@ -102,6 +102,21 @@ driver570.158.01，详细版本与pip freeze保存在外部inputs。驱动/编�
 
 ## 资源答复及下一步
 
+**21:54:25完整终态取代此前运行中状态**：原1584/attempt01外层真实exit0、无external_failure，
+完整512unit/32family、内外terminal及generation齐；主elapsed9288.792455766秒，约2.580220GPUh。
+21:54:58原parent341486已不存在、物理4–7无可见进程/各0MiB，GPU5已释放。未重采或追加GPU任务。
+原外层terminal SHA `2cc9c83f18d06f90700b79f6bc89a46d501db2a8633db2f1407bdca596a66930`；
+supervisor SHA `f09bb2c422b209eacc613e0d31d97720f0bd4523da601fd20c2389f30e85c804`。
+本机小证据镜像 `analysis/outputs/dl-r5-r2-complete-1584ef3/`。
+
+**首次独审非成功**：7c实际CPU入口于21:55:47 exit1/8.844981243秒，原metadata全图认证已过，
+第一record因审计器把mode统一当BF16拒绝；实际原mode为F32、logits/sample为BF16。
+失败证据 `/data/Policy_Discrepancy/runs/dl-r5-independent-audit-20261015-7c4affc/attempt01/`，
+本机 `analysis/outputs/dl-r5-independent-audit-7c4affc/failed-attempt01/`，完整退出记录和日志均保留。
+此失败没有完整physics/统计裁决，不是方法阴性；已定位的精确dtype修复及认证诊断见
+[独审工程记录](DL_R5_AUDIT_ENGINEERING.md)。下一须新Git/Linux补验及fresh目录重审原完整数据，
+不得以失败7c作为normal source或C的通过前驱。C/T未启动，科学门/原预算不变。
+
 **21:37:07更新**：原parent341486/start408554660身份匹配、452unit/28family完整，cal封口，
 无全生成/内外terminal；GPU5仅本worker438660 C+G/2587MiB，4/6/7无可见作业/各1MiB。
 只核计数和资源，没有读取中间科学值或增加GPU作业。独立的正常特征CPU窄接口五项通过，

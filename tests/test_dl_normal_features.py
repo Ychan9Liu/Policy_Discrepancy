@@ -51,6 +51,10 @@ class NormalFeaturesTests(unittest.TestCase):
     self.assertTrue(value['public_native_before_source_override'])
     self.assertTrue(value['source_raw_changes_next_real_h'])
     self.assertTrue(value['official_unimix_not_mode_or_bare_softmax'])
+    self.assertTrue(value['feature_only_current_matches_step'])
+    self.assertTrue(value['missing_current_raw_not_fabricated'])
+    self.assertTrue(value['feature_only_final_blocks_advance'])
+    self.assertTrue(value['per_episode_current_flag_resets'])
     self.assertTrue(value['full_state_policy_copy_counters_unchanged'])
     self.assertFalse(value['source_authenticated'])
     self.assertFalse(value['real_N1M_authenticated'])
@@ -181,11 +185,53 @@ def fixture():
   assert agent.model.dyn._core == core and agent.model.dyn._logit == logit and nj.seed == seed
   seal_a,seal_b = a.finish(),b.finish()
   assert seal_a['full_state_policy_copy_counters_unchanged'] and seal_b['full_state_policy_copy_counters_unchanged']
+  assert not seal_a['feature_only_final'] and seal_a['source_raw_available'] and seal_a['next_prev_raw_bound']
+  # A pre-treatment R5 history stops at obs[t]; no source raw[t] exists.
+  # Compare only the shared forward, before the reference step binds its raw.
+  eval_seed=0x4E4D3101
+  a.reset(reset,eval_seed=eval_seed,source_id='generated/current-only')
+  b.reset(reset,eval_seed=eval_seed,source_id='generated/step-forward-reference')
+  a.step(reset,source_a,0,source_prev_raw=zero)
+  b.step(reset,source_a,0,source_prev_raw=zero)
+  before=a._carry_hash;history=a._episode['history_sha256']
+  rejected(lambda:a.observe_current(current,2,source_prev_raw=source_a),'counter')
+  rejected(lambda:a.observe_current(current,1,source_prev_raw=source_b),'Previous')
+  rejected(lambda:a.observe_current(dict(current,is_last=np.bool_(True)),1,source_prev_raw=source_a),'last frame')
+  assert a._carry_hash==before and a._episode['next_counter']==1 and not a._episode['feature_only_final']
+  final=a.observe_current(current,1,source_prev_raw=source_a)
+  reference=b.step(current,source_b,1,source_prev_raw=source_a)
+  for key in ('h','qlogits','plogits','q_prob','p_prob','root_key','latent_key','actor_key','native_raw'):
+    assert final[key].tobytes()==reference[key].tobytes(),key
+  assert f.tree_digest(final['native_after'])==f.tree_digest(reference['native_after'])
+  assert final['public_oracle']['native_full_after_carry_byte_exact']
+  assert final['source_raw'] is None and final['history_after'] is None and final['history_after_sha256'] is None
+  assert final['source_raw_available'] is False and final['next_prev_raw_bound'] is False
+  assert final['feature_only_final'] is True and final['host_source_override_performed'] is False
+  assert final['source_history_sha256']==f.tree_digest(dict(previous=history,counter=1,obs=current,
+      source_prev_raw=source_a,root_key=f.policy_root_key(eval_seed,1),source_raw_available=False))
+  rejected(lambda:a.step(current,source_a,2,source_prev_raw=final['native_raw']),'only finish')
+  rejected(lambda:a.observe_current(current,2,source_prev_raw=final['native_raw']),'only finish')
+  rejected(lambda:a.reset(reset,eval_seed=eval_seed,source_id='too-early'),'Finish')
+  native_sha=final['native_after_sha256']
+  final['native_after'][1]['deter'][0][0]=np.asarray(99,ml_dtypes.bfloat16)
+  current_seal=a.finish();b.finish()
+  assert current_seal['feature_only_final'] and not current_seal['source_raw_available']
+  assert current_seal['final_carry_sha256'] is None and current_seal['final_native_after_sha256']==native_sha
+  assert current_seal['final_carry_kind']=='feature_only_native_after' and not current_seal['next_prev_raw_bound']
+  assert current_seal['episode']['source_command_frames']==1
+  # Episode flags reset; even a reset-only final observation needs no command.
+  a.reset(reset,eval_seed=eval_seed,source_id='generated/reset-only-current')
+  assert not a._episode['feature_only_final'] and a._episode['next_prev_raw_bound']
+  reset_only=a.observe_current(reset,0,source_prev_raw=zero)
+  assert reset_only['source_raw'] is None and reset_only['counter']==0
+  assert a.finish()['episode']['source_command_frames']==0
   assert f.tree_digest(agent.save()) == original_state and f.counters(agent) == original_counters
   assert all(device.platform == 'cpu' for device in jax.devices())
-  print(json.dumps(dict(version=f.VERSION,scope='Generated tiny BF16 image64/action12, two two-step histories',
+  print(json.dumps(dict(version=f.VERSION,scope='Generated tiny BF16 image64/action12, conditional histories and feature-only final frames',
       public_native_before_source_override=True,source_raw_changes_next_real_h=True,
       official_unimix_not_mode_or_bare_softmax=True,full_state_policy_copy_counters_unchanged=True,
+      feature_only_current_matches_step=True,missing_current_raw_not_fabricated=True,
+      feature_only_final_blocks_advance=True,per_episode_current_flag_resets=True,
       source_authenticated=False,real_N1M_authenticated=False,GPU_used=False)))
   del dll
 

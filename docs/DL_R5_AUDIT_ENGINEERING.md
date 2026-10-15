@@ -52,7 +52,7 @@ PID 复用或组身份不明不授权 kill。原 parent 和每个 family worker 
 supervisor/源码反例、正式 CLI 缺外部权威拒绝、PID 复用不发 kill，以及原单元官方 CPU 物理复放。
 Linux 另须执行真实 reaped-leader/活 descendant 清理用例。fixture 不是完整 512 个真实 N1M 单元验收。
 
-与 producer 提交逐函数 AST 对照：`audit`、`validate_record`、`validate_pretreatment`、`replay`、
+上述 7c 身份修复与 producer 提交逐函数 AST 对照：`audit`、`validate_record`、`validate_pretreatment`、`replay`、
 `official_transition`、随机计划/label/key、策略与 bundle 数值检查不变；只改元数据清理、退出认证、
 resource 身份检查入口和 CLI。`analysis/dl_live_statistics.py`、共享物理实现和所有科研阈值不改。
 
@@ -89,4 +89,41 @@ SHA256 `468317e6f72d7082322a63a32e20d5088250c22c72b3043e2cb09f3e42898470`。
 准备后的控制器已仅复制至
 `/data/Policy_Discrepancy/runs/dl-r5-audit-inputs-20261015-7c4affc/launch.py`，
 raw SHA256 `72d98c21161c4372b21981b20a59a1d040914e30ee40892cae7c128a49ec565f`；
-未执行，须等原R5完整终态后传真实producer terminal raw SHA，不能以准备状态冒称审计启动。
+以上为首次独审前的准备记录；此后已实际执行并失败，见下节，不构成成功独审。
+
+## 首次真实全对象独审暴露的 dtype 契约修复
+
+原 producer `1584ef31c322fc3371ea9ce220c06fe7e654b23a` 已完整生成 512 单元/32 family，
+外层真实 exit0，主入口约 9288.792 秒。首次使用 7c 独审约 8.845 秒后 exit1：元数据闭包认证
+已过，在第一条 record 的 `validate_bundle` 因错误地将 mode 与 logits/sample 全部要求 BF16 而拒绝。
+该失败没有完整物理复放或科研统计裁决，不改写为 producer 失败或方法阴性。
+
+原始产生路径决定的精确契约为：
+
+| 字段 | 原 dtype / shape | 源码依据 |
+| --- | --- | --- |
+| h | BF16 / [4096] | 原 recurrent core 与 RSSM compute dtype |
+| qlogits、plogits | BF16 / [32,32] | 原 `_logit` 与 `_prior` |
+| qsample、psample | BF16 / [32,32] | `_observe`、`R4Policy.derive` 显式 `nn.cast` |
+| qmode、pmode | F32 / [32,32] | `OneHot._onehot_with_grad` 显式 F32；`representative_signal` 仅 stop-gradient，不作 `nn.cast` |
+
+7c 的 N1M 几何 fake 将 mode 也写成 BF16，掩盖了这个缺口；此前真实 tiny policy 测试没有把
+其实际混合 dtype bundle 交给 N1M 几何全审。不能用此前 55 项通过声称本问题已经验收。
+新修复仅按上述原路径核验每类 dtype，不接受任意 float、不在 audit 中 cast 原数据，不改科学算式、
+统计、seed、物理或判败门。原 run 与失败 attempt 均保留；需新 auditor Git、fresh Linux 验收后，
+在新的独审目录重新审同一个完整对象，不重采数据或延长原主入口。
+
+root 在完整原 7c metadata/四外部 pins 认证后，先核将被解码的同一 trajectory bytes SHA，再只输出
+上述 dtype/shape。首 record 为 `family_00/unit_00/trajectory.pkl`，8,987,356 bytes，SHA256
+`3549ae306a11366cf53d2feb16f01b5315a09523363738fd8ceee19e142426de`。
+成功 diagnostic 元数据为 server `dl-r5-audit-dtype-20261015-7c4affc/attempt02/metadata.json`，
+SHA256 `de0a4d50ebc092b9fca5544fa2c1bd00c43dccb724216a4b93b3e8acfc412c86`，
+8.757242301 秒/120 秒、exit0、0GPU，不输出 D/e/Y 或其它科研值。
+attempt01 因 root 将脚本命名为 `inspect.py` 遮蔽 stdlib 而 import 失败，未认证/解码；保留原失败，
+attempt02 改为 `metadata_probe.py`。这一 metadata 核对不是完整物理或统计独审。
+
+本机修复后 `tests.test_dl_live_audit` 共 14 项，13 通过、1 项 Linux `/proc` 测试在 Windows 跳过，
+4.505 秒。新增真实 CPU 官方 `representative_signal`/categorical 路径证明 BF16 logits 产生 F32 mode、
+显式 cast 的 sample 保持 BF16；N1M 几何 fake 改为原精确混合 dtype，并在重封原 hash 后分别拒绝
+q/p 的 BF16 mode、F32 logits 与 F32 sample。仅 shape/counts 相同不足以通过。
+新版固定提交和 clean Linux 补验待 root 完成，不冒称这些 fixtures 是真实 N1M 全对象验收。

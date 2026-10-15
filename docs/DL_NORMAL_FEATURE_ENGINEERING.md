@@ -1,6 +1,6 @@
 # 正常共同历史特征接口
 
-2026-10-15，`DL-normal-features-r1`。Agent 在完整预验证范围内采用的必要工程接口；
+2026-10-15，`DL-normal-features-r2`。Agent 在完整预验证范围内采用的必要工程接口；
 不采用 T4096、训练/特征实际执行预算、native 或性能门。不读取真实 R5，不运行真实 N1M。
 
 实现为 `scripts/dl_normal_features.py` 的 `FrozenNormalFeatures`，无来源/模型文件加载器、
@@ -34,6 +34,33 @@ tiny fixture 必须显式 `fixture=True`，不能静默改生产几何。
    每调用还核原 buffer 身份、未被 donation 删除、配置/counters/pending 及内部 carry。
    返回条件历史封口后才能 reset 下一条历史。
 
+## r2：末帧仅提取特征
+
+真实 R5 处理前来源只有 `obs[0..t]` 和 `raw[0..t-1]`；`raw[t]` 属于随机干预，不能作为
+当前帧提取后继续绑定的普通来源命令。r1 的 `step` 必需 `source_raw`，因此不足以直接处理
+这个边界。r2 增加 `observe_current(obs, counter, source_prev_raw=...)`；不伪造或读取 `raw[t]`，
+不改变已有 `step` 的来源命令覆盖语义，也不采用新来源、T、科学判据或执行预算。
+
+状态机为 `idle → reset/active → observe_current/feature-only-final → finish/idle`；
+active 可先执行任意已有合法 `step`。current 与 step 共用完全相同的 native q posterior、
+官方 q/p query 和公共 oracle 前向；仍核连续 counter、真实首帧标记、已绑定 source prev raw，
+并拒物理 terminal/last 帧。current 不接收当前 source raw，返回
+`source_raw_available=False, source_raw=None, history_after=None, history_after_sha256=None`，
+`next_prev_raw_bound=False, host_source_override_performed=False, feature_only_final=True`。
+当前观测、原 key 和前一 source raw 进入历史封口；不将预测的 native raw 写成来源命令。
+
+current 可保存该模型真实 `native_after` 和 hash，内部只保留其副本用于 finish 完整性检查；
+它不是有下一来源命令的 history after。此后只允许 `finish`，step、再次 current 或提前 reset
+均拒绝。finish 明写 `final_carry_kind='feature_only_native_after'`、
+`final_carry_sha256=None`，另报 `final_native_after_sha256`，并标当前末帧没有 source raw、
+下一 prev raw 未绑定。每条 history 的 `source_command_frames` 只数真正 step 命令；
+总 `steps` 数包含已观测的 feature-only 帧。下一次 reset 将 episode 标记重新置为 active。
+
+真实 tiny BF16 反例在相同 prefix 后，将 current 与提供另一条 source raw 的 step 只比较共同
+前向的 h/q/p/logits、keys、native raw/full after，要求逐字节相同；current 不需要最后 raw。
+另核错 counter/prevraw/last、末帧后继续推进均拒绝，返回副本篡改不改内部状态，reset-only
+current 可 finish、下一 history 标记已清除，完整原 Agent state/policy/counters 始终不变。
+
 本窄接口每步都执行 public oracle；它没有采用未来批量执行时的抽查策略或总预算。
 新增输出可能改变独立 native JIT 融合，oracle 逐字节失败必须拒绝，不能放宽精度通过。
 源码 hook 仅在进程内 tracing 范围使用并在异常时还原，接口为单线程调用。
@@ -48,7 +75,7 @@ counter/prevraw/内部 carry、公共输出/计数篡改和 NJ state 写入均�
 全部物理复放标签及外部产物闭包。这些由调用层另行实现；本模块不以几何或 fixture
 通过取代它们。实际模型特征执行及 T 仍须相应采用与资源安排。
 
-## 有限 CPU 验收
+## r1 有限 CPU 验收（只适用于旧版）
 
 本机新三项测试全部通过，5.565 秒，无 skip、0GPU；使用
 `C:/Users/97370/AppData/Local/Codex/dl-validation-env/Scripts/python.exe`，
@@ -67,3 +94,11 @@ actual/tested **c84995c5cbf243b7182a1c21f687dc159f695d70**，sv3 fresh clean
 `source-binding.json` SHA256 `7f86ab9ff76020f3b0da07e371ff502ae04f3996313d097595cd8f79d92b6ff0`；
 `terminal.json` SHA256 `21b79f1c1b40cbdd9897bdd65dadcf490d819e74a1b3151f460b12f35e83264c`。
 测试中的原接口回归与真实tiny BF16不是真实来源/N1M/读出/性能验收，不激活T或额外GPU预算。
+
+以上 `c84995c` 证据只认证旧 r1 字节，不覆盖本次 r2 current 修复。新版需新的确定提交、
+fresh clean Linux 有限 CPU 验收与对应 source/norm raw Git blob 封口后，才可报告新版工程通过。
+
+r2 本机有限 CPU 补证：新 features 三项与旧 live_policy 两项共五项全过，无 skip，12.135 秒。
+真实 tiny 子进程报告共同 current/step 前向一致、无末帧 raw 伪造、末帧后推进拒绝及逐 episode
+标记重置，完整原态不变；source/N1M/GPU 标记均 False。没有读取真实 R5、运行真实 N1M、
+训练或新增科研裁决；固定提交与 Linux 补验待 root 完成，旧 c84995c 运行目录保持不动。

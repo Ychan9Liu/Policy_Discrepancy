@@ -1,5 +1,22 @@
 # DL 验证日志与证据索引
 
+## R5完整终态、首次独审失败与必要接口修复（2026-10-15）
+
+原run1584于21:54:25外层exit0，9288.792455766秒/原12600秒，完整512unit/32family；
+supervisor SHA f09bb2c422b209eacc613e0d31d97720f0bd4523da601fd20c2389f30e85c804，
+外层terminal raw SHA 2cc9c83f18d06f90700b79f6bc89a46d501db2a8633db2f1407bdca596a66930。
+21:54:58原parent已不存在，物理4–7无可见作业/各0MiB，GPU5已释放；未新增GPU任务。
+7c4affc真实独审首尝试exit1/8.844981243秒：metadata全图已认证，第一record mode被错误BF16契约拒绝；
+无完整physics/statistics。失败terminal SHA c2fba2405abd54c0dbd35324807fb04200e8c71848095bf1f6ecedbf5a82f6c6。
+原失败目录保留；用同bytes认证诊断只读dtype/shape，mode F32、其它logit/sample BF16。
+详[工程记录](DL_R5_AUDIT_ENGINEERING.md)，不会把旧fake通过冒称真实N1M验收。
+
+Agent内部必要接口检查同时发现：source当前t只有obs而无正常raw[t]；完整task快照含真实RandomState，
+不能用仅numeric的普通tree_digest。末帧只读路径及来源快照专用hash须准确解决，不补伪动作或放宽任意object。
+当前官方任务量query只读当前连续复放的Physics，主标签是torso-local velocity_x，非世界坐标速度，
+各快照hash格式须明确不能混比。[后续T审查](DL_NM1_T_READINESS.md)仍为建议/采用前条件。
+以上新增工程均待确定提交clean Linux补证；原R5数据不重采，C8d63未启动，T预算未采用。
+
 ## 正常共同历史特征接口及CPU验收（2026-10-15）
 
 Agent采用的必要工程接口DL-normal-features-r1；本次不实现来源认证，不启动真实提特征，也不采用T预算。

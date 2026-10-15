@@ -65,6 +65,34 @@ def authority_fixture(root):
 
 
 class R2MetadataTests(unittest.TestCase):
+  def test_official_bf16_logit_mode_path_returns_f32_not_compute_dtype(self):
+    code="""
+import json
+import jax
+import jax.numpy as jnp
+import numpy as np
+from embodied.jax import nets as nn
+from dreamerv3 import dt_latch
+from tests.test_dt_latch import FakeAgent
+nn.COMPUTE_DTYPE=jnp.bfloat16
+agent=FakeAgent()
+h=jnp.zeros((1,1,1),jnp.bfloat16)
+q=jnp.zeros((1,1,32,32),jnp.bfloat16)
+p=-q
+result=jax.jit(lambda h,q,p:dt_latch.representative_signal(agent,dict(deter=h,logit=q),p))(h,q,p)
+sample=jax.jit(lambda q:nn.cast(agent.dyn._dist(q).sample(jax.random.PRNGKey(0))))(q)
+assert all(d.platform=='cpu' for d in jax.devices())
+assert result['qmode'].dtype==result['pmode'].dtype==jnp.float32
+assert sample.dtype==q.dtype==jnp.bfloat16
+assert result['qmode'].shape==result['pmode'].shape==sample.shape==(1,1,32,32)
+print(json.dumps(dict(qmode=str(result['qmode'].dtype),pmode=str(result['pmode'].dtype),sample=str(sample.dtype),GPU_used=False)))
+"""
+    result=subprocess.run([sys.executable,'-c',code],cwd=ROOT,capture_output=True,text=True,timeout=60,
+        env=dict(os.environ,CUDA_VISIBLE_DEVICES='',JAX_PLATFORMS='cpu',MUJOCO_GL='disable'))
+    self.assertEqual(result.returncode,0,result.stdout[-2000:]+result.stderr[-4000:])
+    self.assertEqual(json.loads(result.stdout.strip().splitlines()[-1]),
+        dict(qmode='float32',pmode='float32',sample='bfloat16',GPU_used=False))
+
   def test_real_external_schema_requires_both_pins_exit_budget_and_original_identity(self):
     with tempfile.TemporaryDirectory() as temporary:
       args,launch,terminal,reseal=authority_fixture(Path(temporary))
@@ -161,7 +189,8 @@ class KernelDouble(FakePolicy):
       after[1]['deter'][0]=h.copy();after[1]['stoch'][0]=z.copy();after[3]['action'][0]=action.copy()
     value=dict(version='DL-r4-utility-r1',key_namespace='DL_R4_U1',
         current_full_state_sha256='a'*64,q_after=q,p_after=p,q_raw=raw,p_raw=-raw,
-        h=h,qlogits=qz.copy(),plogits=pz.copy(),qsample=qz,psample=pz,qmode=qz.copy(),pmode=pz.copy(),
+        h=h,qlogits=qz.copy(),plogits=pz.copy(),qsample=qz,psample=pz,
+        qmode=qz.astype(np.float32),pmode=pz.astype(np.float32),
         root_key=key.copy(),latent_key=key[::-1].copy(),actor_key=(key^np.uint32(79)).copy(),
         before_carry_sha256=live.kernel.tree_digest(carry),observation_sha256=live.kernel.tree_digest(obs),
         D=np.asarray(.2,np.float32),Dmode=np.asarray(.2,np.float32),K=np.asarray(.3,np.float32),
@@ -238,6 +267,21 @@ class LiveAuditTest(unittest.TestCase):
     for value in (self.record['initial_carry'],self.record['bundle'],self.seal):
       self.assertEqual(a.full_digest(value),live.kernel.full_digest(value))
     self.assertEqual(a.snapshot_hash(self.request['actual_full_snapshot']),self.request['source_snapshot_sha256'])
+
+  def test_bundle_exact_mixed_dtype_contract_rejects_swapped_modes_logits_and_samples(self):
+    _,inner=a.validate_bundle(self.record,7,'a'*64)
+    for source in ('q','p'):
+      self.assertEqual(inner[source+'mode'].dtype,np.float32)
+      for suffix in ('logits','sample'):self.assertEqual(inner[source+suffix].dtype,a.BF16)
+    for source in ('q','p'):
+      for suffix,dtype in (('mode',a.BF16),('logits',np.float32),('sample',np.float32)):
+        record=copy.deepcopy(self.record);outer=record['bundle'];kernel=outer['kernel_bundle']
+        kernel[source+suffix]=kernel[source+suffix].astype(dtype)
+        # Authenticate the changed bytes so rejection proves the exact original
+        # producer dtype contract, not merely a stale seal/hash mismatch.
+        kernel['bundle_sha256']=a.full_digest({k:v for k,v in kernel.items() if k!='bundle_sha256'})
+        outer['bundle_sha256']=a.full_digest({k:v for k,v in outer.items() if k!='bundle_sha256'})
+        with self.subTest(field=source+suffix),self.assertRaises(ValueError):a.validate_bundle(record,7,'a'*64)
 
   def test_actual_controls_and_sub_f32_f64_reward_tamper_refused(self):
     record=copy.deepcopy(self.record);record['applied'][0,0]=np.nextafter(record['applied'][0,0],np.inf)

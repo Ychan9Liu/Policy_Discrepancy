@@ -1,5 +1,17 @@
 # 项目状态
 
+**2026-10-15 21:54:58服务器快照 / R5完整生成，首次独审工程失败**：
+原actual1584于21:54:25完成512unit/32family，generation_complete/内外terminal齐，外层实际exit0、
+elapsed9288.792455766秒（约2.580220单卡小时），原parent341486已不存在、owned组清理记录为true。
+21:54:58物理4–7无可见进程/各0MiB，GPU5已释放；该资源状态是带时间戳快照。
+7c4affc首次完整CPU独审21:55:47 exit1/8.844981243秒，在第一record的mode dtype检查失败，
+尚无全物理复放/统计裁决，不能把完整生成当独审或科学支持。原数据与失败目录均保留。
+源码与认证首record一致表明mode原为F32、logits/sample为BF16，正在以精确分类契约修复；
+见[独审工程记录](DL_R5_AUDIT_ENGINEERING.md)。不cast数据/不改科学门/不重采或延主预算。
+同时完成正常特征末帧接口、来源索引及当前Physics查询的必要CPU工程，尚待确定提交Linux补验和真实来源验收。
+C实际8d63未启动；T4096/6h仍未采用。[T解释审查](DL_NM1_T_READINESS.md)要求先分清损伤/促进学习、
+学习中对照资格和实际总干预范围。下一修复独审完整验收，之后才按原C门fresh核GPU5。goal active。
+
 **2026-10-15 21:37:07服务器快照 / 正常特征窄接口CPU完成**：
 R5原parent341486/start408554660身份匹配，452unit/28family完整、cal封口，无generation/内外terminal；
 GPU5仅本worker438660 C+G/2587MiB，4/6/7无可见作业/各1MiB。未读中间科学值，原12600秒不改。

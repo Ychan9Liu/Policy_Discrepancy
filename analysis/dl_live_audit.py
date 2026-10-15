@@ -333,8 +333,10 @@ def validate_bundle(record, unit, model_state):
     carry(inner[source+'_after'],inner[source+'_raw'])
     same(inner['h'],inner[source+'_after'][1]['deter'][0],'Shared current h')
     same(inner[source+'sample'],inner[source+'_after'][1]['stoch'][0],'Current latent')
-    for suffix in ('logits','sample','mode'):
-      physics.array(inner[source+suffix],BF16,(32,32),'Current distribution/sample/mode')
+    for suffix,dtype in (('logits',BF16),('sample',BF16),('mode',np.float32)):
+      # RSSM/derive explicitly nn.cast samples to BF16. representative_signal
+      # returns OneHot.pred() without nn.cast: official one-hot dtype is F32.
+      physics.array(inner[source+suffix],dtype,(32,32),'Current '+source+suffix)
   for key in ('D','Dmode','K','sample_D'):
     value=np.asarray(inner[key]); require(value.shape == () and np.isfinite(value) and value >= 0,
         'Invalid current signal')
