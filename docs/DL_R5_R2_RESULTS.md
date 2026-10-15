@@ -78,6 +78,14 @@ GPU4未知340867 C及340914 C+G（后者另有GPU0 graphics），不猜其归属
 此前GPU4未知作业自行退出未干预。新外部watch-20261015T113940144530.json/XML只读进程/计数/资源，
 不读中间科研值；没有重启、改预算、选取partial或新GPU任务。
 
+19:51:25.915495仍同parent341486/start408554660，105unit/6family complete、cal未封口、
+无generation/终态。GPU5仅本worker358271 C+G/2587MiB，4/6/7各4MiB无可见作业；
+快照watch-20261015T115125915495.json/XML，不读中间D/e/Y，继续原12600秒任务。
+
+19:55:47.579963同parent身份持续匹配，118unit/7family complete、cal未封口，无全生成/终态；
+GPU5本worker368376 C+G/2587MiB，4/6/7各1MiB无可见作业。
+watch-20261015T115547579963.json/XML，不读科学值；正常C前置510339的0GPU验收没有移动该1584运行代码。
+
 环境prelaunch：Python3.11.16、jax/jaxlib0.4.33、numpy1.26.4、dm-control1.0.48、MuJoCo3.15.0、
 driver570.158.01，详细版本与pip freeze保存在外部inputs。驱动/编译器既有parallel-compile warning不改环境求过门。
 

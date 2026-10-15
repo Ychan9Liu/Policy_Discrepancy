@@ -3,10 +3,13 @@
 **2026-10-15 NM1 cal前置进展**：仅C已由Agent采用为DL-NM1-cal-r1，
 normal_only默认False/显式True、只读普通batch、独立参考梯度与原_train完整scratch接口及有限CPU验证完成；
 [工程范围](DL_NM1_ENGINEERING.md)不是真实N1M cal，完整128 runner/CPU独审仍待实现。
+actual/tested510339e990f0953445b3189eee4ad96febf7f89c clean sv3 CPU95项93pass/2原optional skip，
+无新增skip，237源码/六norm真实blob绑定通过，全入口218.324886秒/300秒/0GPU/owned[]。
 后续T4096/6h/性能门未采用。C计划仅sv3物理5/R5终态及全审或失败封存后fresh串行，3600GPU+900CPU，当前未启动。
-19:39:40服务器快照原R5 parent341486身份匹配、65unit/4family完整、cal未封口/无终态；
-仅GPU5本worker351730 C+G/2587MiB，4/6/7无可见作业/各1MiB，未知GPU4作业自行退出未干预。
+19:55:47服务器快照原R5 parent341486身份匹配、118unit/7family完整、cal未封口/无终态；
+仅GPU5本worker368376 C+G/2587MiB，4/6/7无可见作业/各1MiB，未知GPU4作业此前自行退出未干预。
 原R5 actual1584/12600秒/科学门不改，未读中间D/e/Y，完整goal active。
+sv3普通replay/inventory原路径不存在，待从sv2暂存原字节并新增显式源迁移绑定，不修改原pinned inventory求过检查。
 
 **2026-10-15 19:22:16（服务器时刻）r2实际运行中**：actual/tested1584ef31c322fc3371ea9ce220c06fe7e654b23a，
 clean sv3 CPU71项全过/234源码身份链一致；19:19:36启动原parent341486/start408554660。

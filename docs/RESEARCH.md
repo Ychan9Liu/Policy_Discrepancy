@@ -7,6 +7,9 @@
 normal_only显式子集、只读取批、参考梯度与原生产scratch位移的[有限工程](DL_NM1_ENGINEERING.md)已实现，
 真实128 runner/独审尚未完成，未真实cal或新增学习。T4096/6h/性能门仍建议，不自动采用。
 参考梯度不是生产内部逐叶bit梯度，非零weight不是干预已生效，tiny通过不是N1M/方法有效。
+确定源码510339e990f0953445b3189eee4ad96febf7f89c已sv3 clean CPU95项93pass/2原skip；
+237源码与六norm绑定通过，仍无真实cal。sv3缺普通源/inventory，显式暂存绑定尚待实现，不能伪造旧来源路径。
+后续C要联报实际B/N pre-update replay前向差异；相同也不证明全forward相同，不单凭非零位移声称纯rep机制。
 
 **2026-10-15工程r2实际进展**：actual/tested1584ef31c322fc3371ea9ce220c06fe7e654b23a，
 clean Linux71项全过后19:19:36在sv3物理5一次启动；N1M完整state/实际CUDA-EGL认证通过。

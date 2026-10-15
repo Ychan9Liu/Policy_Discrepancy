@@ -54,7 +54,42 @@ F32张量比较排除optimizer state；signed-zero字节差与数值非零分开
 以上没有真实N1M/BF16/16×65 cal验收、真实普通学习或方法结论。原R5实际代码仍1584，
 运行中的sv3物理5隔离checkout不移动；新源码提交后仅部署新CPU验收隔离目录。
 
+## 确定版本clean Linux证据
+
+actual/tested **510339e990f0953445b3189eee4ad96febf7f89c**，新sv3 clean
+`/data/Policy_Discrepancy/dl-nm1-cpu-code-20261015-510339e`。
+16模块95项：93pass，2项原有optional skip（two-device sharding与FULL_AGENT_TEST opt-in），无新skip；
+unittest215.083秒、测试进程217.137852906秒、完整入口218.324886414秒/300秒，exit0/0GPU/owned[]。
+服务器终态19:53:31.942208；不同主机有钟差，不相减作耗时。
+237源码真实Git blobs前后==父source_binding==audit.source_manifest，六份额外norm亦原blob一致；
+C规范26950字节，SHA `611877a2f5d3f719abcbab10e22b3082dfcc7331b4e8a9b752281dc6163a16ad`。
+第二Agent对本机镜像逐条重算真实blob，root再核小收据/日志raw SHA；不是重演真实N1M cal。
+
+证据目录`/data/Policy_Discrepancy/runs/dl-nm1-cpu-20261015-510339e/attempt01/`；
+本机ignored镜像`analysis/outputs/dl-nm1-cpu-510339e/attempt01/`。
+linux-tests.log SHA `42438e9a7e22fc8c5fae364d9ccbafe876fd35ce2f45a977e67abe2860368ba2`，
+source-binding.json SHA `324955539bbdfd08494bda93314f26a02a5bca4b5da141cf1ab62d373f35ba57`，
+terminal.json SHA `8db61eb55a4fc9c75724a5f317c00131c73ed0070917c93f5fa124e7442e044e`。
+原1584 GPU执行checkout未改，CPU测试未读N1M/R5科学值。后续报告提交只记文档，不能冒充此测试SHA。
+
+## cal应保留的前向差异与解释限制
+
+独立源码审查后明确：C必须保存并比较B/N实际生产核心的完整replay outputs。
+相同初态/keys下，active图也可能因BF16融合/舍入而改变pre-update h/stoch；
+因此非零reference梯度与真实位移不能单独归为纯rep缩放。保持C_N已定数值资格不改，
+但存在这些差异时，C先只证明该实现的operational总更新效应，更强的“仅rep压力”解释需定位或新隔离对照。
+分报stoch离散变化、deter连续差值/ULP，不事后设容差宣布等价，也不自动否定候选。
+反过来，replay entries相同未覆盖logits/probs、D/e、想象、actor/value/norm全部路径，不能当全forward一致证明。
+这不是给所有未来操作性学习实验设置永久逐位门；T仍未采用，届时须明确estimand和必要对照。
+
 ## 下一必要交付
+
+**输入位置缺口，19:49:22服务器只读核查**：sv3上原replay绝对路径与库存路径均不存在；
+真实普通源在sv2，不能因为路径字符串相同就假定sv3已有原对象。
+需要从sv2在新sv3输入目录暂存完整原字节及原inventory raw pin，并独立全SHA核验，
+保留原hostname/源路径与实际暂存路径。当前loader严格要求实际路径等原inventory路径，
+尚未实现显式迁移绑定；不得改写已pin的inventory、猴补路径检查或在sv3伪造旧run来通过。
+此准备不需要GPU，也不是方法失败；源迁移接口及完整cal runner均仍未实现。
 
 先确定提交/clean Linux有限组合与真实Git blob绑定。随后实现完整C的固定128计划、
 原1M只读取批、完整初态反事实、reference F32逐位置记录/F64系数与F32实际释放、

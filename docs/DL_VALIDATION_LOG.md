@@ -2,6 +2,12 @@
 
 ## DL-NM1必要C阶段与有限工程（2026-10-15）
 
+**确定提交补证**：actual/tested510339e990f0953445b3189eee4ad96febf7f89c，sv3 clean CPU16模块95项，
+93pass/2原optional skip、无新skip；237源码/六norm前后真实blob一致，整入口218.324886秒/300秒、owned[]/0GPU。
+完整源码/收据/解释限制见[工程记录](DL_NM1_ENGINEERING.md)，未执行真实N1M cal。
+19:49只读确认sv3原replay/inventory路径缺失，需显式暂存源绑定，不能改pinned库存或伪造源目录。
+19:55:47原R5同parent活跃、118unit/7family/cal未封，无完整科学结论；未读中间值，只有GPU5原作业。
+
 Agent在完整授权内采用[DL-NM1-cal-r1](DL_NM1_TRIAL.md)仅C阶段，128批原普通数据、
 新normal-only干预、真实scratch位移/独立参考梯度及S/P/W资格；3600秒GPU+900秒CPU，
 固定sv3物理5且等原R5终态/全审或失败封存后fresh串行，不自动激活4096学习/6小时/性能门。
