@@ -706,6 +706,11 @@ DL-engineering-r5将logging放入独立只读JIT，在相同pre-update参数/bat
 
 ## 2026-10-15 R5工程r2源码冻结与资源答复
 
+后续已完成：确定SHA1584ef31c322fc3371ea9ce220c06fe7e654b23a clean sv3 Linux12模块71项全过、
+234source父/独审/测试前后逐值相等，whole42.499175秒/300秒、0GPU、owned[]。
+19:19:36实际parent341486/start408554660启动新完整attempt，N1M fullstate与实际CUDA/EGL同物理5通过；
+完整生成/独审尚未完成，未读中间D/e/Y，科学结论未建立。资源/版本/证据/限制见[新运行报告](DL_R5_R2_RESULTS.md)。
+
 Agent采用的DL-r5-engineering-r2已完成五文件实现及独立双审，科学代码/原规范未改。
 本机R5有限组合38项37通过、1 Linux-only跳过（15.490秒）；实际测试对象为e237ed8加五文件未提交改动，
 不是新提交的clean Linux验收或真实512对象。新增冲突sample先write/flush/fsync后拒绝，

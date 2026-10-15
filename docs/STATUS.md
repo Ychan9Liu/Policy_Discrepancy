@@ -1,5 +1,12 @@
 # 项目状态
 
+**2026-10-15 19:22:16（服务器时刻）r2实际运行中**：actual/tested1584ef31c322fc3371ea9ce220c06fe7e654b23a，
+clean sv3 CPU71项全过/234源码身份链一致；19:19:36启动原parent341486/start408554660。
+N1M完整state及实际CUDA/EGL同物理5通过，8unit complete/0family complete、cal未封口/无完整终态，未读中间D/e/Y。
+本项目仅占sv3物理5约2587MiB，4为未知作业/不干预，6–7无可见作业；只是一时快照。
+单卡串行/12600秒≤3.5GPUh，CPU全审0GPU；不改512/seed/H100/科学门，不启动NM1训练。
+详见[新实际记录](DL_R5_R2_RESULTS.md)，保留旧失败且完整goal active。当前本机新commit推送遇两次连接失败，尚未确认GitHub/未main。
+
 **2026-10-15 19:11工程r2冻结（未启动）**：五文件完成，有限R5本机38项37pass/1 Linux skip、15.490秒；
 双只读审查确认科学流程/公式/原规范不变。待提交后clean Linux组合测试与真实Git blob来源链复核，之后fresh GPU5核查。
 资源需求1张独占A100串行，本次完整主入口12600秒≤3.5GPUh、CPU独审0GPU；
