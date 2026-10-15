@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL-r4动作/记忆真实诊断（2026-10-15，实施中未执行）**：[DL_R4_UTILITY.md](DL_R4_UTILITY.md) 是完整预验证授权内Agent采用的有限冻结模型对象：N1M/new32EP/cal8-held24、14普通位置的D-top2主对象、三臂/16root/H100、source共同动作条件H1和独立真实后果。工程正确性/源字节/实际设备及独审是前置；不启动新训练、不改M2，不把条件效用等同信息存在性或保护收益。sv3物理4单A100完整入口21000秒上限，5–7不预占；总科研预算未定。上一条解释时“下一真实干预候选”现已由本规范采用，旧有限裁决保持。
+
 **DL-r4解释结果索引（2026-10-15）**：[DL_R4_IDENTIFIABILITY.md](DL_R4_IDENTIFIABILITY.md) 记录actual/tested `7fa5054aa64160e91c74b0205f4e57bd32c0017c` 的0GPU固定批次代数与有限解析枚举，16项CPU检查/实际入口exit0；不是新训练协议、真实任务信号验收或正式M2变更。同N mask的ρ可行域、actor负效用与信息无用的区别已明确，下一真实动作/记忆干预仍候选未采用。
 
 **DL-pilot-r3验收完成（2026-10-15复核）**：actual13ec72a214b0c03b886b2c7fac52c8f089966dec，sv2 GPU4/quad_walk/N/seed0/1M，10/14 00:58结束、249493更新/21×10完整episode、exit0/父audit。独立CPU actual/tested a4d9330a86cb89f9251b00bdad755f3305244a1a复核通过，21快照/最终checkpoint/全更新ledger/来源/hash/固定统计一致，无新训练。N/B/D的AUC为652.28/638.16/796.25，tail941.52/937.79/944.89，只有本单seed历史对照结论；原正式M2不改。报告 [DL_PILOT_R3_RESULTS.md](DL_PILOT_R3_RESULTS.md)，分析/图与强度限制 [DL_PILOT_R3_ANALYSIS.md](DL_PILOT_R3_ANALYSIS.md)。

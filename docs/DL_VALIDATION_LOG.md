@@ -1,5 +1,25 @@
 # DL 验证日志与证据索引
 
+## DL-r4真实动作/记忆对象工程实施（2026-10-15）
+
+规范 [DL_R4_UTILITY.md](DL_R4_UTILITY.md) 已在完整预验证授权内采用；没有新算法训练。
+新增独立R4 policy/physics/runner/statistics及相应契约；独立CPU审计实施中。
+Windows四组31项30通过/1 Linux进程组skip，12.078秒：真实tiny BF16 source/branch public
+qq raw/完整carry exact、q/p真实subkeys/distribution、H1原路径、q=p退化、写入/创建/额外
+nj.seed拒绝；新CPU quad真实physics/明确stub policy与RGB，三臂prevraw/终止/复放和
+1ULP F64/sub-1e-8 state篡改拒绝；cal-only ridge/EP权重/选择/冻结与统计污染反例。
+这些不是N1M真实模型/真实render验收或信号有效证据。新runner独审审查发现并修复
+source F32误作actual F64、标量obs容器及signals hash链缺失；不可放宽dtype/精确守卫通过。
+
+sv2已审N1M checkpoint/config仅复制到sv3独立ignored inputs目录并按原SHA认证，未解码、
+未构造模型/GPU，canonical checkout不变。实际/tested SHA、Linux及真实对象结果将追加；
+原13ec训练、7fa CPU解释和旧停止门不改，完整目标保持active。
+
+后续六组首轮50项49pass/1Linux skip，23.726秒；独审静态模型身份反例加入后最终10项
+单独8.288秒全过，实际CPU完整source1000步＋14×100 reference已在新fixture验收，
+独审三臂另300真实CPU步；fake Agent/stub RGB不当N1M真实模型验收。输入复制认证收据和
+15:01:16准备资源快照在sv3 inputs目录，见新规范执行前证据；启动前fresh核查仍必需。
+
 ## DL-r4可辨识性与ρ可行域（2026-10-15）
 
 actual/tested `7fa5054aa64160e91c74b0205f4e57bd32c0017c`，本机Windows/Python3.12.14、

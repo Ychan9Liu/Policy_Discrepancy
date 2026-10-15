@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL-r4真实诊断实施中（2026-10-15）**：Agent在完整授权内采用 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)。N1M冻结模型、32全新正常episode、D-top2主对象/固定512辅助、qq/pq/pp三臂/16root/H100；source H1与branch效用分开，不新增训练。已有Windows四组31项工程检查30通过/1 Linux进程组待验（12.078秒），tiny真BF16 policy与CPU真physics/stubRGB的适用范围分开；实际N1M/真实RGB/GPU尚未验收。新入口/独立审计在实施，下一确定SHA Linux验收后fresh核sv3物理4，仅用1卡/21000秒完整入口；5–7不预占。完整方法目标未完成、M2不变；本轮资源估算不能当启动证据。
+
 **DL-r4 CPU解释已执行（2026-10-15）**：actual/tested `7fa5054aa64160e91c74b0205f4e57bd32c0017c`，16项CPU检查通过，认证原review SHA后的实际入口.391秒/exit0，0GPU/无新训练或模型环境调用。固定N批次的合法ρ上限仅达到同mask D潜在释放的5.06221%，不据此预测新训练；三world/256读出枚举区分当前actor效用、信息可用性、压缩收益。坏输入SHA/Git均拒绝且不写结果。绘图入口新增固定输入/原始均值/绝对统计认证，正确PNG逐字节不变。见 [DL_R4_IDENTIFIABILITY.md](DL_R4_IDENTIFIABILITY.md)。本轮未访问服务器或核查GPU当前占用，既有资源快照保持历史；下一真实诊断/新训练未启动，完整目标active，原M2不变。
 
 **资源更新（2026-10-15 14:05:14）**：本次DL N已在10/14完成释放；当前sv2 GPU4/5各647MiB未知C作业，6/7也各1127MiB/两个未知C进程，未干预。最新现场写入独审根`resource_check-20261015-final.json`。本轮只做CPU检查/分析，没有新增GPU工作；下方14:01等为空闲/占用历史快照，不能当现状。

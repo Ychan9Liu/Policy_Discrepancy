@@ -1,5 +1,7 @@
 # 研究问题与方法
 
+**DL-r4真实动作/记忆诊断（2026-10-15，已采用、实施中）**：Agent在用户完整预验证授权内采用 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，不是用户逐项认可的新算法。冻结N1M模型、新32正常episode/cal8-held24、普通14位置、D-only top2主对象＋固定512辅助、三臂qq/pq/pp、16私有root、H100，分别估计当前动作与总观测的有限真实闭环效用。H1沿source共同实际action/nextreward；不将负actor效用当信息无用。主D+K+e+t对D+K+t，cal-only固定ridge/held整EP统计及零效应控制，覆盖不足或MC/测量不确定不进入保护训练。CPU工程实施不当N1M验收，当前尚无真实科学结果；sv3物理4单卡完整入口21000秒上限（5–7不预占），不是整个方法预算。原M2、旧失败和完整目标缺项保持；下一先完成确定SHA工程验收再fresh核卡执行。下方“尚未采用”是采用前历史。
+
 **DL-r4可辨识性解释（2026-10-15）**：Agent在完整目标内采用的0GPU工作包已执行，actual/tested `7fa5054aa64160e91c74b0205f4e57bd32c0017c`。固定已存N批次、α20及同H1 mask，合法ρ≤1的最大释放仅为同批次D-only潜在超额释放的5.06221025%；匹配需越界代数ρ19.7542，不是调参建议或正式κ。独立有限反例中，相同D_toy/K/H1可对应当前actor效用+.72/0/−.72；负效用组的最佳latent读出仍有+.24信息增量，不能把actor错误使用等同信息无用。toy不是实际Dt或Dreamer验证，也不归因本次quadruped。完整范围/验收/未决见 [DL_R4_IDENTIFIABILITY.md](DL_R4_IDENTIFIABILITY.md)。下一真实干预须区分动作、记忆和保护收益，方案尚未采用或启动；原M2和旧失败保持，完整目标仍未完成。
 
 **DL 1M有限结果（2026-10-15）**：已确认本次N/quad_walk/seed0完整1M和工程验收，actual13ec72a；独立CPU全快照/ledger/统计复核a4d9330通过。AUC N652.28、B638.16、D796.25，N对B+2.21%、对D−18.08%，尾段接近；当前没有建立双信号相对单Dt的增量收益。保护确有触发，有效rep-active位置约35.05%受保护，但平均v=.9996853、超额KL损失数值减免仅.3466%；这些是replay-batch日志事实，不是任务信息保留率。H1支持差过窄、保护总量变化、选择位置优劣或轨迹波动的因果解释仍为工作假设/推测，不能据当前结果定论。完整 [DL_PILOT_R3_ANALYSIS.md](DL_PILOT_R3_ANALYSIS.md)。建议现有02先分离选择性与总强度、冻结独立效用标签及同代码/匹配强度/多seed设计；未批准调参、新gate或新训练。旧预验证失败保持，不因本次在线完成改为通过。
@@ -936,3 +938,11 @@ v=sg[1-m*rho*e*(1-1/(1+alpha D))]；
 **设计理由与反例**：局部R没有涵盖未来rep通路；旧F/参考程序变化没有证明原actor可利用的收益。因此新对象把整个当前rep净作用直接接到原actor的正常任务表现，避免继续用readout改善替代性能。A可能同时删除有益rep；旧momentum和其它loss仍保留，A不是选择性保护的上界，也不定位某个posterior特征。离线reset富集的重复8cal训练仍不是普通replay，单训练seed/cp300k/128更新＋32evalseed不支持跨训练seed结论。即使A阳性，通用正则、actor/value学习等替代解释仍未排除。
 
 **已确认范围、未决和资源**：本对象不新增A-F、独立第二信号、nuisance/错误依赖、gate或正式M2变更；这些仍待后续证据。原主完整入口7200秒/单sv3物理4/最多2GPUh、CPU独审1200秒/0GPU不是科研总预算；本attempt已因工程前置失败停止，不补样本或拼接。首选继续当前完整授权chat完成已采用的 [DL_NATIVE_RENDER_IDENTITY.md](DL_NATIVE_RENDER_IDENTITY.md) 输入/renderer层诊断，未知原因明标；未来native修复或观察图guard须另有完整认证依据，不用失败产物冒作成功前置。第二信号、正常replay、选择性压缩与性能目标仍未完成。
+
+### DL-33 新N1M普通历史的动作与记忆效用
+
+**Agent已采用的诊断决定，未获结果支持**：[DL_R4_UTILITY.md](DL_R4_UTILITY.md) 固定源checkpoint/config SHA、新seed4096–4127、cal0–7/held8–31。三臂qq/pq/pp使U_act=Gqq−Gpq、U_obs=Gqq−Gpp可分；不识别交互，不把当前actor效用当最优信息量或保护收益。source当前RGB共享、未来各自真实RGB/posterior、各自prevraw；pq与pp首控制/奖励必须exact。mode D/K/H1与native sampled actor条件对象不同。
+
+**理由、工作假设与反例**：采用高技能N1M和普通非reset历史，针对此前旧300k平均对象与reset对象的适用局限；保留H100，不按旧负结果寻窗。D-top2相对高D中可能有不同signed效用，e/K是否有独立增量仍是假设。全部14普通位置保存信号，top2主训练/评估与固定512辅助严格分开；所有predictor共同控制时间，避免选点分布及时间代理混淆。16-root均值、名义t15状态类、24episode bootstrap均有限探索，不是真值、功效或训练seed确认。
+
+**准入与待解决**：真实public q字节、实际subkeys、fullstate冻结、raw/applied/physics与cached-own-RGB分别审计；零效应差不得与实用尺度同量级，cal封口后才开held。首要未决是新入口在N1M实际模型上是否满足这些条件、e/K是否在固定真实U上有增量；正常active rep损伤/选择性保护、强度/shuffle/reward-only对照及跨seed学习性能尚无充分证据。任何本对象结果都不自动批准gate/正式训练。整体目标仍active。
