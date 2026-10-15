@@ -132,7 +132,7 @@ C只需已认证checkpoint/replay，不需要R5统计、source标签、native或
 B/B与rho0/B的参数、carry、replay输出及共有训练指标须字节一致，忽略只有活动诊断才存在的额外字段。
 失败归为工程/数值测量不合格，不放宽容差；原输入保持不变不能由“调用了pure函数”自行证明。
 
-另用独立完整loss/`nj.grad`参考JIT取得B/N_nr梯度与N/S/W/P reference-forward收据；
+另用独立完整loss/`nj.grad`参考JIT取得B/N_nr梯度、共同N_nr reference-forward及其S/W/P实际F32权重收据；
 复制并丢弃norm scratch，禁止optimizer/slow-target写入或创建叶，保留完整loss而不裁成单rep loss。
 它与生产核心分开编译，可能改变BF16融合/舍入/抽样；**不能把reference梯度叫生产optimizer内部逐叶bit-gradient**。
 梯度差与真实生产参数位移分报，核两者的前向/样本差异；不将差异自动归因为压缩信息损伤。

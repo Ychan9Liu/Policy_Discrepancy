@@ -9,6 +9,11 @@
 只执行 128 批只读反事实，不累计学习，不回写 replay。主入口含 import、输入认证、
 JIT、计算、写盘与清理共 3600 秒；CPU 全对象独审 900 秒。固定 sv3 物理 GPU5，
 UUID `GPU-79704918-e096-92b4-252c-e3244497a8b3`，不渲染、不初始化 EGL。
+采用 C 自有 `DL-NM1-compute-resource-r1` 资源认证：CUDA UUID/物理5/PCI_BUS_ID及
+JAX_PLATFORMS=cuda，MUJOCO_GL=disable，移除 MUJOCO_EGL_DEVICE_ID/PYOPENGL_PLATFORM。
+EGL UUID 为 None、graphics_verified=False/不适用；不要求也不新建 EGL probe。
+原 `dl_resources` 的 CUDA/EGL 认证语义不改；C 只复用真实占用查询和 idle/年龄检查，
+在导入前核 fresh≤120秒、导入后重新实际查 idle，模型后核真实 compute UUID 及 owned 进程。
 R5 权威终态及完整独审或失败封存完成后，重新核空闲才启动；没有加卡或自动延时。
 
 checkpoint 原字节 SHA256 为

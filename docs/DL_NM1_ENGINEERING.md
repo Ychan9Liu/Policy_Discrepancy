@@ -1,5 +1,25 @@
 # DL-NM1 cal-only工程前置
 
+## 2026-10-15：C 入口整合与待验收边界
+
+`scripts/dl_nm1_cal.py` 与 `analysis/dl_nm1_cal_audit.py` 已实现，正在合并独立审查和
+确定提交的 CPU 验收；尚未运行真实 N1M 的128批 C，不启动 T。
+生产 stdlib 父进程监督单个 worker；原完整 B/B重复/rho0/N scratch、实际 context、
+参考原 KL/梯度与真实更新、BF16原 bits、两遍固定系数/权重及全部批闭包分开保存。
+独审在完整 raw 图/外层真实退出及原进程组结束认证后，独立恢复计划、65跨度、context、
+种子/m/A、保留张量数值差、P Threefry 和 F64 资格，不重执行 NN/Adam。
+
+审查发现并已修复两类工程阻断：原 PID-only group cleanup 改为原身份/start_ticks/SID/
+全组归属核验；pickle 改为对实际解码的同一 bytes 先核已知 SHA。不能将登记表清空冒称进程已清空。
+原 CUDA/EGL 成对资源接口不适用于无渲染 C，采用 C 自有 compute-only 认证，旧接口不改。
+CUDA UUID/物理5/实际环境、fresh120秒、加载后真实 idle 和实际 runtime 独占核查保留；
+MUJOCO_GL=disable，EGL环境键移除，EGL标为不适用而非已验证。
+
+执行规范一句已由两个 Agent 同意在执行前澄清：S/W/P 是共同 N reference-forward 上的
+实际 F32 权重收据，没有重跑其 NN 或证明其生产位移匹配。科学对象/门/预算不变。
+完整剩余研究预算未定，一卡足够串行；只有 C 的3600秒采用，T 的6小时仍建议。
+真实源迁移进度、e704 clean Linux114项与外部 source exit 证据见 [迁移记录](DL_REPLAY_STAGE.md)。
+
 ## 2026-10-15：原 raw KL 出口与阴性资格算术
 
 新增工程版本 DL-NM1-counterfactual-r2，源码提交
