@@ -4,6 +4,8 @@
 
 **验收完成。** 2026-10-14 00:58:33.255724北京时间正常结束，worker exit0、父audited_complete；
 1M动作/249493更新/21点×10完整episode/210000eval动作齐全，00:58:34.233197确认GPU4释放。
+`final_state.status`保留worker结束时写入的`training_ended_pending_audit`；后续验收完成以
+`audit.json`、`supervisor_complete.json`及本次独审`review.json`为准，不覆写原始阶段记录。
 实际训练SHA仍 `13ec72a214b0c03b886b2c7fac52c8f089966dec`，无重跑、拼接或配置调整。
 独立CPU复核actual/tested `a4d9330a86cb89f9251b00bdad755f3305244a1a` 的4项Linux契约全过，
 51.383558453秒/exit0核完21个实际快照、最终checkpoint、全部收据、状态/hash/来源及原始统计。
@@ -14,6 +16,8 @@ N AUC652.2809110338405、tail941.5184525181727、endpoint950.7499831742771；
 超额KL损失数值减免.346618%，本轮没有建立双信号优于单Dt的证据。
 完整曲线、保护统计、可证伪解释和下一步建议见 [DL_PILOT_R3_ANALYSIS.md](DL_PILOT_R3_ANALYSIS.md)。
 本次GPU4作业已释放；10/15 14:01 GPU4/5各有647MiB未知C作业（AccessDenied），6/7空闲；未干预。
+14:05:14再次核查时，6/7也各有1127MiB未知C作业；最新资源记录在复核根
+`resource_check-20261015-final.json`，不将14:01快照视为当前四卡状态。
 以下13:37启动信息为历史快照；当前状态以本节和分析页为准。
 
 ## 历史启动快照（2026-10-13 13:37:29 北京时间）

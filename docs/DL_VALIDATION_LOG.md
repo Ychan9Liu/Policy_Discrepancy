@@ -27,6 +27,10 @@ psutil AccessDenied，均标未知作业且未干预；6/7无进程/0MiB。原N�
 本次CPU复核0GPU，不把原释放快照当当前四卡空闲。首选现有02审查信号与强度匹配协议，
 无新算法/参数或训练授权；最新GitHub同步按终点核验，不沿用旧push状态。
 
+14:05:14.796959再次完整XML：GPU4/5未知C作业保持，6/7分别有两个未知C进程/各1127MiB，
+本线程未启动GPU或干预这些任务；现场另存复核根`resource_check-20261015-final.json`。
+worker的final_state待审计状态属于冻结阶段记录，后继audit/supervisor_complete/独审已认证完成。
+
 ## DL-pilot-r3真实启动与首批更新（2026-10-13 13:37:29）
 
 actual/tested完整SHA13ec72a214b0c03b886b2c7fac52c8f089966dec，sv2隔离clean checkout；
