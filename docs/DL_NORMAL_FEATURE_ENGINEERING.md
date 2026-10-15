@@ -102,3 +102,9 @@ r2 本机有限 CPU 补证：新 features 三项与旧 live_policy 两项共五�
 真实 tiny 子进程报告共同 current/step 前向一致、无末帧 raw 伪造、末帧后推进拒绝及逐 episode
 标记重置，完整原态不变；source/N1M/GPU 标记均 False。没有读取真实 R5、运行真实 N1M、
 训练或新增科研裁决；固定提交与 Linux 补验待 root 完成，旧 c84995c 运行目录保持不动。
+
+**确定提交补证**：r2已包含于actual/tested `277c18001d353d9101a3622959351d3994699adb`，
+sv3 clean Linux十模块77项全部通过，无skip，完整39.615237942秒/300秒、真实SSHexit0/0GPU；
+含本接口与原live_policy、完整末帧/readonly反例，252源码和三norm实际bytes前后核同。
+证据与完整hash见[共同工程记录](DL_R5_AUDIT_ENGINEERING.md)。此补证仍是generated tiny BF16，
+没有真实N1M或source特征验收，没有采用T或真实GPU执行预算。

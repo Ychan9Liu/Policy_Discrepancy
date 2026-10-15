@@ -127,3 +127,37 @@ attempt02 改为 `metadata_probe.py`。这一 metadata 核对不是完整物理�
 显式 cast 的 sample 保持 BF16；N1M 几何 fake 改为原精确混合 dtype，并在重封原 hash 后分别拒绝
 q/p 的 BF16 mode、F32 logits 与 F32 sample。仅 shape/counts 相同不足以通过。
 新版固定提交和 clean Linux 补验待 root 完成，不冒称这些 fixtures 是真实 N1M 全对象验收。
+
+## dtype修复与必要接口的确定提交补验
+
+actual/tested **277c18001d353d9101a3622959351d3994699adb**，sv3 fresh clean
+`/data/Policy_Discrepancy/dl-r5-audit-code-20261015-277c180`。十模块77项全过、无skip，
+unittest38.080秒、进程38.517741790秒、完整入口39.615237942秒/300秒；真实SSHexit0/40.218秒、0GPU、owned空。
+252份实际源码及三份额外规范working bytes前后均同Git blobs，最终clean。
+真实Linux descendant与symlink拒绝、真实Categorical混合dtype、新末帧/RandomState/官方query反例均实际执行。
+第二Agent逐Git blob、原日志、bundle/controller/helper及外部SSH终态独立复算一致，未重跑测试。
+
+证据 `/data/Policy_Discrepancy/runs/dl-r5-repair-cpu-20261015-277c180/attempt01/`，
+本机ignored `analysis/outputs/dl-r5-repair-cpu-277c180/attempt01/`。
+`linux-tests.log` SHA256 `73283a4a8210aff4fe54e468e9f8c2c162c15b537352cc10afd520d95b443f9c`；
+`source-binding.json` SHA256 `92b2593d0eb3c2025dc123680e1ef49db50e117a49ed4c42a8d21305de25918f`；
+`terminal.json` SHA256 `c16adb7b26f234ec2106fd8f3135710c888c18672cfeaf8d832ed1b37c7fb7d9`；
+本机SSH终态 SHA256 `c1067e1c9ebc600ffdb2c4b8f0c477603b85ed5305b583a3e7f69766601b232d`。
+有限CPU通过不代替真实512全审。
+
+修复版实际完整CPU独审已完成，输出新目录
+`/data/Policy_Discrepancy/runs/dl-r5-independent-audit-20261015-277c180/attempt01/`，
+真实parent459454/start409578209/PGID=SID=459454；外层继续使用原已核SHA72d98控制器、1800秒整体预算。
+22:21:07实际外层exit0，完整655.220153340秒/1800秒，external_failure为null、原进程结束且owned组清理完成；
+本机SSH观测实际exit0/656.375秒，原handle98628已结束。完整512unit/32family认证，
+247872个source步、51200个outcome步、512个shadow步的物理和奖励byte-exact。
+这不独立重执行NN、renderer、public policy或subkey sampling，不证明信息独立性或方法有效。
+
+成功`audit.json`947544字节，SHA256 `144c4490e69283ab14ad1a96fd8cbd9c47945875797a91ac6d420dade9e216cd`；
+外层`terminal.json` SHA256 `d6164a94bdb7b9a95579454d539643d705f808d798d8f44043dad3d0101c8614`；
+外层`launch.json` SHA256 `0704040141c34e05e67b23469f0d3890075dd6eebb5d8aa66214d7a51942d144`；
+`audit.log` SHA256 `7e2a697b9c3f8c20ed7d80b5f6b31d86fad5ece00d86ea1dfc2ab63843115711`。
+本机完整小镜像`analysis/outputs/dl-r5-independent-audit-277c180/attempt01/`。
+原7c失败目录不覆盖，原1584数据不重采；成功prior physics audit Git是277c完整SHA。
+冻结统计主检验未支持且sham出现implementation concern，详[实际结果](DL_R5_R2_RESULTS.md)；
+完整性通过与科学阳性分别记录，不能互相代替。

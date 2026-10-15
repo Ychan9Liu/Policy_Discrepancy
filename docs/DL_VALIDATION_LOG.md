@@ -1,5 +1,28 @@
 # DL 验证日志与证据索引
 
+## R5修复版完整独审及资源答复（2026-10-15 22:21–22:28）
+
+actual/tested `277c18001d353d9101a3622959351d3994699adb`，十模块77项Linux有限CPU全过，
+完整39.615237942秒/300秒、真实SSHexit0/0GPU；252源码及三norm实际working bytes前后同Gitblob。
+新277c完整独审22:21:07 actual exit0/655.220153340秒/1800秒、owned组清理完成；
+512/32和全部source/outcome/shadow物理与奖励byte-exact通过，非独立NN/render/subkey复执行。
+report SHA `144c4490e69283ab14ad1a96fd8cbd9c47945875797a91ac6d420dade9e216cd`，
+terminal SHA `d6164a94bdb7b9a95579454d539643d705f808d798d8f44043dad3d0101c8614`。
+冻结主检验CI跨0、sham p=.0045995400459954 concern，详[实际结果](DL_R5_R2_RESULTS.md)；
+工程成功与科研支持分开，原7c失败证据仍保留，原1584数据不重采。
+
+前驱封存脚本raw SHA `6436ce13847f7da5aa96530bc6a03c5101056829807ad3320f255749a6b9736c`，
+两遍全run库存、全部已知生产/CPU审计进程身份及外pin闭包认证后实际exit0；
+server完整15.583822330秒/900秒、SSHexit0/16.172秒、0GPU、无科学字段/NPZ/pickle解码。
+final SHA `e8b76009e759c1d22d6770498a121abb7b7c0f22c469b87f2503fc60db168595`；
+本机收据`analysis/outputs/dl-nm1-cal-preflight-8d63fff/retirement-277c180/`。
+22:28:20–24 fresh sv3物理4–7 XML/pmon均0MiB/无进程，实际C checkout仍8d63完整SHA且clean。
+本机资源收据`analysis/outputs/dl-nm1-cal-preflight-8d63fff/resource-20261015T142836256015/`。
+C既定单GPU5/128批/3600秒，独审另900秒CPU；T4096/整体6h仍未采用、总剩余GPU小时未定。
+22:28:41.740151原8d63实际C启动parent467533/start409689202/PGID=SID467533；
+22:31:13–17原进程活跃、仍CPU导入/核验，GPU5为其保留，未新增其它GPU任务。
+尚无完整128/终态/独审或科学结论，实际详情见[执行记录](DL_NM1_CAL_RESULTS.md)。
+
 ## R5完整终态、首次独审失败与必要接口修复（2026-10-15）
 
 原run1584于21:54:25外层exit0，9288.792455766秒/原12600秒，完整512unit/32family；

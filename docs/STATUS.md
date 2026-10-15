@@ -1,5 +1,26 @@
 # 项目状态
 
+**2026-10-15 22:31 C已启动/尚未验收**：原actual/tested
+`8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0`的cal-only于22:28:41.740151启动，
+parent467533/PGID=SID467533/start409689202，sv3物理5单独A10080，无EGL。
+128独立反事实批/共同初态/不累计学习，入口3600秒、完整退出后CPU独审另900秒；不启动T。
+22:31:13–17父进程仍活跃，处于CPU导入/核验，物理4–7无可见GPU进程/各0MiB；
+GPU5仍保留给本入口，4/6/7未使用。当前尚无完整C、系数/资格、峰显存或吞吐结论。
+实际版本/输入/封存raw pins/一次启动和验收边界见[实际C记录](DL_NM1_CAL_RESULTS.md)。
+继续当前chat/handle94939至权威终态和独审；T4096/6h未采用，完整研究总资源未定，goal active。
+
+**2026-10-15 22:21完整R5独审完成**：成功actual/tested
+`277c18001d353d9101a3622959351d3994699adb`，Linux77项/0GPU通过；真实独审外层exit0、
+655.220153340秒/1800秒、无external_failure、owned组清理完成。原1584数据512/32完整，
+247872个source步、51200个outcome步、512个shadow步的物理/奖励byte-exact，非独立NN/render/subkey重执行。
+冻结主检验CI跨0未支持，sham p=.0045995400459954出现implementation concern，根因未定；
+详[结果及原始证据](DL_R5_R2_RESULTS.md)。不能据工程通过宣布方法有效或据科研非阳性更换source。
+前驱封存actual exit0/15.583822330秒/900秒CPU，final SHA
+`e8b76009e759c1d22d6770498a121abb7b7c0f22c469b87f2503fc60db168595`；原生产/独审进程全部退役。
+22:28:20–24 sv3物理4–7完整XML/pmon均无进程/0MiB；C固定GPU5单卡，无EGL，原8d63未移动。
+资源需求为一张独占A10080串行，C另最多1GPUh+900秒CPU；T4096/整阶段6h仍建议，剩余总GPUh未定。
+本次资源核查/封存不是C完成或学习/性能证据，完整goal仍active。
+
 **2026-10-15 21:54:58服务器快照 / R5完整生成，首次独审工程失败**：
 原actual1584于21:54:25完成512unit/32family，generation_complete/内外terminal齐，外层实际exit0、
 elapsed9288.792455766秒（约2.580220单卡小时），原parent341486已不存在、owned组清理记录为true。

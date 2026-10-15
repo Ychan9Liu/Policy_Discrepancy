@@ -110,3 +110,11 @@ CLI 已固定全入口900秒/纯CPU的工程上限，含 import/hash/解码/输�
 source 执行，实际执行预算尚待root采用。实际运行还需独立外层真实 exit0、完整耗时及输出
 raw pin，不能单靠 index JSON 自证入口退出。失败保留，不扩时、补源、拼接或按科学符号换来源。
 来源认证不是机制、读出或性能阳性，也不自动启动 T。
+
+**确定提交Linux补证**：actual/tested `277c18001d353d9101a3622959351d3994699adb`，
+十模块77项全过/无skip、完整39.615237942秒/300秒，真实SSHexit0/0GPU。
+本模块十项均实际执行，含Windows因权限未执行的symlink拒绝；真实RandomState快照协议和路径别名反例通过。
+252源码及本规范等三norm的working bytes前后同真实Git blobs，最终clean，第二Agent独立复算一致。
+证据见[共同工程记录](DL_R5_AUDIT_ENGINEERING.md)。修复版277c已在22:21:07完整独审成功，
+可以作为显式prior physics audit Git；其主科学检验未支持不能用于选择更有利的source。
+当前没有执行真实source index，fixture不是该真实来源验收；实际900秒CPU执行预算尚未启用。

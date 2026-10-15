@@ -3,7 +3,8 @@
 2026-10-15，科学版本DL-live-utility-r1，工程版本DL-r5-engineering-r2。
 这是Agent在既有完整预验证授权、sv3物理4–7范围内采用的
 [一次工程重试](DL_R5_LIVE_RETRY.md)，不是用户逐项确认或正式训练。
-**已启动、尚未完整生成/独审，无信号增量、保护或方法性能结论。**
+**已完整生成并通过物理/证据独审；冻结主检验未支持、sham负对照出现implementation concern，
+没有建立信号增量、保护或方法性能结论。**
 本页时刻均为服务器UTC记录换算北京时间；不同主机有钟差，耗时用对应monotonic，不跨主机相减。
 
 ## 实际版本与有限工程验收
@@ -102,6 +103,31 @@ driver570.158.01，详细版本与pip freeze保存在外部inputs。驱动/编�
 
 ## 资源答复及下一步
 
+**22:21:07完整独审终态**：实际auditor/tested
+`277c18001d353d9101a3622959351d3994699adb`，原producer仍为1584完整SHA。
+新独审外层actual exit0/655.220153340秒/1800秒，external_failure为null、原parent结束、owned组清理完成；
+本机SSH实际exit0。512/32完整认证，source247872/outcome51200/shadow512步物理与奖励byte-exact，
+没有独立重执行NN/render/public policy或subkey。旧7c首次失败不是本次成功证据。
+
+冻结科学结果为`current-finite-procedure-inconclusive-or-not-supported`，不改变任何阈值、端点或来源。
+
+| 预定对象 | 实际结果 | 有限解释 |
+| --- | --- | --- |
+| highD主检验：U_obs的DKe相对DK预测MSE改善 | 0.04284087923030705；95% family-bootstrap CI [-0.014783905283665083, 0.1506001512260224] | 跨0，primary_support_pattern=false；不建立独立增量 |
+| 覆盖 | highD 77/384、23个held family；qqA/qqB/pq/pp为23/13/20/21 | 预定有限覆盖通过，不是功效保证 |
+| sham负对照 | qq条件36点，预定双侧随机化p=0.0045995400459954；highD均值0.12721261225549346 | 拒绝零效应，implementation_concern=true；不是确定bug或确定原因 |
+| 固定quadratic residual辅助控制 | gain=-712.0606446044734，95% CI [-2348.999715087239, -0.025508036503030063]；support=false | 有限固定程序未支持；不删极端family、重拟合或替换主判据 |
+
+sham异常原因尚无证据确定；当前不能无条件采信qqA/qqB可互换或将此结果解释为目标因果效用。
+不得据非阳性拒绝完整认证source、补采有利来源或以辅助结果替换主结果。
+C只检验普通干预的实际作用和对照校准，按既有设计不依赖R5科学阳性；T仍未采用。
+
+实际独审目录`/data/Policy_Discrepancy/runs/dl-r5-independent-audit-20261015-277c180/attempt01/`，
+本机镜像`analysis/outputs/dl-r5-independent-audit-277c180/attempt01/`。
+report raw SHA256 `144c4490e69283ab14ad1a96fd8cbd9c47945875797a91ac6d420dade9e216cd`，
+外层terminal SHA256 `d6164a94bdb7b9a95579454d539643d705f808d798d8f44043dad3d0101c8614`；
+完整工程证据和限制见[独审记录](DL_R5_AUDIT_ENGINEERING.md)。
+
 **21:54:25完整终态取代此前运行中状态**：原1584/attempt01外层真实exit0、无external_failure，
 完整512unit/32family、内外terminal及generation齐；主elapsed9288.792455766秒，约2.580220GPUh。
 21:54:58原parent341486已不存在、物理4–7无可见进程/各0MiB，GPU5已释放。未重采或追加GPU任务。
@@ -114,8 +140,8 @@ supervisor SHA `f09bb2c422b209eacc613e0d31d97720f0bd4523da601fd20c2389f30e85c804
 失败证据 `/data/Policy_Discrepancy/runs/dl-r5-independent-audit-20261015-7c4affc/attempt01/`，
 本机 `analysis/outputs/dl-r5-independent-audit-7c4affc/failed-attempt01/`，完整退出记录和日志均保留。
 此失败没有完整physics/统计裁决，不是方法阴性；已定位的精确dtype修复及认证诊断见
-[独审工程记录](DL_R5_AUDIT_ENGINEERING.md)。下一须新Git/Linux补验及fresh目录重审原完整数据，
-不得以失败7c作为normal source或C的通过前驱。C/T未启动，科学门/原预算不变。
+[独审工程记录](DL_R5_AUDIT_ENGINEERING.md)。随后277c的新Git/Linux补验及fresh重审已成功，见本节上方。
+不得以失败7c作为normal source或C的通过前驱。T未启动，科学门/原预算不变。
 
 **21:37:07更新**：原parent341486/start408554660身份匹配、452unit/28family完整，cal封口，
 无全生成/内外terminal；GPU5仅本worker438660 C+G/2587MiB，4/6/7无可见作业/各1MiB。
@@ -135,8 +161,8 @@ cal封口，无generation/内外terminal；GPU5仅本worker432246 C+G/2587MiB，
 CPU库存/私有replay/tiny工程/ridge/bootstrap/物理标签和独审不占GPU；真实模型重提特征和正常机制学习需要单卡。
 完整剩余总GPU小时尚未冻结，NM1的4096更新/最多五臂/整阶段6GPUh仍仅建议，不能作为已批准总额。
 
-继续当前chat监督同一parent/handle至权威终态；观察超时不是停止理由，不另开补齐任务。
-只有512完整退出且原进程结束后，才从新auditor7c4affc clean代码对原run_git1584执行
-1800秒独立CPU全对象审计并作冻结科学裁决；正式CLI必须提供外部launch/terminal双raw pins。
-其前不读取中间科研值；工程通过不等于信号或方法有效。原f845资源失败及缺失触发sample限制保持，
+R5原parent与成功277c独审handle均已结束，不再重启或补采。下一当前chat按原C条件认证前驱封存、
+fresh核物理5独占后执行128批C，并独立900秒CPU审计；并行只读排查sham异常，不能先宣称根因。
+T完整预算需结合真实C吞吐、完整source特征工作量与native核算后另行采用，不能把6h建议写成ETA。
+工程通过不等于信号或方法有效。原f845资源失败及缺失触发sample限制保持，
 见[旧运行及失败取证](DL_R5_LIVE_RESULTS.md)。正常压缩及有效S/P/W仍缺证据，完整目标active/M2不变。
