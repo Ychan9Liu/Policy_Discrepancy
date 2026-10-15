@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL-r4进度（2026-10-15 15:17:09）**：原parent247014/worker247226身份不变且实际活跃；episode0主生成147份/14700branch步及同量cache/physics复放完成，episode1开始，held尚未生成/无terminal。当前GPU4仅本worker C+G/2587MiB，5–7无进程/各1MiB；GPU4未释放。不是全对象验收/独审/科学结论，actual5ce和协议不变，详见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。继续同chat监督原handle至终态，完整后独审；整体目标active。
+
 **DL-r4已启动（2026-10-15 15:12:06快照）**：actual/tested `5ce1d3724ee8c5d01f09c4d687100a2f42f6ac83`，仅sv3物理GPU4，parent247014/worker247226活跃；N1M完整state load及真实CUDA/EGL同UUID通过，源0/信号文件已生成，尚未整episode验收/独审。三臂16root/H100/cal8-held24、冻结无训练，完整21000秒硬限。基础d61 Linux51全过/pip0；5ce只修管道，相关19全过/无ResourceWarning。研究分支已push、未main，服务器保持5ce clean隔离源码；后续报告版仅docs。见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。先继续监督原handle，不因观察超时重启；完整生成后独审，不中途读held科学值或改协议。整体目标未完成/M2不变；下方为历史。
 
 **DL-r4真实诊断实施中（2026-10-15）**：Agent在完整授权内采用 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)。N1M冻结模型、32全新正常episode、D-top2主对象/固定512辅助、qq/pq/pp三臂/16root/H100；source H1与branch效用分开，不新增训练。已有Windows四组31项工程检查30通过/1 Linux进程组待验（12.078秒），tiny真BF16 policy与CPU真physics/stubRGB的适用范围分开；实际N1M/真实RGB/GPU尚未验收。新入口/独立审计在实施，下一确定SHA Linux验收后fresh核sv3物理4，仅用1卡/21000秒完整入口；5–7不预占。完整方法目标未完成、M2不变；本轮资源估算不能当启动证据。

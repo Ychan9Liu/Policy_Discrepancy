@@ -1,6 +1,6 @@
 # DL-r4 真实动作/记忆诊断运行记录
 
-状态：**运行中，未验收，无科研裁决**。更新：2026-10-15 15:12北京时间。
+状态：**运行中，未验收，无科研裁决**。更新：2026-10-15 15:17北京时间。
 科学规范 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，版本 DL-r4-utility-r1；正式M2不变。
 
 ## 版本与工程证据
@@ -33,6 +33,13 @@ CUDA_VISIBLE_DEVICES为上列UUID，进程内CUDA0；MUJOCO_EGL_DEVICE_ID=4，CU
 worker247226/PGID247226/PPID247014，starttime407058446。
 15:12:06.883578二者均实际活跃，未有supervisor_terminal/worker_complete。
 episode_000的source.pkl/signals.pkl已生成，尚未整episode完成或独审；不能据文件存在宣称科学验收。
+
+**15:17:09.221456后续事实**：原parent/worker的starttime、PGID、cmdline均一致，worker R活跃，
+episode0已完成主生成：147份branch/null，14700真实branch步及等量cached-policy/physics复放，
+source14×100 F64/exact state参考通过；source累计9.827秒、labels累计322.840秒。episode1已创建，
+cal尚未封口，held目录未生成，主terminal/worker_complete尚无。此为主程序工程检查，不是独审或科学裁决。
+GPU4仅本worker247226/C+G、2587MiB；5–7各1MiB但XML+pmon均无作业，本对象未用，GPU4尚未释放。
+现场小收据inputs/status-20261015T0716.json（文件名预置，实际检查时间以内容15:17:09为准）。
 
 主目录 `/data/Policy_Discrepancy/runs/dl-r4-utility-20261015-5ce1d37-attempt01`。
 inputs中的launch-5ce1d37-attempt01.json、resource-5ce1d37-attempt01.json及probe证据保存完整启动和mapping；
