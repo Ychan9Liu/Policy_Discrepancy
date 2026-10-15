@@ -23,8 +23,24 @@ CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu python analysis/dl_pilot_review.py \
 本机用Matplotlib从这两份只读JSON生成学习/保护曲线与固定AUC逐点贡献（不删除点）：
 
 ```sh
-python analysis/dl_pilot_plot.py --review REVIEW/review.json --points REVIEW/points.json --output NEW_FIGURES
+python analysis/dl_pilot_plot.py --review REVIEW/review.json --points REVIEW/points.json \
+  --expected-review-sha REVIEW_SHA256 --expected-points-sha POINTS_SHA256 --output NEW_FIGURES
 ```
+
+绘图在写盘前验证这两份固定字节、21点完整网格、原始episode均值和绝对统计；
+相对AUC相同不能掩盖三条曲线共同污染。既有正确图保留，新图使用新目录。
+
+`dl_signal_identifiability.py` 是 `DL-identifiability-r1` 的0GPU解释检查：
+从已认证N批次的聚合量计算合法ρ可行域，并穷举有限四cue反例，区分信息可用性、
+当前actor利用和保护收益。它不运行模型、环境、训练或replay，不提供新方法验收。
+
+```sh
+python analysis/dl_signal_identifiability.py --review REVIEW/review.json \
+  --expected-review-sha REVIEW_SHA256 --expected-git FULL_CLEAN_COMMIT --output NEW_ANALYSIS.json
+```
+
+范围、未决问题及下一有限诊断候选见 `docs/DL_R4_IDENTIFIABILITY.md`；
+同N批次的代数比例不能当实际Dt强度、正式κ或新训练表现。
 
 ## 原始 return 统计
 
