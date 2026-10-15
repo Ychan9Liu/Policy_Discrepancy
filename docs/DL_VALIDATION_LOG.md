@@ -1,5 +1,16 @@
 # DL 验证日志与证据索引
 
+## DL-r4确定版本Linux通过与真实入口启动（2026-10-15）
+
+实现d61d8ae45b380dd4e54907e5669ce3cb731749f3 clean sv3 Linux51项32.629秒全过/pip0；
+实际5ce1d3724ee8c5d01f09c4d687100a2f42f6ac83只修runner/audit各2行关闭超时pipe及doc，
+相关19项3.341秒全过/ResourceWarning消失。无科学语义、模型或随机流变更。
+15:09:40 fresh4–7空闲，零动作CUDA/EGL probe通过；15:10:12 parent247014启动，
+worker247226，单sv3物理4。实际N1M完整state和runtime同GPU通过；15:12:06原进程仍活跃，
+source0/signals文件已生成，尚无整episode/完整生成/独审/科学裁决。源码仅sv3隔离5ce，
+canonical/sv1/sv2不改；5ce已push研究分支、未main。完整证据/命令/限制与后续见
+[DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。后续docs报告不改变执行checkout。
+
 ## DL-r4真实动作/记忆对象工程实施（2026-10-15）
 
 规范 [DL_R4_UTILITY.md](DL_R4_UTILITY.md) 已在完整预验证授权内采用；没有新算法训练。

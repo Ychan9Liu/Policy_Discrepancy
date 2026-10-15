@@ -1,5 +1,7 @@
 # 研究问题与方法
 
+**DL-r4执行补记（2026-10-15）**：上述下一真实动作/记忆对象已在实际5ce1d3724ee8c5d01f09c4d687100a2f42f6ac83启动；15:12:06 sv3物理4的原parent/worker实际活跃，N1M完整state与CUDA/EGL mapping通过，尚无完整episode/独审或科研裁决。规范保持 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，运行/证据边界与后续见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。这不是新增训练，仍不能解释早期r3慢学；下方实施中/未执行为启动前历史。
+
 **DL-r4真实动作/记忆诊断（2026-10-15，已采用、实施中）**：Agent在用户完整预验证授权内采用 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，不是用户逐项认可的新算法。冻结N1M模型、新32正常episode/cal8-held24、普通14位置、D-only top2主对象＋固定512辅助、三臂qq/pq/pp、16私有root、H100，分别估计当前动作与总观测的有限真实闭环效用。H1沿source共同实际action/nextreward；不将负actor效用当信息无用。主D+K+e+t对D+K+t，cal-only固定ridge/held整EP统计及零效应控制，覆盖不足或MC/测量不确定不进入保护训练。CPU工程实施不当N1M验收，当前尚无真实科学结果；sv3物理4单卡完整入口21000秒上限（5–7不预占），不是整个方法预算。原M2、旧失败和完整目标缺项保持；下一先完成确定SHA工程验收再fresh核卡执行。下方“尚未采用”是采用前历史。
 
 **DL-r4可辨识性解释（2026-10-15）**：Agent在完整目标内采用的0GPU工作包已执行，actual/tested `7fa5054aa64160e91c74b0205f4e57bd32c0017c`。固定已存N批次、α20及同H1 mask，合法ρ≤1的最大释放仅为同批次D-only潜在超额释放的5.06221025%；匹配需越界代数ρ19.7542，不是调参建议或正式κ。独立有限反例中，相同D_toy/K/H1可对应当前actor效用+.72/0/−.72；负效用组的最佳latent读出仍有+.24信息增量，不能把actor错误使用等同信息无用。toy不是实际Dt或Dreamer验证，也不归因本次quadruped。完整范围/验收/未决见 [DL_R4_IDENTIFIABILITY.md](DL_R4_IDENTIFIABILITY.md)。下一真实干预须区分动作、记忆和保护收益，方案尚未采用或启动；原M2和旧失败保持，完整目标仍未完成。

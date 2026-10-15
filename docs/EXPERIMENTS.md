@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**DL-r4运行记录（2026-10-15，未验收）**：[DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md) 记录实际/tested5ce1d37、基础Linux51及修复相关19项、sv3单物理4/真实N1M load与CUDA-EGL、完整命令和原live parent247014/worker247226。15:12:06仍运行、尚无独审或科学结论，保持原三臂/16root/H100及cal-before-held；不是正式训练/M2变更。下一继续原handle至terminal，再独立CPU验收，不把观察超时当失败或改阈值取阳性。
+
 **DL-r4动作/记忆真实诊断（2026-10-15，实施中未执行）**：[DL_R4_UTILITY.md](DL_R4_UTILITY.md) 是完整预验证授权内Agent采用的有限冻结模型对象：N1M/new32EP/cal8-held24、14普通位置的D-top2主对象、三臂/16root/H100、source共同动作条件H1和独立真实后果。工程正确性/源字节/实际设备及独审是前置；不启动新训练、不改M2，不把条件效用等同信息存在性或保护收益。sv3物理4单A100完整入口21000秒上限，5–7不预占；总科研预算未定。上一条解释时“下一真实干预候选”现已由本规范采用，旧有限裁决保持。
 
 **DL-r4解释结果索引（2026-10-15）**：[DL_R4_IDENTIFIABILITY.md](DL_R4_IDENTIFIABILITY.md) 记录actual/tested `7fa5054aa64160e91c74b0205f4e57bd32c0017c` 的0GPU固定批次代数与有限解析枚举，16项CPU检查/实际入口exit0；不是新训练协议、真实任务信号验收或正式M2变更。同N mask的ρ可行域、actor负效用与信息无用的区别已明确，下一真实动作/记忆干预仍候选未采用。
