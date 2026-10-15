@@ -9,7 +9,7 @@ import numpy as np
 
 from scripts.dl_reset_learning import require, tree_digest
 
-VERSION = 'DL-NM1-counterfactual-r1'
+VERSION = 'DL-NM1-counterfactual-r2'
 NEURAL = ('enc/', 'dyn/', 'dec/', 'rew/', 'con/', 'pol/', 'val/')
 
 
@@ -53,7 +53,7 @@ class Counterfactual:
     self.reference_accessed=()
     self.reference_modified=()
     self._context=jax.jit(agent.model._apply_replay_context)
-    pure=nj.pure(agent.model.log_train_collect)
+    pure=nj.pure(agent.model.nm1_reference_collect)
     def reference(params,carry,obs,prevact,seed):
       scratch,bundle,accessed,modified,created=pure(params,carry,obs,prevact,
           seed=seed,create=False,modify=True,track=True)

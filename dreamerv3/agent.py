@@ -165,7 +165,8 @@ class Agent(embodied.jax.Agent):
     carry = (*carry, {k: data[k][:, -1] for k in self.act_space})
     return carry, outs, metrics
 
-  def loss(self, carry, obs, prevact, training, dl_logging=True):
+  def loss(self, carry, obs, prevact, training, dl_logging=True,
+           dl_reference=False):
     # Direct/offline loss calls keep DL diagnostics. The training wrapper runs
     # logging in a separate read-only JIT so its outputs cannot alter optimizer
     # fusion or rounding. Active weighting modes retain the original graph.
@@ -182,7 +183,7 @@ class Agent(embodied.jax.Agent):
         enc_carry, obs, reset, training)
     dyn_carry, dyn_entries, los, repfeat, mets, probe = self.dyn.loss(
         dyn_carry, tokens, prevact, reset, training,
-        rep_probe=(self.rep_probe_active or dl_active) and training)
+        rep_probe=(self.rep_probe_active or dl_active or dl_reference) and training)
     losses.update(los)
     metrics.update(mets)
     dec_carry, dec_entries, recons = self.dec(
@@ -252,6 +253,12 @@ class Agent(embodied.jax.Agent):
       losses.update(los)
       metrics.update(prefix(mets, 'reploss'))
 
+    # DL-NM1: only the explicit independent reference collector retains this
+    # original raw KL node. Default production never returns extra tensors.
+    if dl_reference:
+      assert training and not self.rep_probe_active
+      nm1_rep_before = losses['rep']
+      nm1_weight = jnp.ones_like(nm1_rep_before)
     dl_signal = None
     if self.rep_probe_active and training:
       rep_before = losses['rep']
@@ -274,6 +281,8 @@ class Agent(embodied.jax.Agent):
           self.opt.step.read(), dl_signal)
       if self.config.dt_latch.mode != 'logging':
         losses['rep'] = weight * losses['rep']
+        if dl_reference:
+          nm1_weight = weight
       metrics.update(probe_metrics)
 
     assert set(losses.keys()) == set(self.scales.keys()), (
@@ -286,6 +295,11 @@ class Agent(embodied.jax.Agent):
     outs = {'tokens': tokens, 'repfeat': repfeat, 'losses': losses}
     if dl_active and training:
       outs['dl'] = dl_signals
+    if dl_reference:
+      raw_kl = f32(probe['rep_raw'])
+      outs['nm1_reference'] = dict(
+          K=raw_kl, E=jnp.maximum(raw_kl - self.dyn.free_nats, 0),
+          rep_before=nm1_rep_before, weight=nm1_weight)
     return loss, (carry, entries, outs, metrics)
 
   def log_train_collect(self, carry, obs, prevact):
@@ -298,6 +312,16 @@ class Agent(embodied.jax.Agent):
     """
     return nj.grad(self.loss, self.modules, has_aux=True)(
         carry, obs, prevact, True, dl_logging=False)
+
+  def nm1_reference_collect(self, carry, obs, prevact):
+    """DL-NM1: complete independent reference gradient and original raw KL.
+
+    This is a separate JIT, not an optimizer-internal gradient capture. It
+    retains normalizer scratch writes but never updates optimizer/slow target.
+    The ordinary loss/train paths keep dl_reference=False and their outputs.
+    """
+    return nj.grad(self.loss, self.modules, has_aux=True)(
+        carry, obs, prevact, True, dl_logging=False, dl_reference=True)
 
   def log_train_score(self, repfeat, rep_before, obs, prevact):
     """Read-only DL metrics on features returned by the complete gradient JIT."""

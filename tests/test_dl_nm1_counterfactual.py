@@ -105,6 +105,13 @@ def fixture(output):
   assert int(agent.n_batches) == before_batches
   probe=Counterfactual(agent)
   ref1,ref2=probe.reference(carry,prepared),probe.reference(carry,prepared)
+  original = host(ref1['aux'][2]['nm1_reference'])
+  assert set(original) == {'K','E','rep_before','weight'}
+  assert original['K'].dtype == original['E'].dtype == np.float32
+  np.testing.assert_array_equal(original['E'],np.maximum(original['K']-np.float32(1),np.float32(0)))
+  np.testing.assert_array_equal(original['rep_before'],np.maximum(original['K'],np.float32(1)))
+  np.testing.assert_array_equal(original['weight'],np.ones((2,4),np.float32))
+  np.testing.assert_array_equal(host(ref1['aux'][2]['losses']['rep']),original['rep_before'])
   assert tree_digest(ref1['grads']) == tree_digest(ref2['grads'])
   assert any(np.any(v != 0) for v in ref1['grads'].values())
   assert set(ref1['grads']) == set(ref1['params'])
@@ -140,6 +147,9 @@ def fixture(output):
     branch_probe=Counterfactual(branch)
     branch_prepared=prepare_readonly(branch,raw,before_batches)
     branch_reference=branch_probe.reference(carry,branch_prepared)
+    branch_raw=host(branch_reference['aux'][2]['nm1_reference'])
+    np.testing.assert_array_equal(branch_raw['E'],np.maximum(branch_raw['K']-np.float32(1),np.float32(0)))
+    np.testing.assert_array_equal(branch_raw['rep_before'],np.maximum(branch_raw['K'],np.float32(1)))
     branch_step=branch_probe.production(carry,branch_prepared)
     assert int(branch_step['params']['opt/step/value']) == 2
     branch_probe.fence(full=True)
@@ -152,6 +162,9 @@ def fixture(output):
       signals=host(branch_reference['aux'][2]['dl'])
       expected=signals['m'] & ~raw['is_first'][:,1:]
       np.testing.assert_array_equal(signals['m_intervention'],expected)
+      np.testing.assert_array_equal(branch_raw['weight'],signals['v_intervention'])
+      np.testing.assert_array_equal(host(branch_reference['aux'][2]['losses']['rep']),
+          branch_raw['weight']*branch_raw['rep_before'])
       assert signals['m'][1,2] and not signals['m_intervention'][1,2]
       extra['N_nr_finite_source_unchanged']=True
       extra['N_nr_active_update_difference_not_required_by_fixture']=True
@@ -164,7 +177,7 @@ def fixture(output):
       except ValueError as error:assert 'configuration changed' in str(error)
       else:raise AssertionError('Static configuration mutation was not rejected')
     finally:branch.model.config=old_config
-  Path(output).write_text(json.dumps(dict(version='DL-NM1-counterfactual-fixture-r1',
+  Path(output).write_text(json.dumps(dict(version='DL-NM1-counterfactual-fixture-r2',
       complete_source_unchanged=True,public_train_matches_scratch=True,
       initial_opt_step=1,reference_gradient_scope=ref1['gradient_scope'],
       neural_difference=neural_difference(initial['params'],first['params']),
