@@ -1,6 +1,6 @@
 # DL-r4 真实动作/记忆诊断运行记录
 
-状态：**运行中，未验收，无科研裁决**。更新：2026-10-15 15:17北京时间。
+状态：**运行中，未验收，无科研裁决**。更新：2026-10-15 15:37北京时间。
 科学规范 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，版本 DL-r4-utility-r1；正式M2不变。
 
 ## 版本与工程证据
@@ -40,6 +40,13 @@ source14×100 F64/exact state参考通过；source累计9.827秒、labels累计3
 cal尚未封口，held目录未生成，主terminal/worker_complete尚无。此为主程序工程检查，不是独审或科学裁决。
 GPU4仅本worker247226/C+G、2587MiB；5–7各1MiB但XML+pmon均无作业，本对象未用，GPU4尚未释放。
 现场小收据inputs/status-20261015T0716.json（文件名预置，实际检查时间以内容15:17:09为准）。
+
+**15:37:15.241654后续事实**：原parent247014/starttime407058309与worker247226/starttime407058446、
+PPID/PGID/cmdline一致且S/R活跃，episode0–4均有complete，episode5开始；尚无calibration_frozen、
+held目录或terminal，未见工程错误。GPU4仍仅本worker C+G/2587MiB，5–7各1MiB但无作业；
+GPU0–3出现未知作业，未干预。现场收据inputs/status-20261015T073716.json。
+本轮并行的 [DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 仅0GPU审查/人工接口反例，
+没有读取中途科学值、修改实际5ce或本运行的科学规范。
 
 主目录 `/data/Policy_Discrepancy/runs/dl-r4-utility-20261015-5ce1d37-attempt01`。
 inputs中的launch-5ce1d37-attempt01.json、resource-5ce1d37-attempt01.json及probe证据保存完整启动和mapping；
