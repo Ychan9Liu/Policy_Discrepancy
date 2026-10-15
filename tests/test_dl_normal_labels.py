@@ -145,6 +145,18 @@ class NormalLabelsTest(unittest.TestCase):
       self.assertIn(flag,result.stderr)
 
   def test_generated512_coordinator_closes_only_all_rows_and_reauthenticates(self):
+    # The real labels CLI is a fresh CPU process and must never inherit a model
+    # runtime. Other modules in the combined engineering suite legitimately
+    # import JAX; keep this mocked coordinator in the same isolation as its CLI.
+    isolated='DL_NORMAL_LABELS_COORDINATOR_TEST_PROCESS'
+    if os.environ.get(isolated) != '1':
+      result=subprocess.run([sys.executable,'-m','unittest',
+          'tests.test_dl_normal_labels.NormalLabelsTest.test_generated512_coordinator_closes_only_all_rows_and_reauthenticates','-v'],
+          cwd=ROOT,capture_output=True,text=True,timeout=30,
+          env=dict(os.environ,**{isolated:'1'},CUDA_VISIBLE_DEVICES='',JAX_PLATFORMS='cpu',MUJOCO_GL='disable'))
+      self.assertEqual(result.returncode,0,result.stdout[-2000:]+result.stderr[-4000:])
+      return
+    self.assertNotIn('jax',sys.modules)
     for case in ('success','partial','reordered','late_failure'):
       with self.subTest(case=case),tempfile.TemporaryDirectory() as temporary:
         root=Path(temporary);run=root/'run';run.mkdir()

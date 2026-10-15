@@ -4,6 +4,15 @@
 验收记录；**尚未激活真实来源执行预算**，不采用 T、GPU 特征执行或任何机制结论。
 本轮没有读取真实 R5、SSH、GPU、学习、提交或运行真实512条标签。
 
+**组合Linux测试隔离修复**：actual `01fbef2331e96776ef22a1e1b5a4313bbe586f4d` 首次24模块
+完整174项组合在272.589秒结束，外层SSHexit1/276.828秒；1个error、2原optional skips。
+唯一error为mock512成功case继承其它模块已导入的JAX，被生产入口正确的纯CPU进程要求拒绝。
+不能把该失败报告为完整Linux通过，也不是实际512来源或模型失败；原日志保留
+`analysis/outputs/dl-nm1-repair-cpu-01fbef2/attempt01/`。
+仅将此mock coordinator测试放进独立CPU子进程，与正式CLI隔离一致，不删sys.modules/JAX，
+不改变任何生产纯CPU限制、源码或判据。本机新5项2.200秒/exit0；预先import jax的父进程中
+同5项2.059秒/exit0。下一以新确定Git重做24模块整体600秒Linux验收，真实标签尚未执行。
+
 **后续采用边界（root，2026-10-15）**：Agent在完整预验证授权内采用一次整体900秒CPU真实入口，
 前提是本实现进入确定Git且clean Linux有限验收通过、原prior277c成功完整独审及全部authority pins可认证。
 本页下方“未激活”描述实现/本机验收时状态；新的采用不把测试升级为真实标签验收。

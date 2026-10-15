@@ -15,6 +15,12 @@
 source/index/512prefix/末遍认证共用预算，原source完整性/fixed8fit24held与所有五份authority pins不变，
 不看科研正负筛源、不NN/render/学习/GPU。实际新Git、Linux验收、外层实际退出及完整标签闭包待执行。
 
+actual01fbef2331e96776ef22a1e1b5a4313bbe586f4d首次24模块Linux组合174项/272.589秒、
+1error/2原optional skips，外层实际SSHexit1/276.828秒；并非完整通过。
+唯一error为mock512 labels case继承其它模块JAX，触发正确的生产纯CPU拒绝。
+仅隔离测试子进程，本机干净/预先import JAX父进程两种各5项全过2.200/2.059秒；
+不放宽生产限制，下一新Git/同24模块/整体600秒fresh重验。C真实仍保留首次失败、未重跑。
+
 ## R5修复版完整独审及资源答复（2026-10-15 22:21–22:28）
 
 actual/tested `277c18001d353d9101a3622959351d3994699adb`，十模块77项Linux有限CPU全过，
