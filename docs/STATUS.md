@@ -1,5 +1,12 @@
 # 项目状态
 
+**2026-10-15正常机制前置更新**：新增真实tiny CPU三步训练/私有cache反馈及固定分布读出，
+本机联跑21项20pass/1 Linux skip（11.358秒），不是N1M/BF16/真实65学习或方法有效。
+[读出定义](DL_NORMAL_READOUT.md)与仅基于R5完整性失败启用的[独立来源规范](DL_NORMAL_REFERENCE.md)由Agent采用，
+来源尚未实现/运行；[NM1科学提案](DL_NM1_PROTOCOL_REVIEW.md)中的N_nr/U4096/cal128/native32/S/P/W仍是建议未采用。
+18:40:23原R5 f845/parent301006身份匹配，216unit/13family完整，cal封存/held进行、无终态；
+原GPU4/7200秒/科学门不变，不读中间D/e/Y；下一先确定提交Linux21项，继续监督原handle。
+
 **2026-10-15 18:24:23当前**：R5原f845/parent301006身份匹配，162unit/10family完整，
 cal已封存、held已开始、无完整生成/终态/独审；sv3 fresh XML+pmon仅物理4本worker322060 C+G/2587MiB，
 5–7无进程/各1MiB，继续同一handle，单次7200秒不改，完整方法goal仍active。

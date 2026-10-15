@@ -1,5 +1,14 @@
 # DL 验证日志与证据索引
 
+## DL正常机制前置定义与tiny反馈（2026-10-15）
+
+Agent已采用[固定分布读出](DL_NORMAL_READOUT.md)及仅在R5完整性失败时启用的[独立来源规范](DL_NORMAL_REFERENCE.md)，
+不看R5中间科研值/改其7200秒或复用partial；来源未实现/运行，学习预算和对照资格仍未采用。
+新增pure readout四项本机CPU数学检查通过/.078秒；真实tiny三步公开Agent训练检查通过/9.278秒，
+保留全部loss/default optimizer/norm/targets/free-nats1，验证实际network outs跨chunk回写及下一批context/prevact，
+真实非零moment完整save/load后继续；仅小fixtureB2/T3/context1/F32，不是N1M/BF16/真实65或逐叶gradient验收。
+18:40:23原R5 parent身份匹配，216unit/13family完整、cal封存/held进行，无终态，单GPU4继续。
+
 ## DL普通私有replay真实验收（2026-10-15 18:23:39）
 
 actual/tested2ae18a54722ab4e96f1775d64a0884f998f573da，sv2 attempt03 clean Linux16项全过，

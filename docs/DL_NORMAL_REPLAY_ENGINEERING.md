@@ -94,3 +94,22 @@ probe.json为41,290字节，SHA256
 通过的是真实历史普通数据的完整私有导入与一个工程计划的合成回写，
 不是正常神经网络多步学习、信息压缩/保护、第二信号或性能验收；历史cache/online不可恢复限制不变。
 后续仍在当前chat监督原R5，下一机制的科研预算和判据另行冻结，不以本工程通过代替科研依据。
+
+## 实际tiny多步反馈前置（2026-10-15）
+
+新增`tests/test_dl_normal_learning.py`，本机真实公共Agent连续三次train/take_train_result/strict_update，
+完整八类原loss、默认free-nats1/imagH15/optimizer/norm/slow target均保留；三次opt updates1/2/3，
+保存真实非零moments后完整save/load并继续，无清零或regex。全部保存state/carry/outs/metrics有限，
+optimizer状态逐次变化、最终NN参数变化，原NPZ SHA稳定；只核原总grad_norm有限且正，不声称逐叶独立gradient验收。
+
+关键是consec_train1产生consec0：真实_apply_replay_context用每批第0行cached prefix覆盖传入carry。
+fixture明确用start2→3→4，后批第0context恰为前步actual network outs回写过的位置，
+逐字节核两次反馈与三次真实context/prevact选择；独立counterfactual传入不同carry仍由consec0选cache。
+重叠两行以actual后行网络输出为最终writer，跨真实fixture chunk核读回，不以只连续调用train充当反馈证明。
+
+本项是生成12行/3chunks的tiny CPU F32、B2/T3/context1、image64/action12。
+显式隔离patch小schema/计数，保留原图/flags核验；实际原始输入4行，不是生产65步。
+兼容receipt字段legal65_starts=9仅是该小fixture的4步窗口数，N1M及source Git认证明确False。
+不构成真实N1M/BF16/16×65多步学习、gate作用或方法效果。原完整1M CPU验收actual/tested仍2ae18a5，
+本新fixture不替代或改写它。与四项[新读出数学检查](DL_NORMAL_READOUT.md)及旧三组联跑，
+本机21项20pass/1 Linux alarm skip，11.358秒；确定提交Linux验收待执行。

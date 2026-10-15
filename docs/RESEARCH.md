@@ -1,5 +1,13 @@
 # 研究问题与方法
 
+**正常机制测量前置收敛（2026-10-15，Agent采用的有限定义）**：
+[DL_NORMAL_READOUT.md](DL_NORMAL_READOUT.md)固定官方q/p概率、cal-only group RMS、ridge .1、独立物理速度主标签及family统计，
+不是actor单sample利用或条件MI；四项数学检查通过，尚无真实读出。
+[DL_NORMAL_REFERENCE.md](DL_NORMAL_REFERENCE.md)采用仅基于R5完整性失败启用的独立N1M normal-reference来源规范，
+新32episode×14时刻/单load，不拼partial或改R5科研对象，尚未实现/运行。
+真实tiny三步公共训练已核consec0从前批实际网络输出回写的cache前缀初始化；不当真实N1M/机制效果。
+NM1学习组数/更新/对照资格仍是建议，完整目标保持active。
+
 **普通私有replay真实工程前置完成（2026-10-15）**：
 [DL_NORMAL_REPLAY_ENGINEERING.md](DL_NORMAL_REPLAY_ENGINEERING.md)记录actual/tested2ae18a5，
 sv2 Linux16项通过及真实1280文件/1M动作/999984合法窗口的CPU导入与合成回写，外286.732秒/0GPU。
