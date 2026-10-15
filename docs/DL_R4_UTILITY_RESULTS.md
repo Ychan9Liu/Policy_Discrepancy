@@ -48,6 +48,12 @@ GPU0–3出现未知作业，未干预。现场收据inputs/status-20261015T0737
 本轮并行的 [DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 仅0GPU审查/人工接口反例，
 没有读取中途科学值、修改实际5ce或本运行的科学规范。
 
+**15:40:23持续运行与Git限制**：只读监测确认原PID/starttime/PGID/cmdline一致、worker R，
+episode5文件仍增长，cal/held/终态未改变，无工程错误。最新进度报告本机a559663797dc3ac2385cedea04f5a17de77c1ea9
+推送遇connection reset及GitHub443连接失败，重试仍失败；最后成功远端核验研究分支为
+95bc9d4812e5248c7a3db58e00f08f50c4f9986c，包含新的准入审查，main最后595e982未合。
+后续本机终点报告也属于待补推，不把旧远端快照称现状；实际5ce已先推且sv3作业不受影响。
+
 主目录 `/data/Policy_Discrepancy/runs/dl-r4-utility-20261015-5ce1d37-attempt01`。
 inputs中的launch-5ce1d37-attempt01.json、resource-5ce1d37-attempt01.json及probe证据保存完整启动和mapping；
 Linux检查log/JSON、transfer_verified.json、startup_resources-5ce1d37.json也在inputs。

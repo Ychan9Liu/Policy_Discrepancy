@@ -1,5 +1,7 @@
 # 项目状态
 
+**Git补记（2026-10-15 15:40）**：最新进度文档推送两次遇连接重置/GitHub443不可达，尚未确认同步；最近已成功远端核验95bc9d4812e5248c7a3db58e00f08f50c4f9986c含准入审查，actual5ce已先push/仅sv3执行。未main。真实parent/worker仍原身份活跃，episode5文件增长，无cal封口/held/终态；Git连接故障不是运行停止或重启理由。先继续监督原任务并在网络恢复后补推报告。
+
 **DL准入审查补充（2026-10-15）**：[DL_FORMAL_READINESS.md](DL_FORMAL_READINESS.md) 已完成独立五目标/最小因果需求审查，区分正式前有限机制准入与留待正式的跨任务/多seed结论。补充0GPU人工实际分布接口反例：高mode D、高rawK不保证大的当前边缘策略变化；不是真实N1M根因或R4 H100效用界。当前真实5ce、cal/held门、主比较、GPU资源与预算不变，没有新训练。15:33:38原job身份继续匹配，episode0–3主完成/episode4开始、无工程错误，尚未cal封口或全对象独审。完整目标仍active。
 
 **DL-r4进度（2026-10-15 15:37:15）**：原parent247014/worker247226的starttime/PGID/cmdline匹配且实际活跃；episode0–4主生成完成，episode5开始，cal未封口、held尚未生成/无terminal、未见工程错误。当前GPU4仅本worker C+G/2587MiB，5–7无进程/各1MiB；GPU4未释放，0–3未知作业未干预。不是全对象验收/独审/科学结论，actual5ce和协议不变，详见 [DL_R4_UTILITY_RESULTS.md](DL_R4_UTILITY_RESULTS.md)。继续同chat监督原handle至终态，完整后独审；整体目标active。
