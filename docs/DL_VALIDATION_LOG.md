@@ -1,5 +1,20 @@
 # DL 验证日志与证据索引
 
+## DL普通私有replay工程r1（2026-10-15）
+
+严格helper及CPU全量probe已完成本机16项15pass/1 Linux skip（2.121秒），
+固定完整1280/999984起点、900秒和96GiB上限；详见[DL_NORMAL_REPLAY_ENGINEERING.md](DL_NORMAL_REPLAY_ENGINEERING.md)。
+尚未执行真实1M私有导入或学习；合成cache写明确不当模型输出。下一确定提交后sv2 clean CPU验收。
+R5仍原f845/parent301006，18:12:37身份匹配、124unit/7family完整，cal未封口；
+sv3 XML+pmon物理4仅当前worker315926 C+G，5–7无进程，未读取中间科研值或增加GPU工作。
+
+## DL-NM1下一机制草案（2026-10-15，只读建议）
+
+两Agent独立源码/因果审查已汇总[DL_NORMAL_MECHANISM_DRAFT.md](DL_NORMAL_MECHANISM_DRAFT.md)，
+没有新训练协议或GPU作业。root复核实际dl_pilot_train/protocol同步take_train_result后回写，
+修正仅据通用Agent.train推断“一call延迟”的初步建议；私有cache/S/P/W/独立task读出边界明确。
+R5仍原f845/parent301006执行，未看中间D/e/Y、未改预算/门；新严格replay helper只是必要CPU工程。
+
 ## DL-r5真实入口启动（2026-10-15）
 
 actual/tested f845；17:32:20 fresh sv3 XML+pmon4–7空闲、原inputs完整SHA匹配；

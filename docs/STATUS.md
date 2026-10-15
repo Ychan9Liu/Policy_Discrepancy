@@ -1,5 +1,12 @@
 # 项目状态
 
+**2026-10-15 18:12:37资源/进度快照**：R5原f845/parent301006身份匹配，124unit/7family完整，
+cal128未封口、held未开始、无终态；sv3完整XML+pmon仅物理4当前worker315926 C+G，5–7无进程。
+当前1张独占A100串行，单次7200秒硬上限≤2GPUh不是成功ETA或整体预算；按已观测吞吐有触及上限风险，不改上限/拼接。
+历史同规格完整1M实测11.505856GPUh仅吞吐参考；NM1组数/更新/评价预算未采用，总剩余GPU小时未定。
+正常私有replay helper/probe本机16项15pass/1 Linux skip，真实1M导入待sv2确定提交CPU验收，
+详见[DL_NORMAL_REPLAY_ENGINEERING.md](DL_NORMAL_REPLAY_ENGINEERING.md)。未增加训练/GPU任务，goal active。
+
 **DL-r5真实运行中（2026-10-15 17:39:08快照）**：actual/tested f845de0cce297443c28761421ab91a7955b62553，
 零动作设备probe后17:35:07启动原parent301006/start407927773，首worker301084，N1M完整state和实际CUDA/EGL同物理4通过。
 首family13unit complete、cal128未封口、held未开始，未全对象/独审或科学裁决。GPU4采样2587MiB，5–7不预占；

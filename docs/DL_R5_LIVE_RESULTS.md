@@ -33,6 +33,11 @@ MUJOCO_GL/PYOPENGL_PLATFORM=egl、JAX_PLATFORMS=cuda。模型/协议字段沿规
 驱动CUDA12.8/编译器12.9.86导致XLA关闭parallel compilation的既有warning保留，不改依赖或预算。
 观察超时不当失败，不重启原handle；继续监督同一parent至权威终态，再独审。
 
+18:12:37北京时间原parent301006/start407927773仍匹配，124unit/7family完整；cal未封口、held未开始、
+无generation_complete或terminal。fresh完整XML+pmon当前worker315926在物理4 C+G，5–7无进程，
+快照保存在外部inputs/resource-question-101237.json及同名XML。未读取中间D/e/Y。
+按已观测吞吐，完整512有触及7200秒上限风险；此运行预算不改，超时对象不能拼接为完整成功。
+
 ## 实际版本与工程证据
 
 实际/tested源码SHA `f845de0cce297443c28761421ab91a7955b62553`。
@@ -84,6 +89,6 @@ Windows coarse monotonic仅在Windows fixture中使用真实perf_counter；Linux
 `analysis/outputs/dl-r5-preflight/resource-final-20261015.txt` SHA256
 `6df899e4a69d816b27f32eaa108e7ea8f7055642a7c64f0eb61fe290eea62f0b`。
 
-继续当前chat即可：按f845源版本重新核真实占用、零动作CUDA/EGL映射后，在新attempt执行已冻结单卡对象，
+继续当前chat即可：监督当前f845源版本和同一原handle的已冻结单卡对象，
 不扩unit/预算、改门、拼接或把工程证据升级科研支持；完整退出后独立CPU审计，再据结果确定下一机制对象。
 最终文档提交相对f845只记证据/资源和交接，执行checkout保持f845；最终GitHub分支状态见完成报告/最新Git收据。
