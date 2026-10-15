@@ -5,6 +5,7 @@ fixture. Its BF16 tensors use the actual frozen N1M shapes without a model.
 """
 import copy
 import contextlib
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -29,7 +30,100 @@ from scripts import dl_live_policy as live
 from tests.test_dl_live_family import FakePolicy,stub_rgb
 
 
+def authority_fixture(root):
+  """Actual old launch/terminal JSON shape, synthetic metadata and no NN."""
+  run=root/'run';run.mkdir();code=root/'code';(code/'scripts').mkdir(parents=True)
+  script=code/'scripts/dl_live_trial.py';script.write_bytes(b'producer-source-fixture')
+  launcher=root/'launch-attempt01.py';launcher.write_bytes(b'launcher-source-fixture')
+  def write(path,value):path.write_text(json.dumps(value,sort_keys=True),encoding='utf-8')
+  def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+  parent=dict(pid=123401,parent_pid=1,pgid=123401,start_ticks=17)
+  budget=dict(git_sha='a'*40,parent_pid=parent['pid'],parent_pgid=parent['pgid'],parent_start_ticks=17,
+      input_pins={name:dict(path='/input/'+name) for name in ('checkpoint','config')},
+      resource_record=dict(path='/input/resource'),source_files={'scripts/dl_live_trial.py':dict(bytes=script.stat().st_size,sha256=digest(script))})
+  write(run/'budget.json',budget);supervisor=dict(git_sha='a'*40,fixture=True)
+  write(run/'supervisor_terminal.json',supervisor)
+  command=['/data/Policy_Discrepancy/envs/dreamer/bin/python',str(script),'--expected-git','a'*40,
+      '--checkpoint','/input/checkpoint','--config','/input/config','--output',str(run),'--resource-record','/input/resource']
+  launch=dict(git_sha='a'*40,engineering_version=a.ENGINEERING_VERSION,command=command,cwd=str(code),run=str(run),
+      parent_identity=parent,whole_parent_seconds=12600,outer_watchdog_seconds=12610,physical_gpu=5,model_updates=0,
+      environment=dict(CUDA_DEVICE_ORDER='PCI_BUS_ID',CUDA_VISIBLE_DEVICES=a.GPU_UUID,MUJOCO_EGL_DEVICE_ID='5',
+          MUJOCO_GL='egl',PYOPENGL_PLATFORM='egl',JAX_PLATFORMS='cuda'),launcher_path=str(launcher),launcher_sha256=digest(launcher))
+  launch_path=root/'launch-attempt01.json';write(launch_path,launch)
+  log=root/'main-attempt01.log';log.write_bytes(b'finished fixture')
+  terminal=dict(git_sha='a'*40,engineering_version=a.ENGINEERING_VERSION,parent_returncode=0,parent_terminal=True,
+      elapsed_seconds=12599.,external_failure=None,terminal_at_utc='2026-10-15T15:00:00+00:00',
+      supervisor_terminal=supervisor,supervisor_terminal_sha256=digest(run/'supervisor_terminal.json'),main_log_sha256=digest(log))
+  terminal_path=root/'terminal-attempt01.json';write(terminal_path,terminal)
+  args=mock.Mock(run=str(run),expected_run_git='a'*40,expected_audit_git='b'*40,
+      launcher_terminal=str(terminal_path),launcher_sha=digest(terminal_path),
+      launcher_launch=str(launch_path),launcher_launch_sha=digest(launch_path))
+  def reseal():
+    write(launch_path,launch);write(terminal_path,terminal)
+    args.launcher_sha=digest(terminal_path);args.launcher_launch_sha=digest(launch_path)
+  return args,launch,terminal,reseal
+
+
 class R2MetadataTests(unittest.TestCase):
+  def test_real_external_schema_requires_both_pins_exit_budget_and_original_identity(self):
+    with tempfile.TemporaryDirectory() as temporary:
+      args,launch,terminal,reseal=authority_fixture(Path(temporary))
+      with mock.patch.object(a,'original_inactive') as inactive,mock.patch.object(a,'original_group_inactive') as group, \
+          mock.patch.object(a.pickle,'loads',side_effect=AssertionError('scientific pickle opened')) as decode:
+        proof=a.external_authority(args)
+        self.assertEqual(proof['parent_identity'],launch['parent_identity']);inactive.assert_called_once();group.assert_called_once()
+        for key,value in (('parent_returncode',1),('external_failure','watchdog'),('parent_terminal',False),('elapsed_seconds',12600.01)):
+          original=terminal[key];terminal[key]=value;reseal()
+          with self.subTest(key=key),self.assertRaisesRegex(ValueError,'bounded parent exit0'):a.external_authority(args)
+          terminal[key]=original;reseal()
+        launch['command'][-1]='/wrong/resource';reseal()
+        with self.assertRaisesRegex(ValueError,'argv/run/budget'):a.external_authority(args)
+        launch['command'][-1]='/input/resource';launch['parent_identity']['start_ticks']=18;reseal()
+        with self.assertRaisesRegex(ValueError,'parent identity'):a.external_authority(args)
+        decode.assert_not_called()
+
+  def test_external_terminal_pin_nested_supervisor_and_actual_source_cannot_be_substituted(self):
+    with tempfile.TemporaryDirectory() as temporary:
+      args,launch,terminal,reseal=authority_fixture(Path(temporary))
+      with mock.patch.object(a,'original_inactive'),mock.patch.object(a,'original_group_inactive'):
+        args.launcher_sha='0'*64
+        with self.assertRaisesRegex(ValueError,'raw SHA differs'):a.external_authority(args)
+        reseal();terminal['supervisor_terminal']['fixture']=False;reseal()
+        with self.assertRaisesRegex(ValueError,'terminal/supervisor'):a.external_authority(args)
+        terminal['supervisor_terminal']['fixture']=True;reseal()
+        Path(launch['cwd'],'scripts/dl_live_trial.py').write_bytes(b'new source')
+        with self.assertRaisesRegex(ValueError,'producer script/source'):a.external_authority(args)
+
+  def test_formal_cli_requires_external_authority_and_cannot_fall_back_to_direct_fixture_api(self):
+    result=subprocess.run([sys.executable,str(Path(a.__file__).resolve()),'--run','unused',
+        '--expected-run-git','a'*40,'--expected-audit-git','b'*40,'--output','unused.json'],
+        cwd=ROOT,capture_output=True,text=True,timeout=30)
+    self.assertEqual(result.returncode,2);self.assertIn('--launcher-terminal',result.stderr)
+    self.assertIn('--launcher-launch-sha',result.stderr);self.assertNotIn('ModuleNotFoundError',result.stderr)
+
+  @unittest.skipUnless(os.name=='posix','Linux /proc process-session semantics')
+  def test_reaped_metadata_leader_descendants_are_real_owned_work_until_cleaned(self):
+    child=subprocess.Popen([sys.executable,'-c',
+        'import subprocess,sys;subprocess.Popen([sys.executable,"-c","import time;time.sleep(60)"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)'],
+        start_new_session=True)
+    owned=a.process_identity(child.pid);a.OWNED[child.pid]=owned
+    try:
+      child.wait(timeout=5);self.assertTrue(a.group_alive(owned))
+      with self.assertRaisesRegex(ValueError,'live descendants'):a.original_group_inactive(owned)
+      a.cleanup(child);self.assertFalse(a.group_alive(owned));self.assertNotIn(child.pid,a.OWNED)
+    finally:
+      if child.pid in a.OWNED:a.cleanup(child)
+
+  def test_reused_metadata_pid_never_authorizes_kill_and_helper_deadline_precedes_spawn(self):
+    owned=dict(pid=42,pgid=42,start_ticks=17)
+    with mock.patch.object(a.os,'killpg',create=True) as kill, \
+        mock.patch.object(a,'process_identity',return_value=dict(pid=42,pgid=42,start_ticks=18)):
+      with self.assertRaisesRegex(ValueError,'PID reused'):a.group_alive(owned)
+      self.assertEqual(kill.call_args_list,[mock.call(42,0)])
+    with mock.patch.object(a,'DEADLINE',a.time.monotonic()-1),mock.patch.object(a.subprocess,'Popen') as create:
+      with self.assertRaisesRegex(ValueError,'deadline'):a.command_output(['unused'])
+      create.assert_not_called()
+
   def test_independent_engineering_binding_rejects_old_budget_and_missing_norm(self):
     source={a.ENGINEERING_NORM:dict(bytes=20,sha256='d'*64)}
     budget=dict(engineering_version='DL-r5-engineering-r2',seconds=12600,

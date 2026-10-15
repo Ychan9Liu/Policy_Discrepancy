@@ -10,16 +10,17 @@ ENTRY_STARTED = time.monotonic()
 import os
 import signal
 import sys
-SECONDS, OWNED = 1800, set()
+SECONDS, OWNED = 1800, {}
 DEADLINE = ENTRY_STARTED + SECONDS
+CLI_AUTHORITY = None
 
 
 def expire(signum, frame):
-  for pid in tuple(OWNED):
+  for owned in tuple(OWNED.values()):
     try:
-      os.killpg(pid, signal.SIGKILL)
-    except ProcessLookupError:
-      pass
+      if group_alive(owned):os.killpg(owned['pgid'], signal.SIGKILL)
+    except (OSError, ValueError):
+      pass  # Lost process/session identity never authorizes a signal.
   os._exit(124)
 
 
@@ -60,6 +61,7 @@ TRAJECTORY, SHADOW = 'DL-r5-live-trajectory-r1', 'DL-r5-live-shadow-r1'
 NAMESPACE = 'DL_R5_LIVE_U1'
 ENGINEERING_VERSION = 'DL-r5-engineering-r2'
 ENGINEERING_NORM = 'docs/DL_R5_LIVE_RETRY.md'
+AUDIT_NORM = 'docs/DL_R5_AUDIT_ENGINEERING.md'
 PRODUCER_SECONDS, GPU = 12600, 5
 GPU_UUID = 'GPU-79704918-e096-92b4-252c-e3244497a8b3'
 CHECKPOINT, CONFIG, PARAMS = primitive.CHECKPOINT, primitive.CONFIG, primitive.PARAMS
@@ -107,7 +109,9 @@ def command_output(command, payload=None):
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         start_new_session=os.name == 'posix', preexec_fn=(
             lambda: signal.pthread_sigmask(signal.SIG_SETMASK, previous)) if previous is not None else None)
-    OWNED.add(child.pid)
+    owned=process_identity(child.pid) if os.name == 'posix' else dict(pid=child.pid)
+    require(os.name != 'posix' or owned['pgid'] == child.pid,'Owned metadata independent session required')
+    OWNED[child.pid]=owned
   finally:
     if previous is not None:
       signal.pthread_sigmask(signal.SIG_SETMASK, previous)
@@ -117,19 +121,49 @@ def command_output(command, payload=None):
     check()
     return out
   finally:
-    if os.name == 'posix':
-      try:
-        os.killpg(child.pid, signal.SIGKILL)
-      except ProcessLookupError:
-        pass
-    elif child.poll() is None:
-      child.kill()
-    child.wait(timeout=5)
-    OWNED.discard(child.pid)
+    cleanup(child)
     child.stdout.close()
     child.stderr.close()
     if child.stdin is not None:
       child.stdin.close()
+
+
+def process_identity(pid):
+  fields=Path(f'/proc/{pid}/stat').read_text().rsplit(') ',1)[1].split()
+  return dict(pid=int(pid),pgid=int(fields[2]),start_ticks=int(fields[19]))
+
+
+def group_alive(owned):
+  """Fence the original PGID/SID/start ticks before even considering a kill."""
+  try:os.killpg(owned['pgid'],0)
+  except ProcessLookupError:return []
+  try:actual=process_identity(owned['pid'])
+  except (FileNotFoundError,ProcessLookupError):actual=None
+  require(actual is None or actual == {k:owned[k] for k in ('pid','pgid','start_ticks')},
+      'Metadata/original leader PID reused or group changed')
+  alive=[]
+  for path in Path('/proc').iterdir():
+    if not path.name.isdigit():continue
+    try:fields=(path/'stat').read_text().rsplit(') ',1)[1].split()
+    except (FileNotFoundError,ProcessLookupError):continue
+    if int(fields[2]) == owned['pgid'] and fields[0] not in ('Z','X'):
+      require(int(fields[3]) == owned['pgid'] and int(fields[19]) >= owned['start_ticks'],
+          'Original metadata group/session ownership lost')
+      alive.append(int(path.name))
+  return alive
+
+
+def cleanup(child):
+  require(child.pid in OWNED,'Unregistered metadata helper cleanup refused');owned=OWNED[child.pid]
+  if os.name == 'posix':
+    if group_alive(owned):os.killpg(owned['pgid'],signal.SIGKILL)
+    child.wait(timeout=5);until=time.monotonic()+3
+    while group_alive(owned) and time.monotonic() < until:time.sleep(.01)
+    require(not group_alive(owned),'Owned metadata helper group remains live')
+  else:
+    if child.poll() is None:child.kill()
+    child.wait(timeout=5)
+  OWNED.pop(child.pid)
 
 
 def inventory(root):
@@ -543,7 +577,7 @@ def source_manifest(git):
   require(type(git) is str and re.fullmatch('[0-9a-f]{40}',git),'Full Git SHA required')
   names=command_output(['git','ls-tree','-rz','--name-only',git]).decode().split('\0')
   selected={name for name in names if name.endswith(('.py','.yaml','.yml','.lock')) or
-      name in ('AGENTS.md','docs/DL_R5_LIVE_TRIAL.md',ENGINEERING_NORM)}
+      name in ('AGENTS.md','docs/DL_R5_LIVE_TRIAL.md',ENGINEERING_NORM,AUDIT_NORM)}
   ordered=sorted(selected)
   # Raw blobs, not git archive's possible export/worktree conversions.
   source=io.BytesIO(command_output(['git','cat-file','--batch'],
@@ -594,10 +628,79 @@ def original_inactive(pid, start_ticks):
   path=Path(f'/proc/{pid}/stat')
   try:
     fields=path.read_text().rsplit(') ',1)[1].split()
-  except FileNotFoundError:
+  except (FileNotFoundError,ProcessLookupError):
     return
-  require(int(fields[19]) != start_ticks or fields[0] == 'Z',
+  require(int(fields[19]) != start_ticks or fields[0] in ('Z','X'),
       'Original producer process remains active: '+str(pid))
+
+
+def original_group_inactive(owned):
+  require(all(type(owned[k]) is int and owned[k] > 0 for k in ('pid','pgid','start_ticks')) and
+      owned['pgid'] == owned['pid'],'Original independent session identity required')
+  require(not group_alive(owned),'Original producer session still has live descendants')
+
+
+def authority_file(path,expected):
+  path=Path(path).absolute()
+  require(path.is_file() and not any(p.is_symlink() for p in (path,*path.parents)) and
+      type(expected) is str and re.fullmatch('[0-9a-f]{64}',expected),
+      'External authority needs an ordinary file and explicit raw SHA')
+  require(sha(path) == expected,'External authority raw SHA differs')
+  return path.resolve()
+
+
+def external_authority(args):
+  """Actual old r2 launch/terminal schemas, each independently pinned externally.
+
+  The old terminal did not bind argv/run/identity or the launch JSON; therefore
+  neither a guessed sibling filename nor the run's self-report can replace the
+  second explicit external launch receipt pin. No scientific values are read.
+  """
+  root=Path(args.run).resolve(strict=True)
+  terminal_path=authority_file(args.launcher_terminal,args.launcher_sha)
+  launch_path=authority_file(args.launcher_launch,args.launcher_launch_sha)
+  require(not terminal_path.is_relative_to(root) and not launch_path.is_relative_to(root),
+      'Launcher authority must stay outside original run')
+  terminal,launch=read_json(terminal_path),read_json(launch_path)
+  supervisor=read_json(root/'supervisor_terminal.json');budget=read_json(root/'budget.json')
+  require(terminal['git_sha'] == launch['git_sha'] == budget['git_sha'] == args.expected_run_git and
+      terminal['engineering_version'] == launch['engineering_version'] == ENGINEERING_VERSION and
+      type(terminal['parent_returncode']) is int and terminal['parent_returncode'] == 0 and
+      terminal['parent_terminal'] is True and terminal['external_failure'] is None and
+      type(terminal['elapsed_seconds']) in (int,float) and 0 < terminal['elapsed_seconds'] <= PRODUCER_SECONDS,
+      'True external bounded parent exit0 required before data decode')
+  require(terminal['supervisor_terminal'] == supervisor and terminal['supervisor_terminal_sha256'] ==
+      sha(root/'supervisor_terminal.json'),'External terminal/supervisor raw binding differs')
+  match=re.fullmatch(r'terminal-(attempt[0-9]+)\.json',terminal_path.name)
+  require(match is not None and launch_path == terminal_path.with_name('launch-'+match[1]+'.json'),
+      'Actual old r2 launcher attempt paths differ')
+  log=terminal_path.with_name('main-'+match[1]+'.log')
+  authority_file(log,terminal['main_log_sha256'])
+  code=Path(launch['cwd']);command=launch['command']
+  expected_command=['/data/Policy_Discrepancy/envs/dreamer/bin/python',str(code/'scripts/dl_live_trial.py'),
+      '--expected-git',args.expected_run_git,'--checkpoint',budget['input_pins']['checkpoint']['path'],
+      '--config',budget['input_pins']['config']['path'],'--output',str(root),
+      '--resource-record',budget['resource_record']['path']]
+  require(code.is_absolute() and type(command) is list and command == expected_command and
+      launch['run'] == str(root) and launch['whole_parent_seconds'] == PRODUCER_SECONDS and
+      launch['outer_watchdog_seconds'] == PRODUCER_SECONDS+10 and launch['physical_gpu'] == GPU and
+      launch['model_updates'] == 0,'Actual external argv/run/budget identity differs')
+  require(launch['environment'] == dict(CUDA_DEVICE_ORDER='PCI_BUS_ID',CUDA_VISIBLE_DEVICES=GPU_UUID,
+      MUJOCO_EGL_DEVICE_ID='5',MUJOCO_GL='egl',PYOPENGL_PLATFORM='egl',JAX_PLATFORMS='cuda'),
+      'Actual external CUDA/EGL environment differs')
+  authority_file(launch['launcher_path'],launch['launcher_sha256'])
+  script=code/'scripts/dl_live_trial.py';entry=budget['source_files']['scripts/dl_live_trial.py']
+  require(script.is_file() and not script.is_symlink() and script.stat().st_size == entry['bytes'] and
+      sha(script) == entry['sha256'],'Actual launched producer script/source binding differs')
+  original=launch['parent_identity']
+  require(all(type(original[k]) is int and original[k] == budget[b] for k,b in
+      (('pid','parent_pid'),('pgid','parent_pgid'),('start_ticks','parent_start_ticks'))),
+      'External/original parent identity differs')
+  original_inactive(original['pid'],original['start_ticks']);original_group_inactive(original)
+  return dict(launcher_terminal=dict(path=str(terminal_path),sha256=args.launcher_sha),
+      launcher_launch=dict(path=str(launch_path),sha256=args.launcher_launch_sha),
+      supervisor_terminal_sha256=terminal['supervisor_terminal_sha256'],parent_identity=original,
+      elapsed_seconds=terminal['elapsed_seconds'])
 
 
 def resource_evidence(directory, family, budget, model):
@@ -630,6 +733,7 @@ def resource_evidence(directory, family, budget, model):
       for sample in telemetry),'Resource telemetry incomplete or unknown GPU job')
   original_inactive(pid,spawned['worker_identity']['starttime_ticks'])
   original_inactive(spawned['shadow_identity']['pid'],spawned['shadow_identity']['starttime_ticks'])
+  original_group_inactive(dict(pid=pid,pgid=pid,start_ticks=spawned['worker_identity']['starttime_ticks']))
   return process
 
 
@@ -654,9 +758,14 @@ def policy_receipt(receipt, metadata, steps):
 def authenticate(run, run_git, audit_git):
   """No pickle is decoded until this complete metadata/artifact pass returns."""
   root=Path(run).resolve(strict=True)
+  if CLI_AUTHORITY is not None:
+    require(str(root) == str(Path(CLI_AUTHORITY.run).resolve()) and run_git == CLI_AUTHORITY.expected_run_git and
+        audit_git == CLI_AUTHORITY.expected_audit_git,'CLI authority cannot be reused for another run/Git')
+    external_authority(CLI_AUTHORITY)
   require(command_output(['git','rev-parse','HEAD']).decode().strip() == audit_git and
       not command_output(['git','status','--porcelain','--untracked-files=all']),'Clean exact auditor checkout required')
   audit_source=source_manifest(audit_git)
+  if CLI_AUTHORITY is not None:require(AUDIT_NORM in audit_source,'Tracked independent audit engineering norm required')
   for name,entry in audit_source.items():
     path=ROOT/name
     require(not path.is_symlink() and path.is_file() and path.stat().st_size == entry['bytes'] and
@@ -825,9 +934,12 @@ def audit(args):
 
 
 def main():
+  global CLI_AUTHORITY
   parser=argparse.ArgumentParser(description=__doc__)
-  for name in ('run','expected-run-git','expected-audit-git','output'): parser.add_argument('--'+name,required=True)
-  audit(parser.parse_args())
+  for name in ('run','expected-run-git','expected-audit-git','output','launcher-terminal','launcher-sha',
+      'launcher-launch','launcher-launch-sha'):parser.add_argument('--'+name,required=True)
+  args=parser.parse_args();external_authority(args);CLI_AUTHORITY=args
+  audit(args)
 
 
 if __name__ == '__main__':
