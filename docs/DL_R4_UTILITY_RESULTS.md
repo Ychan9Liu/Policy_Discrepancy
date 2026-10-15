@@ -1,9 +1,19 @@
 # DL-r4 真实动作/记忆诊断运行记录
 
-状态：**校准 null 门失败，已停止；失败证据待独立 CPU 核验，留出未生成**。更新：2026-10-15 15:56北京时间。
+状态：**校准 null 门失败，已停止；失败证据独立 CPU 核验通过，测量资格未通过，留出未生成**。更新：2026-10-15 16:16北京时间。
 科学规范 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)，版本 DL-r4-utility-r1；正式M2不变。
 
 ## 最新终态
+
+**16:12独审补记**：实际/tested审计4ddad2e9a92ddfe95979d104d0f004722c7f7dff在新sv3 clean checkout执行，
+Linux40项全过5.897秒；外部capture1205文件/5,264,343,594字节双遍稳定，17.136秒/exit0；
+独审35.159777秒/exit0/0GPU，23个pair0 qq/null的4600物理步通过，1个e2/t64平均差
+.00319120049295762>.0025，认证了原停止，不是原32EP对象成功。held未生成/未评价，方法有效性未建立。
+全23首RGB差为frame1–5/通道±1；失败caseframe2图像/logit→action5 latent/raw/reward→frame6积分状态，
+仅存储序列首差与CPU物理一致性，不识别renderer根因或独立重演模型。
+完整hash/全部连续值/限制和下一0GPU问题见[CPU核验记录](DL_R4_CALIBRATION_AUDIT.md)。
+16:15:33 fresh XML+pmon：物理4–7无进程/0%/各4MiB、原PID不存在，主采样峰2587MiB；
+生产5ce与审计4dd均clean。没有新增GPU、训练或重跑；后续新增代码仅失败取证/审计及测试。
 
 2026-10-15 15:54:43北京时间只读核验：原parent247014与worker247226均已退出，8个cal episode0–7都有complete；
 calibration_frozen.json的null_passed=False，最终异常精确为

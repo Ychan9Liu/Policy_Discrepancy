@@ -1,5 +1,16 @@
 # DL 验证日志与证据索引
 
+## DL-r4真实校准停止CPU独审完成（2026-10-15 16:12）
+
+actual/tested4ddad2e9a92ddfe95979d104d0f004722c7f7dff：新capture/audit/tests及文档，原算法/runner/统计/fullauditor不改。
+Windows40项38pass/2skip16.114秒；sv3新clean Linux40pass5.897秒，完整6.325646秒。
+capture1205文件5,264,343,594B两遍稳定，外17.136417秒；独审内35.059434/外35.159777秒exit0、0GPU、未导入JAX。
+23 planned pair0 qq/null、4600官方CPU物理步及源/动作/奖励/完整初态链通过，1个e2/t64平均差.00319120049295762超.0025，
+原np.sum/fsum判侧一致，原失败认证/held未生成；不能称方法阴性或原32EP验收。frame2图像/logit微差先于action5 latent/raw，
+但未独立重演模型/render或识别根因。capture/audit完整SHA、全部null值、CPU范围与限制见[DL_R4_CALIBRATION_AUDIT.md](DL_R4_CALIBRATION_AUDIT.md)。
+16:15:33 fresh XML+pmon4–7无进程、生产5ce/审计4dd均clean；新取证0GPU，未重跑或改门。
+下一当前chat先CPU明确可靠测量对象与必要/充分判据，完整goal保持active。
+
 ## DL-r4 cal8测量门停止与CPU取证采用（2026-10-15）
 
 actual5ce原parent247014/worker247226在2622.793269339秒后退出；15:54:43原PID消失，
