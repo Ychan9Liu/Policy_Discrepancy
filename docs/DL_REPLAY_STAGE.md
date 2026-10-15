@@ -46,15 +46,32 @@ sv2 source capture 严格核全部1280文件、11,421,580,553字节与原库存�
 本机小型证据 `analysis/outputs/dl-nm1-stage-e70419b/`；
 外层 source-ssh.log SHA `9b485caeaf3769589bfa99963a3bae88788886dde28d9cbe508e9cf5452cbab6`。
 
-## 目标暂存：进行中
+## 目标暂存：已完成字节验收
 
 外部 `scp -3 -B -r` 将原 replay 复制到 fresh
 `/data/Policy_Discrepancy/runs/dl-nm1-replay-stage-20261015-e70419b/incoming`。
-传输自设1800秒有限 I/O 上限、0GPU，不是 source/materialize 各900秒的延长。
-20:43快照 incoming 约6.48GB，尚不能称全量复制成功或 C 输入已获资格。
-最终目标计划为同级 fresh `replay`；materialize 会逐文件 xb 复制并核 incoming/目标双遍全 SHA，
-只有实际 CLI exit0及外部全 wall≤900秒后才接纳 stage-record.json。
-失败保留目录与证据，不覆盖/删掉重来。输入与输出收据均放 incoming/replay 外。
+真实 exit0、833.218秒/1800秒有限 I/O 上限，20:49:17.500056（北京时间）完成；
+0GPU，不是 source/materialize 各900秒的延长。完整 argv/外层退出在本机 transport-terminal.json，
+同字节副本放目标 `inputs/`，原 run 不写入。
 
-还需完成传输、materialize、独立完整 raw 库存复核与 C 严格加载。
-迁移成功只说明同字节历史数据可用，不是真实 N1M 校准、正常学习或方法有效证据。
+最终目录 `/data/Policy_Discrepancy/runs/dl-nm1-replay-stage-20261015-e70419b/replay`，
+materialize 逐文件 xb 复制；source 前后、incoming 前后、目标前后全部1280项库存与原 raw 库存一致。
+内部 entry→cleanup 91.136819602秒、CLI 打印91.278718960秒；
+外部 SSH exit0、91.828秒/900秒，20:52:45.366142完成。没有重试/覆盖/删除旧目录。
+
+stage record 为同级 `stage-record.json`，1,735,409字节，SHA
+`00063544c10facde529f82fac07e759a2d44306aedd77924f30ff185e51519f8`。
+本机镜像核 raw SHA、source/incoming/目标六份1280项清单、真实 child exit/cleanup、
+原 worker 输出 raw pin 与 stage 去 authority 部分逐值一致。
+materialize 外层日志 SHA `80947d78f51fc15f589f2b425c7a02a416e8feebbce6bfed6effc4f7d56aef1c`。
+
+另用当前完整 C 代码 `8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0` 的实际 stage API
+认证该 e704 记录，并由独立 stdlib 程序再次逐1280文件读全字节 SHA/size/前后 stat，全部通过。
+程序11.828296964秒/900秒、实际 SSH exit0，无 NumPy/JAX/MuJoCo/OpenGL import，无 NPZ decode，0GPU。
+输出 `inputs/current-code-byte-verification.json`，SHA
+`23befaa7823865a56baa81f9a66fe0c95b83cab61bf6ef2cb7083245dd2507e8`。
+本机小证据仍在 `analysis/outputs/dl-nm1-stage-e70419b/`；原11.42GB数据不进 Git。
+
+该验收只说明同字节历史数据可用，不重新验证 CRC/内部 schema/完整私有 cache。
+真实 C 必须提供上述 stage 路径和 SHA，再严格解码/CRC/chain/context 校验并加载 fresh 私有 cache。
+仍不是真实 N1M 校准、正常学习、在线恢复或方法有效证据。

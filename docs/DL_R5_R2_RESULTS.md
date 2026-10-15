@@ -91,6 +91,12 @@ watch-20261015T115547579963.json/XML，不读科学值；正常C前置510339的0
 4未知370131 C+G（另有GPU0 graphics），6–7无作业/1MiB，不干预。
 watch-20261015T115830833197.json/XML；只核封口存在，不读cal系数/科学数组，继续原R5。
 
+21:00:21.473575同parent341486/start408554660仍活跃，**332unit/20family完整、cal已封口**，
+无generation/内外terminal。GPU5仅本worker412107 C+G/2587MiB，4/6/7无可见作业/各1MiB；
+此前GPU4未知作业自行退出未干预。外部watch-20261015T130021473575.json/XML只核计数和资源，未读科学值。
+中间20:13/20:23/20:35/20:47快照分别176/209/252/288unit，完整原始收据留外部inputs。
+并行完成的NM1新8d63代码142项CPU验收和e704原数据迁移均0GPU，未移动此1584运行代码或插入新C。
+
 环境prelaunch：Python3.11.16、jax/jaxlib0.4.33、numpy1.26.4、dm-control1.0.48、MuJoCo3.15.0、
 driver570.158.01，详细版本与pip freeze保存在外部inputs。驱动/编译器既有parallel-compile warning不改环境求过门。
 

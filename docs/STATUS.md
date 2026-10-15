@@ -1,5 +1,19 @@
 # 项目状态
 
+**2026-10-15 21:00:21（服务器快照）/ C 工程与原数据暂存完成**：
+actual/tested8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0 的 sv3 clean CPU20模块142项，
+140pass/2原optional skip，260.298秒unittest/264.391854秒完整入口300秒、exit0/0GPU/owned[]。
+245源码/七norm实际blob一致，C producer前后binding及独审git_binding通过，真实Linux两个新descendant检查通过。
+1280原NPZ/11.42GB已sv2→sv3 fresh迁移、六份库存/目标额外独立全SHA通过；
+stage SHA 00063544c10facde529f82fac07e759a2d44306aedd77924f30ff185e51519f8。
+详见[工程证据](DL_NM1_ENGINEERING.md)/[迁移记录](DL_REPLAY_STAGE.md)。这些不是真实128批C或方法有效验收。
+当前C未启动；T4096/6h未采用。C仅物理5、compute-only、3600秒一次，仍等R5权威终态+全审或失败封存后fresh核空闲。
+原R5 actual1584，同parent341486/start408554660运行，332unit/20family完整、cal封口存在，
+无generation/terminal；未读中间科学值。GPU5仅本worker412107 C+G/2587MiB，4/6/7无可见作业/各1MiB，
+此前GPU4未知作业自行退出，未干预。GPU5继续保留给原12600秒R5，不插入C。
+本轮未新增GPU任务；只新部署sv3 8d63 CPU源码及sv2 e704 stage源码，原R5隔离代码不动。
+当前整体goal active，独立信号、真实普通压缩/保护及方法性能仍未完成；Git终点以最后提交/远端核验为准。
+
 **2026-10-15 19:58:30服务器快照 / Git同步补证**：原R5 parent341486/start408554660仍活跃，
 128unit/8family完整、cal封口存在，无全生成或终态；未读cal系数/D/e/Y。
 物理5处于family切换（1MiB、当时无GPU进程），不代表整个任务释放资源；4有未知370131 C+G，6–7无可见作业。

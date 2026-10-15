@@ -4,17 +4,24 @@
 [执行规范](DL_NM1_TRIAL.md)仅采用C，先核普通非reset干预是否有真实更新作用及有效S/P/W校准；
 128批/128不同位置/8链/16批作用、S/W1%及P50%+10%等预定门，独立3600秒单GPU/900秒CPU。
 资源为sv3物理5，当前R5结束及全审或失败封存后fresh核空闲串行；不新增并行占卡。
-normal_only显式子集、只读取批、参考梯度与原生产scratch位移的[有限工程](DL_NM1_ENGINEERING.md)已实现，
-真实128 runner/独审尚未完成，未真实cal或新增学习。T4096/6h/性能门仍建议，不自动采用。
+normal_only显式子集、只读取批、原raw K参考出口、真实128 runner/独审的
+[有限工程](DL_NM1_ENGINEERING.md)已实现；未真实cal或新增学习。T4096/6h/性能门仍建议，不自动采用。
 参考梯度不是生产内部逐叶bit梯度，非零weight不是干预已生效，tiny通过不是N1M/方法有效。
-确定源码510339e990f0953445b3189eee4ad96febf7f89c已sv3 clean CPU95项93pass/2原skip；
-237源码与六norm绑定通过，仍无真实cal。sv3缺普通源/inventory，显式暂存绑定尚待实现，不能伪造旧来源路径。
+actual/tested8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0已sv3 clean CPU142项140pass/2原skip，
+245源码/七norm及C producer/独审的实际Git绑定通过，仍无真实cal。
+[显式源迁移](DL_REPLAY_STAGE.md)已完成1280文件11.42GB原字节暂存和独立全SHA复核，原库存不改；
+stage raw SHA为00063544c10facde529f82fac07e759a2d44306aedd77924f30ff185e51519f8，真实C仍须严格解码导入。
+S/W/P明确是共同N参考forward上F32权重收据，不冒称各自完整生产NN位移匹配；
+C采用纯compute资源认证、禁EGL，原CUDA/EGL资源接口不变。
 后续C要联报实际B/N pre-update replay前向差异；相同也不证明全forward相同，不单凭非零位移声称纯rep机制。
 
 **2026-10-15工程r2实际进展**：actual/tested1584ef31c322fc3371ea9ce220c06fe7e654b23a，
 clean Linux71项全过后19:19:36在sv3物理5一次启动；N1M完整state/实际CUDA-EGL认证通过。
 仍在生成、无完整审计或独立信号科研裁决，全部科学对象/门不变；[新运行记录](DL_R5_R2_RESULTS.md)。
 这一单次最多3.5GPUh、单卡串行，CPU独审0GPU，整轮剩余总核时尚未定；NM1提案不因启动自动采用。
+21:00:21快照原parent341486/start408554660仍活跃，332unit/20family完整、cal已封口，无全生成/终态；
+只GPU5本项目worker/2587MiB，4/6/7无可见作业。未读中间D/e/Y、cal系数或科研统计。
+资源需求仍一张现有A100 80GB串行，R5的3.5和C的1占卡小时是各自全入口硬限，不是剩余ETA。
 
 **R5资源失败与下一动作（2026-10-15）**：原f845在18:42:31由GPU4 unknown资源guard保护中止，
 无完整独审或科研符号结论，13完整family/208接纳unit、磁盘223partial全部保留不拼。

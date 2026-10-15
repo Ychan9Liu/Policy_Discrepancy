@@ -1,5 +1,28 @@
 # DL 验证日志与证据索引
 
+## DL-NM1完整C工程CPU验收及真实源迁移（2026-10-15）
+
+授权内Agent完成DL-NM1-counterfactual-r2/rawK出口、完整128 cal producer、独立CPU audit和
+stage-r1显式源搬运；C科学量/门/3600GPU+900CPU保持，S/W/P共同N参考forward措辞已执行前澄清，
+T4096/6h未采用，没有真实C或新GPU任务。原resource接口不变，C自有compute-only/禁EGL。
+独立源码审查修复PID-only误清理风险、同buffer pickle认证、独审原worker残留组/精确dtype/m上D>=0；
+没有用改容差/阈值宣布通过。完整原state/cache封口、BF16 bits、F64全pooled/实际F32剂量及负资格None均分别验。
+
+actual/tested **8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0**，sv3 clean CPU20模块142项，
+140pass/2原optional skip、无新skip，unittest260.298秒/进程262.377387944/入口264.391854106秒<300，
+SSH exit0/0GPU/owned[]；245源码和七norm前后真实blob一致，另C producer/audit Git绑定通过。
+两个新真实Linux descendant及stage timeout均实际执行；闭包fixture655 opaque文件不解码，
+NN只为tiny F32，独立全128数学不是真实N1M/C/方法有效。证据与完整hash见[工程记录](DL_NM1_ENGINEERING.md)。
+
+stage实际e70419bd9e8e3f42dd8cad41d8897decb4fbe455：源外SSH18.891秒/900、transport833.218秒/1800、
+materialize外SSH91.828秒/900均exit0/0GPU，1280文件11,421,580,553字节源/目标六遍库存一致，
+独立程序字节pass加当前8d63 API认证11.828296964秒通过；无CRC重新解码或NN加载。
+stage raw SHA00063544c10facde529f82fac07e759a2d44306aedd77924f30ff185e51519f8，细节[迁移记录](DL_REPLAY_STAGE.md)。
+
+21:00:21原R5同parent341486/start408554660活跃、332unit/20family、cal封，无完整终态/独审/科研裁决。
+GPU5本worker412107/2587MiB，4/6/7无可见作业；未读中间D/e/Y，不改原12600秒或启动C。
+单卡现有A10080足够串行的安排保持；当前显存采样不保证新C/学习的最低显存，完整剩余GPU小时仍未定。
+
 ## DL-NM1必要C阶段与有限工程（2026-10-15）
 
 **确定提交补证**：actual/tested510339e990f0953445b3189eee4ad96febf7f89c，sv3 clean CPU16模块95项，

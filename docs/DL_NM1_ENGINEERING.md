@@ -1,9 +1,10 @@
 # DL-NM1 cal-only工程前置
 
-## 2026-10-15：C 入口整合与待验收边界
+## 2026-10-15：C 入口通过 CPU 验收，真实 C 未运行
 
-`scripts/dl_nm1_cal.py` 与 `analysis/dl_nm1_cal_audit.py` 已实现，正在合并独立审查和
-确定提交的 CPU 验收；尚未运行真实 N1M 的128批 C，不启动 T。
+`scripts/dl_nm1_cal.py` 与 `analysis/dl_nm1_cal_audit.py` 已实现，独立源码审查无剩余阻断，
+actual/tested **8d63fff8b15a49c7e2e7bc84fd0f9c3481e6acb0** 的 clean Linux 验收通过；
+尚未运行真实 N1M 的128批 C，不启动 T。
 生产 stdlib 父进程监督单个 worker；原完整 B/B重复/rho0/N scratch、实际 context、
 参考原 KL/梯度与真实更新、BF16原 bits、两遍固定系数/权重及全部批闭包分开保存。
 独审在完整 raw 图/外层真实退出及原进程组结束认证后，独立恢复计划、65跨度、context、
@@ -19,6 +20,28 @@ MUJOCO_GL=disable，EGL环境键移除，EGL标为不适用而非已验证。
 实际 F32 权重收据，没有重跑其 NN 或证明其生产位移匹配。科学对象/门/预算不变。
 完整剩余研究预算未定，一卡足够串行；只有 C 的3600秒采用，T 的6小时仍建议。
 真实源迁移进度、e704 clean Linux114项与外部 source exit 证据见 [迁移记录](DL_REPLAY_STAGE.md)。
+
+sv3 新隔离 `/data/Policy_Discrepancy/dl-nm1-cal-cpu-code-20261015-8d63fff`：
+20模块142项，**140pass/2原optional skip**，无新增 skip；生产者与独审的真实 Linux
+reaped-leader/descendant 清理测试均执行通过。unittest260.298秒，测试进程262.377387944秒，
+完整入口264.391854106秒/300秒，真实 SSH exit0、0GPU/owned[]。
+245源码与7规范前后真实 Git blobs 一致；原 R5 source_binding/audit source_manifest 一致，
+另 C producer.source_binding 前后245项相同，C 独审 git_binding 原/审同8d63均通过，双方 owned{}。
+另一个 Agent 对两套来源的并集251份实际 Git blobs、七norm及完整小型镜像独立重算全部一致，
+未重新执行测试。Linux fixture 的 JAX/fork 警告保留于原日志且该 case 通过；实际父入口仅 stdlib。
+这只是工程及有限数学验收：没有真实 N1M/cal/BF16 更新作用、独立信号增量或方法收益结论。
+
+证据 `/data/Policy_Discrepancy/runs/dl-nm1-cal-cpu-20261015-8d63fff/attempt01/`，
+本机 ignored `analysis/outputs/dl-nm1-cal-cpu-8d63fff/attempt01/`。
+linux-tests.log SHA `e2108f62790d082e5f5d805ad8b21f32ba49d3a01d4e9cc990c4fea09d5c4cbd`，
+nm1-source-binding.json SHA `0d8f76fe6bca6ae0f6a0db6875701c1ac9a5a7c4724b3f38cacc063da01e0f78`，
+terminal.json SHA `efc7cdc146d8f97a5c0c0c9ec3bade5a7b87472650f3779bc92e582c2eb35879`。
+bundle SHA `9cd817ee66fbf240cff4b8582e21c00b42edbb8b577ae6aa2adc1927c2baa746`，
+controller SHA `e9f137158f8649b65cc3db051a921195f5737cd74eba85df4279ddd9f6d55dc2`。
+C规范 actual blob SHA `0100d8f8c0df21669cfaed22c700aba364a8a4522efd9ee2e01427c7cc21f540`，
+产物契约 SHA `e4ecad5dbe3fff263cf94d64fd2b4732419aa54c3cd2431a1faa61b0e0f4695c`。
+后续文档提交不冒充该实际测试版本；只同步 sv3 新 CPU checkout，sv2 仅部署 e704 stage，
+实际 R5 仍在原1584隔离目录运行。
 
 ## 2026-10-15：原 raw KL 出口与阴性资格算术
 
