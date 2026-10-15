@@ -131,3 +131,24 @@ future T endpoint 即使复用 `extract_prefix` 核心，也必须另行认证 c
 
 root及独立Agent已只读复核上述三处修复，runner/test原字节同上述pins；
 下一确定提交的clean Linux六模块测试须实际执行Linux专用alarm反例，仍不构成GPU提特征启动。
+
+## 确定提交的实际Linux CPU验收
+
+实际/测试Git `2a15c91aad16c0e3151fde3943e356dad1fcb69d`，sv3 fresh clean目录
+`/data/Policy_Discrepancy/dl-normal-feature-run-code-20261015-2a15c91`。
+六模块（feature_run/features/live_policy/source_index/task_query/labels）36项全过、无skip，
+unittest45.954秒、整入口47.492050930秒/300秒，真实root SSH exit0/48.078秒；
+pending-authentication真实独立metadata session加SIGALRM反例实际执行通过。
+256份实际Git源码和七份额外规范的working bytes前后核同、最终Git clean、owned均空，0GPU。
+真实小BF16模型及generated65帧、人工512图、mock labels的上述证据边界均保留；
+本次未读取真实R5/运行真实N1M、未执行真实512提取、物理或方法检验。
+
+证据在`/data/Policy_Discrepancy/runs/dl-normal-feature-run-cpu-20261015-2a15c91/attempt01/`，
+本机`analysis/outputs/dl-normal-feature-run-cpu-2a15c91/`。terminal1224B rawSHA
+`7a96338386e8cf49753a8ea1c00602696c20d68efb2c2cca2487fbef84ca1306`；
+test log7930B `8a3f4d5b2b1dfbd85a2eb3a8eb19ba0fcc59d2b1026a6877fc2fb1fd6de268f7`；
+source-binding83612B `87dd6ab6ce089c272541467abc64d78bd85fcc5e5c16e01237398ec971eb3656`。
+外部controller `4840f7f0bd01308b86127a517e3ac7e612347984361da512a7950b084a0c3d3d`，
+source bundle `149bdf289e24da5cbde5f4668d542af720699bd8b17f81e0e707aca248b47e65`；
+SSH外层log `582a357fd35c685f16420b6de469fe5069b9a2fea9c0af141f3a9279e07664c3`。
+此成功不采用任何GPU执行计划或whole预算；仍须先冻结实际计划、bootstrap外部watchdog和资源核查。

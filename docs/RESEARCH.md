@@ -39,6 +39,10 @@ upright为辅助，来源/模型/当前快照的完整exact绑定与readonly须�
 controller797.825秒、root实际SSHexit0/798.329秒/原整体900秒；无NN/render/GPU、无D/e/Y筛选。
 原ID/时间/奖励/完整状态和query readonly闭包通过，详[真实结果](DL_NORMAL_LABEL_RESULTS.md)。
 这不证明q信息、actor关键性或保护；后续reference0特征仍须真实N1M逐帧公共oracle和source/label对齐。
+正常特征整入口actual/tested2a15c91已通过fresh clean Linux六模块36项/无skip、真实pending-auth alarm、
+SSHexit0/48.078秒/300秒/0GPU，256源码与七norm闭包一致；
+详[有限工程证据](DL_NORMAL_FEATURE_RUN_ENGINEERING.md)。尚未执行真实512/N1M特征提取或采用其GPU预算，
+不把该fixture通过当作q信息、独立信号、保护或性能证据。
 
 **共同历史特征工程完成（2026-10-15 21:37快照）**：
 [DL-normal-features-r1](DL_NORMAL_FEATURE_ENGINEERING.md)只实现冻结正常条件历史接口，

@@ -1,5 +1,12 @@
 # 项目状态
 
+**2026-10-15 23:42正常特征入口CPU验收完成**：actual/tested
+`2a15c91aad16c0e3151fde3943e356dad1fcb69d` fresh clean Linux六模块36项全过/无skip，
+真实pending-auth alarm执行、whole47.492秒/300秒、SSHexit0/48.078秒，256源码/七norm前后一致，owned空/0GPU。
+见[证据与边界](DL_NORMAL_FEATURE_RUN_ENGINEERING.md)，没有真实512/N1M提取或GPU预算采用。
+C原47db同parent/worker在23:41:49身份一致、105/128记录，无完整generation/终态/独审，原GPU5/3600秒不变。
+继续当前chat收尾C并修复其CPU审计控制器的pidfd兼容，不新增GPU作业；研究goal仍active。
+
 **2026-10-15 23:36运行观察**：C原47db parent496921/worker496934身份一致，87/128 batch record，
 尚无generation/内外终态，未读取中间科学数值，原GPU5/3600秒不改。
 23:32:23–27物理5仅本worker C/8766MiB，4/6/7无可见作业/0MiB；这是带时快照。

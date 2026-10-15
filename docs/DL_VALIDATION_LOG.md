@@ -1,5 +1,15 @@
 # DL 验证日志与证据索引
 
+## 正常特征整入口确定提交CPU验收（2026-10-15 23:42）
+
+actual/tested2a15c91aad16c0e3151fde3943e356dad1fcb69d，sv3 fresh clean六模块36项全过/无skip，
+Linux pending-authentication独立metadata session加SIGALRM反例实际通过；
+unittest45.954秒/整入口47.492050930秒/300秒，root实际SSHexit0/48.078秒，0GPU/owned空。
+256份Git源码和七额外norm的真实working bytes前后核同且最终Git clean；
+成功证据与全部raw pins见[工程记录](DL_NORMAL_FEATURE_RUN_ENGINEERING.md)。
+没有真实R5/N1M/512特征提取、physics/render或方法裁决，GPU实际计划及预算仍未采用。
+C23:41:49同原parent496921/worker496934身份匹配，105record/0最终complete、无generation/终态，未读中间科学值。
+
 ## 资源答复与CPU清理fixture失败（2026-10-15 23:36）
 
 只读23:32:23–27 XML/pmon：sv3物理5只有原C worker496934、8766MiB，4/6/7无可见作业/0MiB。
