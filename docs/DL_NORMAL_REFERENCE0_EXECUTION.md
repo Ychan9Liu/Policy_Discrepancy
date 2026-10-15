@@ -1,5 +1,50 @@
 # DL 正常共同历史 reference0 实际执行采用
 
+## 2026-10-16当前状态：F1失败，F2已采用但未启动
+
+F1实际producer仍为 `2a15c91aad16c0e3151fde3943e356dad1fcb69d`，在物理GPU4完成325/512后，
+parent因资源guard主动停止：01:16:01保存的XML与pmon同时记录本worker542278为C、未知574111为C+G，
+allowed仅542278；pmon还记录574111在GPU0为G。**不推断未知作业归属或根因，不干扰该进程。**
+原worker返回−9，原parent与实际SSH均返回1，SSH完整耗时3553.406秒，小于原12600秒；这不是超时，
+也不是NN、特征或科研阴性裁决。无worker_complete/generation，325partial不得复用、补齐或与新尝试拼接。
+完整失败产物保留在原run；本机正确小镜像为
+`analysis/outputs/dl-normal-reference0-2a15c91/failed-attempt01-metadata/`，
+首次误用main.log的失败mirror另保留于`failed-attempt01/`，不能混作成功取证。
+
+原F1 root SSH receipt 884B SHA
+`9f27e9cc784bb52917b47902772393583849453b0d49876b16977b451c7b57fa`；
+controller terminal 53235B SHA `b6c674463f626d22b7646f4454d203c8920348834ce6186f423bbbd89de9b263`；
+supervisor SHA `da7e59a2d42bb4febef935add4b02afee97a38f693039c3c534bab397a1db97e`；
+触发资源记录SHA `9f5f3f904689f1ffc17e9a6a996ccd29987e49eb1d7c89280d26dbe1efbabcbb`。
+原parent539679/start410338164、worker542278/start410358034及owned组退场已由实际终态与root观察记录；
+01:19:05–07的4–7空闲只是当时快照；root随后01:42:57–58再次核4–7空闲、原四PID gone和cccb/2a clean，
+再启动独立C4；新F2仍须其自身启动前fresh核查。
+
+root在用户sv3物理GPU4–7的完整预验证授权内采用**F2 fresh全量attempt02、独占物理GPU6**，
+UUID `GPU-70db6c66-9917-e0e2-44db-0fc80fcf41b9`。最多同时两卡、每卡一个任务：C/probe5，F6。
+producer代码与CODE保持原2a及`/data/Policy_Discrepancy/dl-normal-feature-run-code-20261015-2a15c91`，
+仍为同512/32、128fit/384held、原source/labels/keys、逐帧oracle和整入口12600秒；没有改科学量或放宽资源guard。
+原runner已接受物理4–7，无需修改producer。实际启动仍须fresh核GPU6的UUID、XML+pmon空闲与原失败进程退场。
+
+- 新INPUTS：`/data/Policy_Discrepancy/runs/dl-normal-reference0-inputs-20261016-2a15c91/`。
+- 新RUN：`/data/Policy_Discrepancy/runs/dl-normal-reference0-features-20261016-2a15c91/attempt02/`。
+- 准备包：`analysis/outputs/dl-normal-reference0-gpu6-controller-r2/`；controller SHA
+  `740f5cc8ef532b3d95ac495e9316b1f8902d71794c49d1cc6b3c5bb5a7bcd7d6`，plan SHA
+  `f37daf3184925e77ffd9908b5a88c4fcfd2102eb0992d4773b27657bc238b874`。
+
+新controller认证原F1失败whole/资源/日志rawpins、325partial边界和原PID/start/PGID/SID退场；
+旧F及未知进程只查不发信号。全部原函数AST除接线main外保持，原3f清理helper原字节保留；
+F2 controller/plan/observer仅本机准备并经独立只读peer，**未上传、未启动，尚无F2完整特征或读出结果**。
+新reader r2的固定资源/路径重绑定及待验状态见[读出工程记录](DL_NORMAL_READOUT_RUN_ENGINEERING.md)；
+旧dfd reader与已stage的e238读出外层禁止用于失败F1或新F2。
+
+GPU5的cccb生成控制数组回归已有实际SSH0/11.406秒/300秒证据，但无NN、学习或校准资格结论；
+C4已01:43:15在物理5启动、未完整验收，见[当前C记录](DL_NM1_CAL_RESULTS.md)。这些状态不改变F2或T的科研前提。
+
+## 原F1采用与执行历史
+
+以下保留原r1采用及F1当时的运行中观察；GPU4与旧attempt01路径不是当前F2安排。
+
 2026-10-15，`DL-normal-reference0-execution-r1`。这是 Agent 在完整预验证授权内采用的
 一次特征提取，不是用户逐项确认的新算法、正式训练、T4096 或旧6h建议的采用。
 本轮先前完成真实标签及确定提交的工程测试；真实完整特征、吞吐和峰显存仍待执行验收。
@@ -78,7 +123,7 @@ root先验证实际外层成功退出、whole wall、原父子及全部owned ses
 首选在完整特征验收后按已冻结数学程序拟合reference0读出，保留全部h/hq/hp与两标签绝对风险；
 它回答固定读出族的可访问性，后续压缩和保护作用仍需独立学习、匹配对照及native行为证据。
 
-## 2026-10-16实际启动记录：运行中，尚未验收
+## 2026-10-16 F1启动及当时运行中观察（历史，现已失败）
 
 root与独立Agent已逐项核controller源码/真实2a接口/labels真实metadata与输入pins，无剩余静态阻断；
 本机compile/12个纯schema负例，不冒称完整N1M或真实512执行已通过。
@@ -102,7 +147,7 @@ resource19588B `f9a3e2bc52ce38281cf3745e24f49a2277b5e519cae59fa0f1a337906d4045c1
 实际外层observer在真正SSH完成后才写receipt，严格采用exactargv/实际2a/GPU4/returncode/whole wall，
 强制成功为exit0、external_failure=null、elapsed≤12600、actual_outer_complete_within12600=true，
 再绑定controller terminal的完整path/bytes/rawSHA。12630只用于失败观察，不能延长成功预算。
-该receipt当前尚未产生；不能用内部supervisor或external terminal自证其未来最终退出。
+该receipt在当时尚未产生；其后实际结果为exit1，见本页顶部失败记录，不能作为成功读出前驱。
 
 00:21:45只读观察：原parent539679/worker542278（PGID=SID542278/start410358034）均真实存活且身份匹配，
 source_index及initial已存在，5个unit complete文件；无worker_complete/generation/终态。

@@ -1,6 +1,6 @@
 # DL-NM1 后续学习的解释与采用前检查
 
-2026-10-16，DL-NM1-T-readiness-r2。Agent 内部独立复核；本轮未读取运行中 C/reference0 的科学值。
+2026-10-16，DL-NM1-T-readiness-r2。Agent 内部独立复核；本轮未读取 C/reference0 的科学值。
 本页整理后续 T 的建议及必要边界，**全部 T 组数、U4096、32 次 native、效力判据、6 小时及实际资源仍未采用**。
 已采用的 C 与 reference0 分别沿各自规范和实际执行记录；本页不修改其科学对象、停止规则、样本或预算。
 
@@ -10,10 +10,15 @@
 
 - C 原8d63 attempt01、47db attempt02均工程失败，不能作科研阴性。当前实际/测试代码
   `abefbb3f1440cd9c95000a5d7f49c0a560a9a550` 的 attempt03 已在128采集后的CUDA闭包常量D2H处**工程失败**，
-  仍无完整校准资格或CPU独审；原128批/3600秒、sv3物理GPU5不变，局部修复/真实CUDA回归后fresh新尝试，见[实际记录](DL_NM1_CAL_RESULTS.md)。
-- reference0 实际/测试代码 `2a15c91aad16c0e3151fde3943e356dad1fcb69d` **RUNNING**，
-  固定512/32、8fit/24held、sv3物理GPU4/完整12600秒；真实完整特征、固定读出与实际退出仍待验收，
+  仍无完整校准资格或CPU独审；原128批/3600秒、sv3物理GPU5不变。局部传输修复后cccb生成CUDA回归已实际SSH0/11.406秒/300秒，
+  只证明生成控制数组路径，不是NN或C128验收；C4已01:43:15启动、尚未完整验收，见[实际记录](DL_NM1_CAL_RESULTS.md)。
+- reference0 F1实际/测试代码 `2a15c91aad16c0e3151fde3943e356dad1fcb69d` 已**资源冲突失败**：
+  GPU4上325/512后guard记录未知574111 C+G与本worker并存，实际SSH1/3553.406秒/12600秒；不归因、不干扰未知作业，
+  原产物与失败收据完整保留，partial不能拼接。新F2已采用物理GPU6/UUID70db、fresh全量attempt02，
+  producer2a/512/32/8fit/24held/12600秒及科学对象不变，最多两卡C5/F6；F2尚未启动，仍须fresh资源核查，
   见[执行采用](DL_NORMAL_REFERENCE0_EXECUTION.md)。该提特征预算不授权T学习。
+- [reader r2](DL_NORMAL_READOUT_RUN_ENGINEERING.md)仅五个固定路径/资源/版本绑定改变；本机生成/mock+NumPy的13项通过，
+  新提交的Linux验收待完成，真实读出未执行。旧dfd reader与已stage的e238外层不得用于失败F1或新F2。
 - 原R5 producer `1584ef31c322fc3371ea9ce220c06fe7e654b23a` 已完整512/32并退出；
   auditor `277c18001d353d9101a3622959351d3994699adb` 完整CPU独审通过。
   highD主检验未支持预期信号增量，sham保留implementation concern且根因未定，

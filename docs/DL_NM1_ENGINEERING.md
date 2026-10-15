@@ -1,6 +1,30 @@
 # DL-NM1 cal-only工程前置
 
-## DL-NM1-control-transfer-r2：编译闭包的局部D2H修复，待真实CUDA验收
+## DL-NM1-control-transfer-r2：真实CUDA生成控制回归通过，完整C仍待验
+
+**实际补记，2026-10-16**：actual/tested `cccb392a1a69d948d3aae683ae044e8f60d1d927`，
+sv3物理GPU5/UUID `GPU-79704918-e096-92b4-252c-e3244497a8b3`，compute-only。
+root真实SSHexit0/11.406秒/whole300，控制器10.687960952秒、worker0，owned清理且原身份退场；
+257份实际源码初末相同、关闭产物19份本机镜像逐bytes/rawSHA一致。此前本机CPU九项是8pass/1原skip，
+本次另外在实际Linux独立CPU子进程运行原真实JAX controls测试exit0，然后才启动CUDA worker。
+
+真实CUDA四阶段依次为旧全局disallow精确D2H失败、新完整局部许可通过、旧outer-allow参考、晚异常恢复。
+新S/W/P所有输出key/dtype/shape/bytes与旧allow参考相同；正常、不可用、编译边界及晚shuffle异常、外层方向覆盖
+均恢复全部四个guard，作用域外新的隐式H2D及未缓存CUDA scalar D2H仍拒绝。
+未加载N1M/checkpoint/calibration，未调用NN/Adam/环境/renderer；这是生成控制实现的CUDA验收，
+不证明完整128批校准成功、控制资格、保护或性能。
+
+服务器inputs `/data/Policy_Discrepancy/runs/dl-nm1-transfer2-probe-inputs-20261016-cccb392/`，
+run `/data/Policy_Discrepancy/runs/dl-nm1-transfer2-probe-20261016-cccb392/attempt01/`；
+本机镜像 `analysis/outputs/dl-nm1-transfer2-probe-cccb392/`。
+controller terminal116200B SHA `717c1d14135ee6c5d814db53980bd6a5485dbfdfbe4b514cde3f8624c193f24f`；
+worker report86068B SHA `5e965f82990ce1210e9bb3961d4ccd0646587f2043cc535760e24348beb68809`；
+root实际SSH日志SHA `1568e216ab6faecc2b74a1b922499f0cf9b23c412d9f96db9ca1b4850d02ae6a`。
+root实际收据 `ssh-terminal.json` 902B SHA `a4f94ce78d63f6cc7646a69d3d775cac31a1b77407f65bb4b872037521851e3c`，
+单独认证，不能用内部terminal冒充真实SSH退出。第二Agent独立重构257个Gitblob、19份镜像全hash、
+真实CPU测试/四CUDA阶段/资源与清理链，未执行入口或重跑；其本地review1861B rawSHA
+`3f97e5a1ec257c9fa87b9fb3d5f36b3e77f7ebc82fe26e5279d337c8e4a15bf3`。
+下一仍同GPU5、原128/3600秒、fresh attempt04；旧C3/frozen/partial不复用。下文保留采用前设计和有限CPU证据。
 
 真实abef attempt03在128采集后首S控制编译处失败，详[失败证据](DL_NM1_CAL_RESULTS.md)。
 GPU上的F32 coefficient被原lambda闭包捕获，JAX MLIR常量物化隐式device→host，

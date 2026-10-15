@@ -4,6 +4,27 @@
 这是Agent在既有完整预验证授权内采用的128批cal-only，不是累计学习或正式实验；
 后续T4096/整阶段6GPUh仍为建议，尚未采用。
 
+**最新：attempt04已于2026-10-16 01:43:15.298008北京时间启动，尚未完整验收。**
+root实际stage三份原字节并读回SHA、code clean；01:42:57–58 fresh XML/pmon物理4–7无作业/0MiB，旧四PID gone。
+新parent584442/PGID=SID584442/start410856558，worker584455/PGID=SID584455/start410856671，
+同物理5/原128/3600秒，actual/tested仍cccb，root真实SSH handle14751；新文档/reader提交不移动运行代码。
+01:44:08两原身份均真实存活匹配，尚无initial/record/generation/终态，未读中间科学值；
+launch64623B SHA `9c086a5459d5202fae61c6fe492d4cc38e5b5860341103ed202d67705dd3308b`。
+小记录 `analysis/outputs/dl-nm1-cal-transfer2-cccb392/inputs-deployment.json` 与原root观察器/log；
+完整启动元数据在新inputs，当前不能用启动/测试或真实probe代替完整C和独审。
+
+**真实控制CUDA回归前置已通过。**
+actual/tested `cccb392a1a69d948d3aae683ae044e8f60d1d927`，局部`jax.transfer_guard('allow')`修复
+已在sv3物理5的生成数据回归中真实复现旧错误、与allow参考逐位一致、核正常/异常guard恢复；
+rootSSHexit0/11.406秒/whole300，详[真实工程范围与rawpins](DL_NM1_ENGINEERING.md)。
+probe无NN或calibration读取，不能据此产生C系数/资格；新完整C仍原128/3600秒、同物理5、fresh attempt04。
+新code `/data/Policy_Discrepancy/dl-nm1-transfer2-code-20261016-cccb392` 已clean认证；
+新inputs `/data/Policy_Discrepancy/runs/dl-nm1-cal-inputs-20261016-cccb392`、
+新run `/data/Policy_Discrepancy/runs/dl-nm1-cal-20261016-cccb392/attempt04`。
+外层controller最终prepared SHA `1e5ee1e0194d033185e3de759b05156c087ae2ba2df1dd28c8b8e3178630a44b`，
+纯元数据15个C3与28个probe反例及独立复核通过；启动须认证真实probe及root退出rawpins、原失败退场链并fresh核物理5。
+abef专用旧audit controller仍未执行且不适用失败C3或新attempt04；未来须按实际C4完整退出重新绑定CPU审计。
+
 **最新：attempt03实际工程失败**。actual/tested abefbb3，原handle85427已终态、实际SSHexit1/
 3101.188秒；原parent exit1/3099.069495994秒，supervisor worker1/3099.005093803秒，均在原3600秒内。
 128条batch_collected连续0..127后，首S控制的GPU coefficient被jax.jit作为闭包常量物化，

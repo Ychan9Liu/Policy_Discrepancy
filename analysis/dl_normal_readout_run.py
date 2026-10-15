@@ -20,17 +20,17 @@ from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path: sys.path.insert(0, str(ROOT))
-VERSION = 'DL-normal-readout-run-r1'
+VERSION = 'DL-normal-readout-run-r2'
 PRODUCER_GIT = '2a15c91aad16c0e3151fde3943e356dad1fcb69d'
 LABELS_GIT = '47db6265311bc04dbdcc79439842eb8b6e707097'
 PRIOR_GIT = '277c18001d353d9101a3622959351d3994699adb'
 RUN_GIT = '1584ef31c322fc3371ea9ce220c06fe7e654b23a'
 BASE = Path('/data/Policy_Discrepancy')
-FEATURE_RUN = BASE/'runs/dl-normal-reference0-features-20261015-2a15c91/attempt01'
-FEATURE_INPUTS = BASE/'runs/dl-normal-reference0-inputs-20261015-2a15c91'
+FEATURE_RUN = BASE/'runs/dl-normal-reference0-features-20261016-2a15c91/attempt02'
+FEATURE_INPUTS = BASE/'runs/dl-normal-reference0-inputs-20261016-2a15c91'
 PRODUCER_CODE = BASE/'dl-normal-feature-run-code-20261015-2a15c91'
-FEATURE_SECONDS, GPU = 12600, 4
-GPU_UUID = 'GPU-9c070d5a-ac68-4c26-9522-a790ad874b23'
+FEATURE_SECONDS, GPU = 12600, 6
+GPU_UUID = 'GPU-70db6c66-9917-e0e2-44db-0fc80fcf41b9'
 CHECKPOINT = 'c6a7d92e24669a515bb44693faf73e442d9868f9fc814eec0e22e069aa594d24'
 CONFIG = '877f8470cb4f7f45d143e3099fbd3f55a828991afe33779b7b04c4264f6c8377'
 OUTER_COMMAND = ['ssh','-o','BatchMode=yes','-o','ConnectTimeout=10','sv3',

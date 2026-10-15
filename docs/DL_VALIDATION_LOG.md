@@ -1,5 +1,39 @@
 # DL 验证日志与证据索引
 
+## C4完整新尝试实际启动，F2仍未启动（2026-10-16 01:43–01:44）
+
+root实际metadata部署成功/1.204秒：仅新inputs的launcher1e5、旧C3实际SSH be4407及真实probe SSH a4f94，
+原bytes fsync/读回、cccb源码及Gitblob clean；无新模型/数据迁移。01:42:57–58 XML/pmon物理4–7全空/0MiB、
+原C3/F1四PID gone后，于01:43:15.298008实际启动C4，actual/tested cccb、同物理5/128/3600秒，
+parent584442/start410856558、worker584455/start410856671，rootSSH handle14751持续等待真实终态。
+01:44:08原父子真实身份匹配/存活，0record、无initial/generation/终态，不读科学值、不作完整校准结论。
+资源与观察证据为resources-c4-f2-20261015T174313069755及watch-c4-f2-20261015T174423883567.json，
+本机部署/observer位于`analysis/outputs/dl-nm1-cal-transfer2-cccb392/`；详[实际C](DL_NM1_CAL_RESULTS.md)。
+新reader r2/13本机工程及F2原科学范围保持，确定提交Linux验收与F2实际启动仍待完成。
+
+## 真实CUDA控制回归通过、F资源失败与两卡预算口径（2026-10-16）
+
+actual/tested cccb392a1a69d948d3aae683ae044e8f60d1d927：生成控制probe真实SSHexit0/11.406秒/300，
+控制器10.687960952秒、worker0；257源码初末一致、19关闭文件镜像逐rawSHA核过、owned清理。
+先重现旧全局disallow下CUDA F32 scalar闭包D2H错误，新S/W/P逐位等旧outer-allow参考，全部guard恢复。
+无NN/checkpoint/replay/calibration/环境/学习；完整C仍待新尝试，不能写成控制资格或方法阳性。
+镜像及完整pins见[工程记录](DL_NM1_ENGINEERING.md)。C4外层prepared 1e5ee1e…/原128/3600秒，
+15个C3与28个probe反例及独立复核通过；须接真实probe/root退出pins，fresh核物理5后才启动。
+
+原F1 actual/tested2a、GPU4/attempt01真实SSHexit1/3553.406秒/12600，worker -9；
+325条完成后guard在01:16:01.803386检测未知574111 C+G，原仅有自身542278 C。
+仅清理自身作业，未推测或干扰未知进程；无worker_complete/generation，不分析或拼接325partial。
+原handle37919及C3 handle85427均真实终态；F1完整失败/资源raw链和正确镜像保留，
+见[执行记录](DL_NORMAL_REFERENCE0_EXECUTION.md)。Agent在原授权sv3物理4–7范围内采用F2物理6/新attempt02，
+C4仍物理5，最多同时两卡各一作业；producer2a/512/12600/source/labels/keys/oracle/科研门全不变。
+reader r2仅5绑定变化，本机13项通过、独立源码复核，无确定提交Linux验收/真实拟合。
+
+01:26:06–12物理5曾有未知577949 C/492MiB，未在冲突时启动probe或干扰它；
+01:28:58–01:29:00再次XML/pmon物理4–7无作业后才实际probe。快照不保证下一启动仍空闲。
+用户再次询问资源：最低一独占A10080串行、建议两独立并行，无需全占4–7；
+当前C1h/F3.5h合计4.5GPUh为单attempt各自完整入口上限，非全部目标/剩余/成功ETA；
+统计/读出/独审0GPU，T学习及总预算尚未采用。完整五目标仍active，未进入正式实验。
+
 ## C第三次工程失败：CUDA闭包常量D2H（2026-10-16 01:07）
 
 原abef attempt03/handle85427实际SSHexit1/3101.188秒，parent1/3099.069495994、worker1/3099.005093803，

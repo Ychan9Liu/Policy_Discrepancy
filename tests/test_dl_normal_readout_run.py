@@ -74,22 +74,38 @@ class ReadoutRunTests(unittest.TestCase):
       terminal=dict(version='DL-normal-reference0-launcher-r1',git_sha=r.PRODUCER_GIT,run_directory=str(run),
           role='reference0',whole_seconds=12600,parent_returncode=0,parent_terminal=True,success=True,
           parent_identity_gone=True,owned_groups_cleaned=True,external_failure=None,cleanup_errors=[],remaining_helper_registry=[],
-          elapsed_seconds=10.,physical_gpu=4,gpu_uuid=r.GPU_UUID,parent_identity=parent,owned_children=[child],
+          elapsed_seconds=10.,physical_gpu=r.GPU,gpu_uuid=r.GPU_UUID,parent_identity=parent,owned_children=[child],
           scope=dict(complete_units=512,fit_families=8,held_families=24,model_role='reference0',
               independent_NN_reexecution=False,training_updates=0,readout_fitted=False,scientific_verdict=False,subsequent_learning_authorized=False))
       path=inputs/'terminal.json';write(path,terminal)
-      outer=dict(git_sha=r.PRODUCER_GIT,command=r.OUTER_COMMAND,returncode=0,physical_gpu=4,external_failure=None,
+      outer=dict(git_sha=r.PRODUCER_GIT,command=r.OUTER_COMMAND,returncode=0,physical_gpu=r.GPU,external_failure=None,
           actual_outer_complete_within12600=True,elapsed_seconds=11.,log_sha256='a'*64,controller_terminal=r.pin(path))
       external=root/'outer.json';write(external,outer)
       args=SimpleNamespace(features_run=str(run),feature_controller_terminal=str(path),feature_controller_sha=r.pin(path)['sha256'],
           feature_outer_execution=str(external),feature_outer_sha=r.pin(external)['sha256'])
       with mock.patch.object(r,'FEATURE_RUN',run),mock.patch.object(r,'FEATURE_INPUTS',inputs),mock.patch.object(r,'inactive') as retired:
         r.authority(args);self.assertEqual(retired.call_count,2)
-        for key,value in (('returncode',1),('returncode',False),('physical_gpu',5),('elapsed_seconds',12600.01),
+        for key,value in (('returncode',1),('returncode',False),('physical_gpu',4),('physical_gpu',5),('elapsed_seconds',12600.01),
             ('actual_outer_complete_within12600',False),('controller_terminal',{}),('command',['ssh','wrong'])):
           write(external,dict(outer,**{key:value}));args.feature_outer_sha=r.pin(external)['sha256']
           with self.subTest(key=key,value=value),self.assertRaisesRegex(ValueError,'SSH exit0'):
             r.authority(args)
+        write(external,outer);args.feature_outer_sha=r.pin(external)['sha256']
+        # A successful-looking old GPU4/attempt01 terminal cannot stand in for
+        # this fresh GPU6 attempt. Re-signing generated metadata does not make
+        # its fixed execution identity valid.
+        old_run=r.BASE/'runs/dl-normal-reference0-features-20261015-2a15c91/attempt01'
+        for change in (dict(run_directory=str(old_run)),dict(physical_gpu=4),
+            dict(gpu_uuid='GPU-9c070d5a-ac68-4c26-9522-a790ad874b23'),
+            dict(success=False),dict(parent_returncode=1)):
+          write(path,dict(terminal,**change));args.feature_controller_sha=r.pin(path)['sha256']
+          write(external,dict(outer,controller_terminal=r.pin(path)));args.feature_outer_sha=r.pin(external)['sha256']
+          with self.subTest(old_or_failed=change),self.assertRaisesRegex(ValueError,'controller terminal'):
+            r.authority(args)
+        original_run=args.features_run;args.features_run=str(old_run)
+        with self.assertRaisesRegex(ValueError,'fixed reference0 run'):r.authority(args)
+        args.features_run=original_run
+        write(path,terminal);args.feature_controller_sha=r.pin(path)['sha256']
         write(external,outer);args.feature_outer_sha=r.pin(external)['sha256']
         path.write_bytes(b'{}')
         with self.assertRaisesRegex(ValueError,'raw SHA'):r.authority(args)
@@ -178,7 +194,7 @@ class ReadoutRunTests(unittest.TestCase):
           ('launcher_terminal','launcher_launch','audit_report','audit_terminal','audit_launch')})
       write(root/'source_index.json',index)
       plan=dict(version=f.PLAN_VERSION,git_sha=r.PRODUCER_GIT,role='reference0',logical_server='sv3',
-          physical_gpu=4,gpu_uuid=r.GPU_UUID,whole_seconds=12600,complete_units=512,
+          physical_gpu=r.GPU,gpu_uuid=r.GPU_UUID,whole_seconds=12600,complete_units=512,
           labels_outer_execution=inputs['labels_outer_execution'])
       path=external/'execution-plan.json';write(path,plan);inputs['execution_plan']=r.pin(path)
       labelpins=dict(output=inputs['labels'],terminal=inputs['labels_terminal'],outer_execution=inputs['labels_outer_execution'])
@@ -205,7 +221,7 @@ class ReadoutRunTests(unittest.TestCase):
           environment=dict(CUDA_VISIBLE_DEVICES=r.GPU_UUID,CUDA_DEVICE_ORDER='PCI_BUS_ID',JAX_PLATFORMS='cuda',
               MUJOCO_GL='disable',MUJOCO_EGL_DEVICE_ID=None,PYOPENGL_PLATFORM=None)))
       for name in ('runtime_before.json','runtime_after.json'):
-        write(root/name,dict(pid=124,compute_uuid=[r.GPU_UUID],physical_gpu=4,egl_uuid=None,graphics_verified=False))
+        write(root/name,dict(pid=124,compute_uuid=[r.GPU_UUID],physical_gpu=r.GPU,egl_uuid=None,graphics_verified=False))
       initial=r.decode((root/'initial.json').read_bytes());initial['model'].update(checkpoint=inputs['checkpoint'],config_pin=inputs['config'])
       write(root/'initial.json',initial)
       complete=r.decode((root/'worker_complete.json').read_bytes())

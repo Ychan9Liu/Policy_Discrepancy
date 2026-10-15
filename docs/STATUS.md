@@ -1,5 +1,27 @@
 # 项目状态
 
+**2026-10-16 01:44 最新：C4已启动，F2待验/未启动；原两完整尝试均失败。**
+01:42:57–58 XML/pmon物理4–7空闲、cccb/2a源码clean、旧四PID gone后，
+C4于01:43:15.298008在sv3物理5以actual/tested cccb启动：parent584442/start410856558，
+worker584455/start410856671，原128/3600秒；root handle14751持续观察真实SSH退出。
+01:44:08父子身份均匹配/存活，0record、无initial/generation/终态；这是运行进度，不是完整C验收。
+证据 `analysis/outputs/dl-prevalidation-launch-20261016/watch-c4-f2-20261015T174423883567.json`。
+局部传输修复 actual/tested `cccb392a1a69d948d3aae683ae044e8f60d1d927` 在sv3物理5实际通过生成数组回归：
+root真实SSHexit0/11.406秒/whole300，控制器10.687961秒，257份源码初末相同、19份关闭产物镜像核SHA。
+先真实复现旧CUDA F32 scalar D2H错误，再核新S/W/P与旧outer-allow参考逐位相同及所有guard恢复；
+无模型/checkpoint/replay/环境/学习。它仅解决已观测工程故障，不是完整C或方法验收，见[工程证据](DL_NM1_ENGINEERING.md)。
+
+原reference0/2a/GPU4/attempt01实际SSHexit1/3553.406秒，325/512后资源guard发现未知574111 C+G；
+仅清理自身worker，未干扰未知作业。无generation，不能解释为模型阴性或拼接partial。
+原handle37919关闭，C3原handle85427同已关闭；完整失败与新安排见[reference0执行记录](DL_NORMAL_REFERENCE0_EXECUTION.md)。
+Agent在既有sv3物理4–7授权内采用新F attempt02/GPU6，C attempt04仍GPU5，最多两卡各一个作业；
+原512/12600、128/3600、source/labels/keys/oracle及科学门均不变。新reader r2仅固定绑定变化，本机13项通过，
+确定提交Linux验收与实际完整新F仍待完成，旧dfd/e238读出入口不适用于新F。
+01:40:24–25 fresh XML/pmon物理4–7均无作业/0MiB，原C3/F1四父子PID均gone、cccb/2a源码clean；
+证据 `analysis/outputs/dl-prevalidation-launch-20261016/resources-c4-f2-20261015T174039329262/`。
+这是带时快照，不是以后资源保证，下一启动仍须fresh核指定卡。
+完整五目标仍active，T/正式实验尚未准入。以下带时记录为历史，不表示旧作业仍运行。
+
 **2026-10-16 01:07 C第三次工程失败/已释放GPU5**：原abef attempt03完整采集0..127后，
 首S控制jax.jit将闭包GPU F32系数常量隐式取回主机，被原device→host disallow拒绝。
 actualSSHexit1/3101.188秒、parent1/3099.069秒/原3600，无generation/final/独审或科学资格；

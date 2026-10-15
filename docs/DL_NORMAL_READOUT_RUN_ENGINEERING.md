@@ -1,12 +1,33 @@
 # 正常 reference0 读出：只读 CPU 工程接口
 
-2026-10-16，`DL-normal-readout-run-r1`。本文件说明实现与有限工程证据；不新增研究判据、
+2026-10-16 当前索引，`DL-normal-readout-run-r2`。本文件说明实现与有限工程证据；不新增研究判据、
 训练组、T 或真实读出执行授权。数学定义仍以 [DL_NORMAL_READOUT.md](DL_NORMAL_READOUT.md) 为准。
+
+## 当前状态：F1失败，F2及reader r2尚未执行
+
+原F1物理GPU4在325/512条后因资源guard发现未知574111的C+G占用而失败，真实SSH退出1、
+3553.406秒，小于12600秒；不是超时或feature科学阴性。无完整generation，325条partial不能
+拼接、补齐或作为读出输入。未知进程身份和来源未确定，不归因、不干扰。完整失败保存与raw pins见
+[DL_NORMAL_REFERENCE0_EXECUTION.md](DL_NORMAL_REFERENCE0_EXECUTION.md)。
+
+已采用同一producer2a、同512/32family、128fit/384held及12600秒完整预算的fresh F2 attempt02，
+仅在用户已授权sv3物理4–7内改到物理6，UUID
+`GPU-70db6c66-9917-e0e2-44db-0fc80fcf41b9`；最多两卡、每卡一任务，C/probe5、F6。
+F2外部控制器已在本机准备及只读复核，尚未上传或启动；实际启动仍须fresh资源核查。
+
+reader r2仅改五项固定绑定：版本、F2 run、F2 inputs、物理6和UUID；producer2a/CODE、
+五份复用依赖、全部认证函数和数学均不变。本机reader9+math4共13项全过、无skip，107.364秒，
+仅生成/mock provenance与NumPy；不是实际feature/labels读出。入口raw SHA256
+`8250e79feb17c788626edf7b66a0febadcf79a99343ae25a087ceb9923c5cd53`，test
+`9030890aa0dcaead92e0f24111f930270feebd67cdb744e1aeae708c66e1de74`。
+新提交及确定SHA的clean Linux验收尚待完成；不得把下述旧dfd验收记成r2验收。
+旧dfd reader和已部署的e238读出控制器绑定F1/GPU4，**不得执行或复用于F2**。
+新reader尚未执行真实读出，F2未来成功终态/真实外层退出pins尚未产生。
 
 ## 固定对象与命令
 
 `analysis/dl_normal_readout_run.py` 只接受原始 reference0：producer actual/tested
-`2a15c91aad16c0e3151fde3943e356dad1fcb69d`、sv3 物理4、完整512/32family、12600秒。
+`2a15c91aad16c0e3151fde3943e356dad1fcb69d`、sv3 物理6、完整512/32family、12600秒。
 后续 B/N endpoints 需要各自完整来源协议，本入口不冒充通用 endpoint 认证器。
 当前分析提交通过 `--expected-git` 单独记录，不能写成提取时实际提交。
 
@@ -14,18 +35,18 @@
 
 ```text
 python analysis/dl_normal_readout_run.py
-  --features-run /data/Policy_Discrepancy/runs/dl-normal-reference0-features-20261015-2a15c91/attempt01
+  --features-run /data/Policy_Discrepancy/runs/dl-normal-reference0-features-20261016-2a15c91/attempt02
   --feature-controller-terminal <真实外部controller terminal路径>
   --feature-controller-sha <该文件完整rawSHA256>
   --feature-outer-execution <root真实SSH退出收据路径>
   --feature-outer-sha <该文件完整rawSHA256>
   --expected-git <当前分析完整Git SHA>
-  --seconds <另行采用的完整CPU入口秒数>
+  --seconds 900
   --output <所有输入及代码目录之外的fresh目录>
 ```
 
-这些真实特征终态及 SSH 退出收据尚未产生，本文件不填假 pin。600秒只是待 root 采用的工程
-预算候选。入口计时包括 import、认证、Git/raw读取、NumPy 拟合、写盘；不得延时、补 partial、
+这些F2真实特征终态及 SSH 退出收据尚未产生，本文件不填假 pin。既有完整CPU入口900秒采用
+保持；新reader提交/Linux验收及控制器重绑定须先完成。入口计时包括 import、认证、Git/raw读取、NumPy 拟合、写盘；不得延时、补 partial、
 搜索超参或从输出符号调整来源。成功还需要实际外层退出0及完整 wall 在显式预算内；
 `readout.json`/stdout 自身不能证明进程未来成功退出。
 
@@ -33,13 +54,13 @@ python analysis/dl_normal_readout_run.py
 
 先验证强制传入的两个 raw pins。controller terminal 必须为
 `DL-normal-reference0-launcher-r1`，原 parent 实际0、success、gone/owned-clean、无错误、完整
-reference0 scope，固定物理4/UUID/12600。root 实际 SSH 收据采用的字段契约为：
+reference0 scope，固定物理6/上述UUID/12600。root 实际 SSH 收据采用的字段契约为：
 
-- `git_sha=2a15c91...`、`physical_gpu=4`、整数 `returncode=0`；
+- `git_sha=2a15c91...`、`physical_gpu=6`、整数 `returncode=0`；
 - `0 < elapsed_seconds <= 12600`、`external_failure=None`、
   `actual_outer_complete_within12600=True`；
 - 精确 command 为 `ssh -o BatchMode=yes -o ConnectTimeout=10 sv3` 后接项目 Python 与
-  `/data/Policy_Discrepancy/runs/dl-normal-reference0-inputs-20261015-2a15c91/launch.py`；
+  `/data/Policy_Discrepancy/runs/dl-normal-reference0-inputs-20261016-2a15c91/launch.py`；
 - 完整 `log_sha256`；`controller_terminal={path,bytes,sha256}` 必须与强制传入的终态 pin 全同。
 
 该契约已由 root 采用；实际收据仍须真实产生。12630秒通信观察 watchdog 不改变12600成功上限。
@@ -83,7 +104,7 @@ JSON 中每个数值数组引用 NPZ key、dtype/shape/raw SHA；NPZ 不含 obje
 
 结果没有阳性阈值或方法裁决；不能推出 actor 已利用、关键信息已丢失、唯一因果中介、保护有效或性能收益。
 
-## 有限验证范围
+## r1本机有限验证历史
 
 新增测试只使用生成/明确 mock 的图与真实 NumPy 算术，真实 feature/labels 未读取、未拟合。
 涵盖外部失败/超时/错设备/错 pin、partial/缺件/额外文件、被排除顶层终态篡改、
@@ -101,7 +122,7 @@ root及独立Agent只读核认证顺序、严格phase view、数学/bit解码/�
 下一确定提交的reader9+既有math4项采用一次clean Linux CPU测试整入口300秒上限；
 它不是实际读出执行预算，也不允许读取运行中的reference0或按其结果改数学/标签。
 
-## 确定提交的实际 Linux CPU 验收
+## r1确定提交的实际 Linux CPU 验收历史
 
 actual/tested `dfd6756ad4f38f89de87e17bac7fd0192265979a`，sv3 fresh clean checkout：
 上述reader9与原数学4项共13项全过、无skip，7个必需用例均在真实日志中为ok。
@@ -132,37 +153,39 @@ bundle29695291B `fcbb98ccb387a753e800ff20282b4e338bbc6607770669810d1e60251a7f271
 这些是generated/mock provenance、真实NumPy/BF16解码和phase-view有限工程证据；
 不认证真实512特征、标签、NN/Physics或方法有效。
 
-## 下一真实 CPU 读出的有限采用
+## 完整CPU入口900秒的采用与F1读出路径历史
 
-2026-10-16，Agent在完整预验证授权内采用一次reference0固定读出，actual/tested仍dfd，
+2026-10-16，Agent在完整预验证授权内采用一次reference0固定读出，当时actual/tested为dfd，
 **整个CPU入口900秒、0GPU**，覆盖bootstrap前计时、全图/源码/标签认证、原固定拟合、
 全部数值产物、初末只读检查、落盘、owned清理及实际完整退出。旧600秒候选不采用。
-外部控制器尚在准备；原feature handle37919仍运行，真实controller终态/SSH receipt pins尚未知。
-仅在其真实SSHexit0/whole≤12600、512完整图与原组退场均成立后提供这两个真实raw pins，
+当时原feature handle37919仍运行；其后已实际SSH退出1，因而该F1路径不能进入读出。
+当前改为等待F2真实SSHexit0/whole≤12600、512完整图与原组退场均成立后提供两个真实raw pins，
 不使用partial、内部成功替代真实退出、不因读出符号更换来源或数学。
 
-fresh输出 `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-20261016-dfd6756/attempt01/`，
+当时指定的输出 `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-20261016-dfd6756/attempt01/`，
 外部inputs `/data/Policy_Discrepancy/runs/dl-normal-reference0-readout-inputs-20261016-dfd6756/`。
+这两处旧dfd路径不供F2执行；新consumer Git与fresh读出路径待root确定。
 900秒是有限成本上限，非完整任务耗时保证；失败保留，不延时或拼接。
 该采用不启动累计学习、不增加GPU，也不采用T4096/6h或新的研究效力门。
 
-## 外部900秒控制器已准备与部署，尚未执行
+## r1外部900秒控制器部署历史（未执行，现不可运行）
 
 外部launcher43274B rawSHA `e23811bfd67709081ef954f126ea66819066864b1db9b594217f9186c69c287e`，
 原generic helper34052B `3f0b8b025128d3280df2120f3987a6f7ad8806054fab5ec2e57b6decfeca28f1`，
 本机准备包 `analysis/outputs/dl-normal-reference0-readout-controller-r1/`。
+以下仅保留当时准备/部署记录；该包仍固定旧F1/GPU4/dfd，不能用于F2。
 25个通用函数AST等于已实际Linux检验的3f版本，不引入C-specific authority、资格或report判据。
 16个纯生成元数据/数值闭包反例拒绝，正负contrast均可接纳；未运行真实拟合、NN或Physics。
 root与第二Agent只读核真实dfd接口、完整2a schema、两未知真实pins、全图初末、全部数值descriptor及实际reader stdout report pin。
 控制器认证264个Git来源，reader自身analysis_binding为260项且全被覆盖；
 这与上述CPU验收258源码+九norm的267个不同文件是不同集合，不为凑数改变范围。
 
-仅上述两个文件已实际部署到本页指定新inputs，单次SSH原bytes写入并逐文件读回SHA全同，
+当时仅上述两个文件已实际部署到上节历史路径的旧dfd读出inputs，单次SSH原bytes写入并逐文件读回SHA全同，
 远端reader仍dfd且clean；部署未执行main、读取真实feature或增加GPU作业。
 实际部署收据 `analysis/outputs/dl-normal-reference0-readout-dfd6756/controller-deployment.json`。
 CPU环境隐藏CUDA/禁用GL，固定PYTHONPATH为已认证CODE、BLAS/OMP线程1。
 launcher两项必填 `--feature-controller-sha`、`--feature-outer-sha`；后者绑定新inputs内
-`feature-outer-execution.json`的原root真实退出bytes，尚未产生，不能填生成正例。
+`feature-outer-execution.json`的原root真实退出bytes，当时尚未产生；F1其后失败，不能提供成功退出bytes或填生成正例。
 root另备实际SSH observer，同一900秒成功上限、925秒仅失败观察；真实完成时才产生
-`analysis/outputs/dl-normal-reference0-readout-dfd6756/ssh-terminal.json`，当前不存在。
+`analysis/outputs/dl-normal-reference0-readout-dfd6756/ssh-terminal.json`；该旧路径未执行真实读出。
 内部terminal/读出报告不能证明自身未来完整退出；这些工程准备不表示真实读出或方法通过。
