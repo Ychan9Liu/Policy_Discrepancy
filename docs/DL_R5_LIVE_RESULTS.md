@@ -1,8 +1,37 @@
 # DL-r5 live 随机诊断工程记录
 
 2026-10-15。规范为[DL_R5_LIVE_TRIAL.md](DL_R5_LIVE_TRIAL.md)。
-**当前：工程CPU验收完成，真实N1M/GPU诊断未启动；完整方法目标仍active。**
+**当前（17:39:08快照）：真实N1M/GPU诊断运行中；完整生成、独审和科学裁决未完成，完整方法目标仍active。**
 Agent在既有完整预验证授权内采用有限对象，不称用户逐项确认的新算法；原R4失败、M2及旧停止门不变。
+
+## 实际启动与运行快照（2026-10-15）
+
+实际源码保持f845，17:32:20只读核sv3 clean、原N1M/config完整SHA匹配，/data可用583,993,733,120字节，
+物理4–7完整XML+pmon空闲。17:34零动作CUDA/EGL probe exit0，外4.269332秒，成本另记；
+compute和render均物理4/UUID `GPU-9c070d5a-ac68-4c26-9522-a790ad874b23`，0训练动作/0更新。
+probe后17:34:06 fresh idle记录，随后17:35:07.451831北京时间主入口启动。
+
+主run：`/data/Policy_Discrepancy/runs/dl-r5-live-20261015-f845de0/attempt01/`。
+外部probe/resource/launcher/stdout/terminal记录放在严格主产物图之外：
+`/data/Policy_Discrepancy/runs/dl-r5-live-inputs-20261015-f845de0/`。
+parent PID301006、PGID301006、start_ticks407927773；首family worker301084。
+外部启动脚本launch-attempt01.py SHA256
+`3be3a8894596d9b12bd6ddc373d8f30b75cade7c526abe7ce15120f3884be8f9`，
+完整argv/环境/原parent身份在launch-attempt01.json，parent自身budget/process/资源也留档。
+
+实际命令为f845 clean代码下的`/data/Policy_Discrepancy/envs/dreamer/bin/python scripts/dl_live_trial.py`，
+`--expected-git f845de0cce297443c28761421ab91a7955b62553`，原已审inputs目录agent.pkl/config.yaml，
+output为上述attempt01，resource-record为新inputs/resource-attempt01.json。
+环境CUDA_DEVICE_ORDER=PCI_BUS_ID、CUDA_VISIBLE_DEVICES为物理4 UUID、MUJOCO_EGL_DEVICE_ID=4、
+MUJOCO_GL/PYOPENGL_PLATFORM=egl、JAX_PLATFORMS=cuda。模型/协议字段沿规范冻结，不训练、不重算c/调α或损失梯度设置。
+
+17:39:08原parent身份仍匹配且活跃，首family已有13个unit complete；cal128未封口、held未开始、
+没有generation_complete/supervisor_terminal。实际完整load/save state SHA
+`4e0d1a0e1de806bf8e4863278cabd171ed0d208dddc1fea18b8b54d68ca6383f`及params/counters认证通过，
+真实worker CUDA/EGL核验同GPU4；当时采样2587MiB、GPU5–7各4MiB无本对象作业。
+这是生产自检和进度，不是完整512或独审验收；不读取中间D/e/Y或据此修改设计。
+驱动CUDA12.8/编译器12.9.86导致XLA关闭parallel compilation的既有warning保留，不改依赖或预算。
+观察超时不当失败，不重启原handle；继续监督同一parent至权威终态，再独审。
 
 ## 实际版本与工程证据
 
@@ -39,8 +68,8 @@ producer/独审实际单unit包含完整prefix、H100和stdio CPU shadow。
 cal128封口先于held、Linux父/worker/shadow进程组清理和固定统计反例已有有限测试。
 Windows coarse monotonic仅在Windows fixture中使用真实perf_counter；Linux真实strict<未放宽。
 
-未执行真实512完整对象、N1M/GL、实际效用预测、压缩或保护学习干预，
-没有第二信号有效或方法性能结论。完整512审计入口实现不等于已验收真实512。
+以下为CPU阶段的验收边界：当时未执行真实512/N1M/GL。上述新实际运行仍未完整生成/独审，
+未执行压缩或保护学习干预，没有第二信号有效或方法性能结论。完整512审计入口实现不等于已验收真实512。
 
 ## 资源和下一步
 

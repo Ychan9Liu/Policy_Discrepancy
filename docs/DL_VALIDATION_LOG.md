@@ -1,5 +1,14 @@
 # DL 验证日志与证据索引
 
+## DL-r5真实入口启动（2026-10-15）
+
+actual/tested f845；17:32:20 fresh sv3 XML+pmon4–7空闲、原inputs完整SHA匹配；
+17:34零动作CUDA/EGL probe通过/外4.269332秒，17:35:07.451831主parent301006启动，
+worker301084、单物理4。17:39:08原身份匹配且活跃，完整N1M load/state/counters和实际映射通过，
+首family13unit complete、cal128未封口、held未开始/无终态/独审。GPU4采样2587MiB，5–7不预占；
+完整7200秒预算/全部固定统计规则不改。完整路径、argv/环境、身份/hash与证据边界见
+[DL_R5_LIVE_RESULTS.md](DL_R5_LIVE_RESULTS.md)。此后本机只文档报告，执行源码不移动，goal active。
+
 ## DL-r5确定版本Linux工程完成（2026-10-15 17:29）
 
 actual/tested `f845de0cce297443c28761421ab91a7955b62553`，Windows47项46pass/1skip15.896秒，

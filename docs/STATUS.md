@@ -1,5 +1,12 @@
 # 项目状态
 
+**DL-r5真实运行中（2026-10-15 17:39:08快照）**：actual/tested f845de0cce297443c28761421ab91a7955b62553，
+零动作设备probe后17:35:07启动原parent301006/start407927773，首worker301084，N1M完整state和实际CUDA/EGL同物理4通过。
+首family13unit complete、cal128未封口、held未开始，未全对象/独审或科学裁决。GPU4采样2587MiB，5–7不预占；
+全入口7200秒上限不改，原handle继续监督，不因观察timeout重启；完整后CPU独审。
+完整argv/环境/证据见[DL_R5_LIVE_RESULTS.md](DL_R5_LIVE_RESULTS.md)，仅sv3隔离f845，无训练/算法修改，goal active/M2保持。
+下方17:29“未启动/无作业”为此前历史。
+
 **DL当前（2026-10-15 17:29）**：R5源码actual/tested
 `f845de0cce297443c28761421ab91a7955b62553`已push研究分支，clean sv3 Linux47项全过/25.092秒，
 父与独审真实source manifests一致，0GPU；[工程报告](DL_R5_LIVE_RESULTS.md)。

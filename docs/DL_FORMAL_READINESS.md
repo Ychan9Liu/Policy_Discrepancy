@@ -1,5 +1,11 @@
 # DL 正式实验准入与因果证据边界
 
+**当前索引更新（2026-10-15 17:39）**：原R4 cal失败/独审结论保持；普通持久化replay已经7ac完整CRC/schema/双SHA验收，
+见[DL_REPLAY_INVENTORY.md](DL_REPLAY_INVENTORY.md)，下方16:02“只盘点未验内容”是当时历史。
+新R5 live随机单次诊断已在f845/单sv3物理4执行、首family13unit生成，cal未封口/held未开始，
+见[DL_R5_LIVE_RESULTS.md](DL_R5_LIVE_RESULTS.md)。未有完整效用/信号/保护裁决；
+正常active压缩和有效替代控制仍为缺口，下方B/N建议没有被本索引自动采用或授权启动。
+
 版本 **DL-readiness-r1**，2026-10-15。本轮为完整预验证目标内的独立0GPU审查；不改变正在运行的 [DL_R4_UTILITY.md](DL_R4_UTILITY.md)、实际5ce源码或任何停止门，不读取其中间科学值。下述下一干预均是**建议/需求，尚未采用的新实验**，不是用户逐项确认或已支持的算法。
 
 **16:12终态优先**：上述“正在运行/尚未完整”的初始快照已由真实cal8失败和独立CPU证据更新。

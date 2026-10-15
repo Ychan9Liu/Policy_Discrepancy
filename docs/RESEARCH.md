@@ -1,5 +1,10 @@
 # 研究问题与方法
 
+**DL-r5已启动（2026-10-15 17:39快照）**：f845真实N1M单sv3物理4入口17:35:07启动，
+完整state/实际CUDA-EGL映射通过，首family13unit生成、cal未封口/held未开始。
+这是运行进度，不是第二信号或保护证据；512完整生成与独审尚待，原R4失败/M2不改。
+规范[DL_R5_LIVE_TRIAL.md](DL_R5_LIVE_TRIAL.md)、实际[DL_R5_LIVE_RESULTS.md](DL_R5_LIVE_RESULTS.md)。
+
 **DL-r5工程完成与资源核验（2026-10-15 17:29）**：actual/tested
 `f845de0cce297443c28761421ab91a7955b62553`，clean sv3 Linux47项全过、真实Git blob source manifests一致、0GPU。
 新policy/shadow/family/父入口/统计/CPU独审实现并有限验收，真实512/N1M/GL尚未执行，
