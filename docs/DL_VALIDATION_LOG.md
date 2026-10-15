@@ -1,5 +1,32 @@
 # DL 验证日志与证据索引
 
+## DL-pilot-r3终点与独立CPU分析（2026-10-15）
+
+原训练actual/tested13ec72a214b0c03b886b2c7fac52c8f089966dec于10/14 00:58:33.255724北京时间
+正常结束、worker exit0/父audited_complete、1M动作/249493更新/21×10完整episode/210000eval动作；
+00:58:34.233197完整XML确认GPU4释放。父整个入口41421.0822秒/11.505856GPUh占卡上界，
+1333资源样本峰8086MiB；非最低需求或精确硬件峰保证，无故障重跑/续接/配置变更。
+
+新增CPU审阅actual/tested a4d9330a86cb89f9251b00bdad755f3305244a1a，只同步sv2新隔离checkout，
+执行训练checkout13及canonical48保持不改。4项Linux手算/污染/ledger/不可用值契约全过；
+实际审阅51.383558453秒/exit0，核21个实际agent快照/最后完整checkpoint的全部params/
+optimizer/norm/counters及fingerprint、249493连续收据与固定动作映射、21点评价状态不变、
+raw return/种子、历史来源hash、CUDA/EGL仅GPU4及独立AUC/tail通过。只读/hash/算术认证，
+不称独立训练或environment episode复演。证据根
+`/data/Policy_Discrepancy/runs/dl-pilot-r3-review-20261015-a4d9330/`，含tests/review.log和evidence两JSON；
+本机ignored小证据镜像及曲线PNG/PDF完成并视觉核查，未复制/提交checkpoint或replay。
+
+N/B/D AUC652.280911/638.158808/796.253630，N对B+2.21%、对D−18.08%；
+tail941.518453/937.792603/944.886025；本轮不支持DL额外优于Dt。N均权重.9996853471、
+有效rep-active保护覆盖35.0538%、clipped rep损失减免.247926%、超额项减免.346618%，
+同N有效mask上D-only潜在释放比2.53111%仅代数描述，不是正式κ或实际D强度。
+完整 [DL_PILOT_R3_ANALYSIS.md](DL_PILOT_R3_ANALYSIS.md)，不据单seed定因果或改旧科研裁决。
+
+10/15 14:01:39.202261 fresh XML再次确认GPU4/PID533059和GPU5/PID547286各647MiB/C，
+psutil AccessDenied，均标未知作业且未干预；6/7无进程/0MiB。原N父/worker已退出，
+本次CPU复核0GPU，不把原释放快照当当前四卡空闲。首选现有02审查信号与强度匹配协议，
+无新算法/参数或训练授权；最新GitHub同步按终点核验，不沿用旧push状态。
+
 ## DL-pilot-r3真实启动与首批更新（2026-10-13 13:37:29）
 
 actual/tested完整SHA13ec72a214b0c03b886b2c7fac52c8f089966dec，sv2隔离clean checkout；

@@ -1,5 +1,7 @@
 # 项目状态
 
+**DL 1M验收与分析完成（2026-10-15）**：sv2物理GPU4/quad_walk/N/seed0实际13ec72a214b0c03b886b2c7fac52c8f089966dec于10/14 00:58正常结束，1M/249493更新/21×10episode/exit0/父审计及释放齐全。CPU独审a4d9330a86cb89f9251b00bdad755f3305244a1a的4项契约及51.38秒实际21快照/完整ledger/hash/统计通过，无新GPU或训练。N AUC652.28，B638.16、D796.25；N对B+2.21%、对D−18.08%，tail941.52与B937.79/D944.89接近；未建立双信号优于Dt。平均权重仅下降.0315%，KL超额项减免.3466%，不当信息保留率。详情 [DL_PILOT_R3_ANALYSIS.md](DL_PILOT_R3_ANALYSIS.md)。14:01:39 fresh sv2 GPU4/5各647MiB未知C任务（AccessDenied），6/7空；本次旧作业已释放，未干预未知任务。首选现有02审查第二信号/强度匹配设计，新训练/调参未批准；下方运行中条目为历史。
+
 **DL 1M已有效运行（2026-10-13 13:37:29快照）**：实际/tested完整SHA `13ec72a214b0c03b886b2c7fac52c8f089966dec`，sv2物理GPU4 / quadruped_walk/N/seed0 / 1M，α20/ρ.5/H1和原loss/grad不变，21点×10episode。新5项clean Linux通过/pip0，源码相同的旧kernel/protocol认证复用；13ec72a已push/ls-remote核验，main595e982未合。13:28:12启动，父673688/worker674490，共同初始化匹配、0点10完整episode/eval隔离通过，10544动作/2129成功更新且loss/grad有限；1compute/17graphics全在GPU4/8010MiB，5–7无进程/各1MiB。独立监督继续完整预算和终点审计，训练/验收尚未完成，不称方法有效。原100k按用户更正中止并保留，不恢复或拼接。实际路径、命令、hash和后续范围见 [DL_PILOT_R3_RESULTS.md](DL_PILOT_R3_RESULTS.md)。后续报告提交只文档，执行checkout保持13ec72a；以下为历史。
 
 **DL预算更正（2026-10-13 13:21，1M准备中）**：用户改为“跑1m”，覆盖100k；sv2物理4–7继续，单任务quadruped_walk/N/seed0/GPU4，α20/ρ.5/H1和原模型/损失不改，21点×10episode对齐PD_1完整B/D。原r2于13:19按用户更正中止，最后37096动作/8767更新，完整证据保留、无数值故障或100k性能结论；父/worker/环境已清理，13:21:17 GPU4–7各0MiB。本机新r3预算/评价完整性/监督上限适配及CPU fixture通过，下一确定SHA的clean Linux复核后新目录从头启动，不续跑。新规范 [DL_PILOT_R3.md](DL_PILOT_R3.md)，中止记录 [DL_PILOT_R2_RESULTS.md](DL_PILOT_R2_RESULTS.md)。
