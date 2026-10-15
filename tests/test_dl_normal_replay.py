@@ -123,6 +123,16 @@ class NormalReplayTest(unittest.TestCase):
     self.assertEqual(later['dyn/deter'][0,0,0],8)
     for name,body in self.sourcebytes.items():self.assertEqual((self.directory/name).read_bytes(),body)
 
+  def test_original_path_receipt_has_no_implicit_stage_provenance(self):
+    cache=self.load()
+    expected=dict(version=helper.VERSION,inventory_sha256=self.pin,
+        original_inventory_authenticated=False,chunks=3,legal65_starts=56,
+        batch_size=16,length=64,prefix=1,consec=1,prefetch=False,directory=None,
+        online=False,private_cache=True,original_files_written=False,
+        sampler_rng_restored=False,online_queue_restored=False,environment_restored=False,
+        exact_endpoint_cache_restored=False,object_scope=json.loads(self.report.read_bytes())['object_scope'])
+    self.assertEqual(cache.receipt(),expected)
+
   def test_full_span_unknown_id_and_bad_cache_refused_before_any_write(self):
     cache=self.load();batch=cache.batch(self.starts());valid=self.output(batch,5)
     baseline={uid:chunk.data['dyn/deter'].tobytes() for uid,chunk in cache._replay.chunks.items()}

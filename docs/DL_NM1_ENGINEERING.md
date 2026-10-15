@@ -1,5 +1,35 @@
 # DL-NM1 cal-only工程前置
 
+## 2026-10-15：原 raw KL 出口与阴性资格算术
+
+新增工程版本 DL-NM1-counterfactual-r2，源码提交
+`98d92cdc40724ad0b87e229431a4c485bc934cbf`；不改变 C 科学定义/门/预算。
+[产物与独审契约](DL_NM1_CAL_ARTIFACTS.md)明确完整128闭包、原始/实际计数、
+BF16 uint16 原 bits、P 随机性独立复算和未校准 None 的语义。
+完整生产入口与审计仍在实施中，本节不是实际 C 结果或新 GPU 启动。
+
+`Agent.loss` 新增默认 False 的 `dl_reference`，只有独立参考 collector 显式开启：
+从同一 RSSM loss 的原 `probe.rep_raw` 保存 K、其实际 F32 E、覆盖前 rep 和实际权重。
+原 `_train` 不开启该参数，也不增加输出；原 `log_train_collect` 保持原调用。
+一个独立只读源码审查确认默认 Python 分支不新增 RNG/状态/图，原 K 不从加权 floor loss 反推。
+参考 JIT 新输出可能影响其融合，因此仍不把其梯度称生产 optimizer 内部 bit-gradient。
+
+`analysis/dl_nm1_calibration.py` 使用存储的实际 F32 原值做 F64 乘积/全位置 fsum，
+冻结 S/W 与实际 F32 P 边界，分别报告覆盖/同模块梯度及真实更新作用/对照剂量与置换效力。
+零分母、F32 无实际保护或作用不足返回完整阴性，不填默认系数、不追加批次。
+后续学习许可与方法有效性字段固定 False，C 门通过也不能自动采用 T。
+
+本机 CPU 三模块19个不同测试全过：scratch3项30.900秒，normal-only6项与数学10项组合
+24.857秒。真实 tiny F32 Agent 保留非零旧 moments，B 重复/rho0/公共训练全状态一致、
+新 raw K/E/floor/实际 N 权重及只读边界通过；10个合成算术测试覆盖零分母、
+解析正但 F32 无作用、不同路径不能拼作用、重复曝光不增覆盖、pooled P 比例和实际剂量失配。
+一个测试首轮失败来自 fixture 的 deepcopy 保留重复对象别名；改为逐记录独立复制后通过，
+未改科学公式或阈值。尚未进行新确定提交的 clean Linux 补证或真实 N1M 校准。
+
+资源答复沿已采用规范：一张独占 A100 80GB 串行；C 3600秒最多1占卡小时，
+当前 R5-r2 12600秒最多3.5占卡小时，都是各自入口硬限，非成功 ETA 或从现在剩余时间。
+T 的6小时仍建议，完整研究总 GPU 小时未定；当前诊断约2.53GiB不能作为 C/学习显存保证。
+
 2026-10-15，阶段科学版本DL-NM1-cal-r1，接口工程版本DL-NM1-counterfactual-r1。
 Agent在完整预验证授权内采用[仅C阶段规范](DL_NM1_TRIAL.md)；不是用户逐项确认，
 4096学习/6GPUh/后续性能门仍为建议。本记录阶段尚未运行真实N1M cal或新增GPU任务。

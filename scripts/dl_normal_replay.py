@@ -69,7 +69,8 @@ def _decode(body,row):
   return arrays,summary
 
 
-def load_private_cache(replay_directory, inventory_path, *, expected_inventory_sha256=INVENTORY_SHA):
+def load_private_cache(replay_directory, inventory_path, *, expected_inventory_sha256=INVENTORY_SHA,
+                       stage_record_path=None, expected_stage_record_sha256=None):
   """Fresh complete private cache; a nondefault SHA is only an explicit fixture pin.
 
   Production counts/schema/source remain fixed. Small tests explicitly patch
@@ -81,10 +82,19 @@ def load_private_cache(replay_directory, inventory_path, *, expected_inventory_s
   body=path.read_bytes()
   require(hashlib.sha256(body).hexdigest() == expected_inventory_sha256,'Inventory raw SHA differs before JSON decode')
   report=inventory.read_json(body)
+  require((stage_record_path is None) == (expected_stage_record_sha256 is None),
+      'Explicit stage record path and raw SHA must be supplied together')
+  stage_provenance=None
+  if stage_record_path is not None:
+    from scripts import dl_replay_stage as stage
+    stage_provenance=stage.authenticate_stage(stage_record_path,expected_stage_record_sha256,
+        path,report,directory)
+  original_directory=(str(directory) if stage_provenance is None else
+      stage_provenance['original_replay_directory'])
   count,chains,rows,resets,actions=EXPECTED_COUNTS
   require(report['version'] == inventory.VERSION and report['schema'] == 1 and report['stable'] is True and
-      report['source_git'] == inventory.SOURCE_GIT and report['replay_directory'] == str(directory) and
-      report['run_directory'] == str(directory.parent) and report['before_inventory'] == report['after_inventory'] and
+      report['source_git'] == inventory.SOURCE_GIT and report['replay_directory'] == original_directory and
+      report['run_directory'] == str(Path(original_directory).parent) and report['before_inventory'] == report['after_inventory'] and
       report['rows'] == rows and report['resets'] == resets and report['train_actions'] == actions and
       report['corrupt_chunks_skipped'] == 0 and report['model_loaded'] is report['gpu_used'] is False and
       all(report[key] is False for key in ('sampler_rng_restored','online_queue_restored',
@@ -116,16 +126,18 @@ def load_private_cache(replay_directory, inventory_path, *, expected_inventory_s
       'Decoded complete chunk/chain metadata differs from pinned inventory')
   require(sum(x['length'] for x in actual) == rows and sum(x['resets'] for x in actual) == resets and
       rows-resets == actions,'Decoded original replay totals differ')
-  return PrivateReplay(chunks,report,expected_inventory_sha256,_verified=_VERIFIED)
+  return PrivateReplay(chunks,report,expected_inventory_sha256,_verified=_VERIFIED,
+      _stage_provenance=stage_provenance)
 
 
 class PrivateReplay:
   """Single-threaded cache; one outstanding submitted raw batch at a time."""
-  def __init__(self,chunks,report,inventory_sha256,*,_verified=None):
+  def __init__(self,chunks,report,inventory_sha256,*,_verified=None,_stage_provenance=None):
     require(_verified is _VERIFIED,'Use the strict inventory/byte-authenticated loader')
     from embodied.core.replay import Replay
     self._replay=Replay(length=LENGTH+CONTEXT,capacity=None,directory=None,online=False,seed=0)
     self._report=report;self._inventory_sha=inventory_sha256
+    self._stage_provenance=_stage_provenance
     self._pending=None;self._poisoned=False
     ordered=sorted(chunks,key=lambda x:x.filename,reverse=True)
     counts=self._replay._numitems(ordered)
@@ -152,13 +164,19 @@ class PrivateReplay:
         'Official registered legal65 starts differ')
 
   def receipt(self):
-    return dict(version=VERSION,inventory_sha256=self._inventory_sha,
+    result=dict(version=VERSION,inventory_sha256=self._inventory_sha,
         original_inventory_authenticated=self._inventory_sha == INVENTORY_SHA,
         chunks=len(self._replay.chunks),legal65_starts=len(self._replay),
         batch_size=BATCH,length=LENGTH,prefix=CONTEXT,consec=1,prefetch=False,
         directory=None,online=False,private_cache=True,original_files_written=False,
         sampler_rng_restored=False,online_queue_restored=False,environment_restored=False,
         exact_endpoint_cache_restored=False,object_scope=self._report['object_scope'])
+    if self._stage_provenance is not None:
+      # Extra provenance is explicit only for relocation. The original path's
+      # receipt remains byte/field compatible, including its version string.
+      import copy
+      result['stage_provenance']=copy.deepcopy(self._stage_provenance)
+    return result
 
   def make_plan(self,seed,updates):
     """Explicit uniform plan in official insertion order, not restored RNG."""
