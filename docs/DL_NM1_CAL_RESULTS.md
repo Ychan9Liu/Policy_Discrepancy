@@ -1,6 +1,6 @@
 # DL-NM1 C 实际执行与资源记录
 
-2026-10-15，版本DL-NM1-cal-r1，状态：**修复版attempt02运行中；首次尝试失败已封存，尚无完整校准或独审**。
+2026-10-15，版本DL-NM1-cal-r1，状态：**attempt01/02均工程失败并封存；尚无完整校准或独审**。
 这是Agent在既有完整预验证授权内采用的128批cal-only，不是累计学习或正式实验；
 后续T4096/整阶段6GPUh仍为建议，尚未采用。
 
@@ -136,3 +136,35 @@ launch rawSHA `3781dc7f14f4d2a9433a99e8abec47d3ddc24503fca08b42cc0e97405d76cf97`
 23:11:57原parent/worker身份仍匹配，16个batch record，0个最终batch complete、无generation/终态，
 保持原3600秒和未读中间科研值；物理5采样23:09:43–47仅本worker C/8766MiB，4/6/7空闲/0MiB。
 纯CPU标签已独立完整验收，见[结果](DL_NORMAL_LABEL_RESULTS.md)，不替代C审计或新增GPU预算。
+
+## 23:49:32第二次尝试工程失败
+
+原handle22265已真实终态，不再作为活跃进程观察：actual47db parent exit1，
+parent完整3125.098555551842秒/3600秒，worker exit1/3124.9671284328215秒；
+root实际SSH exit1/3126.812秒，external_failure=null仅表示外部未另报故障，不是成功。
+原parent496921/start409861732与worker496934/start409861843均已退出，owned_groups_cleaned=true。
+23:50:49–53完整XML/pmon物理4–7均无可见作业/各0MiB，GPU5已释放；该快照不代表持续空闲。
+
+worker日志连续记录batch_collected 0..127，之后首个control_arrays在PRNGKey(0)的隐式
+host→device scalar传输触发原JAX全局transfer_guard=disallow，退出码1。
+官方Agent setup启用此guard，而旧独立controls fixture没有构造Agent，漏测该状态。
+这解释本次工程故障；没有generation_complete、128最终complete或final模型/cache/source封口，
+**不能以128采集日志宣布完整校准、控制资格、机制或方法阴性**；本轮未读取frozen科学数值。
+
+最小修复待验：仅允许control_arrays诊断控制数组作用域的host→device传输，
+保持key/F32/JIT/公式/系数/科学门及NN路径，退出及异常均恢复原guard。
+原attempt02保持不动，不从128中间记录补拼最终结果；修后新完整attempt03沿原128/3600秒。
+这是原授权内工程修复，不增加训练、样本或更改科学协议。
+
+原始小镜像`analysis/outputs/dl-nm1-cal-repair-47db626/failed-attempt02/`：
+
+| 文件 | bytes | rawSHA256 |
+| --- | ---: | --- |
+| 外部terminal-attempt02.json | 21469 | `581f69c75edddb855bc4090f9f6fb2d9cc1650229543e655925ef937bf9564b5` |
+| supervisor_terminal.json | 1246 | `f273f291811f25205726237a09f0374570f15ce616a49a17464d8f13cc1e9948` |
+| worker.log | 12814 | `13bced8720371148307dccf1b5ee72d6a0f02830a3afa55bc27362b34daf15e1` |
+| main-attempt02.log | 1885 | `790a0afacafddc3e12f2ea129fd4c3ec3274f21cdb3a96e39ca1467a295fcb04` |
+
+同本机父目录真实SSH收据794B SHA `bac876bac788c750d6ceb99fdd6ff42b39625b4fdab9a20641f6874034abb811`，
+SSHlog1384B SHA `8f06dffa2f46e766d1a301df8b93a72e99654efaf63f58a4511ea46e12183241`。
+第二Agent独立核四份rawpins与128连续日志/源码guard设置，未读中间科学值、未重跑NN或服务器步骤。

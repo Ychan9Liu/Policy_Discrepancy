@@ -1,5 +1,25 @@
 # DL-NM1 cal-only工程前置
 
+## DL-NM1-control-transfer-r1：局部诊断传输修复
+
+实际47db attempt02的完整失败证据见[执行记录](DL_NM1_CAL_RESULTS.md)。官方Agent setup启用
+全局`jax_transfer_guard=disallow`；旧controls fixture没有设置这个状态，漏掉首PRNGKey隐式传输。
+本修复只以公开`jax.transfer_guard_host_to_device('allow')`包住`control_arrays`原有诊断计算。
+离开或异常均恢复原状态，不放开collect/prod/reference，也不修改任何NN/梯度、key/F32/JIT/系数/科学门。
+
+本机测试时HEAD `e8c7a1163d5647e98038d52c518da9770916fb45`加两文件未提交修改：
+非tiny九项8pass/1原Linuxskip、1.793秒；没有重复旧tiny NN。
+真实CPU JAX在global disallow下去掉唯一新context即可重现旧故障；新增context生成的全部
+S/P/W/key/priorities/perm/group/counts的dtype/shape/bytes与原allow路径相同，
+zero-denominator None不变，成功/晚shuffle异常均恢复guard，函数外PRNGKey仍拒绝隐式传输。
+生产38059B rawSHA `f49d0c638242ad7c1419233f520a9d114cf455b6c6634b5c3111555337b9d5af`，
+test25651B `b85782e0013fcb4385f43b2a7dc96c2731ed585cadab8e41a045f12e1ccf83b8`。
+移除唯一新with并提升原body后，整个生产模块AST与真实失败47db及上述HEAD完全相同；
+第二Agent独立核diff/AST/测试覆盖，无源码阻断，未重跑JAX/SSH/GPU。
+
+下一确定提交fresh clean Linux四模块/cal真实tiny及控制数组/独立审计联合验收；
+此本机工程证据不是N1M校准验收。修后新attempt03必须完整128/原3600秒，旧128记录不拼接。
+
 ## 2026-10-15：确定修复版clean Linux验收
 
 actual/tested `47db6265311bc04dbdcc79439842eb8b6e707097`，新clean

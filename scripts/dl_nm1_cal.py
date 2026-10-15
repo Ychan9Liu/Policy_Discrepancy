@@ -565,34 +565,36 @@ def control_arrays(signal, frozen):
   import jax.numpy as jnp
   from dreamerv3.dt_latch import conditional_shuffle
   from scripts.dl_nm1_counterfactual import host
-  a, e, f = (jnp.asarray(signal[k]) for k in ('A','e','f'))
-  key = jax.random.fold_in(jax.random.fold_in(jax.random.PRNGKey(0),0x444C),jnp.uint32(STEP))
-  arrays = dict(P_key=host(key), P_priorities=host(jax.random.uniform(key,(BATCH*LENGTH,))))
-  controls, availability = {}, {}
-  for name, factor in (('S',f), ('W',e)):
-    entry = frozen[name]; value = None
+  # These diagnostic controls consume host arrays after Agent enables its guard.
+  with jax.transfer_guard_host_to_device('allow'):
+    a, e, f = (jnp.asarray(signal[k]) for k in ('A','e','f'))
+    key = jax.random.fold_in(jax.random.fold_in(jax.random.PRNGKey(0),0x444C),jnp.uint32(STEP))
+    arrays = dict(P_key=host(key), P_priorities=host(jax.random.uniform(key,(BATCH*LENGTH,))))
+    controls, availability = {}, {}
+    for name, factor in (('S',f), ('W',e)):
+      entry = frozen[name]; value = None
+      if entry['calibrated']:
+        coefficient = jnp.float32(entry['coefficient_f32'])
+        value = host(jax.jit(lambda mask,x: jnp.float32(1)-mask*coefficient*x)(a,factor))
+        arrays['v_'+name] = value
+      controls['v_'+name] = value
+      availability['v_'+name] = dict(available=entry['calibrated'], reason=entry['reason'])
+    entry = frozen['bins']; value = None
     if entry['calibrated']:
-      coefficient = jnp.float32(entry['coefficient_f32'])
-      value = host(jax.jit(lambda mask,x: jnp.float32(1)-mask*coefficient*x)(a,factor))
-      arrays['v_'+name] = value
-    controls['v_'+name] = value
-    availability['v_'+name] = dict(available=entry['calibrated'], reason=entry['reason'])
-  entry = frozen['bins']; value = None
-  if entry['calibrated']:
-    d_bins, k_bins = tuple(entry['D_f32']), tuple(entry['K_f32'])
-    def permute(w, mask, k, d):
-      v, _, perm = conditional_shuffle(w,mask,k,d,1.,d_bins,k_bins,0,STEP)
-      db=jnp.searchsorted(jnp.asarray(d_bins,jnp.float32),d,side='right')
-      kb=jnp.searchsorted(jnp.asarray(k_bins,jnp.float32),k,side='right')
-      group=(((mask.astype(jnp.int32)*2+(k>1))*(len(d_bins)+1)+db)*(len(k_bins)+1)+kb)
-      counts=jnp.bincount(group.reshape(-1),length=4*(len(d_bins)+1)*(len(k_bins)+1))
-      return v,perm,group,counts
-    value, perm, group, counts = host(jax.jit(permute)(jnp.asarray(signal['v_N']),a,
-        jnp.asarray(signal['K']),jnp.asarray(signal['D'])))
-    arrays.update(v_P=value,P_perm=perm,P_group=group,P_counts=counts)
-  controls['v_P'] = value
-  availability['v_P'] = dict(available=entry['calibrated'], reason=entry['reason'])
-  return arrays, controls, availability
+      d_bins, k_bins = tuple(entry['D_f32']), tuple(entry['K_f32'])
+      def permute(w, mask, k, d):
+        v, _, perm = conditional_shuffle(w,mask,k,d,1.,d_bins,k_bins,0,STEP)
+        db=jnp.searchsorted(jnp.asarray(d_bins,jnp.float32),d,side='right')
+        kb=jnp.searchsorted(jnp.asarray(k_bins,jnp.float32),k,side='right')
+        group=(((mask.astype(jnp.int32)*2+(k>1))*(len(d_bins)+1)+db)*(len(k_bins)+1)+kb)
+        counts=jnp.bincount(group.reshape(-1),length=4*(len(d_bins)+1)*(len(k_bins)+1))
+        return v,perm,group,counts
+      value, perm, group, counts = host(jax.jit(permute)(jnp.asarray(signal['v_N']),a,
+          jnp.asarray(signal['K']),jnp.asarray(signal['D'])))
+      arrays.update(v_P=value,P_perm=perm,P_group=group,P_counts=counts)
+    controls['v_P'] = value
+    availability['v_P'] = dict(available=entry['calibrated'], reason=entry['reason'])
+    return arrays, controls, availability
 
 
 def verify_worker(args):

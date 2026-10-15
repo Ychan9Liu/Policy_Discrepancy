@@ -27,6 +27,9 @@ C原8d63于22:28:41在sv3物理5按原128批/3600秒启动，无累计学习，�
 修复实际/tested47db6265311bc04dbdcc79439842eb8b6e707097已通过24模块Linux174项中的172项、
 2原optional skip/SSHexit0/279.206秒/600秒。22:57:27同sv3物理5/原3600秒fresh attempt02已启动，
 尚未完成独审；真实三实例加载身份已通过，修复证据限于加载边界，不证明完整干预或方法有效。
+23:49:32原attempt02已工程失败：128采集后首控制数组PRNGKey被官方全局transfer_guard拒绝隐式host→device，
+actualparent1/3125.099秒、rootSSHexit1/3126.812秒；无完整generation/final闭包或控制资格，不能作科研阴性。
+仅局部诊断传输许可修复待验，原科学/样本/预算不改，新完整attempt03不补拼旧128记录。
 
 **正常当前任务量标签的实际执行采用（Agent决定，2026-10-15）**：
 在已成功完整prior277c物理审计和新labels确定提交clean Linux有限验收后，采用一次固定512/32family、
@@ -43,6 +46,10 @@ controller797.825秒、root实际SSHexit0/798.329秒/原整体900秒；无NN/ren
 SSHexit0/48.078秒/300秒/0GPU，256源码与七norm闭包一致；
 详[有限工程证据](DL_NORMAL_FEATURE_RUN_ENGINEERING.md)。尚未执行真实512/N1M特征提取或采用其GPU预算，
 不把该fixture通过当作q信息、独立信号、保护或性能证据。
+后续一次reference0实际提取已由Agent采用：原512/32/8fit24held、原N1M、已测试2a15c91，
+sv3物理GPU4独占/whole12600秒，在原C完整工程退场与fresh资源核查后启动；
+原GPU5保留C必要重跑，两对象可独立并行。该12600是有限上限而非ETA/足够保证，不采用T或新学习预算。
+见[实际采用与验收边界](DL_NORMAL_REFERENCE0_EXECUTION.md)，当前尚未声称完整真实特征或方法阳性。
 
 **共同历史特征工程完成（2026-10-15 21:37快照）**：
 [DL-normal-features-r1](DL_NORMAL_FEATURE_ENGINEERING.md)只实现冻结正常条件历史接口，

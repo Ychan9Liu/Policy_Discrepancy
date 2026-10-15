@@ -1,5 +1,29 @@
 # DL 验证日志与证据索引
 
+## C第二次失败与正常reference0执行采用（2026-10-15 23:49–23:55）
+
+原C47db attempt02 parent1/3125.098555552秒/原3600，实际SSHexit1/3126.812秒，handle22265关闭。
+128连续采集后首control_arrays PRNGKey被官方transfer_guard=disallow拒绝；无generation/final，
+非方法阴性，未读取frozen科学数值。原parent/worker/owned退场，23:50:49–53物理4–7均无进程/0MiB。
+失败rawpins和独立只读复核见[执行记录](DL_NM1_CAL_RESULTS.md)。局部host→device诊断作用域修复待验，
+后续原128/3600秒新完整尝试，不从中间记录补齐。
+
+CPU独审控制器generic兼容3f0b8b025128d3280df2120f3987a6f7ad8806054fab5ec2e57b6decfeca28f1
+及fixture9487810d9d2a0b1b161450d50e06c36f64784c46ed01e3421a9321343493b7c1，
+新actual Linux20s fixture真实SSHexit0/1.329秒（内部.682293532），13leaf全gone/reaped、6继承组STOP，
+cleanup-final errors=[]/registry=[]/reaperstop/无unknown信号，expired deadline仍拒success。
+backend为受限Linux x86_64/LP64、实际系统头raw9f1c9750...唯一宏434/424的pidfd syscall；
+能力probe在spawn前仅自身signal0，保持原PID/start/PGID/SID fences；不是任意daemon隔离保证。
+本机小证据`analysis/outputs/dl-nm1-cal-audit-controller-r1/linux-fixture-20261015T154716Z/`，
+result raw `77dce7242dd3c17dae9d505023b239fa6fbc540d9dc83a47a8cc948dc680e0e9`，
+cleanup-final raw `e2ca8cbda1d3885617f56abfeeb10fd545ca7a38f19a05619001a9ac419cf461`。
+第二Agent复核小镜像/sourcepins，无重跑/SSH/GPU；此前pidfd API缺失失败保留。
+一次4vs5 producer身份schema推断经实际镜像/源码被否定：原C内外均4key，未采用该错误修复，generic3f原字节保留。
+
+另采用固定reference0提取actual/tested2a15c91、GPU4/12600秒/512，不采用T/训练；
+GPU5保留C重跑，可独立并行至多两卡各一个作业。采用/来源/标签及验收边界见
+[新记录](DL_NORMAL_REFERENCE0_EXECUTION.md)。控制器准备中、未新增GPU启动，不能以采用宣称实际特征成功。
+
 ## 正常特征整入口确定提交CPU验收（2026-10-15 23:42）
 
 actual/tested2a15c91aad16c0e3151fde3943e356dad1fcb69d，sv3 fresh clean六模块36项全过/无skip，

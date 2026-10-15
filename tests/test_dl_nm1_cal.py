@@ -4,6 +4,7 @@ One integration case uses real tiny F32 NN scratch cores on generated B2/T4
 data. The full128/16x65 production entry is never certified by this fixture.
 """
 import json
+from contextlib import nullcontext
 import datetime as dt
 import os
 from pathlib import Path
@@ -201,6 +202,9 @@ assert not any(n.split('.')[0] in ('jax','numpy','mujoco','dm_control','OpenGL')
   def test_controls_use_real_jax_and_zero_denominator_is_complete_none(self):
     result=self.run_fixture('--controls')
     self.assertTrue(result['real_CPU_JAX_controls'])
+    self.assertTrue(result['original_path_rejected_by_real_disallow'])
+    self.assertTrue(result['controls_byte_equal_to_original_allow_path'])
+    self.assertTrue(result['guard_restored_after_success_and_exception'])
     self.assertTrue(result['zero_denominator_controls_all_none'])
     self.assertFalse(result['real_N1M_calibration'])
 
@@ -240,20 +244,70 @@ def controls_fixture(output):
   sig=dict(K=k,E=k-1,D=d,e=e,f=f,v_N=np.where(a,np.float32(1)-np.float32(.5)*e*f,np.float32(1)),
       m=a.copy(),A=a,stepid=ids,chain=np.repeat(np.arange(16,dtype=np.int32)[:,None],64,axis=1))
   frozen=arithmetic.freeze([sig],expected_batches=1)
-  arrays,controls,available=p.control_arrays(sig,frozen)
-  independent=permutation(a,k,d,frozen['bins']['D_f32'],frozen['bins']['K_f32'])
+  empty=dict(sig,K=np.full_like(k,.5),E=np.zeros_like(k),e=np.zeros_like(e),v_N=np.ones_like(k))
+  no=arithmetic.freeze([empty],expected_batches=1)
+  def byte_equal(before,after):
+    for left,right in zip(before[:2],after[:2]):
+      assert set(left) == set(right)
+      for name,value in left.items():
+        actual=right[name]
+        if value is None:assert actual is None
+        else:
+          assert value.dtype == actual.dtype and value.shape == actual.shape
+          assert value.tobytes() == actual.tobytes(),name
+    assert before[2] == after[2]
+  def guard_state():
+    return tuple(getattr(jax.config,'jax_transfer_guard'+suffix)
+        for suffix in ('','_host_to_device','_device_to_device','_device_to_host'))
+  def require_transfer_rejected(call):
+    try:call()
+    except Exception as error:assert 'Disallowed host-to-device transfer' in str(error),str(error)
+    else:raise AssertionError('Implicit host transfer unexpectedly allowed')
+  original_guard=jax.config.jax_transfer_guard
+  try:
+    jax.config.update('jax_transfer_guard','allow')
+    # Removing only the new permission context executes the unchanged original
+    # controls body; this does not copy its random or control arithmetic here.
+    with mock.patch.object(jax,'transfer_guard_host_to_device',side_effect=lambda _:nullcontext()):
+      baseline=p.control_arrays(sig,frozen)
+      empty_baseline=p.control_arrays(empty,no)
+    independent=permutation(a,k,d,frozen['bins']['D_f32'],frozen['bins']['K_f32'])
+    # The official Agent setup uses this global setting. No NN is needed to
+    # reproduce its transfer policy at the diagnostic controls boundary.
+    jax.config.update('jax_transfer_guard','disallow')
+    before=guard_state()
+    with mock.patch.object(jax,'transfer_guard_host_to_device',side_effect=lambda _:nullcontext()):
+      require_transfer_rejected(lambda:p.control_arrays(sig,frozen))
+    assert guard_state() == before
+    arrays,controls,available=p.control_arrays(sig,frozen)
+    byte_equal(baseline,(arrays,controls,available))
+    assert guard_state() == before
+    require_transfer_rejected(lambda:jax.random.PRNGKey(0))
+    missing,weights,availability=p.control_arrays(empty,no)
+    byte_equal(empty_baseline,(missing,weights,availability))
+    assert guard_state() == before
+    def generated_failure(*args,**kwargs):
+      assert jax.config.jax_transfer_guard_host_to_device == 'allow'
+      raise RuntimeError('generated late control exception')
+    with mock.patch('dreamerv3.dt_latch.conditional_shuffle',side_effect=generated_failure):
+      try:p.control_arrays(sig,frozen)
+      except RuntimeError as error:assert str(error) == 'generated late control exception'
+      else:raise AssertionError('Generated shuffle exception was not raised')
+    assert guard_state() == before
+    require_transfer_rejected(lambda:jax.random.PRNGKey(0))
+  finally:
+    jax.config.update('jax_transfer_guard',original_guard)
   for left,right in (('P_key','key'),('P_priorities','priorities'),('P_perm','perm'),('P_group','group'),('P_counts','counts')):
     np.testing.assert_array_equal(arrays[left],independent[right])
   assert all(available[name]['available'] for name in ('v_S','v_W','v_P'))
-  empty=dict(sig,K=np.full_like(k,.5),E=np.zeros_like(k),e=np.zeros_like(e),v_N=np.ones_like(k))
-  no=arithmetic.freeze([empty],expected_batches=1)
-  missing,weights,availability=p.control_arrays(empty,no)
   assert set(missing) == {'P_key','P_priorities'} and all(v is None for v in weights.values())
   summary=arithmetic.summarize([empty],[dict(encoder_gradient_changed_elements=0,encoder_step_changed_elements=0,
       posterior_gradient_changed_elements=0,posterior_step_changed_elements=0)], [weights],no,expected_batches=1)
   assert not any(summary['qualification'].values())
   assert all(device.platform == 'cpu' for device in jax.devices())
-  Path(output).write_text(json.dumps(dict(real_CPU_JAX_controls=True,zero_denominator_controls_all_none=True,
+  Path(output).write_text(json.dumps(dict(real_CPU_JAX_controls=True,
+      original_path_rejected_by_real_disallow=True,controls_byte_equal_to_original_allow_path=True,
+      guard_restored_after_success_and_exception=True,zero_denominator_controls_all_none=True,
       real_N1M_calibration=False)))
   del dll
 

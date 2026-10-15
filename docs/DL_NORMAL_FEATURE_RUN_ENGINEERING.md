@@ -1,7 +1,8 @@
 # 正常共同历史 reference0 特征执行入口
 
-2026-10-15，`DL-normal-feature-run-r1`。本文件记录已委托实现的必要工程接口；
-**未采用实际特征执行的 GPU 卡、UUID、秒数或启动安排**，也不采用 T4096、训练、
+2026-10-15，`DL-normal-feature-run-r1`。本文件记录必要工程接口及有限验收；
+**接口实现和上述测试时未采用实际GPU执行计划**。后续一次reference0的实际设备与预算采用见
+[DL_NORMAL_REFERENCE0_EXECUTION.md](DL_NORMAL_REFERENCE0_EXECUTION.md)；本接口本身也不采用 T4096、训练、
 native 评价或方法性能判据。入口实现于 `scripts/dl_normal_feature_run.py`，
 只加载原 N1M reference0。来源定义仍为 `docs/DL_NORMAL_READOUT.md`，
 逐帧模型接口仍为 `docs/DL_NORMAL_FEATURE_ENGINEERING.md`。

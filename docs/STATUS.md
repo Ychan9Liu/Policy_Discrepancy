@@ -1,5 +1,14 @@
 # 项目状态
 
+**2026-10-15 23:49:32 C attempt02工程失败/已释放GPU5**：actual47db原parent exit1/3125.098555552秒，
+rootSSHexit1/3126.812秒/3600秒；128采集后首control_arrays在PRNGKey隐式host→device处被原disallow拒绝。
+无generation/final闭包或独审，非方法阴性；失败证据见[实际C记录](DL_NM1_CAL_RESULTS.md)。
+23:50:49–53物理4–7无可见GPU作业/各0MiB，原parent/worker退场、owned清理完成。
+仅局部诊断传输许可修复待有限验收，修后新完整attempt03，原128/3600秒不变，不拼旧产物。
+另已采用[reference0提取](DL_NORMAL_REFERENCE0_EXECUTION.md)：实际/已测试代码2a15c91、固定512、
+独占物理GPU4/UUID9c070d5a、whole12600秒；启动前仍须控制器审查/完整输入pins/fresh占用检查。
+GPU5保留C重跑，可最多两卡各一个独立作业；当前尚无新增GPU启动，完整目标未完成。
+
 **2026-10-15 23:42正常特征入口CPU验收完成**：actual/tested
 `2a15c91aad16c0e3151fde3943e356dad1fcb69d` fresh clean Linux六模块36项全过/无skip，
 真实pending-auth alarm执行、whole47.492秒/300秒、SSHexit0/48.078秒，256源码/七norm前后一致，owned空/0GPU。
