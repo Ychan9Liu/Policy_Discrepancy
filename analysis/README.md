@@ -2,6 +2,24 @@
 
 此目录存放可复现的指标整理和绘图代码。输入来自 `docs/EXPERIMENTS.md` 索引的服务器运行目录；大型中间文件及生成图表放在 `analysis/outputs/`，不提交到 Git。
 
+## DL 1M 探索结果复核
+
+`dl_pilot_review.py` 对已完成DL-pilot-r3做CPU只读审阅：核验原始21点评价、全部更新收据、
+21个实际模型快照与最终完整checkpoint的参数/计数、历史B/D来源及实际设备记录，
+独立复算固定1M AUC/80–100万tail，并汇总已有batch级保护统计。
+不训练、不重演环境、不改变参数或把历史单seed比较称为机制/跨seed证据。
+checkpoint只在可信服务器本地读取，不下载或提交；输出目录必须新建。
+
+```sh
+CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu python analysis/dl_pilot_review.py \
+  --plan /data/Policy_Discrepancy/runs/dl-pilot-r3-plan-20261013-13ec72a \
+  --output /data/Policy_Discrepancy/runs/NEW_DL_REVIEW
+```
+
+固定三段AUC和逐eval-seed终点差仅作事后描述。gate统计来自重复采样的replay batch，
+不是独立状态覆盖；N批次上D-only潜在释放比不是实际Dt训练、正式κ或新增已批准对照。
+复核生成 `review.json` 与小型 `points.json`，图表和运行记录见 `docs/DL_PILOT_R3_RESULTS.md`。
+
 ## 原始 return 统计
 
 实现为 `analysis/return_metrics.py`，只依赖 Python 标准库；协议依据为 `docs/EXPERIMENTS.md` C/C.1。生产 CLI 固定100万动作预算、21点、每点10完整 episode、指定末段五点、四任务、训练 seed0。它不接受新的预算、seed 或指标参数。`tests/run_return_metrics_fixtures.py` 的两 seed、小预算仅是手算统计 fixture。
