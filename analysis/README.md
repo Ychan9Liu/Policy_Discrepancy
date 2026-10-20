@@ -13,7 +13,16 @@ python -m analysis.inspect_hopper_v1 --frames --output analysis/outputs/NEW_HOPP
 python -m analysis.diagnose_hopper_v1 --inspection analysis/outputs/NEW_HOPPER_INPUT/remote_inspection.json --mirror analysis/outputs/m2-v1-seed0-20261012/inputs --frames analysis/outputs/NEW_HOPPER_INPUT/replay_frames.npz --output analysis/outputs/NEW_HOPPER_ANALYSIS
 ```
 
-诊断报告见`docs/ANALYSIS_HOPPER_M2_V1.md`。训练replay的raw reward求和是补充证据，不替代正式评价指标，也不声称已获得评价逐reward轨迹。源码`mode_vector_diff_frac`是因子mode不一致率；`mode_factor_diff_frac`是one-hot坐标不一致率，当前32类时前者恰为后者16倍。整向量不一致率未被正确记录，读表须保留此缺口；本轮不改训练源码。
+诊断报告见`docs/ANALYSIS_HOPPER_M2_V1.md`。训练replay的raw reward求和是补充证据，不替代正式评价指标，也不声称已获得评价逐reward轨迹。**历史无版本日志**的`mode_vector_diff_frac`是因子mode不一致率，`mode_factor_diff_frac`是one-hot坐标不一致率，32类时前者为后者16倍；旧整向量比例缺失。2026-10-20修复后新增`mode_diagnostic_version=2`和`mode_coordinate_diff_frac`，factor/vector分别正确记录因子/整向量比例，不能跨版本直接拼同名曲线。兼容说明、CPU验证及限制见`docs/CODE_MODE_DIAGNOSTICS_REPAIR.md`。
+
+独立兼容审计只读原16条已审查训练版本与镜像哈希，保留原字段并另列明确语义；旧整向量值保持null，不改旧表/日志或正式return。原分析脚本保留历史复算语义。
+
+```sh
+python -m analysis.mode_diagnostics --inputs analysis/outputs/m2-v1-seed0-20261012/inputs --output analysis/outputs/NEW_MODE_AUDIT
+python -m unittest tests.test_mode_diagnostics -v
+# JAX回归仅CPU；不创建环境或执行优化器更新
+CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu XLA_FLAGS=--xla_force_host_platform_device_count=2 python -m unittest tests.test_mode_probe_regression tests.test_rep_probe tests.test_rep_overlay -v
+```
 
 `analyze_m2_v1.py` 校验镜像与04审计时输入哈希、逐条实际训练/审计SHA、冻结配置、随机流和同任务初始评价、百万动作/完整收据/21点×10episode、正式窗口S/N及先冻结后constant启动，再调用既有统计器 `--require-complete`，以第二种直接算式交叉核对指标，输出运行清单、c表、按阶段门控表及PNG/SVG图。
 

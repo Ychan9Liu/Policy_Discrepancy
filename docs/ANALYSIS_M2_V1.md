@@ -1,5 +1,7 @@
 # 05 · M2 v1 单训练 seed0 分析
 
+**2026-10-20 03诊断修复回执**：修复后mode语义版本2区分坐标/因子/整向量；原无版本日志只可映射坐标与因子，整向量仍未知。全部正式return表复算逐字节一致，冻结v1不变；兼容及CPU验收见 `docs/CODE_MODE_DIAGNOSTICS_REPAIR.md`，不构成hopper失败根因或gate/输入微扰因果结论。
+
 日期：2026-10-12，Asia/Shanghai。状态：**16条全部完成协议产物验收并纳入；05复算、门控表和图形完成。** 这是正式任务的单seed探索性结果，不是跨seed方法有效性或训练稳定性结论。本轮不启动训练、不调参、不改冻结协议或训练源码。
 
 **2026-10-20 hopper专项补证**：见 `docs/ANALYSIS_HOPPER_M2_V1.md`。已只读核对hopper四组0步294数组逐位相同、首次2032动作/奖励相同，但原prefill图像有少量1级坐标差异；独立求和训练replay显示Dt的992个完整训练episode中799个零return，低回报不只在评价中。补证只针对训练replay，评价逐reward轨迹仍缺失，正式16条指标不变。另确认原 `mode_vector_diff_frac`实际是因子mode不同率、`mode_factor_diff_frac`是one-hot坐标不同率，整向量不同率未正确记录；本报告中mode日志只能按此修正语义阅读，不能从中断言整向量mode相同率。日志错误不进入训练目标，本轮未改训练源码。

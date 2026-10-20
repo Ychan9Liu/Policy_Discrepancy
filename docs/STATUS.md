@@ -2,6 +2,14 @@
 
 更新日期：2026-10-20。
 
+## 03 最新：mode诊断归约修复完成（2026-10-20）
+
+- 实现/实际测试SHA `1ccde38c042d2264b5d5d1e6c93c658d170a9d88`：新增mode诊断语义版本2与坐标比例，因子/整向量按正确轴归约。旧无版本vector→真实因子、factor→真实坐标，旧整向量仍为null，不覆写旧日志或拼接同名跨版本曲线。
+- 本机23项、sv1两虚拟CPU设备37项测试通过，无失败/跳过；四模式冻结输入D/w、损失/梯度、其他诊断及前后Ninjax key与修复前逐位相同。没有训练、环境仿真、优化器更新、GPU作业或新完整agent/CUDA验收，未查GPU现状。
+- 只读补证16运行×20诊断区间，原1161个镜像文件hash保持；正式return统计require-complete退出0，3360 episode/336点/16条指标，tables.json与原05复算逐字节相同。未改变冻结v1、alpha/c/梯度/seed/预算及正式指标。
+- 报告 `docs/CODE_MODE_DIAGNOSTICS_REPAIR.md`；新证据 `analysis/outputs/mode-diagnostics-repair-20261020/`，sv1 CPU日志/bundle在 `/data/Policy_Discrepancy/runs/mode-diagnostics-repair-20261020-cpu/`。本机提交、Git bundle快进sv1，无服务器源码直接编辑；不推送GitHub、不访问或同步sv2/sv3。原RESEARCH/STATUS修改和docs/proposal隔离保留。
+- 本修复不是hopper失败根因结论；原整向量缺口及gate/输入微扰因果问题仍未解决。首选用户继续现有02制定/确认下一项辨别复验，具体干预/seed/预算/判据/资源尚未授权；不自动建chat/发消息或启动训练。
+
 ## 05 最新：hopper低回报专项排查（2026-10-20）
 
 - 只读CPU检查sv2原hopper四组0步可信checkpoint及5120个replay chunk：四组294参数/状态数组逐位相同，首次2032动作/奖励/边界相同；图像相对baseline有25/32/30个1级uint8坐标差异。原16条预算/评价/c/指标完整性不变，另新增mode诊断语义缺口；不将原像素差异或Dt单独定为唯一根因。

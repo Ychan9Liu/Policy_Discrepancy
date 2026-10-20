@@ -1,5 +1,7 @@
 # 03 第二阶段：Dt、constant、global shuffle 工程验收
 
+**2026-10-20 诊断修复索引**：mode 字段归约/命名已在 `1ccde38c042d2264b5d5d1e6c93c658d170a9d88` 修复，新增语义版本2；旧无版本日志的 vector 实为因子比例、factor 实为坐标比例，整向量不可恢复。完整兼容表、37项CPU回归、原16条正式指标逐字节不变及因果限制见 `docs/CODE_MODE_DIAGNOSTICS_REPAIR.md`。下文为原阶段验收历史，不扩大为本轮CUDA或新训练验收。
+
 日期：2026-10-08。方法及验收依据：`docs/METHOD_SPEC.md` v0.1。未改动源码基准 `e935ff7bb01085fec8a1672e31ddfe0536c0f9c0`；第一阶段验收代码 `a8ca727dbd3f3698bb217c00d15997681ee644ef`。本阶段算法提交 `9e0fb8e03f9b3d155bae663c5ec962560db9dafc`；初始测试提交 `64459ae`，修正/扩展后的最终测试提交 `fac4b704d79a2ca4aea7837ec8fe003e5ae9c04b`。中间测试提交见 Git 历史。所有数值均为极小 debug fixture，不是四个 DMC 任务的科研比较。
 
 ## 实现语义
