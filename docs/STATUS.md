@@ -1,6 +1,13 @@
 # 项目状态
 
-更新日期：2026-10-12。
+更新日期：2026-10-20。
+
+## 05 最新：hopper低回报专项排查（2026-10-20）
+
+- 只读CPU检查sv2原hopper四组0步可信checkpoint及5120个replay chunk：四组294参数/状态数组逐位相同，首次2032动作/奖励/边界相同；图像相对baseline有25/32/30个1级uint8坐标差异。原16条预算/评价/c/指标完整性不变，另新增mode诊断语义缺口；不将原像素差异或Dt单独定为唯一根因。
+- 训练replay独立累计：Dt 992完整训练episode平均return0.7842、799条零return，99.7026%实际动作reward=0；baseline/constant/shuffle均值255.56/242.71/222.75。5万—10万动作baseline有9407正奖励步、Dt仅52，后者模型奖励/优势长期低且Gaussian策略熵高，支持早期奖励积累/策略学习反馈未建立的失败链路；具体为何进入该路径仍未裁决。原始抽帧可见选定Dt episode倒地/翻转，不外推全部episode。
+- 确认诊断字段问题：rep_probe的mode_vector_diff_frac实际是因子mode不同率，mode_factor_diff_frac是one-hot坐标不同率；整向量mode不同率缺失。本轮只记录/反例验证，不改训练源码，不把诊断错误当低回报根因。首选继续03修复诊断/核对语义；新的因果训练或多seed方案由02/用户决定。
+- 报告 `docs/ANALYSIS_HOPPER_M2_V1.md`；输入/数组hash/训练阶段表/抽帧/反例/复算在 `analysis/outputs/hopper-diagnosis-20261020-inspection01`、`-frames-final`、`-final`。实际分析/20项测试SHA `2427710a7a89f2a5c90a08634a74a7a11ee87139`，后续交付仅文档；本机提交，不推送/同步服务器。保留原RESEARCH/STATUS修改及docs/proposal，不混入提交。本轮无训练/环境步进/模型推理/GPU作业，未核当前GPU占用，不沿用旧卡状态。
 
 ## 05 最新：M2 v1 seed0 分析完成（2026-10-12）
 
