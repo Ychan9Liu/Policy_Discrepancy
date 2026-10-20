@@ -119,7 +119,12 @@ def overlay(agent, repfeat, prior_logit, rep_raw, rep_before,
   excess = jnp.maximum(rep_raw - tau, 0)
   active_mean = jnp.where(count > 0, (weight * active).sum() / count, jnp.nan)
   source_active_mean = jnp.where(count > 0, (w * active).sum() / count, jnp.nan)
-  mode_diff = jnp.any(qmode != pmode, axis=-1)
+  # qmode/pmode: [B,T,S,C]. Version 2 names each reduction explicitly.
+  # Unversioned historical logs swapped coordinate/factor semantics; see
+  # analysis.mode_diagnostics. These booleans never enter D or the rep weight.
+  coordinate_diff = qmode != pmode
+  factor_diff = jnp.any(coordinate_diff, axis=-1)
+  vector_diff = jnp.any(factor_diff, axis=-1)
   result = {
       'match_sum': match_sum,
       'match_count': match_count,
@@ -158,8 +163,10 @@ def overlay(agent, repfeat, prior_logit, rep_raw, rep_before,
       'source_weight_raw_cov': ((w - w.mean()) *
           (rep_raw - rep_raw.mean())).mean(),
       'shuffle_moved_frac': moved,
-      'mode_factor_diff_frac': (qmode != pmode).mean(),
-      'mode_vector_diff_frac': mode_diff.mean(),
+      'mode_diagnostic_version': jnp.int32(2),
+      'mode_coordinate_diff_frac': coordinate_diff.mean(),
+      'mode_factor_diff_frac': factor_diff.mean(),
+      'mode_vector_diff_frac': vector_diff.mean(),
       'mean_abs_diff': mean_delta.mean(),
       'std_abs_diff': std_delta.mean(),
       'raw_active_D_near_zero_frac': (active & (d <= 1e-6)).mean(),
