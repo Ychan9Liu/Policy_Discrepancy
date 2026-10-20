@@ -6,6 +6,15 @@
 
 `collect_m2_v1.py` 通过只读 SSH 收集 sv2 正式16条的评价、JSONL、成功更新收据、配置、正式 c、04终点审计及快照小标记；不复制 checkpoint/replay，不写 W&B。小镜像包带原路径/SHA256，采集时只读交叉检查 W&B 精确摘要及资源。固定来源是 `formal-four-groups-pd1-20261010-final-attempt01`，不是启动交接版本。
 
+Hopper低回报专项：`inspect_hopper_v1.py` 在sv2以CPU NumPy只读原0步可信checkpoint、replay的reward/action/边界数组及首次更新前图像，重建16条worker链与动作顺序，独立求和训练episode奖励；不会创建环境、调用agent、优化更新、使用GPU或写服务器。原大文件留服务器，保存逐NPY数组hash与初始294数组hash。`--frames`额外抽取已有图像，`--frames-only`可单独抽帧。
+
+```sh
+python -m analysis.inspect_hopper_v1 --frames --output analysis/outputs/NEW_HOPPER_INPUT
+python -m analysis.diagnose_hopper_v1 --inspection analysis/outputs/NEW_HOPPER_INPUT/remote_inspection.json --mirror analysis/outputs/m2-v1-seed0-20261012/inputs --frames analysis/outputs/NEW_HOPPER_INPUT/replay_frames.npz --output analysis/outputs/NEW_HOPPER_ANALYSIS
+```
+
+诊断报告见`docs/ANALYSIS_HOPPER_M2_V1.md`。训练replay的raw reward求和是补充证据，不替代正式评价指标，也不声称已获得评价逐reward轨迹。源码`mode_vector_diff_frac`是因子mode不一致率；`mode_factor_diff_frac`是one-hot坐标不一致率，当前32类时前者恰为后者16倍。整向量不一致率未被正确记录，读表须保留此缺口；本轮不改训练源码。
+
 `analyze_m2_v1.py` 校验镜像与04审计时输入哈希、逐条实际训练/审计SHA、冻结配置、随机流和同任务初始评价、百万动作/完整收据/21点×10episode、正式窗口S/N及先冻结后constant启动，再调用既有统计器 `--require-complete`，以第二种直接算式交叉核对指标，输出运行清单、c表、按阶段门控表及PNG/SVG图。
 
 ```sh

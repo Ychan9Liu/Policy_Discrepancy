@@ -6,9 +6,17 @@ import unittest
 from unittest.mock import patch
 
 from analysis.analyze_m2_v1 import FIELDS, receipts, summarize_diag
+from analysis.diagnose_hopper_v1 import mode_metric_fixture
 
 
 class M2AnalysisTest(unittest.TestCase):
+    def test_onehot_factor_and_whole_vector_differences_are_distinct(self):
+        result=mode_metric_fixture()
+        self.assertEqual(result['source_mode_factor_diff_frac'],.015625)
+        self.assertEqual(result['source_mode_vector_diff_frac'],.25)
+        self.assertEqual(result['correct_factor_diff_frac'],.25)
+        self.assertEqual(result['correct_vector_diff_frac'],.5)
+
     def make_receipts(self, root, rows):
         path = root / 'receipts.jsonl'
         path.write_text('\n'.join(json.dumps(r) for r in rows))
