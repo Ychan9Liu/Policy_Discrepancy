@@ -2,6 +2,15 @@
 
 更新日期：2026-10-21。
 
+## 03合并窗口最新：hopper六条补测已启动并挂W&B（2026-10-21）
+
+- 用户已明确“启动实验”“挂上wandb”；15:25:39在sv3启动监督PID706010。seed1 baseline/Dt=GPU1/3、seed2=4/5、seed3=6/7，训练PID依次706087/706096、706106/706123、706492/706850；size50m/clean纯视觉/alpha20/KL与梯度/百万动作/21×10评价沿用已声明配置。本批无constant/shuffle，c仍由各自完整baseline按原窗口S/N冻结，未产生终点结果。
+- 全部实际训练/监督/63项CPU测试/六卡CUDA-EGL探针/生产logger验证SHA `743089f40662b031a5cf2b6bf988decb52ba0b28`；本机修改提交、bundle同步sv3确定版本，未在服务器改源码。启动后仅文档本机提交并同步Git对象，server checkout保持实际训练版本；原RESEARCH/STATUS及docs/proposal候选修改保留。无GitHub推送或sv1/sv2同步。
+- 15:36:30快照：六条均running，已成功更新3070/3151、3104/3104、3154/3093；每条首更新开始动作2032、收据连续invalid0、0点评价各10完整episode。各seed的两组294初始数组哈希一致、三个seed不同。102个本项目计算/图形PID均在指定卡；GPU0/2为未知作业不使用；本批六卡仍运行，尚无训练卡释放。快照不是后续实时状态。
+- W&B `ychan9liu-tsinghua-university/PD_1` 六条在线，full config与manifest/计划精确一致。现有显式step日志首条暂缓存至下一step/结束，原节奏不改；独立startup精确JSON/hash与0点评价展示摘要已逐条在线写读验证，不是新增评价。SSH MaxStartups和首条summary缓存读取失败证据保留，均未造成训练重跑；TensorFlow profiler缺失为既有非致命提示，不改依赖/配置处理。
+- 新监督器 `scripts/run_hopper_seeds123.py` 后台每30秒记录资源，结束后自动逐条及六条整体审计/c冻结/raw-return统计/W&B精确摘要；失败留错误与产物，不静默续跑/覆盖。启动已验收，完整百万步及终点产物尚未验收，不写成方法有效或hopper根因裁决。
+- 报告 `docs/HOPPER_SEEDS123_RUN.md`。实际根 `/data/Policy_Discrepancy/runs/formal-m2-hopper-seeds123-baseline-dt-20261021/`；启动证据P `/data/Policy_Discrepancy/runs/hopper-seeds123-start-20261021-743089f/`；本机小镜像 `analysis/outputs/hopper-seeds123-start-20261021/`。首选本窗口继续监测/工程修复/结束审计，完成后交05；不再交原04、不建chat/发消息，保持已授权资源/协议。
+
 ## 03 最新：hopper seed1/2/3补测准备完成，未启动（2026-10-21）
 
 - 用户确认只准备hopper的logging baseline/Dt共6条；sv3物理GPU seed1=1/3、seed2=4/5、seed3=6/7；每seed自身baseline按原[100000,300000)活跃位置S/N冻结c，本批不跑constant/shuffle、不复用seed0的c。仅准备授权，训练/GPU探针未启动。
