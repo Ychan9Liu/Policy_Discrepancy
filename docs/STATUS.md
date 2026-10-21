@@ -2,6 +2,13 @@
 
 更新日期：2026-10-21。
 
+## 05 最新：walk既有训练录像提取与25万步核查（2026-10-21）
+
+- 原25万步seed0评价均值baseline366.208158、PPD-KL854.627989，差+488.419831；原10个相同环境seed及source hash/快照核对一致。baseline有4个约725—779分episode，不能概括为每次不会走。
+- 原评价无保存视频/逐步轨迹；两组25万步checkpoint及完成标记仍在。只读CPU抽取第一条保存链在25万动作前最后完整训练episode，实际224001—239985动作，片段return500.288589/940.728044。PPD-KL行走、baseline后段失稳；已交付带来源标签的完整20秒、8—18秒短片和接触图，不伪装成固定25万步评价。
+- 脚本 `analysis/walk_replay_media_v1.py`；报告 `docs/ANALYSIS_WALK_MEDIA_V1.md`；产物 `analysis/outputs/walk-250k-media-20261021/`。源帧hash/reward求和、原评价交叉检查、MP4完整解码及目视检查通过，实际编码/检查SHA `200d7c74b5201a5921aaf228b661e827e00007a7`；后续交付仅文档。本机提交，不训练/推理/创建环境/使用GPU，不同步服务器或推送，未核GPU现状；既有候选修改保留。
+- 首选用户继续现有合并窗口03，准备25万步checkpoint同原10个eval seed的配对推理录像；不得改协议/训练或覆盖原结果。GPU执行依赖用户资源分配，未由本轮指定；可先准备/审查方案。完整prompt在产物HANDOFF，不建chat/发消息。
+
 ## 05 最新：M2 v1三任务PPD-KL展示图（2026-10-21）
 
 - 根据用户要求从原seed0复算表重绘三张图：学习曲线三任务一行且仅baseline/PPD-KL；主次指标差值保留三个对照；门控仅Mean Dt和Actual active weight。省略hopper_hop仅适用于本组展示图，原dt组仅改图例名，原四任务16条结果与总体指标不变。
