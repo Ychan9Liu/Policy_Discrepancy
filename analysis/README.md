@@ -1,5 +1,15 @@
 # 实验分析
 
+## M2 v1 三任务 PPD-KL 展示图（2026-10-21）
+
+`plot_m2_v1_ppd_kl.py` 从已验收的 `analysis-final/return-audit/tables.json` 和 `gate_intervals.csv` 重绘，先检查原分析哈希、21×10评价、episode均值、主次指标差值及20个诊断区间。仅展示quadruped_run、quadruped_walk、reacher_hard；原dt组的图例名为PPD-KL。学习曲线只保留baseline/PPD-KL，另两图保留三个对照；门控只保留Mean Dt与Actual active weight。原四任务正式分析不变，不重算三任务总体，不平滑。
+
+```sh
+python -m analysis.plot_m2_v1_ppd_kl --source analysis/outputs/m2-v1-seed0-20261012/analysis-final --output analysis/outputs/NEW_PPD_KL_FIGURES
+```
+
+依赖同下述Matplotlib环境，输出必须新目录；保存三张PNG/SVG、逐曲线数据与输入/脚本/输出哈希。此次图与PowerShell复现命令见 `docs/FIGURES_M2_V1_PPD_KL.md`。
+
 ## Hopper seed1/2/3补测范围（2026-10-21）
 
 用户已确认仅hopper的baseline/Dt六条，资源sv3 GPU1/3/4/5/6/7；本轮只准备，不启动。配置与范围见`docs/HOPPER_SEEDS123_PREPARATION.md`。新结果使用 `python -m analysis.return_metrics --profile hopper-seeds123 --index ACTUAL_RUN_INDEX.json --output NEW_DIR --require-complete`；固定新三seed、hopper单任务、两组和原预算/评价/指标。保留逐seed值及三条paired_seed_differences，缺seed不重加权；overall_metrics在此profile仅指hopper均值，不是四任务总体。默认CLI保持四任务seed0，原结果不变，不自动混入seed0或新增constant/shuffle。

@@ -1,5 +1,7 @@
 # 05 · M2 v1 单训练 seed0 分析
 
+**2026-10-21 展示图重绘**：按用户要求，在新目录 `analysis/outputs/m2-v1-ppd-kl-figures-20261021/` 省略hopper_hop，原dt组在图例中显示为PPD-KL。学习曲线仅保留baseline/PPD-KL并按三任务一行排列；差值图保留三个对照；门控图只保留Mean Dt和Actual active weight。原四任务正式结果及总体指标不变。PNG/SVG、数据来源、验收与复现命令见 [绘图说明](FIGURES_M2_V1_PPD_KL.md)。
+
 **2026-10-20 03诊断修复回执**：修复后mode语义版本2区分坐标/因子/整向量；原无版本日志只可映射坐标与因子，整向量仍未知。全部正式return表复算逐字节一致，冻结v1不变；兼容及CPU验收见 `docs/CODE_MODE_DIAGNOSTICS_REPAIR.md`，不构成hopper失败根因或gate/输入微扰因果结论。
 
 日期：2026-10-12，Asia/Shanghai。状态：**16条全部完成协议产物验收并纳入；05复算、门控表和图形完成。** 这是正式任务的单seed探索性结果，不是跨seed方法有效性或训练稳定性结论。本轮不启动训练、不调参、不改冻结协议或训练源码。

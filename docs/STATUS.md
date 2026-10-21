@@ -2,6 +2,12 @@
 
 更新日期：2026-10-21。
 
+## 05 最新：M2 v1三任务PPD-KL展示图（2026-10-21）
+
+- 根据用户要求从原seed0复算表重绘三张图：学习曲线三任务一行且仅baseline/PPD-KL；主次指标差值保留三个对照；门控仅Mean Dt和Actual active weight。省略hopper_hop仅适用于本组展示图，原dt组仅改图例名，原四任务16条结果与总体指标不变。
+- 新脚本 `analysis/plot_m2_v1_ppd_kl.py` 校验原输入哈希、21×10评价/点均值/主次差值/20个诊断区间；生成PNG/SVG并逐张目视检查，保存126个学习点、9组主次差值、240个门控区间及来源/版本/输出哈希。无平滑、插值、三任务总体或新显著性结论。
+- 图表在 `analysis/outputs/m2-v1-ppd-kl-figures-20261021/`，说明及复现命令见 `docs/FIGURES_M2_V1_PPD_KL.md`，原报告已加索引。实际绘图与最终SHA记在产物manifest/HANDOFF；本机提交，无训练/GPU作业、服务器同步或GitHub推送，未核GPU现状。原未提交候选内容保留，首选继续现有05核对版式，不自动建chat/发消息。
+
 ## 03合并窗口最新：hopper六条补测已启动并挂W&B（2026-10-21）
 
 - 用户已明确“启动实验”“挂上wandb”；15:25:39在sv3启动监督PID706010。seed1 baseline/Dt=GPU1/3、seed2=4/5、seed3=6/7，训练PID依次706087/706096、706106/706123、706492/706850；size50m/clean纯视觉/alpha20/KL与梯度/百万动作/21×10评价沿用已声明配置。本批无constant/shuffle，c仍由各自完整baseline按原窗口S/N冻结，未产生终点结果。
