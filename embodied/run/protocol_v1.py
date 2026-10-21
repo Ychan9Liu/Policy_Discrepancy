@@ -17,6 +17,7 @@ import jax
 
 from embodied.jax import internal
 from dreamerv3.return_stats import EpisodeReturn, REWARD_SOURCE, RETURN_DEFINITION
+from dreamerv3.protocol_scope import validate_scope
 
 
 def seed32(root, task, namespace, *indices):
@@ -310,8 +311,8 @@ def parameter_digest(agent):
 
 def run(make_agent, make_replay, make_env, make_stream, make_logger,
         args, config):
-  if config.seed != 0:
-    raise ValueError('M2 v1 requires training seed 0')
+  protocol = validate_scope(config.script, config.task, config.seed,
+                            config.agent.rep_probe.mode)
   if args.eval_envs != 1:
     raise ValueError('M2 v1 uses one eval environment for exact 10 episodes')
   if config.agent.rep_probe.mode not in (
@@ -433,7 +434,7 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
   carry_train = [agent.init_train(args.batch_size)]
 
   manifest = dict(
-      protocol='M2-v1', task=config.task, root_seed=config.seed,
+      protocol=protocol, task=config.task, root_seed=config.seed,
       git_commit=git_commit, python=sys.version,
       jax=jax.__version__, host=platform.node(),
       devices=[str(x) for x in jax.devices()],

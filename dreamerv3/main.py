@@ -85,7 +85,7 @@ def main(argv=None):
         bind(make_logger, config),
         args)
 
-  elif config.script == 'protocol_v1':
+  elif config.script in ('protocol_v1', 'protocol_hopper_seeds123'):
     embodied.run.protocol_v1.run(
         bind(make_agent, config),
         bind(make_replay, config, 'replay', seed=(

@@ -7,14 +7,30 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from embodied.run.protocol_v1 import ProtocolState
+from dreamerv3.protocol_scope import V1, HOPPER_123, HOPPER_SCRIPT, validate_scope
 
 
 def freeze(baseline_dir, output, engineering_fixture=False):
   baseline_dir, output = Path(baseline_dir), Path(output)
   manifest = json.loads((baseline_dir / 'protocol_manifest.json').read_text())
-  if manifest['protocol'] != 'M2-v1':
+  protocol = manifest['protocol']
+  if protocol not in (V1, HOPPER_123):
     raise ValueError('Not an M2 v1 baseline')
   config = manifest['config']
+  root_seed = manifest.get('root_seed', 0)
+  if protocol == HOPPER_123:
+    if (config.get('seed') != root_seed or
+        config.get('script') != HOPPER_SCRIPT or engineering_fixture):
+      raise ValueError('Hopper repeat baseline seed/script/fixture mismatch')
+    validate_scope(HOPPER_SCRIPT, manifest['task'], root_seed,
+                   config['agent.rep_probe.mode'])
+    required = {'run.action_budget': 1000000, 'run.eval_every_actions': 50000,
+                'run.eval_eps': 10, 'run.match_start': 100000, 'run.match_end': 300000,
+                'agent.dyn.rssm.free_nats': 1}
+    if any(config.get(key) != value for key, value in required.items()):
+      raise ValueError('Hopper baseline matching/grid configuration differs')
+  elif root_seed != 0 or config.get('seed', 0) != 0:
+    raise ValueError('Original M2 v1 frozen c requires seed0')
   if config['agent.rep_probe.mode'] != 'logging' or float(
       config['agent.rep_probe.alpha']) != 20:
     raise ValueError('Matching source must be the alpha=20 logging baseline')
@@ -59,17 +75,17 @@ def freeze(baseline_dir, output, engineering_fixture=False):
   included = [update_id for update_id, row in state.records.items()
               if state.match_start <= row[0] < state.match_end]
   artifact = dict(
-      protocol='M2-v1', task=manifest['task'],
+      protocol=protocol, task=manifest['task'],
       baseline_git_commit=manifest['git_commit'],
       baseline_dir=str(baseline_dir.resolve()),
       baseline_config_sha256=hashlib.sha256(
           json.dumps(config, sort_keys=True).encode()).hexdigest(),
       receipt_sha256=hashlib.sha256(receipt_path.read_bytes()).hexdigest(),
-      root_seed=0, alpha=20,
+      root_seed=root_seed, alpha=20,
       raw_rep_threshold=config['agent.dyn.rssm.free_nats'],
       window=[state.match_start, state.match_end],
       action_step_definition='executed non-reset train environment actions',
-      generator_version='dreamerv3.freeze_c M2-v1',
+      generator_version='dreamerv3.freeze_c ' + protocol,
       engineering_fixture=bool(engineering_fixture),
       included_update_ids=included,
       match_sum=state.match_sum, match_count=state.match_count,

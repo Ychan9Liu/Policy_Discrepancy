@@ -198,7 +198,7 @@ dmc_vision:
   env.dmc.use_seed: True
   run: {steps: 1.1e6, train_ratio: 256}
 
-m2_v1:
+m2_v1: &m2_v1
   <<: *size50m
   script: protocol_v1
   seed: 0
@@ -207,6 +207,13 @@ m2_v1:
   env.dmc.use_seed: True
   run: {action_budget: 1000000, eval_every_actions: 50000, match_start: 100000, match_end: 300000, eval_envs: 1, eval_eps: 10, report_every_actions: 0, engineering_fixture: False, debug: False, train_ratio: 256}
   agent.rep_probe: {mode: logging, alpha: 20.0, c: -1.0}
+
+# Separate user-approved repeat scope; never relax the original seed0 preset.
+m2_hopper_seeds123:
+  <<: *m2_v1
+  script: protocol_hopper_seeds123
+  task: dmc_hopper_hop
+  seed: 1
 
 bsuite:
   task: bsuite_mnist/0

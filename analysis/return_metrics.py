@@ -1,7 +1,8 @@
 """Auditable raw-return tables for EXPERIMENTS C/C.1 (stdlib only).
 
 CLI: python -m analysis.return_metrics --index RUN_INDEX.json --output NEW_DIR
-The production CLI always uses the frozen million-action, seed0 protocol.
+The default CLI retains the frozen million-action, seed0 protocol. The explicit
+--profile hopper-seeds123 selects only the separately approved six repeat runs.
 Reduced-budget sources are retained as engineering rows with null formal metrics.
 """
 
@@ -15,6 +16,7 @@ from pathlib import Path
 import subprocess
 
 from dreamerv3.return_stats import REWARD_SOURCE, RETURN_DEFINITION
+from dreamerv3.protocol_scope import HOPPER_123
 
 
 TASKS = ('dmc_hopper_hop', 'dmc_quadruped_run',
@@ -38,6 +40,7 @@ class MetricSpec:
   seeds: tuple = (0,)
   tasks: tuple = TASKS
   scope: str = 'M2-v1-formal'
+  groups: tuple = GROUPS
 
   def __post_init__(self):
     if (self.budget <= 0 or self.episodes <= 0 or not self.seeds or
@@ -45,13 +48,20 @@ class MetricSpec:
         self.grid[-1] != self.budget or tuple(sorted(set(self.grid))) != self.grid or
         not self.tail or not set(self.tail) <= set(self.grid) or
         len(set(self.seeds)) != len(self.seeds) or
-        len(set(self.tasks)) != len(self.tasks)):
+        len(set(self.tasks)) != len(self.tasks) or not self.groups or
+        len(set(self.groups)) != len(self.groups) or not set(self.groups) <= set(GROUPS)):
       raise ValueError('Invalid metric specification')
     if self.scope == 'M2-v1-formal' and (
         self.budget != 1000000 or self.grid != tuple(range(0, 1000001, 50000)) or
         self.tail != (800000, 850000, 900000, 950000, 1000000) or
-        self.episodes != 10 or self.seeds != (0,) or self.tasks != TASKS):
+        self.episodes != 10 or self.seeds != (0,) or self.tasks != TASKS or self.groups != GROUPS):
       raise ValueError('Fixture variants require an explicit fixture scope')
+    if self.scope == HOPPER_123 and (
+        self.budget != 1000000 or self.grid != tuple(range(0, 1000001, 50000)) or
+        self.tail != (800000, 850000, 900000, 950000, 1000000) or
+        self.episodes != 10 or self.seeds != (1, 2, 3) or
+        self.tasks != ('dmc_hopper_hop',) or self.groups != ('baseline', 'dt')):
+      raise ValueError('Hopper repeat metric scope differs from approved matrix')
 
 
 def mean(values):
@@ -301,7 +311,7 @@ def seed_metrics(metadata, points, issues, spec=MetricSpec()):
 def aggregate(seed_rows, spec=MetricSpec()):
   tasks, overall, differences = [], [], []
   for task in spec.tasks:
-    for group in GROUPS:
+    for group in spec.groups:
       members = [row for row in seed_rows if row['task'] == task and row['group'] == group]
       output = dict(task=task, group=group, expected_seeds=list(spec.seeds),
                     source_runs=[row['run_id'] for row in members])
@@ -321,7 +331,7 @@ def aggregate(seed_rows, spec=MetricSpec()):
         output.update({key: mean(values) if not errors else None,
                        prefix + '_complete': not errors, prefix + '_issues': errors})
       tasks.append(output)
-  for group in GROUPS:
+  for group in spec.groups:
     members = [row for row in tasks if row['group'] == group]
     output = dict(group=group, expected_tasks=list(spec.tasks),
                   task_weights={task: 1 / len(spec.tasks) for task in spec.tasks})
@@ -334,6 +344,8 @@ def aggregate(seed_rows, spec=MetricSpec()):
                                for task in spec.tasks] + [('overall', None, overall)]:
     by_group = {row['group']: row for row in members}
     for ref in ('baseline', 'constant', 'shuffle'):
+      if ref not in spec.groups:
+        continue
       output = dict(level=scope, task=task, comparison='dt-' + ref)
       for key, prefix in (('auc_return_per_budget', 'auc'), ('tail_mean_return', 'tail')):
         complete = all(by_group[group][prefix + '_complete'] for group in ('dt', ref))
@@ -366,8 +378,14 @@ def analyze_run(entry, spec=MetricSpec()):
   metadata['source_final_state_present'] = final_path.exists()
   records, source_lines = [], []
   parse_issues = [] if evaluation_path.exists() else ['missing_evaluations_file']
-  if metadata['task'] not in spec.tasks or metadata['group'] not in GROUPS:
+  if metadata['task'] not in spec.tasks or metadata['group'] not in spec.groups:
     parse_issues.append('outside_declared_task_or_group')
+  if spec.scope == HOPPER_123 and (
+      manifest.get('protocol') != HOPPER_123 or metadata['seed'] not in spec.seeds or
+      config.get('seed') != metadata['seed']):
+    parse_issues.append('hopper_repeat_protocol_or_seed_mismatch')
+  if spec.scope == 'M2-v1-formal' and manifest.get('protocol') == HOPPER_123:
+    parse_issues.append('hopper_repeat_requires_separate_metric_profile')
   texts = evaluation_path.read_text(encoding='utf-8').splitlines() if evaluation_path.exists() else []
   for line, text in enumerate(texts, 1):
     if not text.strip():
@@ -432,27 +450,45 @@ def main():
   parser.add_argument('--index', type=Path, required=True)
   parser.add_argument('--output', type=Path, required=True)
   parser.add_argument('--require-complete', action='store_true')
+  parser.add_argument('--profile', choices=('v1', 'hopper-seeds123'), default='v1')
   args = parser.parse_args()
+  spec = (MetricSpec() if args.profile == 'v1' else MetricSpec(
+      seeds=(1, 2, 3), tasks=('dmc_hopper_hop',), groups=('baseline', 'dt'), scope=HOPPER_123))
   entries = json.loads(args.index.read_text(encoding='utf-8'))['runs']
   tables = dict(episodes=[], evaluation_points=[], seed_metrics=[])
   audits = []
   for entry in entries:
-    episodes, points, summary, audit = analyze_run(entry)
+    episodes, points, summary, audit = analyze_run(entry, spec)
     tables['episodes'].extend(episodes)
     tables['evaluation_points'].extend(points)
     tables['seed_metrics'].append(summary)
     audits.append(audit)
-  tasks, overall, differences = aggregate(tables['seed_metrics'])
+  tasks, overall, differences = aggregate(tables['seed_metrics'], spec)
   tables.update(task_metrics=tasks, overall_metrics=overall, dt_differences=differences)
+  if args.profile == 'hopper-seeds123':
+    pairs = []
+    for seed in spec.seeds:
+      members = {group: [r for r in tables['seed_metrics'] if r['seed'] == seed and
+                 r['task'] == 'dmc_hopper_hop' and r['group'] == group] for group in spec.groups}
+      pair = dict(task='dmc_hopper_hop', seed=seed, comparison='dt-baseline')
+      for key, prefix in (('auc_return_per_budget', 'auc'), ('tail_mean_return', 'tail')):
+        complete = all(len(members[g]) == 1 and members[g][0][prefix+'_complete'] for g in spec.groups)
+        pair.update({key: members['dt'][0][key] - members['baseline'][0][key] if complete else None,
+                     prefix+'_complete': complete,
+                     prefix+'_issues': [] if complete else ['incomplete_paired_seed_members']})
+      pairs.append(pair)
+    tables['paired_seed_differences'] = pairs
   repo = Path(__file__).resolve().parents[1]
   commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo, text=True).strip()
-  audit = dict(schema_version=1, metric_spec=asdict(MetricSpec()),
+  audit = dict(schema_version=1, metric_spec=asdict(spec),
       tool_commit=commit, tool_worktree_dirty=bool(subprocess.check_output(
           ['git', 'status', '--porcelain'], cwd=repo, text=True).strip()),
       index_path=str(args.index), index_sha256=sha(args.index), runs=audits,
       mean_tolerance=dict(atol=MEAN_ATOL, rtol=MEAN_RTOL),
       formal_metrics_complete=all(row['auc_complete'] and row['tail_complete'] for row in overall),
-      interpretation='single-training-seed descriptive only; engineering rows are not formal M2 results')
+      interpretation=('single-training-seed descriptive only; engineering rows are not formal M2 results'
+          if args.profile == 'v1' else 'hopper-only seeds1/2/3; no four-task aggregate or '
+          'seed0 pooling; descriptive seed mean, no automatic causal or significance conclusion'))
   write_tables(args.output, tables, audit)
   print(json.dumps(dict(output=str(args.output), runs=len(audits),
       episodes=len(tables['episodes']), formal_metrics_complete=audit['formal_metrics_complete'])))
