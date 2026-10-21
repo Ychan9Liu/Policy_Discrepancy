@@ -1,6 +1,15 @@
 # 项目状态
 
-更新日期：2026-10-20。
+更新日期：2026-10-21。
+
+## 03 最新：hopper seed1/2/3补测准备完成，未启动（2026-10-21）
+
+- 用户确认只准备hopper的logging baseline/Dt共6条；sv3物理GPU seed1=1/3、seed2=4/5、seed3=6/7；每seed自身baseline按原[100000,300000)活跃位置S/N冻结c，本批不跑constant/shuffle、不复用seed0的c。仅准备授权，训练/GPU探针未启动。
+- 新受限scope/preset/script只允许本任务、seed1/2/3、logging/Dt；原v1仍限seed0，科学模型/损失/梯度/RNG/预算/评价不改。新统计profile=hopper-seeds123保留逐seed、三seed均值与配对差值，不自动混入seed0或报告四任务总体。
+- 实现/实际测试SHA `0b764bd91e0bc145f8b0c4234c9fefc719ad96eb`：本机27项、sv3两CPU设备59项测试通过；六份生产配置和随机映射已解析核对。原16条正式return表复算require-complete退出0且逐字节不变。最终交付后续仅文档，最终计划固定最终SHA；这是CPU准备，不是新训练或CUDA验收。
+- sv3北京时间14:12:42只读快照：指定六卡无计算/图形作业，GPU0/2已有未知作业不使用；EGL实际映射仍待验证，计划egl/launch_argv为空，不能用旧快照当预约。W&B0.30.0按既有锁补齐10包，已有包版本全部保持、pip check通过；在线认证/上传未测试，无训练run。
+- 报告 `docs/HOPPER_SEEDS123_PREPARATION.md`；本机证据 `analysis/outputs/hopper-seeds123-preparation-20261021/`；sv3准备证据 `/data/Policy_Discrepancy/runs/hopper-seeds123-preparation-20261021-cpu/`，最终配置包在repo `analysis/outputs/hopper-seeds123-preparation-20261021-final/`。本机修改/提交、Git bundle快进只同步sv3，无服务器直接改源码、无GitHub推送；原RESEARCH/STATUS候选与docs/proposal保留隔离。
+- 首选用户明确启动后继续现有04；启动前核资源/EGL/账号、按六份配置监督并审计真实产物。原hopper失败/16条结果保留；补seed不自动解决gate/输入微扰因果问题，不写成方法有效，不自动建chat/发消息。
 
 ## 05 最新：官方任务/奖励归因分析（2026-10-20）
 

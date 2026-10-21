@@ -1,5 +1,9 @@
 # 实验分析
 
+## Hopper seed1/2/3补测范围（2026-10-21）
+
+用户已确认仅hopper的baseline/Dt六条，资源sv3 GPU1/3/4/5/6/7；本轮只准备，不启动。配置与范围见`docs/HOPPER_SEEDS123_PREPARATION.md`。新结果使用 `python -m analysis.return_metrics --profile hopper-seeds123 --index ACTUAL_RUN_INDEX.json --output NEW_DIR --require-complete`；固定新三seed、hopper单任务、两组和原预算/评价/指标。保留逐seed值及三条paired_seed_differences，缺seed不重加权；overall_metrics在此profile仅指hopper均值，不是四任务总体。默认CLI保持四任务seed0，原结果不变，不自动混入seed0或新增constant/shuffle。
+
 此目录存放可复现的指标整理和绘图代码。输入来自 `docs/EXPERIMENTS.md` 索引的服务器运行目录；大型中间文件及生成图表放在 `analysis/outputs/`，不提交到 Git。
 
 ## M2 v1 seed0 终点复核与门控分析

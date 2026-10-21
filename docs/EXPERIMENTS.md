@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-21 Hopper复验准备（用户已确认范围，尚未启动）**：只对 `dmc_hopper_hop` 新增seed1/2/3的logging baseline与Dt，共6条；sv3物理GPU分别按seed1=1/3、seed2=4/5、seed3=6/7。原模型、alpha20、KL/梯度、百万动作、21×10评价和raw-return指标沿用；每seed自身baseline按原窗口S/N冻结c，不复用seed0，本批不跑constant/shuffle。新范围 `M2-v1-hopper-seeds123-baseline-dt` 与统计profile `hopper-seeds123` 独立，原四任务seed0的冻结v1及16条结果不变，不自动混入新三seed均值。CPU配置/范围/统计/旧结果回归通过，实际训练及CUDA/EGL绑定/在线W&B仍待用户启动指令后由04执行。配置声明、准备证据和交接见 `docs/HOPPER_SEEDS123_PREPARATION.md`。
+
 更新日期：2026-10-09。
 
 **2026-10-12终点分析索引**：sv2最终16条审计已于2026-10-10 22:59完成；05逐条复核百万动作/收据/21点×10episode/快照/正式c及实际训练与审计SHA，全部纳入，独立复算主次指标与04三张指标表完全一致。报告与证据在 `docs/ANALYSIS_M2_V1.md` 和 `analysis/outputs/m2-v1-seed0-20261012/analysis-final/`。walk的Dt胜三个对照，run不胜constant，reacher排序混合，hopper明显负向；四任务AUC略正、末段负向。仅单seed探索，冻结C/C.1协议不变，没有新实验/调参授权。下方“运行中/待终点”保留为当时历史状态。
