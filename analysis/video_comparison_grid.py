@@ -35,6 +35,9 @@ def main():
     parser.add_argument('--columns', type=int, choices=(10, 11), default=10)
     parser.add_argument('--compact', action='store_true',
                         help='Keep only method names and timestamps, without heading/footer')
+    parser.add_argument('--hide-seed', action='store_true',
+                        help='Remove seed0 from the subtitle while keeping the heading')
+    parser.add_argument('--no-footer', action='store_true')
     parser.add_argument('--horizontal-gap', type=int, default=10)
     args = parser.parse_args()
     if args.horizontal_gap < 0:
@@ -81,7 +84,9 @@ def main():
     assert count == 500 and set(selected) == set(indices)
 
     margin, label_width, cell, gap, row_gap = 24, 170, 384, args.horizontal_gap, 24
-    top, bottom = (52, 8) if args.compact else (154, 64)
+    show_heading = not args.compact
+    show_footer = not args.compact and not args.no_footer
+    top, bottom = (154 if show_heading else 52), (64 if show_footer else 8)
     width = margin * 2 + label_width + columns * cell + (columns-1) * gap
     height = top + 2 * cell + row_gap + bottom
     canvas = Image.new('RGB', (width, height), 'white')
@@ -92,11 +97,12 @@ def main():
     title_font = ImageFont.truetype(font_file, 38)
     small_font = ImageFont.truetype(font_file, 24)
     heading = args.title
-    subtitle = 'seed0 | training replay, 224k-240k actions'
+    subtitle = ('seed0 | ' if not args.hide_seed else '') + 'training replay, 224k-240k actions'
     footer = 'Matched video times; original MP4 panels, with no frame interpolation.'
-    if not args.compact:
+    if show_heading:
         draw.text((width/2, 30), heading, font=title_font, anchor='mm', fill='#111111')
         draw.text((width/2, 78), subtitle, font=small_font, anchor='mm', fill='#555555')
+    if show_footer:
         draw.text((width/2, height-25), footer, font=small_font, anchor='mm', fill='#555555')
 
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
@@ -107,9 +113,10 @@ def main():
                    f'font-size="{size}" fill="{color}" text-anchor="{anchor}" '
                    f'dominant-baseline="central">{html.escape(value)}</text>')
 
-    if not args.compact:
+    if show_heading:
         svg_text(width/2, 30, heading, 38)
         svg_text(width/2, 78, subtitle, 24, '#555555')
+    if show_footer:
         svg_text(width/2, height-25, footer, 24, '#555555')
     receipts = []
     for column, index in enumerate(indices):
@@ -174,7 +181,10 @@ def main():
         row_order=list(BOXES), columns=columns, total_panels=2*columns, output_size=[width,height],
         nominal_seconds=nominal_seconds, exact_seconds=[i/25 for i in indices],
         horizontal_gap_pixels=gap, vertical_row_gap_pixels=row_gap,
-        compact=args.compact, heading_and_footer_visible=not args.compact,
+        compact=args.compact, heading_and_footer_visible=show_heading and show_footer,
+        heading_visible=show_heading, footer_visible=show_footer,
+        seed_label_visible=show_heading and not args.hide_seed,
+        heading=heading if show_heading else None, subtitle=subtitle if show_heading else None,
         evidence_kind=manifest['evidence_kind'], actual_training_action_range=[224001,239985],
         same_video_frame_in_each_column=True, no_frame_interpolation=True,
         source_unchanged=True, all_png_panels_pixel_identical_to_decoded_crops=True,
