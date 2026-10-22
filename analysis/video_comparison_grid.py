@@ -1,4 +1,4 @@
-"""Make a matched-time comparison grid from the existing walk replay MP4.
+"""Make a matched-time comparison grid from an existing quadruped replay MP4.
 
 Decode the supplied video itself, verify its existing manifest hash, then crop
 the two 384px panels. No generated frames, interpolation, or image retouching.
@@ -17,6 +17,10 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 BOXES = {'baseline': (18, 111, 402, 495), 'PPD-KL': (418, 111, 802, 495)}
 COLORS = {'baseline': '#4b5563', 'PPD-KL': '#c2410c'}
+SOURCES = {
+    'walk_before250k_training_full.mp4': ('dmc_quadruped_walk', (224001, 239985)),
+    'run_before500k_training_full.mp4': ('dmc_quadruped_run', (480001, 495985)),
+}
 
 
 def sha(path):
@@ -31,7 +35,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--video', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--title', default='quadruped_walk')
+    parser.add_argument('--title', help='Defaults to the task in the source metadata')
     parser.add_argument('--columns', type=int, choices=(10, 11), default=10)
     parser.add_argument('--compact', action='store_true',
                         help='Keep only method names and timestamps, without heading/footer')
@@ -48,9 +52,12 @@ def main():
     from PIL import Image, ImageDraw, ImageFont
 
     video, output = args.video.resolve(), args.output.resolve()
-    assert video.name == 'walk_before250k_training_full.mp4'
+    assert video.name in SOURCES
+    task, training_range = SOURCES[video.name]
     manifest_path = video.parent / 'manifest.json'
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+    assert manifest.get('task', task) == task
+    assert tuple(manifest.get('actual_training_action_range', training_range)) == training_range
     expected_hash = manifest['output_sha256'][video.name]
     assert sha(video) == expected_hash, 'Video differs from its existing manifest'
     assert manifest['encoded_fps'] == 25 and manifest['full_seconds'] == 20
@@ -96,8 +103,9 @@ def main():
     label_font = ImageFont.truetype(font_file, 30)
     title_font = ImageFont.truetype(font_file, 38)
     small_font = ImageFont.truetype(font_file, 24)
-    heading = args.title
-    subtitle = ('seed0 | ' if not args.hide_seed else '') + 'training replay, 224k-240k actions'
+    heading = args.title or task.removeprefix('dmc_')
+    action_label = f'{training_range[0]/1000:.0f}k-{training_range[1]/1000:.0f}k'
+    subtitle = ('seed0 | ' if not args.hide_seed else '') + f'training replay, {action_label} actions'
     footer = 'Matched video times; original MP4 panels, with no frame interpolation.'
     if show_heading:
         draw.text((width/2, 30), heading, font=title_font, anchor='mm', fill='#111111')
@@ -160,8 +168,9 @@ def main():
                   anchor='rm', fill=COLORS[label])
         svg_text(margin+label_width-14, y, label, 30, COLORS[label], 'end')
     svg.append('</svg>')
-    png = output / f'walk_comparison_2x{columns}.png'
-    vector = output / f'walk_comparison_2x{columns}.svg'
+    prefix = task.rsplit('_', 1)[1]
+    png = output / f'{prefix}_comparison_2x{columns}.png'
+    vector = output / f'{prefix}_comparison_2x{columns}.svg'
     canvas.save(png, dpi=(300, 300))
     vector.write_text('\n'.join(svg)+'\n', encoding='utf-8')
     # Check the delivered PNG after encoding, not only the in-memory composition.
@@ -185,7 +194,8 @@ def main():
         heading_visible=show_heading, footer_visible=show_footer,
         seed_label_visible=show_heading and not args.hide_seed,
         heading=heading if show_heading else None, subtitle=subtitle if show_heading else None,
-        evidence_kind=manifest['evidence_kind'], actual_training_action_range=[224001,239985],
+        task=task, evidence_kind=manifest['evidence_kind'],
+        actual_training_action_range=training_range,
         same_video_frame_in_each_column=True, no_frame_interpolation=True,
         source_unchanged=True, all_png_panels_pixel_identical_to_decoded_crops=True,
         ffmpeg_version=imageio_ffmpeg.get_ffmpeg_version(), frames=receipts,
