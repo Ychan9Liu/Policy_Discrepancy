@@ -22,6 +22,8 @@ python -m analysis.plot_m2_v1_ppd_kl --source analysis/outputs/m2-v1-seed0-20261
 
 `video_comparison_grid.py --video WALK_FULL_MP4 --output NEW_DIR`直接解码已有walk完整视频并核对原manifest哈希，旧默认生成含首尾的2×10 PNG/SVG。当前展示加`--columns 11 --hide-seed --no-footer --horizontal-gap 0`，取0、2、…、18、约20秒，保留标题和训练步数说明，仅删除seed0、页脚与横向间隙；最后实际19.96秒标`≈20 s`。每列两行来自同一视频帧，逐块核对成图像素与MP4裁剪，保存独立PNG和`sampling.json`；不插值或按动作结果挑帧。输出与命令见`docs/ANALYSIS_WALK_MEDIA_V1.md`的2026-10-22小节。
 
+同一脚本也接受`run_before500k_training_full.mp4`，从已核对文件名/manifest自动使用quadruped_run标题与480k—496k训练动作说明，其余11帧版式/像素验证一致。run图与复现入口见`docs/ANALYSIS_RUN_MEDIA_V1.md`的11帧小节，旧walk默认入口保持。
+
 ## M2 v1 seed0 终点复核与门控分析
 
 `collect_m2_v1.py` 通过只读 SSH 收集 sv2 正式16条的评价、JSONL、成功更新收据、配置、正式 c、04终点审计及快照小标记；不复制 checkpoint/replay，不写 W&B。小镜像包带原路径/SHA256，采集时只读交叉检查 W&B 精确摘要及资源。固定来源是 `formal-four-groups-pd1-20261010-final-attempt01`，不是启动交接版本。

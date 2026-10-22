@@ -2,6 +2,12 @@
 
 更新日期：2026-10-22。
 
+## 05 最新：run视频两行11帧对比图（2026-10-22）
+
+- 从用户指定的run完整MP4按walk最终版式生成2×11图，0/2/…/18/约20秒，末帧实际19.96秒标`≈20 s`；上baseline下PPD-KL，同列同刻。保留quadruped_run标题和480k—496k训练步数说明，无seed0/页脚，横向间隙0，行间24像素。
+- 当前图`analysis/outputs/run-500k-eleven-frames-20261022/`，4442×954 PNG/SVG、22个MP4裁剪PNG、sampling/verification/命令/交接；报告`docs/ANALYSIS_RUN_MEDIA_V1.md`。视频hash、成图像素、SVG内嵌PNG/文字/同刻/间隙和目视检查通过，原视频未改，不伪造20秒帧；仍是480001—495985动作训练replay，不是固定50万步评价。
+- 脚本`analysis/video_comparison_grid.py`新增受限run视频/源元数据支持，实际生成/检查SHA `55cae2ecf1142e29f51c79824338bd2966d723b4`，后续仅文档。本机提交，无服务器访问/同步/推送、训练/推理/环境/GPU，未核GPU现状，既有候选和根TeX文件保留。后续版式继续现有05，完整prompt在产物HANDOFF，不建chat/发消息。
+
 ## 05 最新：walk对比图改为11帧无横向间隙（2026-10-22）
 
 - 按用户最终修订生成2×11对比图，0/2/…/18/约20秒；末帧实际19.96秒标`≈20 s`。上baseline、下PPD-KL，保留quadruped_walk标题和训练步数说明，只删除seed0及底部说明；横向间隙0，原24像素行间距保留。旧10帧图与无标题草图不覆盖。

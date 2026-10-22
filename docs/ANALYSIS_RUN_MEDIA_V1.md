@@ -17,6 +17,14 @@
 
 每两帧取一帧、25 fps、1倍速，原任务控制间隔0.02秒、repeat1。64×64原始图像只作最近邻放大；未生成、插值或重新渲染环境画面。完整视频500帧/20秒、短片250帧/10秒，均已完整解码，源数组hash与去reset后的reward求和通过，接触图已目视核对。
 
+### 2026-10-22：与walk一致的两行11帧对比图
+
+按用户要求直接从上述完整MP4抽取0、2、4、…、18、约20秒，两行各11帧，上baseline、下PPD-KL，每列严格同刻。最后真实帧为499/19.96秒，图上标`≈20 s`，不插值或补造20秒图像。保留`quadruped_run`标题与`training replay, 480k-496k actions`，隐藏seed0与底部说明；横向间隙0、行间24像素，沿用walk最终版式。
+
+输出在`analysis/outputs/run-500k-eleven-frames-20261022/`：`run_comparison_2x11.png`/`.svg`（4442×954，PNG标记300 dpi）、22张独立裁剪PNG、sampling/verification、命令与HANDOFF/DELIVERY。视频SHA256=`0228244d8db3e2aea8d35e20804f46c77a1bf747955ba30dbadefa69b8b3ba3c`与原manifest一致。成图22块像素等于MP4解码裁剪，SVG内嵌PNG/hash、同刻/标题/间隙与PNG目视检查通过；原视频未变。
+
+脚本`analysis/video_comparison_grid.py`按已核对的视频文件名和源manifest自动使用任务与真实训练动作范围，保留walk默认行为。入口：`python -m analysis.video_comparison_grid --video analysis/outputs/run-500k-media-20261022/final/run_before500k_training_full.mp4 --output analysis/outputs/NEW_RUN_ELEVEN --columns 11 --hide-seed --no-footer --horizontal-gap 0`。实际生成/检查SHA=`55cae2ecf1142e29f51c79824338bd2966d723b4`，最终后续仅文档。此图仍是480001—495985动作的历史训练replay，不作为固定50万步评价或跨seed结论。仅本机处理/提交，无服务器访问/同步/推送、训练/推理/环境/GPU，未核GPU现状，既有未提交文件保留；若需版式调整继续现有05，验收及可复制prompt见产物HANDOFF。
+
 ## 训练片段与50万步正式评价分开解释
 
 | 数据 | baseline | PPD-KL | PPD-KL减baseline |
