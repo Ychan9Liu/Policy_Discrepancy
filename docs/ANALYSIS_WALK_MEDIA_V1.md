@@ -34,6 +34,14 @@
 
 脚本`analysis/video_comparison_grid.py`保存源视频/manifest/脚本/输出哈希、每列原视频帧号/精确时间/裁剪框、20张独立PNG和`sampling.json`。成图已目视核对，重新读取成图逐块验证其像素与对应MP4解码裁剪完全一致；源视频哈希保持。实际生成/检查SHA=`ffe82b95d18bdbf85758e2a0ecc4cdf53343053a`，后续交付仅文档索引，最终版本见产物HANDOFF/DELIVERY。继承本报告的训练replay证据范围，不新增固定checkpoint/方法有效性结论。本轮仅本机文件处理，无服务器访问、训练、推理或GPU，未核GPU现状；复现命令及继续现有05的版式核对prompt在产物`COMMANDS.md`/`HANDOFF.md`。
 
+### 2026-10-22：当前展示改为11帧、无横向间隙
+
+用户最终修订为两行各11帧、整数时间戳，保留`quadruped_walk`标题和训练步数说明，只删除其中的seed0；底部说明和横向图片间隙删除。当前交付在`analysis/outputs/walk-250k-eleven-frames-20261022-v2/`：`walk_comparison_2x11.png`和`.svg`，4442×954像素；上baseline、下PPD-KL，横向间隙0像素，行间保留24像素。旧10帧版和无标题11帧草图保留为历史版本。
+
+按0、2、4、…、20秒目标取已有视频帧：帧号0、50、100、…、450、499，最后一帧实际19.96秒，图中标`≈20 s`，没有伪造20秒帧。22个画面仍直接从用户指定MP4解码裁剪，全部PNG像素、SVG内嵌PNG、同刻对应与无间隙位置核对通过，原视频hash不变，成图目视检查通过。图中删除seed0但保留`training replay, 224k-240k actions`；证据仍为本报告的224001—239985动作历史训练replay，不变为固定checkpoint评价。
+
+复现入口：`python -m analysis.video_comparison_grid --video analysis/outputs/walk-250k-media-20261021/final/walk_before250k_training_full.mp4 --output analysis/outputs/NEW_WALK_ELEVEN --columns 11 --hide-seed --no-footer --horizontal-gap 0`。旧10帧默认选项保留。实际生成/检查SHA=`f76b3254270de1d04d0f363a3ca40b213bbb86a6`，后续交付仅文档；输入/输出hash、准确取样时刻、标题/seed/页脚及间隙记录见`sampling.json`/`verification.json`，最终SHA与可复制交接见当前产物HANDOFF。只本机文件处理与提交，无服务器访问/同步/推送、训练/推理/GPU，未核GPU现状，其他既有未提交文件保留。
+
 ## 严格25万步的原始评价事实
 
 | 组 | 10 episode平均原始return | 逐episode范围 |

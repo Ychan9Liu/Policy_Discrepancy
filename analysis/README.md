@@ -20,7 +20,7 @@ python -m analysis.plot_m2_v1_ppd_kl --source analysis/outputs/m2-v1-seed0-20261
 
 同一脚本新增`collect --task dmc_quadruped_run --action-step 500000`，按相同规则提取run的480001—495985动作片段；`render`从输入识别任务/步数并核对原正式评价/源hash，输出完整20秒与固定8—18秒短片。原walk默认入口/旧输入保留兼容。训练片段return508.23/582.28与50万步正式均值442.03/725.63分别标注；不得把训练录像当固定checkpoint评价。见`docs/ANALYSIS_RUN_MEDIA_V1.md`。
 
-`video_comparison_grid.py --video WALK_FULL_MP4 --output NEW_DIR`直接解码已有walk完整视频，核对原manifest哈希，均匀抽10个实际视频帧（含首尾），同一时刻裁出baseline/PPD-KL两行，生成2×10 PNG/SVG。逐块验证成图像素与MP4裁剪一致，保存20个独立PNG及`sampling.json`；不插值或按动作结果挑帧。输出与命令见`docs/ANALYSIS_WALK_MEDIA_V1.md`的2026-10-22小节。
+`video_comparison_grid.py --video WALK_FULL_MP4 --output NEW_DIR`直接解码已有walk完整视频并核对原manifest哈希，旧默认生成含首尾的2×10 PNG/SVG。当前展示加`--columns 11 --hide-seed --no-footer --horizontal-gap 0`，取0、2、…、18、约20秒，保留标题和训练步数说明，仅删除seed0、页脚与横向间隙；最后实际19.96秒标`≈20 s`。每列两行来自同一视频帧，逐块核对成图像素与MP4裁剪，保存独立PNG和`sampling.json`；不插值或按动作结果挑帧。输出与命令见`docs/ANALYSIS_WALK_MEDIA_V1.md`的2026-10-22小节。
 
 ## M2 v1 seed0 终点复核与门控分析
 
