@@ -36,7 +36,8 @@ sv1原Python环境缺wandb；按 `env/requirements-wandb-pd1.lock` 添加10个�
 ### 已完成验收
 
 - 本机41项CPU检查，17.079秒，全部通过；提交后sv1 **85项回归，44.709秒，全部通过、无跳过**。覆盖原phase1/2诊断、回退/梯度与shuffle、协议计步/评价/去重/恢复、原return指标、补seed/新增范围及新串行控制器。新检查覆盖精确8×2、同卡顺序、完成审计才启动Dt、失败只阻止该任务后继、未知C/G占用拒绝、未授权/未绑定/已有根目录拒绝，缺任务不重加权。原四任务及完整dmc16统计保留；新增16条合成CLI产物含3360 episode/336点，总体3.5/5.5仅为手算fixture。
-- CPU/float32完整连续agent完成no-report、with-report、少评价episode、并行环境、故意中断/恢复拒绝及Dt/constant/shuffle。三项报告/评价/并行路径参数、训练随机流、更新数精确一致；共同参数hash `4317c6095b04e61698f26beb6e7c077c6c5d49e1baf135a716e3b3849c7d74b2`。这些是dummy/debug fixture，不是DMC任务效果；非零作用的损失/梯度由保留的overlay测试覆盖。
+- CPU/bfloat16完整连续agent完成no-report、with-report、少评价episode、并行环境、故意中断/恢复拒绝及Dt/constant/shuffle。三项报告/评价/并行路径参数、训练随机流、更新数精确一致；共同参数hash `4317c6095b04e61698f26beb6e7c077c6c5d49e1baf135a716e3b3849c7d74b2`。入口debug继承bfloat16，不能因platform=cpu称为float32。这些是dummy/debug fixture，不是DMC任务效果；非零作用的损失/梯度由保留的overlay测试覆盖。
+- 显式追加 `--jax.compute_dtype float32` 的CPU完整agent补验，仍为18b85c4实际测试版本：no-report/with-report/one-eval三条各12动作、9更新、5点评价，退出码全部0；参数、收据、训练随机计数及共同评价episode精确一致，参数hash `41a913d9d50f02df34e387ba514354e51ca924aeefed36a643aebcd2fabb6be4`。完整命令与结果在 `cpu-float32-attempt02/acceptance.json`（20:49:54北京时间）。首轮错误地给协议runner传off模式，被四组限制在创建agent前拒绝，证据 `cpu-float32/off.stdout` 保留；没有放宽入口、修改代码或正式配置。第二次用独立目录及协议允许的logging模式完成补验。此条修正初稿的CPU精度标注，不改任何正式运行。
 - 八张实际分配GPU的CUDA计算与EGL图形PID同卡验证通过；一张UUID mask对应进程内CUDA0，EGL实际索引依物理卡为0..7。记录在 `gpu{0..7}-binding.json`，包括枚举、PID、compute-apps及pmon，不仅凭环境变量判定。
 - 八任务×logging/Dt **16条真实size50m/CUDA/bfloat16工程运行全部完成**，每条4098动作、517成功更新、3点评价（每点1完整episode）、2次报告。合计8272更新、48点评价、32次报告的训练状态指纹隔离检查通过，未关闭transfer guard；所有baseline匹配窗口活跃计数非零。logging实际权重精确1；Dt两段实际平均权重范围0.9993799448—0.9999476372，活跃有效比例范围0.4723072—1，证实工程中有实际门控作用，不能据此推断收益或解释hopper失败。
 - 生产W&B logger线上写入/读回通过，工程run `logger-dmc8-20261022-18b85c4` 为finished、seed0、sentinel=1，0动作/0更新。没有使用离线替代线上验收。
