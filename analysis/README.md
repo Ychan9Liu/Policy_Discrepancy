@@ -20,6 +20,8 @@ python -m analysis.plot_m2_v1_ppd_kl --source analysis/outputs/m2-v1-seed0-20261
 
 同一脚本新增`collect --task dmc_quadruped_run --action-step 500000`，按相同规则提取run的480001—495985动作片段；`render`从输入识别任务/步数并核对原正式评价/源hash，输出完整20秒与固定8—18秒短片。原walk默认入口/旧输入保留兼容。训练片段return508.23/582.28与50万步正式均值442.03/725.63分别标注；不得把训练录像当固定checkpoint评价。见`docs/ANALYSIS_RUN_MEDIA_V1.md`。
 
+`video_comparison_grid.py --video WALK_FULL_MP4 --output NEW_DIR`直接解码已有walk完整视频，核对原manifest哈希，均匀抽10个实际视频帧（含首尾），同一时刻裁出baseline/PPD-KL两行，生成2×10 PNG/SVG。逐块验证成图像素与MP4裁剪一致，保存20个独立PNG及`sampling.json`；不插值或按动作结果挑帧。输出与命令见`docs/ANALYSIS_WALK_MEDIA_V1.md`的2026-10-22小节。
+
 ## M2 v1 seed0 终点复核与门控分析
 
 `collect_m2_v1.py` 通过只读 SSH 收集 sv2 正式16条的评价、JSONL、成功更新收据、配置、正式 c、04终点审计及快照小标记；不复制 checkpoint/replay，不写 W&B。小镜像包带原路径/SHA256，采集时只读交叉检查 W&B 精确摘要及资源。固定来源是 `formal-four-groups-pd1-20261010-final-attempt01`，不是启动交接版本。
