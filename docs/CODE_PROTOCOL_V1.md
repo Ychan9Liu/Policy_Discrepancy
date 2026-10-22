@@ -1,5 +1,9 @@
 # 03 · M2 v1 协议链路工程验收
 
+## 新增DMC16准备索引（2026-10-22，真实实测暂停）
+
+用户已确认sv1物理GPU0–7、新增其余16任务的logging baseline/Dt、seed0及原v1设置，随后因占用明确暂停实测。本轮仅本机准备代码/32配置/随机映射/队列与33项CPU fixture验收；实际测试SHA `e83a012a8dde255b8cb9df0631243eddab2454db`，无训练/环境创建/GPU/服务器写入或源码同步，未把旧fixture升级为新任务验收。独立 `m2_dmc16/protocol_dmc16`、新scope与统计profile保持旧四任务和hopper边界；Windows冻结c固定LF字节输出，旧语义和严格校验不变；旧16结果复算tables逐字节相同。完整说明、未验收条件和复现见 `docs/DMC16_PREPARATION.md`，生成产物在 `analysis/outputs/dmc16-preparation-20261022/`。恢复用户授权与现场资源/实际CUDA-EGL/完整agent和任务接口/W&B验收后才可启动，不设置自动空闲开跑。
+
 日期：2026-10-09。依据：`docs/EXPERIMENTS.md` 已确认 v1；交接提交 `e4d9b67940f12d1ae67f7b92c500c316b423f2f2`。本报告记录缩小预算工程 fixture，**没有运行四任务的正式百万步比较，也没有 M2 效果结论**。第一、二阶段算法与基准证据继续见 `CODE_PHASE1.md`、`CODE_PHASE2.md`。
 
 同步：代码及测试均先在本机提交，以 Git bundle 快进同步到 sv1 的同一确定提交后才运行；本轮结束时本机 `main` 与 GitHub `origin/main` 已快进一致。最终文档提交再次通过 bundle 同步到 sv1；本机、GitHub、sv1 的最终 SHA 与 bundle SHA-256 以完成报告为准。服务器未直接修改项目源码。

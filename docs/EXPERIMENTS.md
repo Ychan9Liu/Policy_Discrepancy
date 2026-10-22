@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-22 新增DMC16准备，实测暂停（当前）**：用户确认其余16视觉任务×baseline/Dt、sv1物理GPU0–7、沿用原v1的seed0/size50m/alpha20/百万动作/21×10评价；发现八卡占用后用户暂停实测，仅准备。新独立scope/preset与统计profile不放宽原四任务/补seed范围，不新增constant/shuffle或强M2结论。32完整配置/随机映射/队列、33项CPU验收与旧16结果逐字节回归完成，未启动/同步服务器/使用GPU；授权字段false、EGL未绑定、无空闲自动启动。范围、c及原始return口径、资源快照、恢复条件见 `docs/DMC16_PREPARATION.md`；状态见STATUS当前段。
+
 **2026-10-21 Hopper补测已启动**：用户明确启动并要求挂W&B；sv3物理GPU1/3、4/5、6/7分别承担seed1/2/3的logging baseline/Dt，实际训练SHA `743089f40662b031a5cf2b6bf988decb52ba0b28`，15:25启动，15:36六条均有3000余成功更新、0点各10完整episode、W&B PD_1在线，102个计算/图形PID落卡正确。完整预算、c及最终指标仍待结束验收，不作效果结论。配置、运行目录、监督、W&B链接及证据见 `docs/HOPPER_SEEDS123_RUN.md`；以下准备段为启动前历史，后续由03/04合并窗口连续执行。
 
 **2026-10-21 Hopper复验准备（用户已确认范围，尚未启动）**：只对 `dmc_hopper_hop` 新增seed1/2/3的logging baseline与Dt，共6条；sv3物理GPU分别按seed1=1/3、seed2=4/5、seed3=6/7。原模型、alpha20、KL/梯度、百万动作、21×10评价和raw-return指标沿用；每seed自身baseline按原窗口S/N冻结c，不复用seed0，本批不跑constant/shuffle。新范围 `M2-v1-hopper-seeds123-baseline-dt` 与统计profile `hopper-seeds123` 独立，原四任务seed0的冻结v1及16条结果不变，不自动混入新三seed均值。CPU配置/范围/统计/旧结果回归通过，实际训练及CUDA/EGL绑定/在线W&B仍待用户启动指令后由04执行。配置声明、准备证据和交接见 `docs/HOPPER_SEEDS123_PREPARATION.md`。

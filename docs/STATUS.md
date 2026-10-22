@@ -2,6 +2,16 @@
 
 更新日期：2026-10-22。
 
+## 03合并窗口最新：新增DMC16准备完成，实测暂停（2026-10-22）
+
+- 用户指定除原四任务外的其余16个DMC视觉任务、logging baseline/Dt共32条，sv1物理GPU0–7，全部沿用原v1（seed0/size50m/alpha20/百万动作/21×10评价）；现场八卡已有Ray未知作业后，用户明确暂停实测、仅做准备。暂停优先，无训练/真实环境/GPU探针或空闲自动启动，不停止其他作业；原hopper六条不由本次任务操作。
+- 新独立scope/preset/入口 `M2-v1-dmc16-seed0-baseline-dt` / `m2_dmc16` / `protocol_dmc16` 及 `--profile dmc16`，仅新16任务、seed0、baseline/Dt。原四任务四组与hopper补seed范围保持。接球成绩ID `dmc_ball_in_cup_catch` 显式映射为当前wrapper运行ID `dmc_cup_catch`。
+- 代码及实际本机CPU测试SHA `e83a012a8dde255b8cb9df0631243eddab2454db`：33项通过，无跳过；32配置、16随机流映射、八卡各4条队列、暂停/范围/真实入口前置校验、c边界/旧产物兼容与分层统计fixture通过。Windows c写出修为LF，严格hash校验保留；原loss/agent/RSSM/probe及runner训练/评价/RNG逻辑未改。CPU函数fixture不是完整agent/CUDA或新任务验收，原算法测试保留未修改，本轮未重跑梯度数值验收。
+- 原四任务16运行真实小镜像CPU复算require-complete退出0，3360 episode，tables.json逐字节不变。新32条无任何真实结果/c；没有constant/shuffle，不自动合并历史四任务或hopper新seed，不把baseline/Dt两组差异当强M2选择性归因。
+- 资源唯一只读快照为14:52:17北京时间：sv1实际host lyg2153、八卡都有未知Ray计算进程、当时仓库313532571f0a0e39759b9229264361c0fd9bd48f干净；暂停后没有再访问/写服务器、安装或同步源码。此快照不代表未来资源状态，本批占用GPU为0。代码/测试/后续报告只本机提交，不推送GitHub，原RESEARCH/STATUS/proposal/根TeX文件保留。
+- 报告 `docs/DMC16_PREPARATION.md`；本机证据/最终32配置/随机映射/队列/bundle/交付 `analysis/outputs/dmc16-preparation-20261022/`，最终交付SHA绑定plan-final。未来服务器实验根计划为 `/data/Policy_Discrepancy/runs/formal-m2-dmc16-baseline-dt-20261022/`，本轮未创建；所有authorized=false、launch_argv=null、EGL未绑定。
+- 首选继续当前03合并窗口等待用户恢复实测；恢复后刷新资源/依赖/确定SHA、实际CUDA/EGL及16任务接口、完整agent/梯度/W&B验收，再做启动绑定和受限队列监督。完成百万动作、21×10、S/N/c、收据/快照、原始return/W&B审计后交05；不自动建chat/发消息，不因资源空闲自行启动。
+
 ## 05 最新：run 50万步附近训练录像（2026-10-22）
 
 - 按walk相同的预先固定规则提取第一条保存链在50万动作前最后完整episode，两组实际480001—495985动作，原始return508.234756/582.275476；已交付带来源标签的完整20秒、固定8—18秒短片与接触图。PPD-KL前段翻转后恢复，完整视频保留该过程，不把短片当全程稳定性或固定50万步评价。
