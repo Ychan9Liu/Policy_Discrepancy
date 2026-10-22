@@ -215,6 +215,13 @@ m2_hopper_seeds123:
   task: dmc_hopper_hop
   seed: 1
 
+# Separate 16-task baseline/Dt preparation; execution currently paused by user.
+m2_dmc16:
+  <<: *m2_v1
+  script: protocol_dmc16
+  task: dmc_acrobot_swingup
+  seed: 0
+
 bsuite:
   task: bsuite_mnist/0
   run: {envs: 1, save_every: -1, train_ratio: 1024}

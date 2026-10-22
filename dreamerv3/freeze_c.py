@@ -7,28 +7,31 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from embodied.run.protocol_v1 import ProtocolState
-from dreamerv3.protocol_scope import V1, HOPPER_123, HOPPER_SCRIPT, validate_scope
+from dreamerv3.protocol_scope import (
+    V1, HOPPER_123, HOPPER_SCRIPT, DMC16, DMC16_SCRIPT, validate_scope,
+    tasks_for_protocol)
 
 
 def freeze(baseline_dir, output, engineering_fixture=False):
   baseline_dir, output = Path(baseline_dir), Path(output)
   manifest = json.loads((baseline_dir / 'protocol_manifest.json').read_text())
   protocol = manifest['protocol']
-  if protocol not in (V1, HOPPER_123):
+  if protocol not in (V1, HOPPER_123, DMC16):
     raise ValueError('Not an M2 v1 baseline')
   config = manifest['config']
   root_seed = manifest.get('root_seed', 0)
-  if protocol == HOPPER_123:
+  if protocol in (HOPPER_123, DMC16):
+    expected_script = HOPPER_SCRIPT if protocol == HOPPER_123 else DMC16_SCRIPT
     if (config.get('seed') != root_seed or
-        config.get('script') != HOPPER_SCRIPT or engineering_fixture):
-      raise ValueError('Hopper repeat baseline seed/script/fixture mismatch')
-    validate_scope(HOPPER_SCRIPT, manifest['task'], root_seed,
+        config.get('script') != expected_script or engineering_fixture):
+      raise ValueError('Extension baseline seed/script/fixture mismatch')
+    validate_scope(expected_script, manifest['task'], root_seed,
                    config['agent.rep_probe.mode'])
     required = {'run.action_budget': 1000000, 'run.eval_every_actions': 50000,
                 'run.eval_eps': 10, 'run.match_start': 100000, 'run.match_end': 300000,
                 'agent.dyn.rssm.free_nats': 1}
     if any(config.get(key) != value for key, value in required.items()):
-      raise ValueError('Hopper baseline matching/grid configuration differs')
+      raise ValueError('Extension baseline matching/grid configuration differs')
   elif root_seed != 0 or config.get('seed', 0) != 0:
     raise ValueError('Original M2 v1 frozen c requires seed0')
   if config['agent.rep_probe.mode'] != 'logging' or float(
@@ -40,9 +43,8 @@ def freeze(baseline_dir, output, engineering_fixture=False):
             'run.eval_every_actions', 'run.eval_eps',
             'run.match_start', 'run.match_end')))
   else:
-    if config.get('run.engineering_fixture') or manifest['task'] not in (
-        'dmc_hopper_hop', 'dmc_quadruped_run',
-        'dmc_quadruped_walk', 'dmc_reacher_hard'):
+    if (config.get('run.engineering_fixture') or
+        manifest['task'] not in tasks_for_protocol(protocol)):
       raise ValueError('Cannot freeze a formal c from an engineering fixture')
     state = ProtocolState(1000000, 50000, 10, 100000, 300000)
   receipt_path = baseline_dir / 'update_receipts.jsonl'
@@ -101,10 +103,11 @@ def freeze(baseline_dir, output, engineering_fixture=False):
     return existing
   artifact['frozen_at_utc'] = datetime.now(timezone.utc).isoformat()
   payload = json.dumps(artifact, sort_keys=True, indent=2) + '\n'
-  output.write_text(payload, encoding='utf-8')
+  # The checksum covers file bytes; preserve the same LF bytes on Windows too.
+  output.write_text(payload, encoding='utf-8', newline='\n')
   output.with_suffix(output.suffix + '.sha256').write_text(
       hashlib.sha256(payload.encode()).hexdigest() + '\n',
-      encoding='utf-8')
+      encoding='utf-8', newline='\n')
   return artifact
 
 

@@ -52,6 +52,12 @@ python -m unittest tests.test_return_metrics tests.test_m2_analysis -v
 
 采集器仅依赖标准库和SSH，服务器使用现有dreamer环境。绘图需要 Matplotlib 3.10.8 / NumPy 2.4.2；本轮本机独立 `outputs/.../plot_deps` 安装，不修改服务器训练环境。输出必须新目录；失败尝试保留。诊断是每5万动作区间内的成功更新均值，以快照update ID得到实际更新数后加权；D分位数为逐批分位数均值，不能当作阶段合并分位数。仅logging收据持久化S/N，其余组三个matching字段为0是源码约定，不能据此解释为无活跃位置；各组作用取真实 `train/dt/` 日志。活跃区均值是每更新活跃均值的加权平均，不宣称已恢复逐位置梯度。详见 `docs/ANALYSIS_M2_V1.md`。
 
+## 新增DMC16准备范围（2026-10-22，实测暂停）
+
+`scripts.prepare_dmc16`仅解析其余16任务×logging baseline/Dt、seed0的32份配置，记录固定sv1物理GPU0–7的每卡4条排队计划，不创建环境、不使用GPU、不启动训练，也不监视空闲自动启动。用户已暂停本批实测；计划保留`authorized_to_train=false`、`launch_argv=null`，EGL实际映射未绑定。完整范围、条件与准备验收见`docs/DMC16_PREPARATION.md`。
+
+未来实际产物使用独立`analysis.return_metrics --profile dmc16`，冻结百万动作/21×10评价/指定末段五点，仅seed0、这16任务、baseline/Dt；不改变默认原四任务四组profile，不自动合并旧四任务或hopper补seed。本批没有constant/shuffle，不能仅凭两组结果回答强M2选择性主张。成绩名`dmc_ball_in_cup_catch`显式映射为现有包装器的运行ID`dmc_cup_catch`。
+
 ## 原始 return 统计
 
 实现为 `analysis/return_metrics.py`，只依赖 Python 标准库；协议依据为 `docs/EXPERIMENTS.md` C/C.1。生产 CLI 固定100万动作预算、21点、每点10完整 episode、指定末段五点、四任务、训练 seed0。它不接受新的预算、seed 或指标参数。`tests/run_return_metrics_fixtures.py` 的两 seed、小预算仅是手算统计 fixture。

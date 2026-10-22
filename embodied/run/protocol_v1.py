@@ -17,7 +17,7 @@ import jax
 
 from embodied.jax import internal
 from dreamerv3.return_stats import EpisodeReturn, REWARD_SOURCE, RETURN_DEFINITION
-from dreamerv3.protocol_scope import validate_scope
+from dreamerv3.protocol_scope import validate_scope, tasks_for_protocol
 
 
 def seed32(root, task, namespace, *indices):
@@ -351,10 +351,8 @@ def run(make_agent, make_replay, make_env, make_stream, make_logger,
         int(args.eval_eps), int(args.match_start), int(args.match_end)) != (
             1000000, 50000, 10, 100000, 300000):
       raise ValueError('M2 v1 budget, grid, episodes, or window differs')
-    if config.task not in (
-        'dmc_hopper_hop', 'dmc_quadruped_run',
-        'dmc_quadruped_walk', 'dmc_reacher_hard'):
-      raise ValueError('M2 v1 task is outside the frozen four-task set')
+    if config.task not in tasks_for_protocol(protocol):
+      raise ValueError('Task is outside the declared protocol task set')
     rssm = config.agent.dyn.rssm
     if (rssm.deter, rssm.hidden, rssm.classes) != (4096, 512, 32):
       raise ValueError('M2 v1 requires size50m RSSM')
