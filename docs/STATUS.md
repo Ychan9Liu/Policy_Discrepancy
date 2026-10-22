@@ -2,6 +2,16 @@
 
 更新日期：2026-10-22。
 
+## 03合并窗口最新：前八任务16条串行队列已启动（2026-10-22）
+
+- 用户恢复并缩小为前八任务×baseline/Dt，总16次；sv1物理GPU0–7依次acrobot_swingup、cup_catch、cartpole_balance、cartpole_balance_sparse、cartpole_swingup、cartpole_swingup_sparse、cheetah_run、finger_spin，每卡baseline完成审计后Dt。其余八任务仍不启动，旧32条暂停准备记录保留。
+- 冻结v1沿用：clean纯视觉、size50m、seed0、alpha20、free_nats1、dyn/rep1/.1、原梯度开关、repeat1、百万动作含预填充、21点评价各10完整episode/采样动作/隔离流；自身logging baseline按 `[100000,300000)` 活跃位置S/N冻结c作审计，本批不跑constant/shuffle，不填默认c、不调alpha。
+- 实际代码/测试/启动SHA `18b85c4d85ff456e6822626f17cb14cc0f44d2b8`。sv1 85项CPU回归、CPU/float32完整agent和16条真实size50m CUDA/bfloat16短程通过；每条4098动作、517更新、3×1评价、2报告，共8272更新、32报告/48点评价隔离通过。logging实际权重1，Dt活跃门控非平凡；这些工程证据不代表方法有效或正式指标完成。
+- 20:39:20北京时间八卡无C/G PID、/data约1.07TB可用；20:39:41启动CPU监督器3990345。20:44:22核查八条baseline均运行、0点各10完整episode、470—701连续更新、非法值0；136个项目C/G PID映射正确，无未知作业，八卡仍由本批baseline占用。八条Dt排队，未启动。线上W&B PD_1完整配置及独立startup摘要读回通过；JSONL保留。
+- 正式根 `/data/Policy_Discrepancy/runs/formal-m2-dmc16-first8-serial-20261022/`；工程/探针/依赖/启动审计 `/data/Policy_Discrepancy/runs/engineering-dmc8-serial-20261022/`；本机小证据镜像 `analysis/outputs/dmc8-first8-serial-start-20261022/`。报告 `docs/DMC8_SERIAL_RUNS.md`，包含完整配置、命令、UUID/EGL与恢复限制。
+- 仅以校验bundle向sv1同步干净确定提交；10个W&B依赖新增、旧版本未变、pip check通过。无GitHub推送、sv2/sv3同步、服务器源码手工修改或原运行覆盖。后续交付仅文档，运行checkout固定18b85c4；本机已有RESEARCH/STATUS/proposal/TeX草稿保留。
+- 首选继续当前03合并窗口监测同批，完成各baseline审计后衔接Dt，全部百万动作/21×10/正式c/收据/快照/原始return与W&B终点审计后交05分析；当前没有完整正式结果。失败保留独立尝试，不把环境/replay不完整恢复称为无缝；不扩大任务/seed/组、不自行改变科学协议、不自动建chat或发消息。
+
 ## 05 最新：run视频两行11帧对比图（2026-10-22）
 
 - 从用户指定的run完整MP4按walk最终版式生成2×11图，0/2/…/18/约20秒，末帧实际19.96秒标`≈20 s`；上baseline下PPD-KL，同列同刻。保留quadruped_run标题和480k—496k训练步数说明，无seed0/页脚，横向间隙0，行间24像素。

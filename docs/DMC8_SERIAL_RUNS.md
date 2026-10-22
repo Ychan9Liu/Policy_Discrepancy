@@ -29,9 +29,41 @@
 
 sv1原Python环境缺wandb；按 `env/requirements-wandb-pd1.lock` 添加10个包（wandb0.30.0等），既有包版本全部保持，pip check通过。依赖前后完整版本与安装日志均在工程目录。不读取或记录认证秘密；线上读写另行验收。
 
-代码修改不涉及agent/RSSM/rep_probe、训练目标、梯度、环境或runner计算路径。共享探针/audit仅增加可选host/允许卡/协议参数，旧Hopper默认行为保留。控制器、配置范围、串行屏障及结果profile的CPU测试通过后提交，再同步同一确定提交到sv1。完整CPU agent和八任务×两模式真实size50m CUDA/bfloat16验收尚待执行；**当前文档不是已启动或已通过CUDA的证明**。
+代码修改不涉及agent/RSSM/rep_probe、训练目标、梯度、环境或runner计算路径。共享探针/audit仅增加可选host/允许卡/协议参数，旧Hopper默认行为保留。实际代码、服务器测试、真实CUDA验收及正式启动版本均为 **`18b85c4d85ff456e6822626f17cb14cc0f44d2b8`**。后续交付只更新报告/索引，最终完整SHA见本机outputs的DELIVERY及最终回复；不将运行中的服务器checkout切到文档提交。
 
-工程验收使用独立4098动作、间隔2049、每点1完整episode、窗口 `[2200,3600)`，报告间隔2049；这些缩小值仅用于工程测试，不能进入正式配置。真实报告/评价执行前后检查完整训练状态指纹。已有40项本机CPU检查通过；最终测试SHA、实际结果、bundle同步、正式启动及运行状态将在本文件后续补记。
+工程验收使用独立4098动作、间隔2049、每点1完整episode、窗口 `[2200,3600)`，报告间隔2049；这些缩小值仅用于工程测试，不能进入正式配置。真实报告/评价执行前后检查完整训练状态指纹。
+
+### 已完成验收
+
+- 本机41项CPU检查，17.079秒，全部通过；提交后sv1 **85项回归，44.709秒，全部通过、无跳过**。覆盖原phase1/2诊断、回退/梯度与shuffle、协议计步/评价/去重/恢复、原return指标、补seed/新增范围及新串行控制器。新检查覆盖精确8×2、同卡顺序、完成审计才启动Dt、失败只阻止该任务后继、未知C/G占用拒绝、未授权/未绑定/已有根目录拒绝，缺任务不重加权。原四任务及完整dmc16统计保留；新增16条合成CLI产物含3360 episode/336点，总体3.5/5.5仅为手算fixture。
+- CPU/float32完整连续agent完成no-report、with-report、少评价episode、并行环境、故意中断/恢复拒绝及Dt/constant/shuffle。三项报告/评价/并行路径参数、训练随机流、更新数精确一致；共同参数hash `4317c6095b04e61698f26beb6e7c077c6c5d49e1baf135a716e3b3849c7d74b2`。这些是dummy/debug fixture，不是DMC任务效果；非零作用的损失/梯度由保留的overlay测试覆盖。
+- 八张实际分配GPU的CUDA计算与EGL图形PID同卡验证通过；一张UUID mask对应进程内CUDA0，EGL实际索引依物理卡为0..7。记录在 `gpu{0..7}-binding.json`，包括枚举、PID、compute-apps及pmon，不仅凭环境变量判定。
+- 八任务×logging/Dt **16条真实size50m/CUDA/bfloat16工程运行全部完成**，每条4098动作、517成功更新、3点评价（每点1完整episode）、2次报告。合计8272更新、48点评价、32次报告的训练状态指纹隔离检查通过，未关闭transfer guard；所有baseline匹配窗口活跃计数非零。logging实际权重精确1；Dt两段实际平均权重范围0.9993799448—0.9999476372，活跃有效比例范围0.4723072—1，证实工程中有实际门控作用，不能据此推断收益或解释hopper失败。
+- 生产W&B logger线上写入/读回通过，工程run `logger-dmc8-20261022-18b85c4` 为finished、seed0、sentinel=1，0动作/0更新。没有使用离线替代线上验收。
+
+### 同步与环境
+
+只向sv1同步：以服务器原干净 `313532571f0a0e39759b9229264361c0fd9bd48f` 为prerequisite的Git bundle，双方校验SHA256 **`baf8ef8791f2b44a9bf8cbdce1d7158eee9b256d9f1e5f05a887bae594991f08`**；bundle verify、fetch及fast-forward后HEAD为18b85c4完整SHA、工作区干净。没有服务器源码手工修改、GitHub推送或sv2/sv3同步；已有本机RESEARCH/STATUS/proposal/TeX草稿保留。
+
+sv1 host `lyg2153`，Python3.11.16，jax/jaxlib0.4.33，numpy1.26.4，dm-control1.0.48，mujoco3.15.0，elements3.22.2，ninjax3.6.3，wandb0.30.0，driver570.158.01。完整包版本、安装差异、环境/RAM/磁盘、设备映射见工程目录JSON。20:39:20北京时间启动前八卡再次无C/G进程，/data可用1,070,504,132,608字节，全部工程GPU进程已释放。
+
+### 正式启动与尚未完成
+
+2026-10-22 **20:39:41北京时间** 启动独立CPU监督器PID3990345；八条logging baseline已创建并运行，八条Dt状态queued，尚未启动。`actual-RUN_INDEX.json`、`prelaunch.json`、`bound-plan.json`、每条execution/config/manifest/stdout均保存在正式根；监督器日志与完整启动命令在工程根 `formal-supervisor.stdout` / `formal-supervisor-command.json`。JSONL与在线W&B PD_1启用，唯一run ID为 `{campaign}-{task去dmc_}-seed0-{logging或dt}-01`。
+
+**20:44:22北京时间启动审计通过**：八条baseline均完成0点固定快照的恰好10完整episode，共80条；已观察到各470—701次连续成功更新，非法值计数0，实际manifest完整配置与绑定版本一致。136个C/G PID全部可追溯到本批8个agent及其环境子进程，物理GPU/UUID/CUDA mask/实际EGL一致，无未知作业。八个线上W&B run状态running，完整配置逐字段一致；用独立 `startup/*` 命名空间记录0点评价及当前更新快照，exact JSON/hash读回相同，不改训练logger、随机流或正式指标。原logger按显式step提交，0点history可能在下一step/结束前暂存；startup摘要仅说明启动快照，不冒充实时进度或正式AUC。证据 `formal-startup-audit.json`。该时刻八卡均为本批baseline占用，没有正式卡释放；全部短程工程进程已退出，Dt尚未创建运行进程。
+
+正式百万动作、21×10评价、正式c、全部Dt及完整return/W&B终点审计仍待完成。现阶段只能称“已启动/运行中”，不能称16条正式验收完成。不能完整恢复环境/replay；监督器拒绝已有campaign根，失败证据保留，新尝试须独立标识，不把后续续跑称为无缝恢复。真实环境跨独立运行逐bit一致性及gate/输入微扰因果边界未由本次解决。
+
+本机小证据镜像 `analysis/outputs/dmc8-first8-serial-start-20261022/`（Git忽略），包含bundle、CPU日志、server前后依赖/资源/探针、工程和启动审计。完整命令在服务器 `cpu-commands.json`、`probe-logger-commands.json`、`integration-command.json`、`formal-supervisor-command.json`，生产16配置和8任务随机映射在 `plan/`；其中 `unlaunched-dmc16-catalog/` 只是生成时的32条未授权静态目录，不能当作32条实际运行。实际RUN_INDEX仅16条。
+
+```sh
+# 服务器CPU回归完整模块列表见工程根cpu-commands.json。
+CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu XLA_FLAGS=--xla_force_host_platform_device_count=2 OPENBLAS_NUM_THREADS=1 /data/Policy_Discrepancy/envs/dreamer/bin/python -m unittest -v tests.test_dmc8_supervisor tests.test_dmc16_preparation tests.test_hopper_supervisor tests.test_return_metrics
+CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu OPENBLAS_NUM_THREADS=1 /data/Policy_Discrepancy/envs/dreamer/bin/python -m tests.run_protocol_fixtures --output_dir NEW_CPU_AGENT_DIR
+# 下列审计只在全部训练结束后，对新的输出目录执行；不启动训练。
+CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu OPENBLAS_NUM_THREADS=1 /data/Policy_Discrepancy/envs/dreamer/bin/python -m scripts.run_dmc8_serial audit --plan /data/Policy_Discrepancy/runs/engineering-dmc8-serial-20261022/bound-plan.json --output NEW_FINAL_AUDIT_DIR
+```
 
 ## 操作入口与完成标准
 

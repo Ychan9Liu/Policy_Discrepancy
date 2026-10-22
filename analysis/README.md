@@ -1,5 +1,9 @@
 # 实验分析
 
+## 新增前八任务单seed独立统计
+
+sv1前八任务×baseline/Dt的16条授权运行见 `docs/DMC8_SERIAL_RUNS.md`，统计入口为 `python -m analysis.return_metrics --profile dmc8-first8 --index ACTUAL_INDEX --output NEW_OUTPUT --require-complete`。精确八任务/seed0/两组，沿用百万固定分母、21×10评价、指定末段五点；缺任务/点不重加权。不能将只完成八任务的批次用完整 `dmc16` profile宣称完整，也不自动并入原四任务或补seed总体。当前正式队列运行中，工程短程不能生成完整正式指标。
+
 ## M2 v1 三任务 PPD-KL 展示图（2026-10-21）
 
 `plot_m2_v1_ppd_kl.py` 从已验收的 `analysis-final/return-audit/tables.json` 和 `gate_intervals.csv` 重绘，先检查原分析哈希、21×10评价、episode均值、主次指标差值及20个诊断区间。仅展示quadruped_run、quadruped_walk、reacher_hard；原dt组的图例名为PPD-KL。学习曲线只保留baseline/PPD-KL，另两图保留三个对照；门控只保留Mean Dt与Actual active weight。原四任务正式分析不变，不重算三任务总体，不平滑。

@@ -1,5 +1,9 @@
 # 03 · M2 v1 协议链路工程验收
 
+## 前八任务串行恢复与实际启动（2026-10-22，最新）
+
+用户明确sv1物理GPU0–7依次前八任务、每卡baseline审计后Dt，总16次。代码/实际测试/运行SHA `18b85c4d85ff456e6822626f17cb14cc0f44d2b8`：sv1共85项CPU回归、CPU/float32完整agent及16条真实size50m/CUDA/bfloat16短程验收通过；4098动作/517更新/3×1评价/2报告仅为每条工程预算。32次报告与48点评价指纹隔离通过，原算法及训练路径未改。20:39启动8条正式baseline，8条Dt排队；20:44八条0点各10完整episode、470—701更新、无非法值、136个C/G PID同卡、线上PD_1完整配置/启动摘要读回通过。正式百万动作/21×10/c与终点指标仍未完成。范围、实现、完整证据/同步/命令和限制见 `docs/DMC8_SERIAL_RUNS.md`；下方32条暂停准备是历史，其余八任务仍不启动。
+
 ## 新增DMC16准备索引（2026-10-22，真实实测暂停）
 
 用户已确认sv1物理GPU0–7、新增其余16任务的logging baseline/Dt、seed0及原v1设置，随后因占用明确暂停实测。本轮仅本机准备代码/32配置/随机映射/队列与33项CPU fixture验收；实际测试SHA `e83a012a8dde255b8cb9df0631243eddab2454db`，无训练/环境创建/GPU/服务器写入或源码同步，未把旧fixture升级为新任务验收。独立 `m2_dmc16/protocol_dmc16`、新scope与统计profile保持旧四任务和hopper边界；Windows冻结c固定LF字节输出，旧语义和严格校验不变；旧16结果复算tables逐字节相同。完整说明、未验收条件和复现见 `docs/DMC16_PREPARATION.md`，生成产物在 `analysis/outputs/dmc16-preparation-20261022/`。恢复用户授权与现场资源/实际CUDA-EGL/完整agent和任务接口/W&B验收后才可启动，不设置自动空闲开跑。
