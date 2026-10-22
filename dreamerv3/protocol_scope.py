@@ -5,6 +5,7 @@ HOPPER_123 = 'M2-v1-hopper-seeds123-baseline-dt'
 HOPPER_SCRIPT = 'protocol_hopper_seeds123'
 DMC16 = 'M2-v1-dmc16-seed0-baseline-dt'
 DMC16_SCRIPT = 'protocol_dmc16'
+DMC8_FIRST = 'M2-v1-dmc8-first8-seed0-baseline-dt-serial'
 V1_TASKS = ('dmc_hopper_hop', 'dmc_quadruped_run',
             'dmc_quadruped_walk', 'dmc_reacher_hard')
 # Scores use ball_in_cup_catch; the current DMC wrapper accepts cup_catch.

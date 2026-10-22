@@ -17,7 +17,7 @@ from pathlib import Path
 import subprocess
 
 from dreamerv3.return_stats import REWARD_SOURCE, RETURN_DEFINITION
-from dreamerv3.protocol_scope import HOPPER_123, DMC16, DMC16_TASKS
+from dreamerv3.protocol_scope import HOPPER_123, DMC16, DMC16_TASKS, DMC8_FIRST
 
 
 TASKS = ('dmc_hopper_hop', 'dmc_quadruped_run',
@@ -69,6 +69,12 @@ class MetricSpec:
         self.episodes != 10 or self.seeds != (0,) or type(self.seeds[0]) is not int or
         self.tasks != DMC16_TASKS or self.groups != ('baseline', 'dt')):
       raise ValueError('DMC16 metric scope differs from approved matrix')
+    if self.scope == DMC8_FIRST and (
+        self.budget != 1000000 or self.grid != tuple(range(0, 1000001, 50000)) or
+        self.tail != (800000, 850000, 900000, 950000, 1000000) or
+        self.episodes != 10 or self.seeds != (0,) or type(self.seeds[0]) is not int or
+        self.tasks != DMC16_TASKS[:8] or self.groups != ('baseline', 'dt')):
+      raise ValueError('DMC8 first-eight metric scope differs from approved matrix')
 
 
 def mean(values):
@@ -393,12 +399,12 @@ def analyze_run(entry, spec=MetricSpec()):
     parse_issues.append('hopper_repeat_protocol_or_seed_mismatch')
   if spec.scope == 'M2-v1-formal' and manifest.get('protocol') == HOPPER_123:
     parse_issues.append('hopper_repeat_requires_separate_metric_profile')
-  if spec.scope == DMC16 and (
+  if spec.scope in (DMC16, DMC8_FIRST) and (
       manifest.get('protocol') != DMC16 or metadata['seed'] != 0 or
       config.get('seed') != 0 or type(metadata['seed']) is not int or
       type(config.get('seed')) is not int):
     parse_issues.append('dmc16_protocol_or_seed_mismatch')
-  if spec.scope != DMC16 and manifest.get('protocol') == DMC16:
+  if spec.scope not in (DMC16, DMC8_FIRST) and manifest.get('protocol') == DMC16:
     parse_issues.append('dmc16_requires_separate_metric_profile')
   texts = evaluation_path.read_text(encoding='utf-8').splitlines() if evaluation_path.exists() else []
   for line, text in enumerate(texts, 1):
@@ -464,12 +470,13 @@ def main():
   parser.add_argument('--index', type=Path, required=True)
   parser.add_argument('--output', type=Path, required=True)
   parser.add_argument('--require-complete', action='store_true')
-  parser.add_argument('--profile', choices=('v1', 'hopper-seeds123', 'dmc16'), default='v1')
+  parser.add_argument('--profile', choices=('v1', 'hopper-seeds123', 'dmc16', 'dmc8-first8'), default='v1')
   args = parser.parse_args()
   spec = {'v1': MetricSpec,
       'hopper-seeds123': lambda: MetricSpec(seeds=(1, 2, 3),
           tasks=('dmc_hopper_hop',), groups=('baseline', 'dt'), scope=HOPPER_123),
       'dmc16': lambda: MetricSpec(tasks=DMC16_TASKS, groups=('baseline', 'dt'), scope=DMC16),
+      'dmc8-first8': lambda: MetricSpec(tasks=DMC16_TASKS[:8], groups=('baseline', 'dt'), scope=DMC8_FIRST),
       }[args.profile]()
   entries = json.loads(args.index.read_text(encoding='utf-8'))['runs']
   tables = dict(episodes=[], evaluation_points=[], seed_metrics=[])
@@ -505,10 +512,12 @@ def main():
       formal_metrics_complete=all(row['auc_complete'] and row['tail_complete'] for row in overall),
       interpretation=('single-training-seed descriptive only; engineering rows are not formal M2 results'
           if args.profile == 'v1' else (
+          'first eight selected tasks, serial baseline/dt seed0; no 16/20-task pooling or '
+          'strong selective M2 attribution' if args.profile == 'dmc8-first8' else (
           'remaining 16 tasks, baseline/dt seed0; separate cohort, single-seed descriptive only; '
           'no automatic 20-task pooling or attribution to selective M2 benefit'
           if args.profile == 'dmc16' else 'hopper-only seeds1/2/3; no four-task aggregate or '
-          'seed0 pooling; descriptive seed mean, no automatic causal or significance conclusion')))
+          'seed0 pooling; descriptive seed mean, no automatic causal or significance conclusion'))))
   write_tables(args.output, tables, audit)
   print(json.dumps(dict(output=str(args.output), runs=len(audits),
       episodes=len(tables['episodes']), formal_metrics_complete=audit['formal_metrics_complete'])))

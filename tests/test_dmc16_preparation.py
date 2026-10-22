@@ -302,6 +302,15 @@ class Dmc16PreparationTest(unittest.TestCase):
       tables=json.loads((root/'complete/tables.json').read_text())
       self.assertEqual((len(tables['episodes']),len(tables['evaluation_points']),len(tables['seed_metrics'])),(6720,672,32))
       self.assertEqual([r['auc_return_per_budget'] for r in tables['overall_metrics']],[7.5,9.5])
+      subset=root/'first-eight-index.json';subset.write_text(json.dumps(dict(runs=runs[:16])))
+      subset_command=[sys.executable,'-m','analysis.return_metrics','--index',str(subset),'--require-complete']
+      first8=subprocess.run(subset_command+['--profile','dmc8-first8','--output',str(root/'first8')],capture_output=True,text=True)
+      self.assertEqual(first8.returncode,0,first8.stderr)
+      selected=json.loads((root/'first8/tables.json').read_text())
+      self.assertEqual((len(selected['episodes']),len(selected['evaluation_points']),len(selected['seed_metrics'])),(3360,336,16))
+      self.assertEqual([r['auc_return_per_budget'] for r in selected['overall_metrics']],[3.5,5.5])
+      incomplete16=subprocess.run(subset_command+['--profile','dmc16','--output',str(root/'incomplete16')],capture_output=True,text=True)
+      self.assertEqual(incomplete16.returncode,2,incomplete16.stderr)
       wrong=subprocess.run(command+['--output',str(root/'old-v1')],capture_output=True,text=True)
       self.assertEqual(wrong.returncode,2,wrong.stderr)
       damaged=Path(runs[0]['directory'])/'evaluations.jsonl'

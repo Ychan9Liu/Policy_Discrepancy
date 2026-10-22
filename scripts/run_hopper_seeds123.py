@@ -108,8 +108,9 @@ def egl_visible_device():
   return matches[0], records
 
 
-def probe(gpu, uuid, output):
-  if platform.node() != 'lyg0326' or gpu not in MATRIX.values():
+def probe(gpu, uuid, output, *, host='lyg0326', allowed_gpus=None):
+  allowed_gpus = MATRIX.values() if allowed_gpus is None else allowed_gpus
+  if platform.node() != host or gpu not in allowed_gpus:
     raise RuntimeError('Probe outside user resources')
   output = Path(output)
   if output.exists() or os.environ.get('CUDA_VISIBLE_DEVICES') != uuid:
@@ -211,13 +212,13 @@ def child_environment(template, inherited=None):
   return env
 
 
-def audit_run(row):
+def audit_run(row, expected_protocol=HOPPER_123):
   """CPU audit of raw committed receipts/snapshots, not replay content dedupe."""
   from embodied.run.protocol_v1 import ProtocolState, audit_complete_outputs, audit_persisted_history
   from dreamerv3.freeze_c import freeze
   directory = Path(row['directory'])
   manifest, final = read(directory/'protocol_manifest.json'), read(directory/'final_state.json')
-  if (manifest['protocol'] != HOPPER_123 or manifest['git_commit'] != row['code_sha'] or
+  if (manifest['protocol'] != expected_protocol or manifest['git_commit'] != row['code_sha'] or
       manifest['root_seed'] != row['seed'] or manifest['config'] != row['config']):
     raise ValueError('Actual manifest differs from bound configuration')
   state = ProtocolState(1000000, 50000, 10, 100000, 300000)
