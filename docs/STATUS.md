@@ -8,10 +8,10 @@
 - sv2代码/实际测试/运行SHA `dbd28b6703d51d61e5d3485dbfea6c413075ea85`：本机49项、两服务器各93项CPU回归和各3条显式float32完整agent通过。sv1单卡分片代码/实际测试/运行SHA `6e468ad4a8252f21401eab6a9761626b33659f0e`：本机50项、sv1 94项/3条float32 agent通过，原共同参数hash不变；相对sv2只控制器分片及测试不同。补充仅测试SHA `5c6dd4fae0b35ac9d769dd00bc7d2845dfd226eb` 的2项启动环境回归在本机/两服务器通过，服务器执行已提交blob、不移动活动checkout。算法/梯度/协议runner/RNG源码未改，后续交付仅文档。
 - 最终16条真实size50m CUDA/bfloat16工程短程通过：每条4098动作/517更新/3×1完整episode/2报告，共8272更新、32报告与48点评价指纹隔离；logging活跃非零/实际权重1，Dt实际权重非平凡。8卡实际CUDA UUID/EGL落卡及线上W&B生产logger验证通过；工程证据不代表正式百万步完整或方法有效。
 - sv2六条baseline22:53启动；sv1 GPU7 hard于23:04启动；GPU2 easy两次在零动作JAX编译期SIGSEGV，旧目录全部保留，使用已验证的干净非交互父环境后原卡/原配置retry03于23:45启动，23:51通过0点10完整episode/1229成功更新/invalid0/17个同卡C/G PID/W&B完整配置与exact摘要读回。未安装依赖、未放宽检查或改科学配置；上下文恢复解决当前故障，尚未逐变量证明具体动态库内部根因。
-- 23:52—23:54资源快照：八条baseline仍running、八条Dt queued，sv2约8.8万更新开始动作、GPU7约7.4万、GPU2约1.1万，全部收据连续invalid0；已完成评价点均恰好10完整episode。本批136个C/G PID仍在用户八卡，尚无训练卡释放。**sv1 GPU7于运行后新增外来cgy PID2235998/2236001（PGID2235891），持续独占检查未通过**；已报告并等待用户处理资源冲突，未停止外来/本项目作业或自行换卡。其余七卡当时无外来C/G PID；GPU7处理未定前不启动该卡新任务，Dt仍受占用门禁。旧快照不是当前预约，冲突的性能/最终有效性限制需继续审查。
+- 23:52—23:54 sv1 GPU7后进入外来cgy PID2235998/2236001（PGID2235891），独占检查未通过，已报告、未停任何作业或换卡。**23:58:59 sv1 / 23:59:02 sv2复核外来进程已退出，八卡当时只发现136个本批C/G PID**，资源询问因冲突解除而无需调整；不把未答复当共享批准。八条baseline仍running、八条Dt queued，sv2约9.8万更新开始动作、GPU7约8.1万、GPU2约1.8万，全部收据连续invalid0，已完成评价点均恰好10完整episode，尚无训练卡释放。旧冲突证据保留，短时并发的性能/逐位数值影响未单独量化，最终有效性审查不得写全程独占；后继Dt仍逐卡require_free，旧快照不是当前预约。
 - 当前正式根：sv2 `formal-m2-dmc16-remaining8-serial-20261024-sv2/`；sv1 hard `...-20261024-sv1-gpu7/`、easy `...-20261024-retry03-sv1-gpu2/`，均在 `/data/Policy_Discrepancy/runs/`。CPU监督器sv2=1251084、sv1 hard=2181514、easy=2232259。W&B在线 `ychan9liu-tsinghua-university/PD_1`，JSONL保留；完整百万步/21×10/c与终点指标尚未验收。前八旧批实际10条逐条audit、6条Dt未启动，整体不完整，不挪本批卡补跑、不自动拼总体。
 - 报告 `docs/DMC8_REMAINING_RUNS.md`，本机小证据/命令/bundle/镜像/DELIVERY及继续prompt `analysis/outputs/dmc8-remaining-start-20261024/`。仅本机修改提交、校验Git bundle同步sv1/sv2；运行checkout固定上述两SHA，后续测试/文档只fetch对象，无GitHub推送/sv3访问或服务器直接改源码。原RESEARCH/STATUS/proposal/根TeX草稿保留，STATUS仅本节及日期进入本次提交。
-- 首选继续当前03，落实GPU7资源决定并监测/修复/逐条审计同批16条，完成所有百万动作/21×10/收据/快照/正式c/raw-return与W&B后供05。可立即继续其余七卡原队列；GPU7后继与前八旧缺项分别依赖资源处理/新分配，科学协议不重新等待确认。无需新建chat，不自动创建或发送消息；完整复制prompt见本轮HANDOFF-current03.txt。
+- 首选继续当前03监测/修复/逐条审计同批16条，保留GPU7短时冲突限制，完成所有百万动作/21×10/收据/快照/正式c/raw-return与W&B后供05。可继续当前已授权八卡原队列；前八旧六条Dt仍依赖用户新分配，不挪本批卡，科学协议不重新等待确认。无需新建chat，不自动创建或发送消息；完整复制prompt见本轮HANDOFF-current03.txt。
 
 ## 03合并窗口最新：前八任务16条串行队列已启动（2026-10-22）
 

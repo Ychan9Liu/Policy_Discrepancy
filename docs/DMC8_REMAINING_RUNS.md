@@ -81,7 +81,7 @@ GPU2独立新目录在6e468ad4版本完成本任务2条真实size50m CUDA/bfloat
 
 补充环境回归测试提交 **`5c6dd4fae0b35ac9d769dd00bc7d2845dfd226eb`**：2项本机及两台CPU检查通过，复现交互环境污染与显式正确继承上下文、验证目标GPU/W&B身份覆盖和CPU/MPS flags隔离、原环境不被修改。仅新增测试；通过Git bundle同步对象，在当前各自实测实现版本上执行已提交测试blob（hash见launch-context-tests.json），没有切换活动checkout或声称以5c6dd4f运行正式agent。具体动态库根因仍是工程限制，不影响冻结v1或构成hopper gate因果证据。
 
-### 启动验收与最新资源限制（23:54快照）
+### 启动验收与资源冲突复核（23:59快照）
 
 GPU2 retry03/start02于 **23:51:57北京时间** 通过实际启动审计：代码6e468ad4完整SHA，0点评价恰好10完整episode/快照动作0-update0，1229连续成功更新、invalid_count=0，17个C/G PID在原GPU2及正确agent session，CUDA UUID/EGL2/进程内CUDA0一致；线上W&B running、完整配置及startup exact JSON/hash读回通过。当前agent PID2232292、监督器2232259，根为 `formal-m2-dmc16-remaining8-serial-20261024-retry03-sv1-gpu2/`。白名单记录确认LD_LIBRARY_PATH/CUDA_HOME等注入已清除。没有读取旧失败检查点或复用GPU7模型/RNG。
 
@@ -102,6 +102,8 @@ GPU2 retry03/start02于 **23:51:57北京时间** 通过实际启动审计：代�
 
 **运行后外来占用，未通过持续独占检查**：23:52末次独占断言发现sv1 GPU7新PID2235998；23:53:28核查用户cgy的PID2235998/2236001、PGID2235891，启动时间约23:52，明确不在本项目agent2181554的进程祖先或session中。23:54快照仍有这两个外来计算进程。此前GPU7启动前和23:12启动审计均无外来进程；本项目没有主动共享/停对方/换卡，也未因冲突擅自丢弃仍在运行的baseline。已按AGENTS资源规则报告并请用户决定协调释放、停止本项目或重新分配；处理未确认前不据该卡启动新的工作，后继Dt仍须require_free。保留 `delivery-resource-ownership-investigation.json` 及 `delivery-resource-and-running-snapshot.json` 的原始pmon/归属证据；该快照的exclusive检查为false，**不是通过**。冲突可能影响性能/后续可执行性，当前无loss/梯度非法值；不能仅凭收据有限就保证独占或裁决最终结果有效性。其余七卡当时未发现外来C/G PID。用户处理与下一次资源复核后再更新事实，不把旧启动审计当实时资源保证。
 
+**23:58:59 sv1 / 23:59:02 sv2复核，冲突解除**：GPU7上述两个外来进程已退出，无需改变用户分配；八卡当时只发现136个本批C/G PID，八条baseline仍running、八条Dt queued，尚无训练卡释放。sv1 hard19866更新/最近开始动作81492、easy4027/18136；sv2六条23925—24070更新/最近开始动作97728—98308，全部收据ID连续invalid0，已完成评价点均10完整episode。可用空间sv1 567,467,507,712字节、sv2 1,039,443,705,856字节。当前资源询问因外来作业退出而解除，不是把未答复当资源或共享批准。原运行未中断、不重开、不追加GPU工作；后继仍逐卡刷新require_free。短时外来并发的性能/逐位数值影响未单独量化，留作最终有效性审查限制，不把此后快照通过改写为全程独占。两台 `delivery-final-resource-snapshot.json` / `delivery-final-actual-RUN_INDEX.json` 是最新有时间戳的证据，旧冲突和失败记录不覆盖。
+
 本机小证据包：sv1 480文件、SHA256 `115fb046a8618bb749105760a517491db99eddab5569a8dc8ba8491a4853ed8a`；sv2 307文件、SHA256 `07a97579ad8a40f3935877b3a2ad658f55a9cd661043f4bb40dc204b6d370dfc`。镜像只含小配置/日志/诊断/工程收据与启动证据，不含检查点或replay，完整最终审计仍需源服务器数据。最终交付在5c6dd4f之后只更新文档；相对sv1运行版另有2项新增测试，相对sv2运行版还包括显式单卡分片控制器。只向sv1/sv2同步已验证Git对象，不移动活动checkout，无GitHub/sv3同步。完整最终SHA/对象同步及副本hash见本机DELIVERY.json。
 
 ### 复现、输出和未完成项
@@ -119,4 +121,4 @@ python -m analysis.return_metrics --profile dmc8-remaining --index GLOBAL_ACTUAL
 
 正式百万动作、21×10全网格、正式c、全部Dt和两机八任务最终统计尚未完成，不能将排队的Dt称为已运行或验收完成。后续交付SHA晚于实际测试版本的差异、同步范围与各卡最新状态在DELIVERY及最终回复说明。
 
-首选继续当前03窗口，先落实sv1 GPU7外来占用的用户资源决定；其余七卡可继续原已授权队列。随后监测同批16条至每条百万动作/21×10/正式c/收据/快照/原始return与W&B审计完成，再供05分析。前八旧六条Dt另需用户分配资源，不能挪用本批卡补跑。现存科研边界仍交02与用户决定，不扩大任务/seed/组、不自动建chat或发消息。可复制的完整继续prompt在 `analysis/outputs/dmc8-remaining-start-20261024/HANDOFF-current03.txt`，由同一窗口继续，无需新建chat。
+首选继续当前03窗口监测同批16条，保留GPU7短时资源冲突限制，逐卡确认无占用后完成baseline→Dt；每条百万动作/21×10/正式c/收据/快照/原始return与W&B审计完成再供05分析。当前可继续原已授权队列，前八旧六条Dt另需用户分配资源，不能挪用本批卡补跑。现存科研边界仍交02与用户决定，不扩大任务/seed/组、不自动建chat或发消息。可复制的完整继续prompt在 `analysis/outputs/dmc8-remaining-start-20261024/HANDOFF-current03.txt`，由同一窗口继续，无需新建chat。
