@@ -68,6 +68,22 @@ class RemainingTest(unittest.TestCase):
       self.assertEqual([e['action_step'] for e in r['evaluations']],list(range(0,1000001,50000)))
       self.assertTrue(all(len(e['episodes'])==10 for e in r['evaluations']))
 
+  def test_split_card_never_uses_blocked_other_card_or_changes_science(self):
+    source=self.root/'host-plan.json';source.write_text(json.dumps(self.plans['sv1']))
+    output=self.root/'card7-plan.json'
+    runner.split_card(source,7,output);p=json.loads(output.read_text());runner.validate_plan(p)
+    self.assertEqual(p['tasks'],['dmc_finger_turn_hard'])
+    self.assertEqual({r['physical_gpu'] for r in p['runs']},{7})
+    self.assertEqual(len(p['runs']),2)
+    self.assertTrue(p['root'].endswith('-sv1-gpu7'))
+    for r in p['runs']:
+      old=next(x for x in self.plans['sv1']['runs'] if x['task']==r['task'] and x['mode']==r['mode'])
+      self.assertEqual({k for k in r['config'] if r['config'][k]!=old['config'][k]},{'logdir'})
+    with self.assertRaises(ValueError):runner.split_card(source,0,self.root/'unallocated.json')
+    with self.assertRaises(ValueError):runner.split_card(source,7,output)
+    bad=copy.deepcopy(p);bad['card_gpu']=2
+    with self.assertRaises(ValueError):runner.validate_plan(bad)
+
   def test_each_shard_metrics_remain_incomplete_until_all_eight_present(self):
     spec=MetricSpec(tasks=runner.TASKS,groups=('baseline','dt'),scope=DMC8_REMAINING)
     rows=[dict(task=t,group=g,seed=0,run_id=t+g,auc_complete=True,tail_complete=True,

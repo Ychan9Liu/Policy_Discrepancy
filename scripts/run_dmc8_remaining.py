@@ -4,6 +4,7 @@ Each host owns a fixed shard. Host completion never implies eight-task cohort
 completion. Training semantics, RNG derivation and protocol_dmc16 are unchanged.
 """
 import argparse
+import copy
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -34,6 +35,11 @@ def validate_plan(plan):
   if server not in HOSTS:
     raise ValueError('Unknown server shard')
   tasks = [t for t in TASKS if MATRIX[t][0]==server]
+  card = plan.get('card_gpu')
+  if card is not None:
+    if type(card) is not int or card not in DEVICES[server]:
+      raise ValueError('Card plan is outside the user allocation')
+    tasks = [t for t in tasks if MATRIX[t][1]==card]
   rows = plan['runs']
   if (plan['protocol']!=DMC16 or plan['cohort']!=DMC8_REMAINING or plan['host']!=HOSTS[server] or
       plan['tasks']!=tasks or plan['cohort_tasks']!=list(TASKS) or len(rows)!=2*len(tasks) or
@@ -42,7 +48,7 @@ def validate_plan(plan):
   root = PurePosixPath(plan['root'])
   if (root.parent!=PurePosixPath('/data/Policy_Discrepancy/runs') or
       not plan['campaign'].startswith('formal-m2-dmc16-remaining8-serial-') or
-      root.name!=plan['campaign']+'-'+server):
+      root.name!=plan['campaign']+'-'+server+('' if card is None else '-gpu'+str(card))):
     raise ValueError('Unexpected campaign root')
   for row in rows:
     mode = row['mode']
@@ -160,6 +166,35 @@ def prepare(output, campaign, resources):
   dump(output/'artifact-hashes.json',{p.name:sha(p) for p in output.iterdir() if p.is_file()})
 
 
+def split_card(plan_path, gpu, output):
+  """Independent approved card; no new device, task or scientific override."""
+  plan=read(plan_path);validate_plan(plan)
+  output=Path(output)
+  if plan['authorized_to_train'] or plan.get('card_gpu') is not None or output.exists():
+    raise ValueError('Split only a fresh unbound host plan into a new file')
+  if type(gpu) is not int or gpu not in DEVICES[plan['server']]:
+    raise ValueError('Unallocated card')
+  plan=copy.deepcopy(plan)
+  plan.update(card_gpu=gpu,root=plan['root']+'-gpu'+str(gpu))
+  plan['runs']=[r for r in plan['runs'] if r['physical_gpu']==gpu]
+  plan['tasks']=sorted({r['task'] for r in plan['runs']})
+  plan.update(host_run_count=2,total_train_actions=2000000,
+      dispatch='independent assigned card, not a replacement for blocked devices')
+  for row in plan['runs']:
+    directory=plan['root']+'/'+row['task']+'/'+row['mode']+'-attempt01'
+    row['directory']=directory
+    argv=row['review_argv'];argv[argv.index('--logdir')+1]=directory
+    config=resolve(argv[4:]);check_dmc16(config)
+    row['config']=json.loads(json.dumps(dict(config.flat)))
+    row['config_sha256']=__import__('hashlib').sha256(json.dumps(row['config'],sort_keys=True).encode()).hexdigest()
+    row['config_file']=None
+    row['command_for_review']=shlex.join(argv)
+    row['run_id']+=':gpu'+str(gpu)
+    row['environment_template'].update(TMPDIR=directory+'/tmp',WANDB_DIR=directory,
+        WANDB_RUN_ID=row['environment_template']['WANDB_RUN_ID']+'-gpu'+str(gpu))
+  validate_plan(plan);dump(output,plan)
+
+
 def bind(plan_path, evidence, output, authorized):
   plan,evidence,output=read(plan_path),Path(evidence),Path(output)
   validate_plan(plan)
@@ -256,19 +291,20 @@ def finish_host(plan, output):
 
 def run(plan_path):
   plan=read(plan_path);validate_plan(plan)
-  serial.run(plan_path,validator=validate_plan,host=plan['host'],gpus=DEVICES[plan['server']],
+  serial.run(plan_path,validator=validate_plan,host=plan['host'],gpus=tuple(sorted({r['physical_gpu'] for r in plan['runs']})),
       finisher=finish_host,capacity_bytes=len(plan['runs'])*60_000_000_000,
       before_start=before_start,new_session=True)
 
 
 if __name__=='__main__':
   parser=argparse.ArgumentParser(description=__doc__)
-  parser.add_argument('action',choices=('prepare','probe','logger','integration','bind','run','audit-host'))
+  parser.add_argument('action',choices=('prepare','split-card','probe','logger','integration','bind','run','audit-host'))
   for name in ('output','resources','plan','evidence'):parser.add_argument('--'+name,type=Path)
   parser.add_argument('--campaign');parser.add_argument('--server',choices=tuple(HOSTS))
   parser.add_argument('--gpu',type=int);parser.add_argument('--uuid')
   parser.add_argument('--authorized',action='store_true');args=parser.parse_args()
   if args.action=='prepare':prepare(args.output,args.campaign,args.resources)
+  elif args.action=='split-card':split_card(args.plan,args.gpu,args.output)
   elif args.action=='probe':probe(args.gpu,args.uuid,args.output,host=HOSTS[args.server],allowed_gpus=DEVICES[args.server])
   elif args.action=='logger':serial.logger_check(args.output,run_tag='remaining8-'+args.server+'-20261024',task=next(t for t in TASKS if MATRIX[t][0]==args.server))
   elif args.action=='integration':
