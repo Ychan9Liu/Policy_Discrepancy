@@ -1,5 +1,9 @@
 # 实验分析
 
+## 剩余后八任务与两机分片
+
+本批后八任务用 `--profile dmc8-remaining`，配置和资源见 `docs/DMC8_REMAINING_RUNS.md`。sv1两个单卡计划、sv2六任务计划已启动八条baseline，八条Dt等待各自完整审计；GPU2编译失败的旧尝试保留，当前为retry03。23:54北京时间sv1 GPU7出现后进入的外来计算进程，资源独占未通过、已报告等待用户处理，不能把启动审计当持续独占保证。单机/单卡audit生成逐任务指标且八任务总体保持null；全部八任务完整证据汇齐后，独立索引才可用 `--require-complete` 判定完整。沿用原始return、固定百万分母及指定五点，不自动与前八任务/原四任务/补seed汇总。前八批6条Dt缺项仍保留，不因新增后八任务而标完整。
+
 ## 新增前八任务单seed独立统计
 
 sv1前八任务×baseline/Dt的16条授权运行见 `docs/DMC8_SERIAL_RUNS.md`，统计入口为 `python -m analysis.return_metrics --profile dmc8-first8 --index ACTUAL_INDEX --output NEW_OUTPUT --require-complete`。精确八任务/seed0/两组，沿用百万固定分母、21×10评价、指定末段五点；缺任务/点不重加权。不能将只完成八任务的批次用完整 `dmc16` profile宣称完整，也不自动并入原四任务或补seed总体。当前正式队列运行中，工程短程不能生成完整正式指标。
