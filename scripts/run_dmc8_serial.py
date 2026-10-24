@@ -94,16 +94,16 @@ def prepare(output, campaign, resources):
   dump(output/'planned-run-index.json',plan)
 
 
-def logger_check(output):
+def logger_check(output, *, run_tag='dmc8-20261022', task=TASKS[0]):
   output = Path(output)
   output.mkdir(parents=True, exist_ok=False)
   commit = clean_sha()
   os.environ.update(WANDB_PROJECT='PD_1', WANDB_ENTITY=ENTITY, WANDB_MODE='online',
       WANDB_RESUME='never', WANDB_RUN_GROUP='logger-engineering-validation',
-      WANDB_RUN_ID='logger-dmc8-20261022-'+commit[:7], WANDB_DIR=str(output))
+      WANDB_RUN_ID='logger-'+run_tag+'-'+commit[:7], WANDB_DIR=str(output))
   from dreamerv3.main import make_logger
   import wandb
-  config = resolve(['--configs','m2_dmc16','--task',TASKS[0],'--logdir',str(output),
+  config = resolve(['--configs','m2_dmc16','--task',task,'--logdir',str(output),
                     '--logger.outputs','jsonl','wandb'])
   logger = make_logger(config)
   run = wandb.run
@@ -166,7 +166,7 @@ def next_for_gpu(rows, gpu):
   return None
 
 
-def start(row):
+def start(row, *, new_session=False):
   check = require_free(row['physical_gpu'],row['gpu_uuid'])
   directory = Path(row['directory'])
   directory.mkdir(parents=True, exist_ok=False)
@@ -175,7 +175,7 @@ def start(row):
   try:
     process = subprocess.Popen(row['launch_argv'],cwd=REPO,
         env=child_environment(row['environment_template']),stdin=subprocess.DEVNULL,
-        stdout=log,stderr=subprocess.STDOUT)
+        stdout=log,stderr=subprocess.STDOUT,start_new_session=new_session)
   except BaseException:
     log.close()
     raise
@@ -213,18 +213,19 @@ def finish(plan, output):
       interpretation='First eight tasks seed0; two-group descriptive comparison, no strong selective M2 attribution.'))
 
 
-def run(plan_path):
+def run(plan_path, *, validator=validate_plan, host=HOST, gpus=range(8),
+        finisher=finish, capacity_bytes=960_000_000_000, before_start=None, new_session=False):
   plan = read(plan_path)
-  validate_plan(plan)
-  if not plan['authorized_to_train'] or platform.node()!=HOST or clean_sha()!=plan['code_sha']:
+  validator(plan)
+  if not plan['authorized_to_train'] or platform.node()!=host or clean_sha()!=plan['code_sha']:
     raise RuntimeError('Authorization, host or exact clean SHA differs')
   root = Path(plan['root'])
   if root.exists():
     raise FileExistsError('No resume/overwrite: '+str(root))
-  checks = [require_free(g, next(r['gpu_uuid'] for r in plan['runs'] if r['physical_gpu']==g)) for g in range(8)]
+  checks = [require_free(g, next(r['gpu_uuid'] for r in plan['runs'] if r['physical_gpu']==g)) for g in gpus]
   # Engineering capacity floor, not a change to replay/checkpoint configuration.
-  if shutil.disk_usage(root.parent).free < 960_000_000_000:
-    raise RuntimeError('Less than 960GB free for 16 full runs; report capacity, do not change protocol')
+  if shutil.disk_usage(root.parent).free < capacity_bytes:
+    raise RuntimeError(f'Less than {capacity_bytes} bytes free; report capacity, do not change protocol')
   root.mkdir(parents=True)
   dump(root/'prelaunch.json',dict(checked_utc=now(),checks=checks,supervisor_pid=os.getpid()))
   dump(root/'bound-plan.json',plan)
@@ -243,12 +244,16 @@ def run(plan_path):
         except Exception as error:
           row.update(state='audit_failed',audit_error=repr(error))
       dump(Path(row['directory'])/'execution-initial.json',row)
-    for gpu in range(8):
+    for gpu in gpus:
       row = next_for_gpu(plan['runs'],gpu)
       if row is None:
         continue
       try:
-        process,log = start(row)
+        if before_start is not None:
+          before_start(row,plan)
+        process,log = start(row,new_session=new_session)
+        if new_session:
+          row['process_group_id']=process.pid
         handles.append((row,process,log))
       except Exception as error:
         row.update(state='blocked',error=repr(error))
@@ -263,7 +268,7 @@ def run(plan_path):
   status = dict(checked_utc=now(),runs=plan['runs'],all_training_exited=True,complete=False)
   if all(r['state']==AUDITED for r in plan['runs']):
     try:
-      finish(plan,root/'final-audit-attempt01')
+      finisher(plan,root/'final-audit-attempt01')
       status['complete']=True
       for row in plan['runs']:
         row['state']='accepted'
@@ -273,12 +278,12 @@ def run(plan_path):
   dump(root/'supervisor-final.json',status)
 
 
-def integration(plan_path, evidence):
+def integration(plan_path, evidence, *, validator=validate_plan, host=HOST, new_session=False):
   """Real size50m CUDA/bfloat16 acceptance, engineering budgets only."""
   plan, evidence = read(plan_path), Path(evidence)
-  validate_plan(plan)
+  validator(plan)
   commit = clean_sha()
-  if plan['code_sha']!=commit or platform.node()!=HOST:
+  if plan['code_sha']!=commit or platform.node()!=host:
     raise RuntimeError('Engineering host/SHA differs')
   output = evidence/'integration'
   output.mkdir(parents=True,exist_ok=False)
@@ -299,7 +304,7 @@ def integration(plan_path, evidence):
       row.update(directory=str(directory),launch_argv=argv)
       row['environment_template'].update(MUJOCO_EGL_DEVICE_ID=str(proof['egl_index']),
           TMPDIR=str(directory/'tmp'),WANDB_DIR=str(directory))
-      process,log = start(row)
+      process,log = start(row,new_session=new_session)
       children.append((row,process,log))
     while any(p.poll() is None for _,p,_ in children):
       time.sleep(10)
@@ -331,7 +336,7 @@ def integration(plan_path, evidence):
           directory=str(directory),updates=state.updates,match_count=state.match_count,
           reports=len(reports),evaluations=len(state.evaluations),exit_code=process.returncode))
     dump(output/('completed-'+mode+'.json'),completed)
-  dump(output/'acceptance.json',dict(code_sha=commit,passed=True,run_count=16,
+  dump(output/'acceptance.json',dict(code_sha=commit,passed=True,run_count=len(plan['runs']),
       engineering_only=True,budget=4098,evaluation_episodes=1,runs=completed,checked_utc=now()))
 
 

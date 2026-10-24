@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-10-24 剩余八任务执行（最新）**：用户分配sv1 GPU2/7、sv2 GPU0–5，运行DMC16后八任务的baseline→Dt共16条，沿用已冻结v1及W&B/JSONL。配置/分配/代码验收和实际启动见 `docs/DMC8_REMAINING_RUNS.md`。前八批当前10条有逐条audit、6条Dt因占用未启动，整体尚不完整，不能与本批自动拼成已完成16/20任务结论。
+
 **2026-10-22 前八任务串行恢复（最新）**：用户将新增范围明确缩小为前八任务×baseline/Dt、总16次训练，sv1物理GPU0–7依次一个任务，每卡先baseline审计后Dt。保留冻结v1所有科学配置、独立PD_1/W&B与JSONL；其余八任务继续未启动。当前实现/部署/验收与实际运行状态见 `docs/DMC8_SERIAL_RUNS.md`；下方32条暂停状态为此前历史。原任务/补seed结果不自动合并，本批八任务profile缺项不重加权。
 
 **2026-10-22 新增DMC16准备，实测暂停（当前）**：用户确认其余16视觉任务×baseline/Dt、sv1物理GPU0–7、沿用原v1的seed0/size50m/alpha20/百万动作/21×10评价；发现八卡占用后用户暂停实测，仅准备。新独立scope/preset与统计profile不放宽原四任务/补seed范围，不新增constant/shuffle或强M2结论。32完整配置/随机映射/队列、33项CPU验收与旧16结果逐字节回归完成，未启动/同步服务器/使用GPU；授权字段false、EGL未绑定、无空闲自动启动。范围、c及原始return口径、资源快照、恢复条件见 `docs/DMC16_PREPARATION.md`；状态见STATUS当前段。

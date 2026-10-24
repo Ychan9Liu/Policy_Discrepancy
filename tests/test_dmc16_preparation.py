@@ -311,6 +311,16 @@ class Dmc16PreparationTest(unittest.TestCase):
       self.assertEqual([r['auc_return_per_budget'] for r in selected['overall_metrics']],[3.5,5.5])
       incomplete16=subprocess.run(subset_command+['--profile','dmc16','--output',str(root/'incomplete16')],capture_output=True,text=True)
       self.assertEqual(incomplete16.returncode,2,incomplete16.stderr)
+      remaining_index=root/'remaining-index.json';remaining_index.write_text(json.dumps(dict(runs=runs[16:])))
+      remaining_command=[sys.executable,'-m','analysis.return_metrics','--index',str(remaining_index),'--profile','dmc8-remaining','--require-complete']
+      remaining=subprocess.run(remaining_command+['--output',str(root/'remaining')],capture_output=True,text=True)
+      self.assertEqual(remaining.returncode,0,remaining.stderr)
+      remaining_tables=json.loads((root/'remaining/tables.json').read_text())
+      self.assertEqual(len(remaining_tables['seed_metrics']),16)
+      self.assertEqual([r['auc_return_per_budget'] for r in remaining_tables['overall_metrics']],[11.5,13.5])
+      shard_index=root/'remaining-shard.json';shard_index.write_text(json.dumps(dict(runs=runs[16:20])))
+      shard=subprocess.run([sys.executable,'-m','analysis.return_metrics','--index',str(shard_index),'--profile','dmc8-remaining','--require-complete','--output',str(root/'shard')],capture_output=True,text=True)
+      self.assertEqual(shard.returncode,2,shard.stderr)
       wrong=subprocess.run(command+['--output',str(root/'old-v1')],capture_output=True,text=True)
       self.assertEqual(wrong.returncode,2,wrong.stderr)
       damaged=Path(runs[0]['directory'])/'evaluations.jsonl'
