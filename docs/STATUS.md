@@ -1,6 +1,15 @@
 # 项目状态
 
-更新日期：2026-10-24。
+更新日期：2026-10-25。
+
+## 03合并窗口最新：后八baseline全部逐条通过，Dt三运行五占用阻塞（2026-10-25）
+
+- 14:10北京时间只读核查：八条baseline均100万动作、249493成功更新、21点×10完整episode、退出0，已有逐条audit/c；索引仍为run_audited_pending_group_and_WB，整批与线上汇总收尾尚未完成。本轮读取并交叉检查已有审计/收据/评价，不冒充重新全量终点复算。
+- Dt实际运行三条：sv1 GPU2 finger_turn_easy最近更新开始动作310828（已7点评价）、GPU7 finger_turn_hard373088（8点）；sv2 GPU4 walker_stand394300（8点）。进程/监督器存活，最近收据invalid0、已完成点各10完整episode；14:11线上W&B三条running且完整配置一致。不是三条Dt已完成，不作方法有效或强M2结论。
+- sv2 GPU0/1/2/3/5对应hopper_stand、pendulum_swingup、reacher_easy、walker_run、walker_walk的Dt在09:50—09:53交接时因外来/未核实GPU进程被门禁阻止，**从未启动**。14:10这五卡仍有root用户JaxGCRL目录作业，PGID1338124/1338125/1338126/1338127/1338129，非本批session；本批已释放五卡，但卡不空闲。没有终止外来、共享或换卡；原卡释放确认或用户重新分配前不补开。blocked不会自动变queued，不能向用户承诺自动空闲重试。
+- 固定v1/后八范围/seed0/size50m/alpha20/百万预算/21×10/梯度/c与原始return协议均不变；baseline正式c已记录，未用工程c或新增constant/shuffle。三条Dt仍用原三卡，前八旧六条Dt缺项也保留，不挪本批资源、不自动汇成20任务完成。
+- 实际运行与原完整agent/CPU/CUDA测试版本仍sv1 `6e468ad4a8252f21401eab6a9761626b33659f0e`、sv2 `dbd28b6703d51d61e5d3485dbfea6c413075ea85`；额外上下文测试 `5c6dd4fae0b35ac9d769dd00bc7d2845dfd226eb` 不变。两台工作区干净。本次无代码/测试/科学协议/实验启动或停止变更，仅服务器/W&B只读核查和本机文档提交，未同步服务器或推送GitHub；原未提交草稿保留。
+- 详情 `docs/DMC8_REMAINING_RUNS.md` 最新段；小证据/版本/继续prompt `analysis/outputs/dmc8-remaining-status-20261025-1410/`。首选继续当前03监测三条、协调sv2五张原卡后补开缺失Dt，保留占用/故障/恢复限制；16条全量审计、正式c和raw-return/W&B收尾通过再供05。无需新chat，不自动创建或发送消息。
 
 ## 03合并窗口最新：后八任务八条baseline已启动，八条Dt排队（2026-10-24）
 
