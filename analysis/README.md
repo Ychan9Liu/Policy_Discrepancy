@@ -1,5 +1,9 @@
 # 实验分析
 
+## hopper_hop 六画面任务示意GIF（2026-10-26）
+
+`hopper_demo_gif.py collect/render`只读sv2既有seed0 baseline，取前六条保存链在百万动作前最后完整episode的固定2—8秒片段，生成三行两列、横纵间隙0、无文字/边框的6秒循环GIF。使用真实64×64观测最近邻放大，固定256色全局调色板；不执行模型/环境或GPU，不作方法对照。输出与命令、来源和量化限制见`docs/ANALYSIS_HOPPER_GIF.md`，GIF副本在`docs/proposal/hopper_hop_任务示意.gif`。
+
 ## 剩余后八任务与两机分片
 
 本批后八任务用 `--profile dmc8-remaining`，配置和资源见 `docs/DMC8_REMAINING_RUNS.md`。sv1两个单卡计划、sv2六任务计划已启动八条baseline，八条Dt等待各自完整审计；GPU2编译失败的旧尝试保留，当前为retry03。23:54北京时间sv1 GPU7后进入的外来计算进程使独占检查未通过；23:58:59复核已退出，八卡当时只发现本项目C/G PID，短时冲突证据和影响未量化的限制保留。不能把任一快照当持续独占保证。单机/单卡audit生成逐任务指标且八任务总体保持null；全部八任务完整证据汇齐后，独立索引才可用 `--require-complete` 判定完整。沿用原始return、固定百万分母及指定五点，不自动与前八任务/原四任务/补seed汇总。前八批6条Dt缺项仍保留，不因新增后八任务而标完整。

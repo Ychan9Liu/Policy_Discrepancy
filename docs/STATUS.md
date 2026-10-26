@@ -1,6 +1,12 @@
 # 项目状态
 
-更新日期：2026-10-25。
+更新日期：2026-10-26。
+
+## 05 最新：hopper六段动作任务示意GIF（2026-10-26）
+
+- 用户确认六段hopper动作示意，不作方法比较。已交付512×768、三行两列、横纵间隙/边框0、无文字、25 fps/6秒循环GIF；源为sv2既有seed0 baseline前六条保存链的末个完整episode各2—8秒片段，非六个训练seed或固定checkpoint评价。
+- GIF在`analysis/outputs/hopper-demo-gif-20261026/final/`，同字节副本`docs/proposal/hopper_hop_任务示意.gif`；脚本`analysis/hopper_demo_gif.py`，报告`docs/ANALYSIS_HOPPER_GIF.md`。源hash/训练reward求和、量化前分格像素、全部150帧解码/时长/循环/无间隙及目视检查通过；GIF保留256色量化限制，无损参考帧留存，不作方法有效性结论。
+- 实际采集/编码/检查SHA `fa5b54a7bf678717bc090cf8121da43700034998`，后续仅文档。本机提交，不推送/同步或写服务器，无训练/推理/环境/GPU，未核GPU现状。既有候选和TeX文件保留，素材副本不入Git；后续版式继续现有05，完整prompt在产物HANDOFF，不建chat/发消息。
 
 ## 03合并窗口最新：后八baseline全部逐条通过，Dt三运行五占用阻塞（2026-10-25）
 
