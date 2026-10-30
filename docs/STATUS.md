@@ -1,6 +1,15 @@
 # 项目状态
 
-更新日期：2026-10-26。
+更新日期：2026-10-30。
+
+## 03合并窗口最新：全批27条已训练结束、11条Dt从未启动（2026-10-30）
+
+- 13:40资源/索引及13:43—13:45线上只读核查：新增16环境×baseline/Dt共32条，21条已结束且有逐条audit，11条Dt从未启动；另hopper seed1/2/3六条全部accepted。新增38槽位共27条训练结束、11条未启动、运行中0。所有已结束条均百万动作/249493更新/21×10、退出0，线上27条finished且full config一致；本轮核对已有audit/终点评价/尾收据，不冒充新的一次全量原始产物重审计。
+- 前八16条为8 baseline+cheetah_run/finger_spin两个Dt已结束，余6条Dt缺失；后八16条为8 baseline+finger_turn_easy/hard/walker_stand三个Dt已结束，余5条Dt缺失。缺失11条目录/manifest/评价均未创建，blocked不会自动重试。两个finger单卡4条和hopper六条已有最终统计/精确线上摘要，10份JSON/hash读回一致；其余17条仍run_audited_pending_group_and_WB，所属批次不完整，不能称全部验收完成。
+- 历史原四任务四组16条completion/full_four_groups_complete=true及原表hash本轮只读复核一致；若仅盘点历史16+新增38，为54槽位43训练结束/11未启动，不是合并科研指标或方法有效结论。冻结协议、原始return和缺项不重加权保持；hopper六条可供05独立分析，不自动并seed0或新任务总体。
+- 本轮训练/监督进程均已退出，原分配卡已由本批释放；13:40实际外来C/G卡为sv1 GPU0/1、sv2 GPU0/6、sv3 GPU0/2，项目未识别者不猜测、不干扰。sv1 GPU2—7、sv2 GPU1—5/7及sv3原六卡当时无C/G PID，但不是未来预约。sv1/data仅52,328,312,832字节，低于原单条60GB门槛；sv2约821GB、sv3约725GB。补11条须落实有效资源/空间方案，不自行迁移/共享或删原checkpoint/replay。
+- 实际训练及既有测试版本：前八 `18b85c4d85ff456e6822626f17cb14cc0f44d2b8`；后八sv1 `6e468ad4a8252f21401eab6a9761626b33659f0e`、sv2 `dbd28b6703d51d61e5d3485dbfea6c413075ea85`；hopper `743089f40662b031a5cf2b6bf988decb52ba0b28`；额外上下文测试 `5c6dd4fae0b35ac9d769dd00bc7d2845dfd226eb`。本轮无代码/测试/训练操作，只本机状态文档提交，无服务器源码/Git同步或GitHub推送。当前各服务器仍各自确定运行SHA且干净，原AGENTS/CHATS/RESEARCH/STATUS/proposal/TeX草稿保留。
+- 总报告 `docs/RUNS_STATUS_20261030.md`；小证据/配置比对/完成标记与表hash/DELIVERY及可复制prompt `analysis/outputs/all-runs-status-20261030-1340/`。首选继续现有03落实11条Dt资源和空间后补齐、完成全体收尾；可立即做CPU准备和只读复核，实际GPU启动依赖执行条件。已齐全hopper六条可供现有05分析；无新增科学协议选择，不自动建chat/发消息，不以交接替代缺失工作。
 
 ## 05 最新：hopper六段动作任务示意GIF（2026-10-26）
 
