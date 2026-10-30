@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from scripts import run_missing_dt as runner
 from scripts.prepare_m2_v1 import resolve
@@ -98,6 +98,61 @@ class MissingDtTest(unittest.TestCase):
     with patch.object(runner.platform,'node',return_value=p['host']),patch.object(runner,'clean_sha',return_value=p['code_sha']),patch.object(Path,'exists',return_value=True),patch.object(runner,'require_free') as free,patch.object(runner.subprocess,'Popen') as spawn:
       with self.assertRaises(FileExistsError):runner.run(file)
       free.assert_not_called();spawn.assert_not_called()
+
+  def make_subset(self):
+    source=self.base/'parent-subset.json';source.write_text(json.dumps(self.plans['sv2']))
+    with TemporaryDirectory() as temp,patch.object(runner,'source_state',return_value=('new-sha','drafts')):
+      output=Path(temp)/'plan.json';runner.subset(source,output)
+      return json.loads(output.read_text())
+
+  def test_partial_exact_four_cards_and_three_deferred_unchanged(self):
+    parent=copy.deepcopy(self.plans['sv2']);p=self.make_subset();runner.validate_plan(p)
+    self.assertEqual([r['physical_gpu'] for r in p['runs']],[1,3,5,7])
+    self.assertEqual(p['deferred_tasks'],['dmc_acrobot_swingup','dmc_cartpole_balance','dmc_cartpole_swingup'])
+    self.assertEqual(self.plans['sv2'],parent)
+    self.assertFalse(p['authorized_to_train'])
+    for r in p['runs']:
+      old=next(x for x in parent['runs'] if x['task']==r['task'])
+      self.assertEqual({k for k in r['config'] if r['config'][k]!=old['config'][k]},{'logdir'})
+      self.assertEqual(r['environment_template']['CUDA_VISIBLE_DEVICES'],old['gpu_uuid'])
+      self.assertNotEqual(r['environment_template']['WANDB_RUN_ID'],old['environment_template']['WANDB_RUN_ID'])
+      self.assertIsNone(r['launch_argv']);self.assertIsNone(r['egl_index'])
+
+  def test_partial_cannot_expand_or_drop_card_or_change_server(self):
+    original=self.make_subset()
+    for change in ('drop','expand','server','shard','campaign'):
+      p=copy.deepcopy(original)
+      if change=='drop':p['runs'].pop()
+      elif change=='expand':p['runs'].append(copy.deepcopy(self.plans['sv2']['runs'][0]))
+      elif change=='server':p.update(server='sv3',host=runner.HOSTS['sv3'])
+      elif change=='shard':p['shard']='arbitrary'
+      else:p['campaign']='formal-m2-dmc16-missing-dt-wrong'
+      with self.subTest(change=change),self.assertRaises(ValueError):runner.validate_plan(p)
+
+  def test_subset_refuses_other_host_already_split_or_existing_output(self):
+    for p in (self.plans['sv3'],self.make_subset()):
+      source=self.base/'bad-parent.json';source.write_text(json.dumps(p))
+      with self.assertRaises(ValueError):runner.subset(source,self.base/'unused-subset.json')
+    source=self.base/'full-parent.json';source.write_text(json.dumps(self.plans['sv2']))
+    with self.assertRaises(ValueError):runner.subset(source,source)
+
+  def test_partial_execution_never_checks_or_spawns_deferred_cards(self):
+    p=self.make_subset();p['authorized_to_train']=True
+    for r in p['runs']:
+      r.update(launch_argv=r['review_argv'],verified_compute_and_graphics_same_gpu=True,
+          egl_index=r['physical_gpu'],authorized_to_train=True,state='queued')
+      r['environment_template']['MUJOCO_EGL_DEVICE_ID']=str(r['egl_index'])
+    process=MagicMock(returncode=0,pid=12345);process.poll.return_value=0
+    disk=MagicMock(free=10**15)
+    def free(gpu,uuid):
+      self.assertIn(gpu,(1,3,5,7));return dict(physical_gpu=gpu)
+    with patch.object(runner,'read',return_value=p),patch.object(runner,'dump'),patch.object(runner.platform,'node',return_value=p['host']),patch.object(runner,'clean_sha',return_value=p['code_sha']),patch.object(Path,'exists',return_value=False),patch.object(Path,'mkdir'),patch.object(Path,'open',return_value=MagicMock()),patch.object(runner.shutil,'disk_usage',return_value=disk),patch.object(runner,'require_free',side_effect=free) as guard,patch.object(runner.subprocess,'Popen',return_value=process) as spawn,patch.object(runner.subprocess,'check_output',return_value='fixture GPUs'),patch.object(runner,'audit_run',return_value={}),patch.object(runner,'finish') as finish,patch.object(runner.time,'sleep') as sleep:
+      runner.run('fixture.json')
+    self.assertEqual([x.args[0] for x in guard.call_args_list],[1,3,5,7]*2)
+    self.assertEqual(spawn.call_count,4);finish.assert_called_once();sleep.assert_not_called()
+    self.assertEqual({c.kwargs['env']['CUDA_VISIBLE_DEVICES'] for c in spawn.call_args_list},
+        {r['gpu_uuid'] for r in p['runs']})
+    self.assertTrue(all(r['state']=='accepted' for r in p['runs']))
 
 
 if __name__=='__main__':unittest.main()

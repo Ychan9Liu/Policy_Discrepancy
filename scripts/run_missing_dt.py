@@ -29,6 +29,7 @@ MATRIX = dict(zip(TASKS, [('sv2',g) for g in (0,1,2,3,4,5,7)] +
                         [('sv3',g) for g in (4,5,6,7)]))
 PREFIX = 'formal-m2-dmc16-missing-dt-'
 AUDITED = 'run_audited_pending_group_and_WB'
+PARTIAL_GPUS = (1, 3, 5, 7)
 
 
 def approved_context(inherited=None):
@@ -44,6 +45,15 @@ def validate_plan(plan):
   if server not in HOSTS or plan['host'] != HOSTS[server] or plan['protocol'] != DMC16:
     raise ValueError('Wrong fixed host/protocol')
   expected = [t for t in TASKS if MATRIX[t][0] == server]
+  shard = plan.get('shard')
+  if shard is not None:
+    if (shard != 'sv2-gpu1357' or server != 'sv2' or
+        not plan['campaign'].endswith('-partial1357')):
+      raise ValueError('Only the user-approved sv2 four-card shard')
+    expected = [t for t in expected if MATRIX[t][1] in PARTIAL_GPUS]
+    if plan.get('deferred_tasks') != [t for t in TASKS
+        if MATRIX[t][0] == 'sv2' and MATRIX[t][1] not in PARTIAL_GPUS]:
+      raise ValueError('Deferred slots must remain the original three tasks')
   root = PurePosixPath(plan['root'])
   if (not plan['campaign'].startswith(PREFIX) or '/' in plan['campaign'] or
       '..' in plan['campaign'] or root.parent != PurePosixPath('/data/Policy_Discrepancy/runs') or
@@ -126,6 +136,34 @@ def prepare(output, resources, sources, campaign):
         source_index_hashes={str(p):sha(p) for p in sources},resource_hash=sha(resources),
         authorization='User: sv2 seven GPU0-5/7, exclude6; sv3 four GPU4-7, remaining eleven Dt (2026-10-30)')
     validate_plan(plan); dump(output/(server+'-plan.json'),plan)
+
+
+def subset(plan_path, output):
+  """Prepare only the four cards explicitly approved after the resource conflict."""
+  parent = read(plan_path); validate_plan(parent)
+  if parent['server'] != 'sv2' or parent.get('shard') or Path(output).exists():
+    raise ValueError('Need the original sv2 seven-card plan and a fresh output')
+  commit, dirty = source_state()
+  plan = copy.deepcopy(parent)
+  plan.update(shard='sv2-gpu1357', campaign=parent['campaign']+'-partial1357',
+      code_sha=commit, authorized_to_train=False, created_utc=now(), local_drafts=dirty,
+      source_plan_sha256=sha(plan_path),
+      authorization='User latest answer: start sv2 GPU1/3/5/7; defer GPU0/2/4 (2026-10-30)')
+  plan['root'] = '/data/Policy_Discrepancy/runs/'+plan['campaign']+'-sv2'
+  plan['deferred_tasks'] = [r['task'] for r in parent['runs']
+                           if r['physical_gpu'] not in PARTIAL_GPUS]
+  plan['runs'] = [r for r in plan['runs'] if r['physical_gpu'] in PARTIAL_GPUS]
+  for r in plan['runs']:
+    directory = plan['root']+'/'+r['task']+'/dt-attempt02'
+    argv = r['review_argv']; argv[argv.index('--logdir')+1] = directory
+    r.update(code_sha=commit, directory=directory, state='planned', launch_argv=None,
+        authorized_to_train=False, verified_compute_and_graphics_same_gpu=False,
+        egl_index=None, config=json.loads(json.dumps(dict(resolve(argv[4:]).flat))),
+        run_id=f'sv2:{plan["campaign"]}:{r["task"]}:seed0:dt:attempt02')
+    r['environment_template'].update(MUJOCO_EGL_DEVICE_ID=None, TMPDIR=directory+'/tmp',
+        WANDB_DIR=directory, WANDB_RUN_GROUP=plan['campaign'],
+        WANDB_RUN_ID=plan['campaign']+'-'+r['task'][4:]+'-seed0-dt-02')
+  validate_plan(plan); dump(output,plan)
 
 
 def bind(plan_path, evidence, output):
@@ -218,12 +256,13 @@ def run(plan_path):
 
 if __name__=='__main__':
   p=argparse.ArgumentParser(description=__doc__)
-  p.add_argument('action',choices=('prepare','probe','logger','integration','bind','run'))
+  p.add_argument('action',choices=('prepare','subset','probe','logger','integration','bind','run'))
   p.add_argument('--plan',type=Path);p.add_argument('--output',type=Path);p.add_argument('--evidence',type=Path)
   p.add_argument('--resources',type=Path);p.add_argument('--sources',nargs='+',type=Path)
   p.add_argument('--campaign');p.add_argument('--gpu',type=int);p.add_argument('--uuid');p.add_argument('--server',choices=HOSTS)
   a=p.parse_args()
   if a.action=='prepare':prepare(a.output,a.resources,a.sources,a.campaign)
+  elif a.action=='subset':subset(a.plan,a.output)
   elif a.action=='probe':probe(a.gpu,a.uuid,a.output,host=HOSTS[a.server],allowed_gpus=[g for s,g in MATRIX.values() if s==a.server])
   elif a.action=='logger':serial.logger_check(a.output,run_tag='missing-dt-20261030-'+a.server,task=next(t for t in TASKS if MATRIX[t][0]==a.server))
   elif a.action=='integration':
