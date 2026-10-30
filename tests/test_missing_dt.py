@@ -146,13 +146,56 @@ class MissingDtTest(unittest.TestCase):
     disk=MagicMock(free=10**15)
     def free(gpu,uuid):
       self.assertIn(gpu,(1,3,5,7));return dict(physical_gpu=gpu)
-    with patch.object(runner,'read',return_value=p),patch.object(runner,'dump'),patch.object(runner.platform,'node',return_value=p['host']),patch.object(runner,'clean_sha',return_value=p['code_sha']),patch.object(Path,'exists',return_value=False),patch.object(Path,'mkdir'),patch.object(Path,'open',return_value=MagicMock()),patch.object(runner.shutil,'disk_usage',return_value=disk),patch.object(runner,'require_free',side_effect=free) as guard,patch.object(runner.subprocess,'Popen',return_value=process) as spawn,patch.object(runner.subprocess,'check_output',return_value='fixture GPUs'),patch.object(runner,'audit_run',return_value={}),patch.object(runner,'finish') as finish,patch.object(runner.time,'sleep') as sleep:
+    runner.validate_plan(p)
+    with patch.object(runner,'validate_plan'),patch.object(runner,'read',return_value=p),patch.object(runner,'dump'),patch.object(runner.platform,'node',return_value=p['host']),patch.object(runner,'clean_sha',return_value=p['code_sha']),patch.object(Path,'exists',return_value=False),patch.object(Path,'mkdir'),patch.object(Path,'open',return_value=MagicMock()),patch.object(runner.shutil,'disk_usage',return_value=disk),patch.object(runner,'require_free',side_effect=free) as guard,patch.object(runner.subprocess,'Popen',return_value=process) as spawn,patch.object(runner.subprocess,'check_output',return_value='fixture GPUs'),patch.object(runner,'audit_run',return_value={}),patch.object(runner,'finish') as finish,patch.object(runner.time,'sleep') as sleep:
       runner.run('fixture.json')
     self.assertEqual([x.args[0] for x in guard.call_args_list],[1,3,5,7]*2)
     self.assertEqual(spawn.call_count,4);finish.assert_called_once();sleep.assert_not_called()
     self.assertEqual({c.kwargs['env']['CUDA_VISIBLE_DEVICES'] for c in spawn.call_args_list},
         {r['gpu_uuid'] for r in p['runs']})
     self.assertTrue(all(r['state']=='accepted' for r in p['runs']))
+
+  def make_remainder(self):
+    with TemporaryDirectory() as temp:
+      base=Path(temp);parent=base/'parent.json';parent.write_text(json.dumps(self.plans['sv2']))
+      partial=base/'partial.json';partial.write_text(json.dumps(self.make_subset()))
+      inventory=base/'resources.json';inventory.write_text(json.dumps(dict(servers={
+          s:dict(host=h,gpus='\n'.join(f'{g}, fixture-{s}-{g}, 0 MiB' for g in range(8)))
+          for s,h in runner.HOSTS.items()})))
+      with patch.object(runner,'source_state',return_value=('new-sha','drafts')):
+        runner.remainder(parent,partial,inventory,base/'out')
+      return {s:json.loads((base/'out'/(s+'-plan.json')).read_text()) for s in runner.HOSTS}
+
+  def test_remaining_three_exact_new_mapping_and_mandatory_dependency(self):
+    plans=self.make_remainder()
+    self.assertEqual([(r['task'],r['physical_gpu']) for r in plans['sv2']['runs']],
+        [('dmc_acrobot_swingup',1)])
+    self.assertEqual([(r['task'],r['physical_gpu']) for r in plans['sv3']['runs']],
+        [('dmc_cartpole_balance',1),('dmc_cartpole_swingup',3)])
+    for p in plans.values():runner.validate_plan(p)
+    p=copy.deepcopy(plans['sv2']);p.pop('wait_for')
+    with self.assertRaises(ValueError):runner.validate_plan(p)
+    p=copy.deepcopy(plans['sv3']);p['runs'][0]['physical_gpu']=4
+    with self.assertRaises(ValueError):runner.validate_plan(p)
+
+  def test_waiter_releases_only_after_successful_own_predecessor_audit(self):
+    p=self.make_remainder()['sv2'];wait=p['wait_for']
+    prior=dict(state=runner.AUDITED,task=wait['task'],code_sha=wait['code_sha'],directory=wait['directory'])
+    with patch.object(Path,'exists',return_value=True),patch.object(runner,'read',return_value=prior),patch.object(runner,'audit_run',return_value={'passed':True}) as audit,patch.object(runner,'dump'),patch.object(runner.time,'sleep') as sleep:
+      runner.await_predecessor(p,'fixture')
+      audit.assert_called_once_with(prior,runner.DMC16);sleep.assert_not_called()
+    for field,value in [('state','failed'),('code_sha','wrong'),('task','other'),('directory','wrong')]:
+      bad=dict(prior,**{field:value})
+      with patch.object(Path,'exists',return_value=True),patch.object(runner,'read',return_value=bad),patch.object(runner,'audit_run') as audit:
+        with self.assertRaises(RuntimeError):runner.await_predecessor(p,'fixture')
+        audit.assert_not_called()
+
+  def test_waiter_does_not_poll_foreign_or_failed_jobs(self):
+    p=self.make_remainder()['sv2'];wait=p['wait_for']
+    bad=dict(task=wait['task'],directory=wait['directory'],code_sha=wait['code_sha'],state='failed')
+    with patch.object(Path,'exists',return_value=False),patch.object(runner,'read',return_value=dict(runs=[bad])),patch.object(runner.time,'sleep') as sleep:
+      with self.assertRaises(RuntimeError):runner.await_predecessor(p,'fixture')
+      sleep.assert_not_called()
 
 
 if __name__=='__main__':unittest.main()

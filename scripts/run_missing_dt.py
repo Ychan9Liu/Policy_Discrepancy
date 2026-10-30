@@ -45,15 +45,32 @@ def validate_plan(plan):
   if server not in HOSTS or plan['host'] != HOSTS[server] or plan['protocol'] != DMC16:
     raise ValueError('Wrong fixed host/protocol')
   expected = [t for t in TASKS if MATRIX[t][0] == server]
+  allocation = dict(MATRIX)
   shard = plan.get('shard')
-  if shard is not None:
-    if (shard != 'sv2-gpu1357' or server != 'sv2' or
-        not plan['campaign'].endswith('-partial1357')):
-      raise ValueError('Only the user-approved sv2 four-card shard')
+  if shard == 'remaining-three':
+    if not plan['campaign'].endswith('-remaining3'):
+      raise ValueError('Wrong remaining-three output namespace')
+    allocation.update(dmc_acrobot_swingup=('sv2',1),
+        dmc_cartpole_balance=('sv3',1),dmc_cartpole_swingup=('sv3',3))
+    expected = ['dmc_acrobot_swingup'] if server == 'sv2' else [
+        'dmc_cartpole_balance','dmc_cartpole_swingup']
+    if server == 'sv2':
+      predecessor = plan.get('wait_for', {})
+      base_campaign = plan['campaign'][:-len('-remaining3')]
+      directory = '/data/Policy_Discrepancy/runs/'+base_campaign+'-partial1357-sv2/dmc_cup_catch/dt-attempt02'
+      if predecessor != dict(directory=directory,task='dmc_cup_catch',code_sha=plan['code_sha']):
+        raise ValueError('Acrobot must wait for the approved cup job on sv2 GPU1')
+    elif plan.get('wait_for') is not None:
+      raise ValueError('No cross-server or arbitrary predecessor')
+  elif shard == 'sv2-gpu1357':
+    if server != 'sv2' or not plan['campaign'].endswith('-partial1357'):
+      raise ValueError('Wrong four-card shard')
     expected = [t for t in expected if MATRIX[t][1] in PARTIAL_GPUS]
     if plan.get('deferred_tasks') != [t for t in TASKS
         if MATRIX[t][0] == 'sv2' and MATRIX[t][1] not in PARTIAL_GPUS]:
       raise ValueError('Deferred slots must remain the original three tasks')
+  elif shard is not None:
+    raise ValueError('Unapproved shard')
   root = PurePosixPath(plan['root'])
   if (not plan['campaign'].startswith(PREFIX) or '/' in plan['campaign'] or
       '..' in plan['campaign'] or root.parent != PurePosixPath('/data/Policy_Discrepancy/runs') or
@@ -62,7 +79,7 @@ def validate_plan(plan):
     raise ValueError('Only the fixed eleven missing slots in a fresh root')
   for r in plan['runs']:
     task = r['task']; old = r['source_blocked']; base = r['source_baseline']
-    if (MATRIX[task] != (server,r['physical_gpu']) or r['server'] != server or
+    if (allocation[task] != (server,r['physical_gpu']) or r['server'] != server or
         r['host'] != HOSTS[server] or r['mode'] != 'dt' or type(r['seed']) is not int or
         r['seed'] != 0 or r['code_sha'] != plan['code_sha'] or
         old['task'] != task or old['mode'] != 'dt' or old['state'] != 'blocked' or
@@ -166,6 +183,64 @@ def subset(plan_path, output):
   validate_plan(plan); dump(output,plan)
 
 
+def remainder(plan_path, partial_path, resources, output):
+  """Prepare the newly assigned three tasks; GPU1 is serial with cup on sv2."""
+  parent=read(plan_path);partial=read(partial_path)
+  validate_plan(parent);validate_plan(partial)
+  commit,dirty=source_state()
+  if (parent['server']!='sv2' or parent.get('shard') or
+      partial.get('shard')!='sv2-gpu1357' or partial['code_sha']!=commit or
+      Path(output).exists()):raise ValueError('Need original and current four-card plan, fresh output')
+  inventory=read(resources)['servers'];output=Path(output);output.mkdir(parents=True)
+  for server,tasks in [('sv2',['dmc_acrobot_swingup']),('sv3',[
+      'dmc_cartpole_balance','dmc_cartpole_swingup'])]:
+    if inventory[server]['host']!=HOSTS[server]:raise ValueError('Resource host mismatch')
+    devices={int(l.split(',')[0]):l.split(',')[1].strip() for l in inventory[server]['gpus'].splitlines()}
+    plan=copy.deepcopy(parent);campaign=parent['campaign']+'-remaining3'
+    plan.update(server=server,host=HOSTS[server],shard='remaining-three',campaign=campaign,
+        root='/data/Policy_Discrepancy/runs/'+campaign+'-'+server,code_sha=commit,
+        authorized_to_train=False,created_utc=now(),local_drafts=dirty,
+        source_plan_sha256=sha(plan_path),partial_plan_sha256=sha(partial_path),
+        resource_hash=sha(resources),authorization='User: remaining three on sv2 GPU1 and sv3 GPU1/3; sv2 GPU1 serial after cup (2026-10-30)')
+    plan['runs']=[r for r in plan['runs'] if r['task'] in tasks]
+    if server=='sv2':plan['wait_for']=dict(directory=partial['root']+'/dmc_cup_catch/dt-attempt02',task='dmc_cup_catch',code_sha=commit)
+    for r in plan['runs']:
+      gpu=3 if r['task']=='dmc_cartpole_swingup' else 1
+      directory=plan['root']+'/'+r['task']+'/dt-attempt02';argv=r['review_argv'];argv[argv.index('--logdir')+1]=directory
+      r.update(server=server,host=HOSTS[server],physical_gpu=gpu,gpu_uuid=devices[gpu],
+          code_sha=commit,directory=directory,state='planned',launch_argv=None,
+          authorized_to_train=False,verified_compute_and_graphics_same_gpu=False,egl_index=None,
+          config=json.loads(json.dumps(dict(resolve(argv[4:]).flat))),
+          run_id=f'{server}:{campaign}:{r["task"]}:seed0:dt:attempt02')
+      r['environment_template'].update(CUDA_VISIBLE_DEVICES=devices[gpu],MUJOCO_EGL_DEVICE_ID=None,
+          TMPDIR=directory+'/tmp',WANDB_DIR=directory,WANDB_RUN_GROUP=campaign,
+          WANDB_RUN_ID=campaign+'-'+r['task'][4:]+'-seed0-dt-02')
+    validate_plan(plan);dump(output/(server+'-plan.json'),plan)
+
+
+def await_predecessor(plan, evidence):
+  """Wait only for our audited predecessor, never for an arbitrary GPU job."""
+  wait=plan.get('wait_for')
+  if wait is None:return
+  directory=Path(wait['directory']);path=directory/'execution-final.json'
+  while not path.exists():
+    index=read(directory.parent.parent/'actual-RUN_INDEX.json')
+    prior=next(r for r in index['runs'] if r['task']==wait['task'])
+    if (prior['state']!='running' or prior['code_sha']!=wait['code_sha'] or
+        prior['directory']!=wait['directory']):
+      raise RuntimeError('Predecessor absent, failed or incompatible; no automatic retry')
+    os.kill(prior['pid'],0)
+    dump(Path(evidence)/'queue-progress.json',dict(state='waiting_for_own_cup_job',
+        predecessor_pid=prior['pid'],predecessor_directory=str(directory),utc=now()))
+    time.sleep(30)
+  prior=read(path)
+  if (prior['state'] not in (AUDITED,'accepted') or prior['code_sha']!=wait['code_sha'] or
+      prior['task']!=wait['task'] or prior['directory']!=wait['directory']):
+    raise RuntimeError('Predecessor did not finish and pass audit')
+  audit=audit_run(prior,DMC16)
+  dump(Path(evidence)/'queue-released.json',dict(utc=now(),predecessor_audit=audit))
+
+
 def bind(plan_path, evidence, output):
   plan = read(plan_path); evidence=Path(evidence); validate_plan(plan)
   if platform.node()!=plan['host'] or clean_sha()!=plan['code_sha'] or Path(output).exists():
@@ -213,6 +288,7 @@ def run(plan_path):
   if (not plan['authorized_to_train'] or platform.node()!=plan['host'] or
       clean_sha()!=plan['code_sha']):raise RuntimeError('Authorization/host/SHA mismatch')
   if root.exists():raise FileExistsError('No resume/overwrite: '+str(root))
+  await_predecessor(plan, Path(plan_path).parent)
   if shutil.disk_usage(root.parent).free < len(plan['runs'])*60_000_000_000:
     raise RuntimeError('Insufficient space for allocated runs')
   checks=[require_free(r['physical_gpu'],r['gpu_uuid']) for r in plan['runs']]
@@ -256,13 +332,14 @@ def run(plan_path):
 
 if __name__=='__main__':
   p=argparse.ArgumentParser(description=__doc__)
-  p.add_argument('action',choices=('prepare','subset','probe','logger','integration','bind','run'))
+  p.add_argument('action',choices=('prepare','subset','remainder','probe','logger','integration','bind','run'))
   p.add_argument('--plan',type=Path);p.add_argument('--output',type=Path);p.add_argument('--evidence',type=Path)
   p.add_argument('--resources',type=Path);p.add_argument('--sources',nargs='+',type=Path)
   p.add_argument('--campaign');p.add_argument('--gpu',type=int);p.add_argument('--uuid');p.add_argument('--server',choices=HOSTS)
   a=p.parse_args()
   if a.action=='prepare':prepare(a.output,a.resources,a.sources,a.campaign)
   elif a.action=='subset':subset(a.plan,a.output)
+  elif a.action=='remainder':remainder(a.plan,a.evidence,a.resources,a.output)
   elif a.action=='probe':probe(a.gpu,a.uuid,a.output,host=HOSTS[a.server],allowed_gpus=[g for s,g in MATRIX.values() if s==a.server])
   elif a.action=='logger':serial.logger_check(a.output,run_tag='missing-dt-20261030-'+a.server,task=next(t for t in TASKS if MATRIX[t][0]==a.server))
   elif a.action=='integration':
