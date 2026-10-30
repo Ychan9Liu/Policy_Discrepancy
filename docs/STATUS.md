@@ -2,6 +2,15 @@
 
 更新日期：2026-10-30。
 
+## 03合并窗口最新：补十一条Dt，sv3四条启动验收通过、sv2七条资源阻塞（2026-10-30）
+
+- 用户新分配sv2七条GPU0—5/7（不使用sv2 GPU6）、sv3四条GPU4—7。仅补新增16环境中从未启动的11条Dt，seed0/clean纯视觉/size50m/alpha20/free_nats1/dyn-rep=1-.1/原梯度开关/百万动作/21×10/采样评价/独立RNG均不变，挂PD_1在线W&B和JSONL。不重跑原baseline/已完成Dt，不新增constant/shuffle或科学协议。
+- 本机新增受限`run_missing_dt.py`及7项测试；53项本机、两服务器各107项CPU回归、CPU三变体float32完整agent精确一致、11张分配卡CUDA/EGL实测、两台零动作online logger全部通过。11条真实size50m CUDA/bfloat16短程各4098动作/517更新/3×1评价/2报告，5687更新/22报告/33点评价隔离审计通过；Dt活跃位置和非1实际权重已记录，工程作用不代表收益。实际代码/测试版本`d8997f64a301bfdcfe08758faeae8957a7395766`，Git bundle同步sv2/sv3干净源码，无sv1/GitHub同步。
+- sv3于14:21:10启动四条Dt：GPU4 pendulum_swingup、5 reacher_easy、6 walker_run、7 walker_walk；监督器618156，agent618571/618580/618594/618917。14:25启动审计各零点10完整episode/0动作快照，316—437连续成功更新invalid0，68个C/G PID均为对应agent及子进程、四卡无外来，四条W&B running/full config及startup exact JSON/hash一致。本批新根`formal-m2-dmc16-missing-dt-20261030-sv3`，每任务dt-attempt02；正式百万动作尚未验收。
+- sv2七条工程/配置/绑定齐全，但14:20启动前GPU2/4出现外来计算作业，14:25再核GPU0也新增计算/图形作业，正式根未创建、七条均未启动。旧blocked和新plan保留；已报告并请用户协调或重新分配，未共享/停对方/自行换卡/自动等待空闲启动。GPU1/3/5/7当时无C/G PID，不是预约；sv2 GPU6全程不使用，sv3 GPU6属于已分配范围。实际容量及冲突证据见工程根，14:25 /data余sv2约806GB、sv3约706GB。
+- 14:29:36复核：sv3四条仍运行、2030—2153更新/最近开始动作10148—10640，invalid累计0、各0点10完整episode，四卡仅本项目进程；sv2 GPU0/2/4冲突仍在、正式根未创建。sv2本项目工程进程全部退出，sv3四张训练卡尚未释放；不能把本项目释放与卡空闲混同。因此新增32条为21条已结束/4条运行/7条未启动；加hopper六条为新增38槽位27条已结束/4条运行/7条未启动。既有10条完整指标/W&B收尾及17条待所属批次收尾的边界不变。新7/4条Dt分片结束时的shard_complete不等于全32条cohort_complete；仍需全来源原始return/快照/收据和线上最终审计，缺项不重加权，不作方法有效或跨seed结论。
+- 配置/实现/完整命令、提交/同步、测试、逐卡PID/设备及限制见`docs/MISSING_DT_RUNS_20261030.md`；小证据镜像/哈希、DELIVERY和可复制prompt在`analysis/outputs/missing-dt-start-20261030/`。首选继续当前03监测sv3、在用户解决sv2资源条件后按原配置补齐七条并完成全32条收尾；可立即做只读监测，阻塞卡启动依赖明确资源。未自动建chat/发消息；本机其他AGENTS/CHATS/RESEARCH/STATUS/proposal/根TeX草稿保留，仅本段进入提交。
+
 ## 03合并窗口最新：全批27条已训练结束、11条Dt从未启动（2026-10-30）
 
 - 13:40资源/索引及13:43—13:45线上只读核查：新增16环境×baseline/Dt共32条，21条已结束且有逐条audit，11条Dt从未启动；另hopper seed1/2/3六条全部accepted。新增38槽位共27条训练结束、11条未启动、运行中0。所有已结束条均百万动作/249493更新/21×10、退出0，线上27条finished且full config一致；本轮核对已有audit/终点评价/尾收据，不冒充新的一次全量原始产物重审计。
