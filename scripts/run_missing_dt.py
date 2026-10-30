@@ -340,7 +340,8 @@ if __name__=='__main__':
   if a.action=='prepare':prepare(a.output,a.resources,a.sources,a.campaign)
   elif a.action=='subset':subset(a.plan,a.output)
   elif a.action=='remainder':remainder(a.plan,a.evidence,a.resources,a.output)
-  elif a.action=='probe':probe(a.gpu,a.uuid,a.output,host=HOSTS[a.server],allowed_gpus=[g for s,g in MATRIX.values() if s==a.server])
+  elif a.action=='probe':probe(a.gpu,a.uuid,a.output,host=HOSTS[a.server],
+      allowed_gpus=(0,1,2,3,4,5,7) if a.server=='sv2' else (1,3,4,5,6,7))
   elif a.action=='logger':serial.logger_check(a.output,run_tag='missing-dt-20261030-'+a.server,task=next(t for t in TASKS if MATRIX[t][0]==a.server))
   elif a.action=='integration':
     plan=read(a.plan);serial.integration(a.plan,a.evidence,validator=validate_plan,host=plan['host'],new_session=True)
