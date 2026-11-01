@@ -1,6 +1,16 @@
 # 项目状态
 
-更新日期：2026-10-30。
+更新日期：2026-11-01。
+
+## 03合并窗口最新：25/32训练结束，六条实际补启动、一条依赖排队（2026-11-01）
+
+- 23:32—38重新核查：新增16任务×baseline/Dt共32条，25条训练结束、6条运行、1条排队。旧21条索引仍为accepted或run_audited_pending_group_and_WB、退出0；新增sv3四条于10月31日01:30全部accepted，各百万动作/249493更新/21×10，终点表hash及线上finished/full config/正式精确JSON与源表读回一致。旧17条仍待所属批次汇总，不把25条统称全32条验收完成。hopper补seed六条仍全部accepted、单列；新增38槽位为31结束/6运行/1排队。
+- 上轮后七条只完成工程验收，正式启动/后台队列没有执行，不能将中断当持续运行。本次按已有授权补启动，不重复确认、不重跑已完成四条、不用sv2 GPU6。冻结seed0/clean纯视觉/size50m/alpha20/原KL梯度/百万动作/21×10/原始return/在线PD_1均不变。
+- 23:34启动sv2 GPU1 cup_catch、3 cartpole_balance_sparse、5 cartpole_swingup_sparse、7 hopper_stand，监督器1647284；sv3 GPU1 cartpole_balance、3 cartpole_swingup，监督器875315。23:37:57六条启动审计通过：各0点10完整episode/固定0步快照、289—378连续更新invalid0、102个C/G PID正确同卡/对应agent子进程、W&B running/full config/startup精确JSON/hash读回一致；百万动作尚未完成。
+- acrobot在sv2 GPU1串行等待cup完整成功及终点审计，23:35 CPU队列1650585启动、queue-progress明确training_started=false/等待本项目前驱或其审计，正式根不存在、无agent。生产用独立queue_missing_dt辅助器覆盖agent退出但监督器尚审计窗口；原c768内置PID等待不直接用于长时队列。释放后仍核空闲与空间，不共享/等候外来作业或自动恢复。
+- 实际旧四条SHA `d8997f64a301bfdcfe08758faeae8957a7395766`；新七条训练/CPU114及CUDA工程实测 `c7689d50f4caed0fef89912c65280b8d2558b126`；独立CPU队列及sv2实际17项验收 `2cccd5e006a639f10699907ad3f5b2f49c2c0b56`。c768两机各114项/三变体float32完整agent、7条真实size50m CUDA短程各4098动作/517更新/3×1/2报告已通过，保留旧算法梯度回归。未改训练源码/科学协议/容差；最终相对2ccc仅文档，相对c768另有CPU队列辅助器及其测试。
+- 23:33—34六张指定卡空闲并重新CUDA/EGL实测通过，/data余sv2约764GB、sv3约237GB；启动审计时当前六卡仅本批作业、仍运行未释放，原sv3 GPU4—7已释放。sv3 GPU0/2外来作业不干扰，sv1本轮只读索引、未核GPU。两机canonical repo仍d899，独立训练工作树c768，sv2独立队列工作树2ccc；Git校验同步仅sv2/sv3，无sv1源码/GitHub推送，不改活动checkout或删除base-py311/产物。
+- 报告`docs/RUNS_STATUS_20261101.md`，准备/控制器报告`docs/MISSING_DT_REALLOCATION_20261030.md`，小证据/hash/DELIVERY及可复制prompt `analysis/outputs/missing-dt-start-20261101/`。首选继续当前03监测六条/队列并完成七条终点和全32条原始return/快照/收据/W&B审计；结束前不重加权或称方法有效。旧跨机逐位/真实环境、hopper因果及GPU7并发限制保留，不自动建chat/发消息；用户既有草稿保留。
 
 ## 03合并窗口最新：补十一条Dt，sv3四条启动验收通过、sv2七条资源阻塞（2026-10-30）
 
