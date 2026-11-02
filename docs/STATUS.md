@@ -2,6 +2,13 @@
 
 更新日期：2026-11-02。
 
+## 05 最新：新增15任务分析完成，排除acrobot（2026-11-02）
+
+- 用户明确排除acrobot_swingup；新增15任务baseline/PPD-KL共30条seed0，逐条复核百万动作/249493连续成功更新/21×10评价/快照小证据/正式c与配置，复算原始return AUC及末段五点均值。AUC正向7/15、末段正向11/15，非显著性胜率；pendulum_swingup和walker_run最大正向，finger_turn_easy主次负向，finger_spin末段优势依赖最后一点跳升。
+- 门控实际作用存在，活跃权重约0.626—0.926；缺新constant/shuffle与多seed，不能归因位置选择价值/跨seed稳定性。14条索引accepted，16条逐条审计通过但仍待批次/W&B收尾；本次完成指定子集分析，不宣称原32条全批完成。历史四任务单列参照，不混入新总体，hopper补seed另批。
+- 报告 `docs/ANALYSIS_DMC15_V1.md`，代码 `analysis/analyze_dmc15_v1.py`，原始小证据/哈希/逐任务与诊断表/学习曲线和差值图在 `analysis/outputs/dmc15-analysis-20261102-final/`。实际分析/核查SHA a0b66181586194066fe0c7bdd34ae75847a5ddcc，后续仅文档；三服务器仅只读CPU文件，无训练/GPU/服务器源码同步或推送，未核GPU现状；既有草稿保留。
+- 首选继续02制定覆盖强正向与负向任务的多seed及必要对照协议，配置/资源待用户确认；03可并行补批次/线上收尾。报告附可复制prompt，不自动建chat或发送消息。
+
 ## 03合并窗口最新：31/32训练结束，仅acrobot在sv2 GPU1运行（2026-11-02）
 
 - 12:07—08核查：昨晚六条Dt全部accepted/退出0，各百万动作、249493更新、21点×10完整episode，分片表hash/completion一致；线上六条finished/full config/原始return精确JSON/hash与源表一致。因此新增32条为31训练结束/1运行，无排队或失败，未完成全32条最终汇总；旧17条所属批次收尾仍未自动完成。原21条计数继承11月1日索引，本轮重点核新六条、原补四条及最后运行，不冒充旧21条全量重审。
