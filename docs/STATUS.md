@@ -2,6 +2,12 @@
 
 更新日期：2026-11-02。
 
+## 05 最新：四任务指定步数附近对比GIF（2026-11-02）
+
+- 已制作cartpole_swingup 300k、finger_spin/pendulum_swingup/walker_run 1M对比GIF及MP4，左baseline右PPD-KL。沿用第一保存链、目标前最后完整episode规则，无回报择样；实际动作范围272001—287985、其余976001—991985，均完整episode原速循环。属于训练replay，不是固定checkpoint评价。
+- 输出 `analysis/outputs/dmc-four-gifs-20261102/final/`，时长分别10/20/20/25秒；报告/复现/交接prompt `docs/ANALYSIS_DMC_FOUR_GIFS.md`。八条源帧hash/reward求和、四GIF逐帧像素与时长及MP4完整解码通过，接触图已目视检查。
+- 实际采集/编码/验证SHA 575e9916077e4e9c8b731453d3d284d489599acf，后续仅文档；只读sv1/sv2/sv3文件、本机提交，无训练/推理/环境/GPU/服务器源码同步或推送，未核GPU现状；既有草稿保留。后续版式继续现有05；严格checkpoint评价补录由03在用户资源授权后处理，不自动建chat/发消息。
+
 ## 05 最新：新增15任务分析完成，排除acrobot（2026-11-02）
 
 - 用户明确排除acrobot_swingup；新增15任务baseline/PPD-KL共30条seed0，逐条复核百万动作/249493连续成功更新/21×10评价/快照小证据/正式c与配置，复算原始return AUC及末段五点均值。AUC正向7/15、末段正向11/15，非显著性胜率；pendulum_swingup和walker_run最大正向，finger_turn_easy主次负向，finger_spin末段优势依赖最后一点跳升。
