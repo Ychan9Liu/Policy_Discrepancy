@@ -91,3 +91,13 @@ bundle SHA256 `e1b61d38c0f0f0f48d2ddbdbd53b7ae12dd55f2b056008c5a53f03c3dafdb425`
 本次准备只改分析代码/测试/文档，不修改训练源码或服务器两个活动checkout，不写W&B。6项新增范围/hash/加权fixture与20项既有指标/分析测试的执行日志、实际版本/hash存`analysis/outputs/pendulum-seeds23-analysis-preparation-20261104/`；不能将这些离线测试写成四条真实终点验收。终点采集及完整图形验看尚待训练完成。
 
 首选继续当前chat监测并完成四条终点审计和05分析；已完成新卡验收和并行启动，不重复申请或启动。新科学干预仍交02/用户，不自动建chat或发送消息。交付完整SHA/实测控制器SHA/实际训练SHA、差异与同步范围、实际资源状态、原始指标/限制及可复制prompt；本机其他chat草稿保留。
+
+### 首个5万点与初始条件检查（2026-11-04）
+
+01:54:07只读核对两条新Dt首个5万点：各10个完整1000动作episode，原始return均值seed2=38.2、seed3=0，JSONL均值一致，同seed baseline评价环境seed一致；快照实际50000动作/11993更新、metadata/done/payload存在，前11993成功收据连续且invalid0。门控日志有限且active_weight_available=1；两条首5万的实际活跃权重更新均值0.9869512231/0.9988607466。它们是早期描述，不作完整AUC、失败或方法效力判定；评价reward逐transition没有独立重放，该点参数payload仅查存在。证据在本次并行输出目录的monitor/partial-50k-20261104-015448.json和对应只读脚本。
+
+01:58:18两监督器PID/创建时间/命令及四agent继续匹配，baseline seed2/3最新动作183440/183168、Dt为58672/58760，末条invalid0，/data余324.44GB，终点completion仍不存在。
+
+02:01:43新增实际初始条件CPU检查：每seed baseline/Dt的294个0步参数数组及计数完全相同且有限，但reset图像已有623/301个坐标不同，reset观测上的策略输出有1/2个不同。完整更新前前缀的reward/episode边界一致，action/image不逐位相同；首次成功更新仍2032动作。本次实际解码并hash的是四条0步checkpoint，不能扩大为所有后续快照。详细计数、动作对齐语义与解释限制见docs/ANALYSIS_PENDULUM_CORRECTION.md新增小节。
+
+分析/实测SHA58f6ff6710c62bb9871a260d59aba6813d6952a6，8项新分析测试及既有20项共28项通过；原始检查/源hash见analysis/outputs/pendulum-seeds23-initial-20261104/，未改训练源码或活动checkout。初始差异早于优化器更新，具体数值来源未裁决，不因此改协议/停训/重复启动，不把这批当输入逐位相同的机制实验；继续等待四条完整终点及逐seed结果。

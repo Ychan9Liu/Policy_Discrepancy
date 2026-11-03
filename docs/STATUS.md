@@ -2,6 +2,12 @@
 
 更新日期：2026-11-04。
 
+## 05校正跟进：初始参数一致，更新前输入已有差异（2026-11-04）
+
+- 02:01:43 CPU只读四条实际0步checkpoint及16链×128行前缀：同seed两组294个参数数组/初始计数完全相同且有限；reset图像不同坐标seed2/3=623/301，reset观测对应策略输出不同数=1/2。前缀reward/episode边界一致，action/image不逐位相同，第一次成功更新均2032动作。这限制精确输入控制的机制归因，不构成参数初始化错误、停训或改协议依据；具体数值来源未裁决。
+- 01:54两Dt的5万点已局部核对：各10完整episode/11993连续成功更新、固定快照metadata/完成标记与JSONL一致、门控数值合法；评价后训练继续。01:58:18四条agent和两监督器均真实存活，baseline约18.3万、Dt约5.9万动作，/data324.44GB，仍0条终点验收。GPU1/4/5/6继续原四条、7保留，不追加实验。
+- 实际初始检查与28项离线测试SHA58f6ff6710c62bb9871a260d59aba6813d6952a6；新增initial只读入口，不改训练源码/活动checkout，不执行agent/env、不写W&B，大checkpoint/replay留sv3。证据/hash/版本/命令在analysis/outputs/pendulum-seeds23-initial-20261104/；报告docs/ANALYSIS_PENDULUM_CORRECTION.md及docs/PENDULUM_SEEDS23_PARALLEL.md。首选继续当前chat等四条终点、按冻结口径逐seed复算与校正解释，再交02下一协议建议，目标保持进行中。
+
 ## 03执行：Vision20 seed1 sv1六卡实际续启（2026-11-04）
 
 - 用户明确“直接启动，我会继续清理”，仅sv1初始六卡360GB预留执行显式例外；实际启动余289.725GB，后继每条60GB底线保留，不删数据、不降预算或replay。01:48:39监督器1609040启动GPU2/3/4/5/6/7首批quadruped_run/quadruped_walk/reacher_hard/acrobot_swingup/cup_catch/cartpole_balance六baseline；各卡后继Dt与第二任务按原串行队列，18条排队。
