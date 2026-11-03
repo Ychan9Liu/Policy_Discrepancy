@@ -166,3 +166,26 @@ seed3 Dt在20万点的10个0回报之后，25万点有5个0、5个正回报。�
 进一步逐记录比较前次28点与本次32点：前次每条评价记录精确保留，新点追加。每seed两组在0…30万各共同点的10个评价环境seed完全相同，但不同评价点的环境seed集合各不相同，这是当前原协议的数据事实。seed3 Dt在20/25/30万点为0/472.2/91.6，不能称为已稳定恢复；也不能把跨点变化全部归为优化导致的参数退化或恢复，因为策略快照与评价初始条件同时变化。现有结果不能分离这两者的贡献，不修改评价协议或另行启动评价来补该缺口。完整曲线、训练replay与终点指标仍待完成。
 
 新复算结果`monitor/partial-return-300k-20261104.json` SHA256 `e8355fe6368d2095d63a51d8105c7004975002a2f828c9b51275f80679dd724b`；本机记录一致性脚本`compare-observed-evaluations.py` SHA256 `15dce17e0dee5748f841675a2e99c35b5e1ef7c7bee2ad53535577cb76fae743`，结果`monitor/observed-record-consistency-300k.json` SHA256 `874c2d8ddf76538718ee370f3c5358b32565e6f7dfa516c03c6ed567e8b0f095`。均在本次并行输出目录。未新解码30万参数或重放评价逐reward；不把所查点完整说成四条终点完整。无代码/训练配置/服务器同步/W&B/c写入变更，继续当前chat至四条完整验收和校正分析完成。
+
+### 05:44现有40点评价复算：四条继续原协议训练
+
+05:43:57核对两监督器及四agent的真实身份/命令均匹配，baseline seed2/3最新动作525904/525148、PPD-KL为400556/401236，末条invalid_count均0。GPU1/4/5/6各17个本批C/G进程，GPU7无进程，/data余298.51GB；四条仍运行中，终点0/4。两条PPD-KL已写出40万点评价并继续训练，未发生本批训练失败或重跑。
+
+05:44:08通过未修改的`partial-return-250k.py`和实际c5f86ca冻结指标代码，复算baseline各0…50万11点、PPD-KL各0…40万9点，共40点/400完整episode。全部现有点的原始episode均值、来源/协议与固定快照小证据通过；无解析冲突、重复评价行或episode缺项。前次已核的32条评价记录精确保留。完整21点AUC和末段五点均值仍为null，未插值、截短预算或用局部曲线代替正式指标。
+
+|训练seed|40万点baseline均值|40万点PPD-KL均值|该点PPD-KL−baseline|PPD-KL原始10episode return|
+|---:|---:|---:|---:|---|
+|2|705.1|784.3|+79.2|651, 689, 937, 933, 635, 939, 889, 726, 799, 645|
+|3|839.8|365.8|−474.0|0, 0, 0, 0, 0, 923, 922, 0, 896, 917|
+
+新增35万点PPD-KL seed2/3为824.3/584.1；baseline45万点753.9/804.3、50万点775.7/788.0，也已纳入本次独立复算。每seed两组在0…40万共同点的评价环境seed一致，但不同点的环境seed集合仍各不相同。seed3 PPD-KL的30/35/40万均值91.6/584.1/365.8呈阶段波动；40万点6个零回报、4个正回报。不能凭这些点判定最终优劣、稳定恢复、永久失败，或把跨点变化完全归为参数变化；保留全部点，继续原百万动作协议。
+
+本次仍仅核已记录的episode累计return，未独立重放评价逐transition reward，也未新增解码35万/40万checkpoint参数。既有四条0步和seed3 Dt的15万/20万参数检查范围不扩大。终点训练replay诊断、完整门控统计、正式c冻结及全部21×10审计仍待完成。
+
+本机只读采集/一致性检查脚本`analysis/outputs/pendulum-seeds23-parallel-20261104/collect-observed-400k.py`，SHA256 `0774248495d10e32c512ae02e7c422885c2a6a6406b055ffbf9e97ac4b21c95d`；冻结指标读取脚本仍为`partial-return-250k.py`，SHA256 `76f4f9a45d2a57ac90bf433ce4a07c23537f5b63f6ce5322ac0602dff41172fb`。结果`monitor/partial-return-400k-20261104.json` SHA256 `5a8ba7804b005bb7dc734839ee7d41687adcb2941e8c4434bd98de80709cf200`；一致性结果`monitor/observed-record-consistency-400k.json` SHA256 `d4d3e483f298ed0aba25bce6dad7d3aaba6719f3b7e4df2f8bce4bffd3f1d03d`。执行命令：
+
+```powershell
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-observed-400k.py'
+```
+
+该命令已执行成功，脚本拒绝覆盖既有证据；后续阶段使用新输出位置并保留原文件。仅本机小证据/运行记录更新，无训练源码、科学配置、服务器Git同步、W&B或c写入变更。实际训练SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca、控制器/服务器验收SHA b7f42d46d16d4eda5cff5a798ec7b60cb27a3790保持；终点分析及34项已通过测试仍3591c8d2f54b0558badb2c98641c87f5e6edb52b。继续当前chat完成四条终点collect/analyze/replay、图形验看与校正解释，目标保持进行中，不自动建chat或发消息。
