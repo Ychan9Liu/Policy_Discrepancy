@@ -2,6 +2,14 @@
 
 更新日期：2026-11-04。
 
+## 03执行：Vision20 seed1 sv1六卡实际续启（2026-11-04）
+
+- 用户明确“直接启动，我会继续清理”，仅sv1初始六卡360GB预留执行显式例外；实际启动余289.725GB，后继每条60GB底线保留，不删数据、不降预算或replay。01:48:39监督器1609040启动GPU2/3/4/5/6/7首批quadruped_run/quadruped_walk/reacher_hard/acrobot_swingup/cup_catch/cartpole_balance六baseline；各卡后继Dt与第二任务按原串行队列，18条排队。
+- 实际代码/测试bef29480df12d07659c640b22218804dd1d69e63：本机9项控制器测试、服务器123 CPU、三个完整float32隔离变体、六卡实际CUDA/EGL及24条真实size50m CUDA/bfloat16短程通过（各4098动作/517更新/3×1/2报告）。初次W&B直连403停止且未启动正式训练；同SHA新retry02通过现有本地代理恢复，失败及37份同SHA复用证据/hash保留，无凭据/依赖/训练算法改动。
+- 01:56:52六条各0点评价10完整episode、固定0动作0更新快照，1841—1937连续成功更新/invalid0、全配置/SHA/seed、CUDA与EGL同卡独占及线上running/精确startup JSON/hash读回通过，sv1余283.305GB。01:57:25 sv2原GPU0—5/7七baseline继续、七Dt排队、余569.931GB，不用GPU6；全40记录2复用验收/13运行/25排队，没有百万步终点新增验收。两机这些卡仍有本项目作业、未释放，不能把启动验收当方法有效或全批完成。
+- 仅sv1独立checkout部署bef2948，sv2保持77699380851701f7a03a9d13985c5cc0de5d0702，canonical/其他活动源码不移动；58训练/环境blob及24完整配置与原计划一致。报告docs/VISION20_SEED1_SV1_RUNS.md；462份小证据及归档hash、本机测试/版本/DELIVERY和继续prompt在analysis/outputs/vision20-seed1-sv1-20261104/，原始模型/replay仍服务器。并行其他chat改动保留，不把其后续分析提交当本批实测。
+- 首选继续当前03监测两机已授权队列、容量和每条终点审计，完成38新运行+hopper2复用的全40来源/百万动作/249493更新/21×10/c/raw-return/W&B精确收尾，再由用户交05分析；存储底线或外来冲突阻断后继即报告，不擅自删数据或换卡。不新建chat/发送消息，不自行修改科学协议。
+
 ## 05校正跟进：四条运行中，终点分析入口就绪（2026-11-04）
 
 - 01:43:27北京时间核对两个监督器真实PID/创建时间/命令及四条agent：sv3 GPU1/4 baseline seed2/3最新动作160100/159856，GPU5/6 PPD-KL seed2/3为37160/37088，末条更新invalid均0；GPU7无进程、/data余326.35GB。四条仍运行中，尚无终点completion，不依据阶段return作最终结论。

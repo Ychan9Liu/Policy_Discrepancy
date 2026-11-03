@@ -1,5 +1,7 @@
 # 03合并窗口 · Vision-task20 seed1 baseline/PPD-KL（2026-11-03）
 
+**2026-11-04续启**：用户明确接受sv1初始容量缺口并继续清理。01:48在sv1 GPU2—7实际启动六条baseline，18条排队；24条真实CUDA短程及01:56启动审计通过。sv2原七baseline/七排队不变。容量例外、实际运行bef2948、首批任务/收据/线上与剩余条件见`VISION20_SEED1_SV1_RUNS.md`；下方sv1未部署/空间阻塞为11月3日历史状态。
+
 ## 用户确认与范围
 
 用户要求vision-task20、原配置、训练seed1、baseline与PPD-KL全部测试。用户进一步确认：资源为sv1物理GPU2—7、sv2物理GPU0—5/7（不用sv2 GPU6）；**复用已完成hopper_hop seed1 baseline/PPD-KL一对，其余19任务新跑38条**。最终20任务×两组40条记录中两条保留原运行身份，不重训hopper、不把旧源改写成新提交。用户同意sv2先跑、自己释放或扩容sv1 /data。
