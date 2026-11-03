@@ -189,3 +189,30 @@ seed3 Dt在20万点的10个0回报之后，25万点有5个0、5个正回报。�
 ```
 
 该命令已执行成功，脚本拒绝覆盖既有证据；后续阶段使用新输出位置并保留原文件。仅本机小证据/运行记录更新，无训练源码、科学配置、服务器Git同步、W&B或c写入变更。实际训练SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca、控制器/服务器验收SHA b7f42d46d16d4eda5cff5a798ec7b60cb27a3790保持；终点分析及34项已通过测试仍3591c8d2f54b0558badb2c98641c87f5e6edb52b。继续当前chat完成四条终点collect/analyze/replay、图形验看与校正解释，目标保持进行中，不自动建chat或发消息。
+
+### 06:50现有48点评价复算与seed3零回报的算术分解
+
+06:49:50实际核查：两监督器及四agent身份/命令匹配；baseline seed2/3最新更新开始动作626192/625316、PPD-KL为500496/501368，末条invalid0，全部继续训练。GPU1/4/5/6各17个本批C/G进程，GPU7无进程，/data余291.12GB；四条终点仍0/4。两条PPD-KL已完成50万点评价，没有新的训练失败或重跑。
+
+06:50:03复用原c5f86ca冻结指标代码，只读复算baseline各0…60万13点、PPD-KL各0…50万11点，共48点/480完整episode。原始episode均值、来源/协议和固定快照小证据通过，无重复或均值冲突；前次40条评价记录精确保留。完整21点AUC和末段五点评价仍不齐，正式指标保持null，不插值或计算替代预算指标。
+
+|训练seed|50万点baseline均值|50万点PPD-KL均值|该点PPD-KL−baseline|PPD-KL原始10episode return|
+|---:|---:|---:|---:|---|
+|2|775.7|791.1|+15.4|691, 1000, 886, 792, 939, 0, 802, 934, 933, 934|
+|3|788.0|377.8|−410.2|0, 932, 0, 0, 934, 983, 0, 0, 0, 929|
+
+新增45万点PPD-KL seed2/3为778.4/291.0，baseline55万点814.9/741.6、60万点800.3/762.1，也纳入本次复算。每seed两组在0…50万共同点的评价环境seed一致，跨点环境seed集合各不相同；跨点变化仍混合参数快照和评价初始条件变化。seed3 PPD-KL40/45/50万均值365.8/291.0/377.8，保持全部正式点，不据阶段结果调参、停训、重跑或宣告最终优劣。
+
+50万点seed3的低均值可作直接的算术说明：PPD-KL有6个零回报episode，其相同评价环境seed下的baseline return为843/714/758/135/760/889，合计4099，对该点组间均值差贡献−409.9；其余4个PPD-KL正回报为932/934/983/929，对应baseline为935/931/996/919，差值合计−3，对均值差贡献−0.3。两部分相加为−410.2。因此该点评价差距主要来自6个零回报episode。这是按PPD-KL结果选取子集后的单点描述，不能据此证明两组保持能力等效、确定reset角度、区分是否完成摆起，或定位训练机制原因；完整训练replay和终点分析仍待完成。
+
+本次还只读核对终点分析按seed/组分别汇总、按更新数加权，以及实际训练入口的数值检查。embodied/run/protocol_v1.py在c5f86ca和当前交付父版本ff1e76e的Git blob同为ddfa3ba8f00ff9a0b533ef369380bccf1fa10df1：写成功收据前检查opt/loss与opt/grad_norm有限，record_update在非有限时抛错。此代码事实不代替完整249493条收据终点核验，也不能排除有限数值的梯度尖峰或证明每个checkpoint参数均被独立解码。没有因代码阅读新增训练或改变验收阈值，既有34项分析测试不因文档更新重复执行。
+
+本次没有额外解码45万/50万参数或重放评价逐transition reward；只核已记录的episode累计return，既有0步和seed3 Dt15/20万参数检查范围不扩大。正式c、完整门控统计、百万训练replay核验和四条终点验收均仍待完成。
+
+只读采集/一致性脚本analysis/outputs/pendulum-seeds23-parallel-20261104/collect-observed-500k.py的SHA256为fed23b0b40d365e26910a0298be39f6bf5cd47f57dc44f8b3bac4a2cc3c6bd89，调用未修改的partial-return-250k.py（SHA256 76f4f9a45d2a57ac90bf433ce4a07c23537f5b63f6ce5322ac0602dff41172fb）。结果monitor/partial-return-500k-20261104.json的SHA256为58f15b4529e4f0062b6ffbd3377b2514d7e8bcb5b19a1d210ee78ae669c502df；一致性结果monitor/observed-record-consistency-500k.json为072aa18551a8d505677063aca60fb2d2520abc63d6d8cee72cfb5c3cdb33f2c3；单点分解monitor/paired-500k-seed3-decomposition.json为f1f751804fb0b95b4e1470d2aaee84552942e9d92d7ef7c9c689e1ffd02e6937。分解文件保留原episode ID、环境seed和两组return，按各子集的sum(PPD-KL−baseline)/10即可复算上述贡献。采集命令已成功执行，不能覆盖既有证据：
+
+```powershell
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-observed-500k.py'
+```
+
+本轮仅本机小证据/辅助只读脚本和文档更新；无训练源码、科学配置、服务器Git同步、活动checkout、W&B或c写入变更。实际训练/指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca、控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790，以及终点分析/既有34项测试3591c8d2f54b0558badb2c98641c87f5e6edb52b保持。继续当前chat完成四条终点collect/analyze/replay、图形验看和完整校正解释，目标保持active，不自动建chat或发消息。
