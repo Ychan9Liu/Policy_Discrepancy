@@ -243,6 +243,55 @@ def collect(source, output):
         list(pool.map(one, specs))
 
 
+def compare_prefix(source, output):
+    """Copy only 16 x 128 pre-update rows, never a full replay/checkpoint."""
+    output.mkdir(parents=True, exist_ok=False)
+    proofs = {g: read(source / (g+'.json')) for g in ('baseline', 'dt')}
+    remote = '''from pathlib import Path
+import numpy as np, sys
+parts=[]
+for path in paths:
+ with np.load(path,allow_pickle=False) as z:
+  parts.append({k:z[k][:128] for k in ('reward','action','is_first','is_last','is_terminal','image')})
+np.savez_compressed(sys.stdout.buffer,**{k:np.stack([p[k] for p in parts]) for k in parts[0]})
+'''
+    def one(group):
+        proof = proofs[group]
+        paths = [next(c['path'] for c in proof['replay_chunks'] if c['worker'] == i) for i in range(16)]
+        program = 'paths=' + repr(paths) + '\n' + remote
+        (output / (group+'-remote.py')).write_text(program, encoding='utf-8')
+        command = ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=20', proof['spec']['server'],
+            "CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /data/Policy_Discrepancy/envs/dreamer/bin/python -"]
+        proc = subprocess.run(command, input=program.encode(), capture_output=True)
+        (output / (group+'-stderr.txt')).write_bytes(proc.stderr)
+        proc.check_returncode()
+        path = output / (group+'.npz')
+        path.write_bytes(proc.stdout)
+        with np.load(path, allow_pickle=False) as z:
+            arrays = {k: z[k] for k in z.files}
+        for k, values in arrays.items():
+            assert all(array_digest(v) == old[k] for v, old in zip(values, proof['root_prefix_hashes']))
+        return group, arrays
+    with concurrent.futures.ThreadPoolExecutor(2) as pool:
+        arrays = dict(pool.map(one, proofs))
+    result = dict(source_hashes={g: digest(source / (g+'.json')) for g in proofs},
+                  copied_npz_hashes={g: digest(output / (g+'.npz')) for g in proofs}, fields={})
+    for k, a in arrays['baseline'].items():
+        b = arrays['dt'][k]
+        unequal = a != b
+        # First chronological callback: row first, then ordered worker.
+        where = np.argwhere(np.swapaxes(unequal, 0, 1))
+        first = where[0].tolist() if len(where) else None
+        difference = np.abs(a.astype(np.float64) - b.astype(np.float64))
+        result['fields'][k] = dict(unequal_elements=int(unequal.sum()), total_elements=a.size,
+            max_abs_difference=float(difference.max()), mean_abs_difference=float(difference.mean()),
+            first_difference_row_worker_coordinate=first,
+            first_difference_callback_index=first[0]*16+first[1] if first else None,
+            initial_reset_unequal_elements=int(unequal[:, 0].sum()))
+    dump(output / 'comparison.json', result)
+    print(json.dumps(result))
+
+
 def analyze(source, output):
     output.mkdir(parents=True, exist_ok=False)
     runs = {group: read(source / (group+'.json')) for group in ('baseline', 'dt')}
@@ -319,7 +368,8 @@ def analyze(source, output):
             subset = [r for r in rows if r['group'] == group]
             x, y = [r['end_action']/1e6 for r in subset], [r[key] for r in subset]
             if key == 'evaluation_return':
-                x, y = [0]+x, [0]+y
+                point0 = next(c['mean_return'] for c in curves if c['group'] == group and c['action_step'] == 0)
+                x, y = [0]+x, [point0]+y
             ax.plot(x, y, color=color, label=label)
         ax.set(title=title, xlabel='Training actions (millions)')
         ax.grid(alpha=.2)
@@ -337,11 +387,11 @@ def analyze(source, output):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=('collect', 'analyze'))
+    parser.add_argument('mode', choices=('collect', 'analyze', 'prefix'))
     parser.add_argument('--source', '--input', dest='source', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
-    {'collect': collect, 'analyze': analyze}[args.mode](args.source, args.output)
+    {'collect': collect, 'analyze': analyze, 'prefix': compare_prefix}[args.mode](args.source, args.output)
 
 
 if __name__ == '__main__':
