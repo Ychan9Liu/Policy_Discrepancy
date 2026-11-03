@@ -73,6 +73,30 @@ class Vision20Seed1Test(unittest.TestCase):
       self.assertFalse(record['reservation_satisfied']);self.assertTrue(record['explicit_sv1_capacity_exception'])
       self.assertEqual(record['per_run_floor_bytes'],60_000_000_000)
 
+  def test_sv1_engineering_two_waves_never_share_a_card(self):
+    with TemporaryDirectory() as temp:
+      root=Path(temp);self.make_plan(root)
+      runner.split(root/'out/planned-run-index.json','sv1',root/'sv1.json')
+      plan=json.loads((root/'sv1.json').read_text());evidence=root/'engineering';evidence.mkdir()
+      for gpu in range(2,8):(evidence/f'gpu{gpu}-binding.json').write_text('{}')
+      observed=[]
+      def simulate(path,folder,validator,host,new_session):
+        p=runner.read(path);validator(p)
+        bad=json.loads(json.dumps(p));bad['runs'].pop()
+        with self.assertRaises(ValueError):validator(bad)
+        pairs={(r['task'],r['physical_gpu']) for r in p['runs']}
+        self.assertEqual(len(p['runs']),12);self.assertEqual(len(pairs),6)
+        self.assertEqual(len({g for t,g in pairs}),6)
+        observed.extend((r['task'],r['mode']) for r in p['runs'])
+        (folder/'integration').mkdir()
+        runner.dump(folder/'integration/acceptance.json',dict(passed=True,code_sha=p['code_sha'],
+            runs=[dict(task=r['task'],mode=r['mode'],updates=517,reports=2,evaluations=3) for r in p['runs']]))
+      with patch.object(runner,'clean_sha',return_value=plan['code_sha']),patch.object(runner.platform,'node',return_value=plan['host']),patch.object(runner,'serial_integration',side_effect=simulate) as integration:
+        runner.integration(root/'sv1.json',evidence)
+      self.assertEqual(integration.call_count,2);self.assertEqual(len(set(observed)),24)
+      a=runner.read(evidence/'integration/acceptance.json');self.assertTrue(a['passed'])
+      self.assertEqual(a['run_count'],24);self.assertEqual(a['waves'],2)
+
   def test_queue_audits_baseline_before_dt_and_blocks_failed_predecessor(self):
     for exit_code in (0,1):
       with TemporaryDirectory() as temp:

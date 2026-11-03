@@ -1,5 +1,6 @@
 """Approved seed1 task pairs; one job per assigned GPU, no resume or idle retry."""
 import argparse
+import copy
 import json
 import os
 from pathlib import Path
@@ -15,7 +16,7 @@ from scripts.prepare_m2_v1 import resolve
 from scripts.run_hopper_seeds123 import (
     REPO,read,dump,sha,now,clean_sha,require_free,audit_run,child_environment,probe)
 from scripts.run_missing_dt import approved_context
-from scripts.run_dmc8_serial import integration
+from scripts.run_dmc8_serial import integration as serial_integration
 
 AUDITED='run_audited_pending_group_and_WB'
 
@@ -97,6 +98,37 @@ def bind(plan_path,evidence,output):
   plan['authorized_to_train']=True;validate(plan);dump(output,plan)
 
 
+def integration(plan_path,evidence):
+  """Keep engineering one task per GPU even for two-task production queues."""
+  plan=read(plan_path);validate(plan);evidence=Path(evidence)
+  if clean_sha()!=plan['code_sha'] or platform.node()!=plan['host']:
+    raise RuntimeError('Engineering exact SHA/host differs')
+  target=evidence/'integration'
+  if target.exists():raise FileExistsError(target)
+  completed=[]
+  waves=sorted({(r['queue_position']-1)//2 for r in plan['runs']})
+  for wave in waves:
+    part=copy.deepcopy(plan)
+    part['runs']=[r for r in part['runs'] if (r['queue_position']-1)//2==wave]
+    # The original full plan was strictly validated; permit only its exact slice.
+    def validator(value, expected=part):
+      if value!=expected:raise ValueError('Engineering wave differs from approved full plan')
+    folder=evidence/f'wave{wave+1:02d}';folder.mkdir(parents=True,exist_ok=False)
+    dump(folder/'plan.json',part)
+    for gpu in {r['physical_gpu'] for r in part['runs']}:
+      shutil.copyfile(evidence/f'gpu{gpu}-binding.json',folder/f'gpu{gpu}-binding.json')
+    serial_integration(folder/'plan.json',folder,validator=validator,host=plan['host'],new_session=True)
+    result=read(folder/'integration/acceptance.json')
+    if not result['passed'] or result['code_sha']!=plan['code_sha']:
+      raise RuntimeError('Engineering wave failed or changed code')
+    completed.extend(result['runs'])
+  if ({(r['task'],r['mode']) for r in completed} != {(r['task'],r['mode']) for r in plan['runs']} or
+      len(completed)!=len(plan['runs'])):raise RuntimeError('Missing or duplicate engineering task')
+  target.mkdir();dump(target/'acceptance.json',dict(passed=True,code_sha=plan['code_sha'],
+      engineering_only=True,budget=4098,evaluation_episodes=1,run_count=len(completed),
+      waves=len(waves),runs=completed,checked_utc=now()))
+
+
 def run(plan_path, accept_initial_capacity_deficit=False):
   p=read(plan_path);validate(p);root=Path(p['root'])
   if accept_initial_capacity_deficit and p['server']!='sv1':
@@ -166,7 +198,6 @@ if __name__=='__main__':
   if x.action=='split':split(x.plan,x.server,x.output)
   elif x.action=='probe':probe(x.gpu,x.uuid,x.output,host=HOSTS[x.server],allowed_gpus=[g for s,g in CARDS if s==x.server])
   elif x.action=='logger':logger_check(x.output,x.server)
-  elif x.action=='integration':
-    p=read(x.plan);integration(x.plan,x.evidence,validator=validate,host=p['host'],new_session=True)
+  elif x.action=='integration':integration(x.plan,x.evidence)
   elif x.action=='bind':bind(x.plan,x.evidence,x.output)
   else:run(x.plan,x.accept_initial_capacity_deficit)
