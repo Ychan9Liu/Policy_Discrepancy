@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-11-03 Pendulum校正复验已授权**：用户确认原参数新跑pendulum_swingup seed2/3各logging baseline/PPD-KL四条；sv3物理GPU1对应seed2、GPU4对应seed3，每卡baseline完整审计后Dt，GPU5/6/7保留，不重复seed1或hopper。独立`M2-v1-pendulum-seeds23-baseline-dt`/`pendulum-seeds23` profile，百万动作/21×10/原始return口径及每seed自身baseline S/N冻结c不变；不混入seed0/1总体或新增科学干预。配置、工程/启动验收和实际版本见`docs/PENDULUM_SEEDS23_RUNS.md`；正式完成以四条实际产物审计为准。
+
 **2026-11-03 Vision20 seed1执行（当前）**：用户授权原配置20任务×baseline/PPD-KL（代码dt），复用已有hopper seed1一对，其他19任务新跑38条。sv1 GPU2—7因/data仅约1.24GB等用户释放/扩容，sv2 GPU0—5/7先执行七任务baseline→Dt、不用GPU6。独立scope/profile保持旧范围关闭，实际代码/验收SHA77699380851701f7a03a9d13985c5cc0de5d0702，121 CPU及14条真实CUDA短程通过；23:00七baseline已启动、23:03启动验收通过，七Dt排队。当前2复用完成/7运行/7排队/24空间阻塞，不是20任务完成或方法有效结论。完整冻结配置、版本、任务/卡、空间/队列与复用来源及证据见`docs/VISION20_SEED1_RUNS.md`。原seed0结果和其他scope不自动合并。
 
 **2026-11-02完成进展（当前）**：12:07—08核查新增32条为31训练结束/1运行，无排队或失败；昨晚六条Dt均百万动作/21×10/逐条和分片审计及线上精确收尾通过。acrobot已在cup审计通过后自动于10:34在sv2 GPU1启动，最近更新开始动作141600，三点评价各10完整episode、W&B running。全32条最终汇总仍未完成；不将分片通过或训练结束数写成全批完整。冻结协议不变，本轮无新启动/代码/实验修改；证据/限制见`docs/RUNS_STATUS_20261102.md`。

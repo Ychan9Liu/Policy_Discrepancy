@@ -2,6 +2,13 @@
 
 更新日期：2026-11-03。
 
+## 03职责执行更新：pendulum seed2/3四条复验获准，工程验收后启动（2026-11-03）
+
+- 用户明确回复“按此方案准备并启动四条复验”，此前本批先不启动限制解除。本chat连续执行工程/启动/审计；sv3物理GPU1运行seed2 baseline→Dt，GPU4运行seed3 baseline→Dt，GPU5/6/7保留；不重复已有seed1计划或hopper。
+- 新受限scope/preset/profile只允许pendulum seed2/3两组；原科学配置逐字段对照原seed0相应组，仅script/seed/logdir改变。百万动作/21×10/原始return、alpha20/free nats1/KL梯度与各seed baseline完整S/N冻结c保持，不新增constant/shuffle或调参。
+- 23:29:14五卡空闲、/data349.32GB，四条按240GB保守预留；启动前与每个后继重新检查，CUDA/EGL同卡、CPU/四条真实CUDA/线上logger证据同SHA绑定。当前正式四条尚未启动，工程验收进行中，不将fixture当真实任务通过。
+- 配置/执行记录docs/PENDULUM_SEEDS23_RUNS.md；本机analysis/outputs/pendulum-seeds23-start-20261103/，服务器独立engineering/formal-m2-pendulum-seeds23根。只同步sv3确定提交、不覆盖原产物；已授权任务继续完成，不重复询问启动、不自动建chat/发消息。
+
 ## 05 最新：PPD-KL无明显优势与参数强度解释（2026-11-03）
 
 - 已只读关联新增15任务seed0的return指标与门控统计，核对30条alpha20/rep系数0.1：finger_spin超额KL减弱45.90%但AUC差−3.17，walker_walk减弱29.81%但AUC差−1.25；pendulum减弱10.00%却AUC差+658.93。不能统一归为alpha太小，也未证明alpha20最优；loss减弱不等于总梯度范数减弱。

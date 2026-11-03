@@ -7,6 +7,8 @@ DMC16 = 'M2-v1-dmc16-seed0-baseline-dt'
 DMC16_SCRIPT = 'protocol_dmc16'
 VISION20_SEED1 = 'M2-v1-vision20-seed1-baseline-dt'
 VISION20_SCRIPT = 'protocol_vision20_seed1'
+PENDULUM_23 = 'M2-v1-pendulum-seeds23-baseline-dt'
+PENDULUM_SCRIPT = 'protocol_pendulum_seeds23'
 DMC8_FIRST = 'M2-v1-dmc8-first8-seed0-baseline-dt-serial'
 DMC8_REMAINING = 'M2-v1-dmc8-remaining-seed0-baseline-dt-serial'
 V1_TASKS = ('dmc_hopper_hop', 'dmc_quadruped_run',
@@ -22,6 +24,8 @@ VISION20_TASKS = V1_TASKS + DMC16_TASKS
 
 
 def tasks_for_protocol(protocol):
+  if protocol == PENDULUM_23:
+    return ('dmc_pendulum_swingup',)
   if protocol == VISION20_SEED1:
     return VISION20_TASKS
   if protocol == DMC16:
@@ -32,6 +36,11 @@ def tasks_for_protocol(protocol):
 
 
 def validate_scope(script, task, seed, mode):
+  if script == PENDULUM_SCRIPT:
+    if (type(seed) is not int or seed not in (2, 3) or
+        task != 'dmc_pendulum_swingup' or mode not in ('logging', 'dt')):
+      raise ValueError('Pendulum extension requires pendulum_swingup, seeds 2/3, logging or dt')
+    return PENDULUM_23
   if script == VISION20_SCRIPT:
     if (type(seed) is not int or seed != 1 or task not in VISION20_TASKS or
         mode not in ('logging', 'dt')):

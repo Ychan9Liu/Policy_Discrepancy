@@ -19,7 +19,7 @@ import subprocess
 from dreamerv3.return_stats import REWARD_SOURCE, RETURN_DEFINITION
 from dreamerv3.protocol_scope import (
     HOPPER_123, DMC16, DMC16_TASKS, DMC8_FIRST, DMC8_REMAINING,
-    VISION20_SEED1, VISION20_TASKS)
+    VISION20_SEED1, VISION20_TASKS, PENDULUM_23)
 
 
 TASKS = ('dmc_hopper_hop', 'dmc_quadruped_run',
@@ -46,6 +46,12 @@ class MetricSpec:
   groups: tuple = GROUPS
 
   def __post_init__(self):
+    if self.scope == PENDULUM_23 and (
+        self.budget != 1000000 or self.grid != tuple(range(0,1000001,50000)) or
+        self.tail != (800000,850000,900000,950000,1000000) or self.episodes != 10 or
+        self.seeds != (2,3) or any(type(s) is not int for s in self.seeds) or
+        self.tasks != ('dmc_pendulum_swingup',) or self.groups != ('baseline','dt')):
+      raise ValueError('Pendulum repeat metric matrix differs')
     if self.scope == VISION20_SEED1 and (
         self.budget != 1000000 or self.grid != tuple(range(0,1000001,50000)) or
         self.tail != (800000,850000,900000,950000,1000000) or self.episodes != 10 or
@@ -407,6 +413,13 @@ def analyze_run(entry, spec=MetricSpec()):
   parse_issues = [] if evaluation_path.exists() else ['missing_evaluations_file']
   if metadata['task'] not in spec.tasks or metadata['group'] not in spec.groups:
     parse_issues.append('outside_declared_task_or_group')
+  if spec.scope == PENDULUM_23:
+    if (manifest.get('protocol') != PENDULUM_23 or type(metadata['seed']) is not int or
+        metadata['seed'] not in spec.seeds or type(config.get('seed')) is not int or
+        config.get('seed') != metadata['seed']):
+      parse_issues.append('pendulum_repeat_protocol_or_seed_mismatch')
+  elif manifest.get('protocol') == PENDULUM_23:
+    parse_issues.append('pendulum_repeat_requires_separate_metric_profile')
   if spec.scope == HOPPER_123 and (
       manifest.get('protocol') != HOPPER_123 or metadata['seed'] not in spec.seeds or
       config.get('seed') != metadata['seed']):
@@ -491,9 +504,11 @@ def main():
   parser.add_argument('--index', type=Path, required=True)
   parser.add_argument('--output', type=Path, required=True)
   parser.add_argument('--require-complete', action='store_true')
-  parser.add_argument('--profile', choices=('v1', 'hopper-seeds123', 'dmc16', 'dmc8-first8', 'dmc8-remaining', 'vision20-seed1'), default='v1')
+  parser.add_argument('--profile', choices=('v1', 'hopper-seeds123', 'dmc16', 'dmc8-first8', 'dmc8-remaining', 'vision20-seed1', 'pendulum-seeds23'), default='v1')
   args = parser.parse_args()
   spec = {'v1': MetricSpec,
+      'pendulum-seeds23': lambda: MetricSpec(seeds=(2,3),tasks=('dmc_pendulum_swingup',),
+          groups=('baseline','dt'),scope=PENDULUM_23),
       'vision20-seed1': lambda: MetricSpec(seeds=(1,),tasks=VISION20_TASKS,
           groups=('baseline','dt'),scope=VISION20_SEED1),
       'hopper-seeds123': lambda: MetricSpec(seeds=(1, 2, 3),
@@ -513,12 +528,13 @@ def main():
     audits.append(audit)
   tasks, overall, differences = aggregate(tables['seed_metrics'], spec)
   tables.update(task_metrics=tasks, overall_metrics=overall, dt_differences=differences)
-  if args.profile == 'hopper-seeds123':
+  if args.profile in ('hopper-seeds123', 'pendulum-seeds23'):
     pairs = []
+    paired_task = spec.tasks[0]
     for seed in spec.seeds:
       members = {group: [r for r in tables['seed_metrics'] if r['seed'] == seed and
-                 r['task'] == 'dmc_hopper_hop' and r['group'] == group] for group in spec.groups}
-      pair = dict(task='dmc_hopper_hop', seed=seed, comparison='dt-baseline')
+                 r['task'] == paired_task and r['group'] == group] for group in spec.groups}
+      pair = dict(task=paired_task, seed=seed, comparison='dt-baseline')
       for key, prefix in (('auc_return_per_budget', 'auc'), ('tail_mean_return', 'tail')):
         complete = all(len(members[g]) == 1 and members[g][0][prefix+'_complete'] for g in spec.groups)
         pair.update({key: members['dt'][0][key] - members['baseline'][0][key] if complete else None,
@@ -535,6 +551,7 @@ def main():
       mean_tolerance=dict(atol=MEAN_ATOL, rtol=MEAN_RTOL),
       formal_metrics_complete=all(row['auc_complete'] and row['tail_complete'] for row in overall),
       interpretation={
+          'pendulum-seeds23':'User-approved pendulum seeds2/3 repeat; retain each seed, no automatic seed0/1 pooling, causal claim or significance claim',
           'vision20-seed1':'User-approved visual20 seed1 baseline/PPD-KL cohort; hopper seed1 reused from its original audited source; descriptive only, no automatic seed0 pooling or causal claim',
           'v1':'single-training-seed descriptive only; engineering rows are not formal M2 results',
           'dmc8-first8':'first eight selected tasks, serial baseline/dt seed0; no 16/20-task pooling or strong selective M2 attribution',

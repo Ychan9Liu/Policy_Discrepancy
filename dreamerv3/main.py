@@ -86,7 +86,7 @@ def main(argv=None):
         args)
 
   elif config.script in ('protocol_v1', 'protocol_hopper_seeds123', 'protocol_dmc16',
-                         'protocol_vision20_seed1'):
+                         'protocol_vision20_seed1', 'protocol_pendulum_seeds23'):
     embodied.run.protocol_v1.run(
         bind(make_agent, config),
         bind(make_replay, config, 'replay', seed=(

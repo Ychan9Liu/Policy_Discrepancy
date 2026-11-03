@@ -229,6 +229,13 @@ m2_vision20_seed1:
   task: dmc_quadruped_run
   seed: 1
 
+# User-approved pendulum correction repeats; no change to the original scopes.
+m2_pendulum_seeds23:
+  <<: *m2_v1
+  script: protocol_pendulum_seeds23
+  task: dmc_pendulum_swingup
+  seed: 2
+
 bsuite:
   task: bsuite_mnist/0
   run: {envs: 1, save_every: -1, train_ratio: 1024}
