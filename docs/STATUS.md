@@ -2,6 +2,12 @@
 
 更新日期：2026-11-04。
 
+## 05校正跟进：四条运行中，终点分析入口就绪（2026-11-04）
+
+- 01:43:27北京时间核对两个监督器真实PID/创建时间/命令及四条agent：sv3 GPU1/4 baseline seed2/3最新动作160100/159856，GPU5/6 PPD-KL seed2/3为37160/37088，末条更新invalid均0；GPU7无进程、/data余326.35GB。四条仍运行中，尚无终点completion，不依据阶段return作最终结论。
+- 新增analysis/pendulum_seeds23_analysis.py，终点严格读取新四条合并索引、原始评价/完整成功收据与c/hash，复用冻结pendulum-seeds23指标及门控复核，生成逐seed图表；排除旧Dt替代槽位/其他seed/工程数据，不插值或改阈值。离线fixture与旧指标回归的日志/源码hash见analysis/outputs/pendulum-seeds23-analysis-preparation-20261104/，真实终点采集和图形验看仍待训练完成。
+- 本次仅本机分析代码/测试/文档，未同步或移动服务器活动checkout，四条训练c5f86ca、控制器b7f42d4不变，不写W&B/追加实验。首选继续当前chat完成四条终点审计、逐seed复算与校正解释，再给02下一协议建议；目标仍进行中。运行安排/证据边界见docs/PENDULUM_SEEDS23_PARALLEL.md，复算命令见analysis/README.md。
+
 ## 03执行/05校正最新：pendulum四条改为GPU1/4/5/6并行（2026-11-04）
 
 - 用户明确允许“刚分配的其他的空闲gpu也可以用，可以并行的测试可以尝试”。保留sv3 GPU1 seed2 baseline PID3690581、GPU4 seed3 baseline PID3690588及原监督器3690542；01:18新增GPU5 seed2 Dt PID3732084、GPU6 seed3 Dt PID3732097，新监督器3732048；GPU7保留。仅原四条，不增加任务/seed/参数、不重复seed1/hopper。

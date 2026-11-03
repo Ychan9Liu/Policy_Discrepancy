@@ -8,6 +8,16 @@
 
 正式统计命令为`python -m analysis.return_metrics --profile pendulum-seeds23 --index ACTUAL_RUN_INDEX.json --output NEW_DIR --require-complete`。此profile严格为pendulum、seed2/3、baseline/dt四条，沿用百万动作/21×10/原始return AUC及末段五点均值，输出逐seed指标和两条配对差值；缺seed/点不插值或重加权，不并入seed0/1、不把工程短程或评价episode当训练重复。完整批次指标需等四条结束验收。
 
+`pendulum_seeds23_analysis.py collect/analyze`补充该四条的终点入口。collect只读sv3，要求新合并索引四条accepted与supervisor/completion一致，严格识别原两baseline和GPU5/6新Dt；不读取旧Dt替代槽位。镜像包含原始评价、metrics、全部成功更新收据、完整配置、c与终点审计、快照metadata/done及源hash，不下载checkpoint/replay、不写W&B。analyze调用原`return_metrics --profile pendulum-seeds23`，重新逐行核对收据和各seed c、与控制器指标交叉检查，生成逐seed学习曲线和门控图表。分布分位数仅为日志所存批次分位数的更新均值，不解释为全训练合并分位数。快照只复用元数据/完成标记及既有审计，不声称新解码参数或逐transition评价reward。
+
+```sh
+python -m analysis.pendulum_seeds23_analysis collect --output analysis/outputs/NEW_PENDULUM23_INPUT
+python -m analysis.pendulum_seeds23_analysis analyze --input analysis/outputs/NEW_PENDULUM23_INPUT --output analysis/outputs/NEW_PENDULUM23_RESULT
+python -m unittest tests.test_pendulum_seeds23_analysis tests.test_return_metrics tests.test_m2_analysis -v
+```
+
+2026-11-04准备时四条仍运行中；入口的范围拒绝、源hash和加权统计fixture验收不代表四条真实终点通过。命令/hash/测试和当前阶段记录在`analysis/outputs/pendulum-seeds23-analysis-preparation-20261104/`。正式采集、完整图表目视检查和校正结论待四条终点产物就绪；不移动活动训练/控制器checkout。
+
 ## PPD-KL作用强度与无明显优势的解释（2026-11-03）
 
 `docs/ANALYSIS_PPD_KL_STRENGTH.md`关联已有15任务return指标与门控统计，解释alpha、实际减弱、阶段/高分空间及单seed限制；不把无优势统一归为参数太小，不据已有曲线直接调参。核查脚本/输入hash/未舍入表在`analysis/outputs/ppd-kl-strength-20261103/`，无训练或协议变更。
