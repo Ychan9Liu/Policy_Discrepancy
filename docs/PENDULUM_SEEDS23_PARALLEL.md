@@ -101,3 +101,18 @@ bundle SHA256 `e1b61d38c0f0f0f48d2ddbdbd53b7ae12dd55f2b056008c5a53f03c3dafdb425`
 02:01:43新增实际初始条件CPU检查：每seed baseline/Dt的294个0步参数数组及计数完全相同且有限，但reset图像已有623/301个坐标不同，reset观测上的策略输出有1/2个不同。完整更新前前缀的reward/episode边界一致，action/image不逐位相同；首次成功更新仍2032动作。本次实际解码并hash的是四条0步checkpoint，不能扩大为所有后续快照。详细计数、动作对齐语义与解释限制见docs/ANALYSIS_PENDULUM_CORRECTION.md新增小节。
 
 分析/实测SHA58f6ff6710c62bb9871a260d59aba6813d6952a6，8项新分析测试及既有20项共28项通过；原始检查/源hash见analysis/outputs/pendulum-seeds23-initial-20261104/，未改训练源码或活动checkout。初始差异早于优化器更新，具体数值来源未裁决，不因此改协议/停训/重复启动，不把这批当输入逐位相同的机制实验；继续等待四条完整终点及逐seed结果。
+
+### 03:17匹配窗口前缀核查（尚非正式c冻结）
+
+03:17:04两baseline均已写出30万点评价并继续训练；最新动作seed2/3=302044/301724，Dt=178840/179124。四条agent和两监督器的真实身份/命令均匹配，末条invalid0，GPU1/4/5/6各17个本批C/G进程，7无进程，/data余314.87GB；仍无终点completion。
+
+03:17:15只读核对各baseline前74493条成功收据（update_id=0…74492）及30万点10完整episode、74493更新的快照metadata/done/payload存在。收据连续、开始动作单调且invalid0；[100000,300000)各纳入50000条，IDs24492…74491，300000动作的update_id74492正确排除。逐收据汇总如下，仅为窗口原始统计，**未计算/写入/冻结正式c**：
+
+|seed|窗口S = match_sum|窗口N = match_count|窗口成功更新数|
+|---:|---:|---:|---:|
+|2|7396141.760381699|8363327|50000|
+|3|7721404.809896469|8560619|50000|
+
+两N均大于0；正式c仍由原监督器在完整百万动作/21×10/全部收据审计通过后冻结，并在终点独立复算再次比对本窗口S/N。当前检查不证明未来收据/全部终点评价完整，不代替其他快照的参数解码或评价逐reward重放。没有用部分窗口、工程c或默认值继续新对照，也未新增训练组。
+
+脚本analysis/outputs/pendulum-seeds23-parallel-20261104/matching-window-prefix-audit.py，只经SSH stdin执行Python标准库只读检查；脚本SHA256 `242a7ea0c0aee840e778a9941ffbf30effd3028bda2c5e7d70fed566f7d558d8`。结果monitor/matching-window-prefix-20261104T031757217.json，SHA256 `52719abfeb1dd137b0b66cfdeceb759595267d816d118714fd07bb30b9b963b0`，包含原目录、实际训练SHA、固定前缀/评价行/metadata hash和边界IDs。大文件留sv3，未修改训练源码、活动checkout、W&B或c文件；正式终点0/4，继续原协议等待。指标代码/测试仍以58f6ff6及原冻结return_metrics为准，本次只有运行记录更新。
