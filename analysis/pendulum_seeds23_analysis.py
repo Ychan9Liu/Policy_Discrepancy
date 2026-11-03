@@ -1,7 +1,8 @@
-"""Terminal-only collection/analysis of the four approved pendulum repeats.
+"""Read-only initial checks and terminal analysis of four approved pendulum repeats.
 
 python -m analysis.pendulum_seeds23_analysis collect --output NEW_INPUT
 python -m analysis.pendulum_seeds23_analysis analyze --input NEW_INPUT --output NEW_RESULT
+python -m analysis.pendulum_seeds23_analysis initial --output NEW_INITIAL_CHECK
 
 Reads original JSONL and existing audits. Never trains, writes W&B, downloads
 checkpoint/replay payloads, or substitutes a partial curve for formal metrics.
@@ -190,6 +191,118 @@ def verify_mirror(source):
     return proof
 
 
+def compare_prefix_arrays(a, b):
+    """Rows are [worker, callback, ...]; report the first chronological difference."""
+    import numpy as np
+    require(a.shape == b.shape and a.dtype == b.dtype and a.ndim >= 2,
+            'Prefix array shape/dtype differs')
+    unequal = a != b
+    chronological = np.swapaxes(unequal, 0, 1)
+    first = [int(x) for x in np.unravel_index(np.argmax(chronological), chronological.shape)] if unequal.any() else None
+    difference = np.abs(a.astype(np.float64)-b.astype(np.float64))
+    return dict(unequal_elements=int(unequal.sum()), total_elements=int(a.size),
+        max_abs_difference=float(difference.max()), mean_abs_difference=float(difference.mean()),
+        first_difference_row_worker_coordinate=first,
+        first_difference_callback_index=first[0]*a.shape[0]+first[1] if first else None,
+        initial_reset_unequal_elements=int(unequal[:,0].sum()))
+
+
+def remote_initial():
+    """CPU-only read of trusted initial checkpoints and immutable replay prefixes."""
+    import gc
+    import pickle
+    import numpy as np
+    def array_sha(value):
+        value = np.asarray(value)
+        return hashlib.sha256(str(value.dtype).encode()+str(value.shape).encode()+value.tobytes()).hexdigest()
+    index = read(Path(ROOT)/'actual-RUN_INDEX.json')
+    rows = index['runs']
+    require(len(rows) == 4 and {(r['seed'],r['group']) for r in rows} == set(MATRIX), 'Unexpected repeat matrix')
+    result = dict(checked_utc=datetime.now(timezone.utc).isoformat(), training_sha=TRAIN_SHA,
+        read_only=True, new_agent_or_environment_execution=False, terminal_acceptance=False, pairs=[])
+    for seed in (2,3):
+        pair, arrays = {}, {}
+        for group in ('baseline','dt'):
+            row = next(r for r in rows if r['seed'] == seed and r['group'] == group)
+            gpu, mode = MATRIX[seed,group]
+            root = OLD_ROOT if group == 'baseline' else ROOT
+            require(row['directory'] == f'{root}/seed{seed}/{mode}-attempt01' and
+                    row['physical_gpu'] == gpu and row['code_sha'] == TRAIN_SHA, 'Wrong initial-check source')
+            directory = Path(row['directory']); manifest = read(directory/'protocol_manifest.json')
+            require(manifest['protocol'] == SCOPE and manifest['root_seed'] == seed and
+                    manifest['git_commit'] == TRAIN_SHA and manifest['config'] == row['config'] and
+                    not manifest['config']['run.engineering_fixture'], 'Wrong initial manifest/config')
+            folder = directory/'eval_snapshots/0000000'; tag = (folder/'latest').read_text().strip()
+            require(tag and Path(tag).name == tag and tag not in ('.','..'), 'Invalid initial checkpoint tag')
+            meta = read(folder/'evaluation_snapshot.json'); payload = folder/tag/'agent.pkl'
+            require(meta['actual_action_step'] == meta['update_id'] == 0 and meta['git_commit'] == TRAIN_SHA and
+                    meta['snapshot_id'] == f'eval_snapshots/0000000/{tag}' and (folder/tag/'done').is_file(),
+                    'Initial snapshot identity/marker differs')
+            before = payload.stat()
+            with payload.open('rb') as file: saved = pickle.load(file)
+            require(saved['counters']['updates'] == 0, 'Checkpoint is not before optimization')
+            require(all(np.isfinite(np.asarray(v)).all() for v in saved['params'].values()),
+                    'Initial parameter contains a nonfinite value')
+            params = {k:array_sha(v) for k,v in sorted(saved['params'].items())}
+            item = dict(directory=str(directory),run_id=row['run_id'],physical_gpu=gpu,
+                manifest_sha256=sha(directory/'protocol_manifest.json'), metadata=meta,
+                checkpoint_sha256=sha(payload), checkpoint_bytes=before.st_size,
+                initial_counters=saved['counters'], parameter_array_sha256=params, initial_parameters_finite=True)
+            del saved; gc.collect()
+            after = payload.stat()
+            require((before.st_size,before.st_mtime_ns) == (after.st_size,after.st_mtime_ns), 'Initial payload changed')
+            with (directory/'update_receipts.jsonl').open('rb') as file: first_raw = file.readline()
+            first = json.loads(first_raw)
+            require(first['update_id'] == 0 and first['start_action'] == 2032 and first['invalid_count'] == 0,
+                    'Prefix boundary does not precede the first successful update')
+            paths = {p.stem.split('-')[1]:p for p in (directory/'replay').glob('*.npz')}
+            successors = {p.stem.split('-')[2] for p in paths.values()}
+            roots = sorted((p for key,p in paths.items() if key not in successors), key=lambda p:p.name)
+            require(len(roots) == 16 and len({p.stem.split('-')[0] for p in roots}) == 16, 'Replay roots ambiguous')
+            fields = ('reward','action','is_first','is_last','is_terminal','image')
+            parts, sources = [], []
+            for path in roots:
+                require(int(path.stem.split('-')[-1]) >= 128, 'Root chunk shorter than pre-update prefix')
+                with np.load(path,allow_pickle=False) as data:
+                    part = {k:data[k][:128].copy() for k in fields}
+                require(all(len(v) == 128 for v in part.values()) and part['is_first'][0] and
+                        not part['is_first'][1:].any(), 'Prefix reset/count differs')
+                require(np.isfinite(part['reward']).all() and np.isfinite(part['action']).all(),
+                        'Nonfinite pre-update reward/action')
+                sources.append(dict(path=str(path),prefix_rows=128,
+                                    prefix_array_sha256={k:array_sha(v) for k,v in part.items()}))
+                parts.append(part)
+            arrays[group] = {k:np.stack([p[k] for p in parts]) for k in fields}
+            item.update(first_update_receipt=first,first_update_receipt_sha256=hashlib.sha256(first_raw).hexdigest(),
+                        prefix_sources=sources,prefix_actions=2032,prefix_resets=16)
+            pair[group] = item
+        ka, kb = pair['baseline']['parameter_array_sha256'], pair['dt']['parameter_array_sha256']
+        require(ka.keys() == kb.keys(), 'Initial parameter name set differs')
+        result['pairs'].append(dict(seed=seed,runs=pair,parameter_arrays_identical=ka == kb,
+            parameter_array_count=len(ka),changed_parameter_names=[k for k in ka if ka[k] != kb[k]],
+            initial_counters_identical=pair['baseline']['initial_counters'] == pair['dt']['initial_counters'],
+            prefix_comparison={k:compare_prefix_arrays(arrays['baseline'][k],arrays['dt'][k]) for k in fields}))
+    print(json.dumps(result,indent=2,allow_nan=False))
+
+
+def collect_initial(output):
+    output = output.resolve(); output.mkdir(parents=True,exist_ok=False)
+    code = Path(__file__).read_text(encoding='utf-8')
+    program = "namespace={'__name__':'readonly_initial'}\nexec("+repr(code)+",namespace)\nnamespace['remote_initial']()\n"
+    (output/'collector.py').write_text(program,encoding='utf-8')
+    with (output/'inspection.json').open('xb') as stream, (output/'stderr.txt').open('xb') as errors:
+        subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=20','sv3',
+            "CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /data/Policy_Discrepancy/envs/dreamer/bin/python -"],
+            input=program.encode(),stdout=stream,stderr=errors,check=True)
+    result = read(output/'inspection.json')
+    dump(output/'verification.json',dict(collector_sha256=sha(output/'collector.py'),
+        inspection_sha256=sha(output/'inspection.json'),script_sha256=sha(Path(__file__)),
+        analysis_sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        interpretation='Read-only actual initial/prefill comparison; not a terminal audit or numerical determinism guarantee.'))
+    print(json.dumps([dict(seed=p['seed'],parameter_arrays_identical=p['parameter_arrays_identical'],
+        prefix_comparison=p['prefix_comparison']) for p in result['pairs']],indent=2))
+
+
 def summarize(rows):
     """Per-seed update-weighted summaries; quantiles remain means of batch quantiles."""
     from analysis.analyze_m2_v1 import FIELDS
@@ -316,11 +429,12 @@ def plots(output, tables, diagnostics):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=('collect','analyze'))
+    parser.add_argument('mode', choices=('collect','analyze','initial'))
     parser.add_argument('--input', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     if args.mode == 'collect': collect(args.output)
+    elif args.mode == 'initial': collect_initial(args.output)
     else:
         if args.input is None: parser.error('analyze requires --input')
         analyze(args.input, args.output)

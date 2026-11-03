@@ -89,6 +89,25 @@ class PendulumAnalysisTest(unittest.TestCase):
             (mirror/'data.json').write_bytes(b'modified')
             with self.assertRaises(ValueError): a.verify_mirror(source)
 
+    def test_prefix_comparison_uses_callback_order_and_avoids_unsigned_wrap(self):
+        import numpy as np
+        baseline = np.zeros((2,3,1), dtype=np.uint8)
+        dt = baseline.copy(); baseline[0,2,0] = 1; dt[1,0,0] = 255
+        result = a.compare_prefix_arrays(baseline,dt)
+        self.assertEqual(result['unequal_elements'],2)
+        self.assertEqual(result['max_abs_difference'],255)
+        self.assertEqual(result['first_difference_row_worker_coordinate'],[0,1,0])
+        self.assertEqual(result['first_difference_callback_index'],1)
+        self.assertEqual(result['initial_reset_unequal_elements'],1)
+
+    def test_identical_prefix_and_incompatible_layout(self):
+        import numpy as np
+        value = np.zeros((16,128,1),dtype=np.float32)
+        result = a.compare_prefix_arrays(value,value.copy())
+        self.assertEqual(result['unequal_elements'],0)
+        self.assertIsNone(result['first_difference_callback_index'])
+        with self.assertRaises(ValueError): a.compare_prefix_arrays(value,value.astype(np.float64))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -18,6 +18,8 @@ python -m unittest tests.test_pendulum_seeds23_analysis tests.test_return_metric
 
 2026-11-04准备时四条仍运行中；入口的范围拒绝、源hash和加权统计fixture验收不代表四条真实终点通过。命令/hash/测试和当前阶段记录在`analysis/outputs/pendulum-seeds23-analysis-preparation-20261104/`。正式采集、完整图表目视检查和校正结论待四条终点产物就绪；不移动活动训练/控制器checkout。
 
+同模块`initial --output NEW_INITIAL_DIR`可在训练期间以CPU只读四条已保存的0步可信checkpoint和16条replay链各前128行（16次reset、2032动作），核对首次成功更新边界、逐参数数组hash/有限性及同seed输入差异。读取严格限定原两baseline/新两Dt路径和训练SHA，大文件留sv3，保存checkpoint文件hash、前缀数组hash、逐字段差异和实际分析版本。它核查实际初始条件，不宣称整个训练逐位确定，也不替代终点验收；执行结果在`analysis/outputs/pendulum-seeds23-initial-20261104/`。
+
 ## PPD-KL作用强度与无明显优势的解释（2026-11-03）
 
 `docs/ANALYSIS_PPD_KL_STRENGTH.md`关联已有15任务return指标与门控统计，解释alpha、实际减弱、阶段/高分空间及单seed限制；不把无优势统一归为参数太小，不据已有曲线直接调参。核查脚本/输入hash/未舍入表在`analysis/outputs/ppd-kl-strength-20261103/`，无训练或协议变更。
