@@ -126,3 +126,13 @@ bundle SHA256 `e1b61d38c0f0f0f48d2ddbdbd53b7ae12dd55f2b056008c5a53f03c3dafdb425`
 本机证据`analysis/outputs/pendulum-seeds23-replay-preparation-20261104/`包含tests.txt/tests.json、实际远端只读脚本、seed0-replay.json、verification.json及命令。原参考JSON SHA256 `18ca0872092e577db802442796b11395f64c13dd9fdf78c9bf4467bc01093273`；本次实际回归JSON SHA256 `bfaf9f21a116186c65d7ca0b0eb971cd349e6ab563f6e10a98e311502aafb547`。未解析或hash全部图像；各chunk仅核所读标量数组hash与ZIP CRC。训练reward独立求和不能替代评价逐transition reward核验，首动作reward不能当成测得的reset角度。
 
 03:31:18实时核查：原两baseline动作324376/324040，新两Dt均到200000动作、49493次成功更新，20万点评价当时尚未写出；两监督器及四agent真实身份/命令匹配、末条invalid0，四卡各17个本批C/G PID、GPU7无进程，/data余313.79GB。仍0/4终点验收，新replay入口尚未用于本批终点。只改本机分析代码/测试/文档，经stdin只读sv3，无服务器Git同步或训练/控制器checkout变更。下一步继续现有chat完成四条终点collect/analyze/replay及图形验看，再综合校正解释；整体目标保持进行中。
+
+### seed3 PPD-KL 20万点零回报的阶段复核
+
+03:32:58四条仍存活并继续训练，PPD-KL seed2/3已写出20万点，各10episode，均值807.4/0；baseline最新动作327000/326648，Dt202104/202380。03:34:16随后对seed3 Dt的15万/20万两点评价、JSONL和实际checkpoint作CPU只读检查：15万返回`[0,0,0,924,0,0,1000,0,0,0]`（均值192.4），20万10个return均为0，均为完整1000动作episode，与同点baseline评价环境seed匹配，原始episode值/重复数组/JSONL均值一致。
+
+实际解码两份checkpoint，各294个参数数组均有限，全部294个数组在两点之间发生变化；更新计数分别36993/49493，与评价及snapshot metadata一致，payload/done/hash完整。所查10—15万和15—20万区间的门控标量日志无非有限值，日志中的梯度范数区间均值为20.710876/18.185102；这不是逐更新梯度轨迹，不能据均值排除瞬时尖峰。实际活跃权重均值0.984339/0.976759，free-nats活跃比例0.076268/0.074215；均为该阶段统计，不能代替整轮门控结论。
+
+本次没有发现评价记录错误、快照未更新或已保存参数非有限的证据；不能仅凭20万点0回报宣布整轮工程失败、永久学习失败或方法无效，也不能据此证明优化没有问题。保留该点，继续原百万动作协议，不调参、删seed、重跑或插值。当前仅额外解码seed3 Dt这两个checkpoint，不扩大为全部21点参数或逐transition评价reward均已独立验证。
+
+证据在并行输出目录`monitor/dt-seed3-200k-numerics.json`（SHA256 `0e1fc73acc28ab49f3eb27c6e82d5b62b7c4abb5c347e47ef0b1f879c63a5e18`）；只读脚本`inspect-dt-seed3-200k.py`（SHA256 `f20ef9ac4dc24c9bacd9a5ad713abb15f0cc7b232b56cd05f9835e008dde390e`）。脚本经stdin执行CPU/NumPy/pickle，不执行agent/环境或修改服务器源码；原始大文件未下载或覆盖，实际训练c5f86ca/控制器b7f42d4继续固定，正式终点仍0/4。
