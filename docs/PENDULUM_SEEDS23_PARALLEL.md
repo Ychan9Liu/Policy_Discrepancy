@@ -136,3 +136,18 @@ bundle SHA256 `e1b61d38c0f0f0f48d2ddbdbd53b7ae12dd55f2b056008c5a53f03c3dafdb425`
 本次没有发现评价记录错误、快照未更新或已保存参数非有限的证据；不能仅凭20万点0回报宣布整轮工程失败、永久学习失败或方法无效，也不能据此证明优化没有问题。保留该点，继续原百万动作协议，不调参、删seed、重跑或插值。当前仅额外解码seed3 Dt这两个checkpoint，不扩大为全部21点参数或逐transition评价reward均已独立验证。
 
 证据在并行输出目录`monitor/dt-seed3-200k-numerics.json`（SHA256 `0e1fc73acc28ab49f3eb27c6e82d5b62b7c4abb5c347e47ef0b1f879c63a5e18`）；只读脚本`inspect-dt-seed3-200k.py`（SHA256 `f20ef9ac4dc24c9bacd9a5ad713abb15f0cc7b232b56cd05f9835e008dde390e`）。脚本经stdin执行CPU/NumPy/pickle，不执行agent/环境或修改服务器源码；原始大文件未下载或覆盖，实际训练c5f86ca/控制器b7f42d4继续固定，正式终点仍0/4。
+
+### 04:05现有28点评价复算：seed3 Dt的25万点重新出现正回报
+
+04:04:55连续只读监测结束时，两监督器和四agent真实身份/命令匹配；baseline动作375460/374872，Dt250480/250792，末条invalid0，GPU1/4/5/6各17个本批C/G PID，7无进程，/data余309.64GB，终点completion仍不存在。两baseline35万点为818.2/875.6；两Dt25万点新写出800.6/472.2，随后继续训练。
+
+04:05:33调用实际训练checkout c5f86ca1a16648f57db3c3abfa2584ac560495ca中的冻结return_metrics，以严格pendulum-seeds23范围只读复算已保存评价：baseline各0…35万共8点，Dt各0…25万共6点，合计28点/280完整episode。原始episode均值、来源/协议字段及固定快照小证据全部通过；无解析冲突、重复行或缺episode，检查期间评价文件hash未变。完整21点AUC及末段五点仍为null，未插值或用部分曲线冒充正式指标。
+
+|训练seed|25万点baseline均值|25万点PPD-KL均值|PPD-KL该点原始10episode return|
+|---:|---:|---:|---|
+|2|772.5|800.6|549, 724, 719, 932, 705, 836, 829, 886, 885, 941|
+|3|842.1|472.2|0, 929, 933, 0, 0, 0, 929, 1000, 931, 0|
+
+seed3 Dt在20万点的10个0回报之后，25万点有5个0、5个正回报。这不支持把20万单点直接视为整轮永久失败；也不能将随后一个正回报点写成训练已稳定、已完全学会摆起或最终优于baseline。保留全部阶段点，继续原百万动作协议；当前没有新的重跑或调参依据。评价内部逐transition reward仍未独立重放，本次没有额外解码25万checkpoint参数；前述15万/20万参数检查的范围不扩大。
+
+只读脚本`analysis/outputs/pendulum-seeds23-parallel-20261104/partial-return-250k.py`，SHA256 `76f4f9a45d2a57ac90bf433ce4a07c23537f5b63f6ce5322ac0602dff41172fb`；结果`monitor/partial-return-250k-20261104.json`，SHA256 `83e0899c4d8ce94821ee28e510169444259c51e5e3efa3b80e57987f1fbd19d7`，含原始评价记录、输入hash、点级核查及正式指标null。仅本机文档/小证据更新，无训练源码、科学配置、活动checkout、W&B或c文件变更；终点分析代码/34项测试仍3591c8d2f54b0558badb2c98641c87f5e6edb52b。继续当前chat完成四条终点collect/analyze/replay和校正解释，目标保持进行中。

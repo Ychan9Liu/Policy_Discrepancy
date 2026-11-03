@@ -2,6 +2,11 @@
 
 更新日期：2026-11-04。
 
+## 05校正跟进：现有28点评价复算通过，seed3 Dt 25万点为472.2（2026-11-04）
+
+- 04:05:33只读复算baseline各0…35万8点、PPD-KL各0…25万6点，共28点/280完整episode；来源/协议及固定快照小证据通过，无重复或均值冲突，完整AUC/末段指标仍null。25万点baseline seed2/3=772.5/842.1、PPD-KL=800.6/472.2；seed3 Dt该点5个0、5个正回报，不能把20万单点0判为整轮永久失败，也不能据随后一个点宣告训练稳定。阶段点全部保留，继续原协议。
+- 04:04:55四agent/两监督器真实身份匹配，baseline动作375460/374872、Dt250480/250792，末条invalid0；GPU1/4/5/6各17个本批C/G、7空闲，/data309.64GB，终点0/4。证据/hash见docs/PENDULUM_SEEDS23_PARALLEL.md及analysis/outputs/pendulum-seeds23-parallel-20261104/monitor/partial-return-250k-20261104.json。仅文档/只读小证据，训练c5f86ca/控制器b7f42d4及分析/34项测试3591c8d未改变；不重跑、不调参、不写W&B/c，继续当前chat至四条终点与完整校正解释完成，目标active。
+
 ## 05校正跟进：终点训练reward复核入口与原seed0实际回归通过（2026-11-04）
 
 - 新增pendulum_seeds23_analysis replay入口，严格等新权威四条全部accepted及终点镜像/源hash一致后，以CPU只读训练reward/action/边界，复用原seed0百万动作重建函数。输出零回报episode、首次获奖及首动作有/无奖励分层，用于判断摆起失败是否重复；不改变21点评价指标，不新增成功阈值、GPU执行或训练参数。
