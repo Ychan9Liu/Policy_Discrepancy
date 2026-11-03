@@ -94,10 +94,16 @@ def episodes_from_chain(chain, stamps, worker):
     episodes, start = [], 0
     for end in np.flatnonzero(last):
         reward = chain['reward'][start + 1:end + 1]
+        positive = np.flatnonzero(reward > 0)
+        edges = np.diff(np.r_[False, reward > 0, False].astype(np.int8))
+        bouts = np.flatnonzero(edges == -1) - np.flatnonzero(edges == 1)
         episodes.append(dict(worker=worker, start_index=int(start), end_index=int(end),
                              start_action=int(stamps[start + 1]), end_action=int(stamps[end]),
                              length=int(end - start), return_raw=float(reward.sum(dtype=np.float64)),
-                             positive_steps=int((reward > 0).sum())))
+                             positive_steps=len(positive), first_action_reward=float(reward[0]),
+                             first_positive_step=int(positive[0]+1) if len(positive) else None,
+                             last_positive_step=int(positive[-1]+1) if len(positive) else None,
+                             positive_bouts=len(bouts), longest_positive_bout=int(bouts.max()) if len(bouts) else 0))
         start = int(end + 1)
     tail = chain['reward'][start + 1:]
     return episodes, dict(worker=worker, length=len(tail), return_raw=float(tail.sum(dtype=np.float64)))
@@ -345,6 +351,15 @@ def analyze(source, output):
             first_100k_positive_steps=sum(p['positive_reward_count'] for p in run['phases'][:2]),
             first_100k_reward=sum(p['reward_sum'] for p in run['phases'][:2]),
             max_loss_reconstruction_abs_error=max(loss_errors)))
+        if 'first_action_reward' in run['training_episodes'][0]:
+            summaries[-1]['reward_entry'] = {}
+            for initial_positive in (False, True):
+                selected = [e for e in run['training_episodes'] if (e['first_action_reward'] > 0) == initial_positive]
+                summaries[-1]['reward_entry'][str(initial_positive)] = dict(
+                    count=len(selected), ever_positive=sum(e['positive_steps'] > 0 for e in selected),
+                    return_stats=stats([e['return_raw'] for e in selected]),
+                    first_positive_step_stats=stats([e['first_positive_step'] for e in selected if e['first_positive_step'] is not None]),
+                    longest_positive_bout_stats=stats([e['longest_positive_bout'] for e in selected]))
     for name, data in [('phases', rows), ('summary', summaries), ('learning_points', curves)]:
         dump(output / (name+'.json'), data)
         flat = [{k: json.dumps(v) if isinstance(v, (list, dict)) else v for k, v in r.items()} for r in data]
