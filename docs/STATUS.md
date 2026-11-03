@@ -2,6 +2,13 @@
 
 更新日期：2026-11-04。
 
+## 03存储维护：sv1清理完成，Denoising仅盘点（2026-11-04）
+
+- 11月3日23:04清两处pip下载缓存778文件/3.3266GB；11月4日00:13把20条已验收DMC8工程integration的80个agent.pkl完整归档后移除sv1原件/41.0292GB。合计44.3558GB，00:15 /data可用45.583GB、98%，项目占325.807GB。无新训练/推理/GPU作业或GPU占用核查。
+- 本机有效归档analysis/outputs/sv1-storage-cleanup-20261103/engineering-models.tar.zst为18.8282GB；全部80模型读回SHA256、整包落盘hash、源文件复核通过，1190项保留证据检查与19587正式文件元数据集合一致。20条工程目录已有归档标记，原快照/完成复开验收须先恢复模型。正式产物、replay、环境/base-py311及旧失败/固定输入证据保留；不能整体清空该本机归档目录。
+- Denoising仅只读盘点：精确重复GIF可去重6.7449GB，迁移包约5.621GB需接收端/备份核验；replay约295.429GB、budget_snapshots约47.771GB先保留，不自行选科研保留点。具体路径、证据/恢复限制见docs/SV1_STORAGE_CLEANUP_20261103.md及本机DENOISING_CANDIDATES.md。实际维护基于sv1源码6e468ad4a8252f21401eab6a9761626b33659f0e；本次仅文档入Git，无新训练代码测试或服务器源码同步。
+- 本机旧未完成gzip临时文件10.9387GB删除被自动审批拒绝（仅blocked by policy），暂留；有效zstd归档和sv1清理不受影响。余量仍低于原单条60GB启动门槛，不自动启动。首选当前03准备/确认Denoising重复GIF保留与去重方案后处理获批范围，不自动建chat或发消息。
+
 ## 03执行/05校正最新：pendulum seed2/3两baseline运行、两PPD-KL排队（2026-11-04）
 
 - 用户已明确批准“按此方案准备并启动四条复验”。sv3物理GPU1=seed2 baseline→Dt、GPU4=seed3 baseline→Dt，后继依赖自身baseline完整产物审计；GPU5/6/7保留，不重复vision20已有seed1或hopper。沿用原clean视觉/size50m/repeat1/alpha20/free nats1/原损失与梯度/百万动作/21×10采样评价/JSONL+PD_1，仅script/seed/logdir改变，不调整科学参数。
