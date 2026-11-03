@@ -1,12 +1,18 @@
 # 实验分析
 
+## Pendulum seed2/3原参数复验已启动（2026-11-04）
+
+用户已于11月3日明确批准四条复验并启动，原“先不启动”已解除。sv3 GPU1=seed2、GPU4=seed3，各自baseline完整审计后PPD-KL（dt），当前两条baseline运行、两条Dt排队，GPU5/6/7保留；配置/实际SHA/工程与启动验收见`docs/PENDULUM_SEEDS23_RUNS.md`。没有新增alpha、损失、奖励或其他科学干预。
+
+正式统计命令为`python -m analysis.return_metrics --profile pendulum-seeds23 --index ACTUAL_RUN_INDEX.json --output NEW_DIR --require-complete`。此profile严格为pendulum、seed2/3、baseline/dt四条，沿用百万动作/21×10/原始return AUC及末段五点均值，输出逐seed指标和两条配对差值；缺seed/点不插值或重加权，不并入seed0/1、不把工程短程或评价episode当训练重复。完整批次指标需等四条结束验收。
+
 ## PPD-KL作用强度与无明显优势的解释（2026-11-03）
 
 `docs/ANALYSIS_PPD_KL_STRENGTH.md`关联已有15任务return指标与门控统计，解释alpha、实际减弱、阶段/高分空间及单seed限制；不把无优势统一归为参数太小，不据已有曲线直接调参。核查脚本/输入hash/未舍入表在`analysis/outputs/ppd-kl-strength-20261103/`，无训练或协议变更。
 
 ## Pendulum失败链路与校正准备（2026-11-03）
 
-`diagnose_pendulum_v1.py collect/analyze/prefix`只读两条正式seed0原始replay/0步checkpoint/JSONL，核对百万动作、episode奖励累计与首次进入奖励区间、动作与下一行奖励对齐、初始参数及首次更新前输入差异，输出统计与六面板图。完整来源、命令和范围见`docs/ANALYSIS_PENDULUM_CORRECTION.md`；产物为`analysis/outputs/pendulum-diagnosis-20261103/`。CPU读取，不执行agent/环境/GPU。4项手算新测试与既有指标统计共24项通过；新seed方案待确认，用户“先不启动”仍有效。
+`diagnose_pendulum_v1.py collect/analyze/prefix`只读两条正式seed0原始replay/0步checkpoint/JSONL，核对百万动作、episode奖励累计与首次进入奖励区间、动作与下一行奖励对齐、初始参数及首次更新前输入差异，输出统计与六面板图。完整来源、命令和范围见`docs/ANALYSIS_PENDULUM_CORRECTION.md`；产物为`analysis/outputs/pendulum-diagnosis-20261103/`。CPU读取，不执行agent/环境/GPU。4项手算新测试与既有指标统计共24项通过；该诊断交付时新seed方案待确认、尚不允许启动，后续授权与执行见上节，诊断产物和解释不变。
 
 ## 新增15任务分析（2026-11-02，用户排除acrobot）
 

@@ -1,6 +1,15 @@
 # 项目状态
 
-更新日期：2026-11-03。
+更新日期：2026-11-04。
+
+## 03执行/05校正最新：pendulum seed2/3两baseline运行、两PPD-KL排队（2026-11-04）
+
+- 用户已明确批准“按此方案准备并启动四条复验”。sv3物理GPU1=seed2 baseline→Dt、GPU4=seed3 baseline→Dt，后继依赖自身baseline完整产物审计；GPU5/6/7保留，不重复vision20已有seed1或hopper。沿用原clean视觉/size50m/repeat1/alpha20/free nats1/原损失与梯度/百万动作/21×10采样评价/JSONL+PD_1，仅script/seed/logdir改变，不调整科学参数。
+- 实现、实际服务器测试及训练SHA `c5f86ca1a16648f57db3c3abfa2584ac560495ca`：129 CPU测试、三个float32完整agent隔离变体、GPU1/4实际CUDA/EGL同卡及线上logger通过；四条真实size50m CUDA短程各4098动作/517成功更新/3×1评价/2报告，全部审计通过。59个训练/环境文件与两个原pendulum训练版本分别逐Git blob相同，仅入口/范围/冻结器四文件不同；工程产物不作正式c或收益。
+- 11月3日23:56:14五卡无C/G、/data340.70GB，超过四条240GB预留；绑定/监督器/每条启动再次检查。23:56:37监督器3690542启动，两baseline PID3690581/3690588。11月4日00:00:40启动审计两条各0点10完整episode/固定0动作0更新快照/评价seed正确，458/461连续成功更新invalid0，C/G全属相应作业且同卡，线上running/full config及精确startup JSON/hash读回一致，/data余338.57GB。
+- 当前2运行/2排队/0正式验收完成；GPU1/4仍有本项目作业，GPU5/6/7保留未用。两条Dt尚无PID/manifest，监督器等待各自百万动作、完整成功收据、21×10/快照和自身baseline [10万,30万) S/N冻结c审计通过后启动；冲突或失败停后继、保留证据。四条accepted/原始return指标/跨seed重复性仍待终点，不称已完成或方法有效。
+- 仅同步sv3独立干净checkout `/data/Policy_Discrepancy/checkouts/pendulum-seeds23-c5f86ca1a166`，原canonical HEAD保持d8997f64a301bfdcfe08758faeae8957a7395766；无sv1/sv2同步、依赖变更或GitHub推送。后续交付提交仅文档，活动训练checkout不移动；其他chat草稿保留。完整证据/命令/哈希/DELIVERY及prompt在analysis/outputs/pendulum-seeds23-start-20261103/，报告docs/PENDULUM_SEEDS23_RUNS.md。
+- 首选继续当前chat监测既有队列并完成四条终点审计，再按05职责逐seed比较；不新建chat/不发消息/不重复启动。新科学干预交02与用户确认。seed0/1来源单列、保留低回报seed，episode不当独立训练seed，正式指标只用未平滑21点原始return、缺项不补齐或重加权。
 
 ## 03职责执行更新：pendulum seed2/3四条复验获准，工程验收后启动（2026-11-03）
 

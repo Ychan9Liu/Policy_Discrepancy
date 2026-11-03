@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-11-04 Pendulum seed2/3启动验收完成**：实现/实测/实际训练固定SHA `c5f86ca1a16648f57db3c3abfa2584ac560495ca`；129项CPU、三变体完整agent隔离检查、两卡CUDA/EGL与在线logger、四条真实4098动作CUDA短程全部通过。11月3日23:56 sv3 GPU1 seed2 baseline、GPU4 seed3 baseline已启动，两条PPD-KL按各自baseline完整审计后串行；11月4日00:00:40各0点评价10完整episode、458/461成功更新、同卡独占及W&B配置/精确摘要回读通过。当前2运行/2排队，不是四条已完成；GPU5/6/7保留，seed1不重复。完整命令/配置/版本/产物与后续标准见`docs/PENDULUM_SEEDS23_RUNS.md`，不据启动验收作效果结论。
+
 **2026-11-03 Pendulum校正复验已授权**：用户确认原参数新跑pendulum_swingup seed2/3各logging baseline/PPD-KL四条；sv3物理GPU1对应seed2、GPU4对应seed3，每卡baseline完整审计后Dt，GPU5/6/7保留，不重复seed1或hopper。独立`M2-v1-pendulum-seeds23-baseline-dt`/`pendulum-seeds23` profile，百万动作/21×10/原始return口径及每seed自身baseline S/N冻结c不变；不混入seed0/1总体或新增科学干预。配置、工程/启动验收和实际版本见`docs/PENDULUM_SEEDS23_RUNS.md`；正式完成以四条实际产物审计为准。
 
 **2026-11-03 Vision20 seed1执行（当前）**：用户授权原配置20任务×baseline/PPD-KL（代码dt），复用已有hopper seed1一对，其他19任务新跑38条。sv1 GPU2—7因/data仅约1.24GB等用户释放/扩容，sv2 GPU0—5/7先执行七任务baseline→Dt、不用GPU6。独立scope/profile保持旧范围关闭，实际代码/验收SHA77699380851701f7a03a9d13985c5cc0de5d0702，121 CPU及14条真实CUDA短程通过；23:00七baseline已启动、23:03启动验收通过，七Dt排队。当前2复用完成/7运行/7排队/24空间阻塞，不是20任务完成或方法有效结论。完整冻结配置、版本、任务/卡、空间/队列与复用来源及证据见`docs/VISION20_SEED1_RUNS.md`。原seed0结果和其他scope不自动合并。
