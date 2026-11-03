@@ -116,6 +116,8 @@ PPD-KL前5万的活跃权重0.997705、超额KL减弱约0.0883%；5万—10万�
 
 当前代码只支持原seed0、hopper限定seed1/2/3及vision20限定seed1，**尚无pendulum seed2/3正式入口**。以下是待确认范围；若获授权，工程实现应新增严格独立scope及回归，不放宽旧scope、不冒用hopper入口。
 
+2026-11-03追加CPU预检：在ca0a62d7c0df1b86fea8284e18f3afb548cf2cfb上实际执行16个范围案例，原pendulum seed0和vision20 seed1允许，dmc16、vision20 seed1和hopper三个入口下pendulum seed2/3按预期拒绝；四份候选配置与原组配置除seed和未分配目录外完全一致。证据为`analysis/outputs/pendulum-correction-preflight-20261103/`，含完整候选配置/hash、preflight.json和可重新执行的verify_preflight.py。它们保留旧script以显式暴露未实现条件，目录含UNASSIGNED、authorized_to_train=false、launch_argv=null，**不是可运行计划或授权**。该预检不执行agent/env/GPU，不改训练入口；下一步仍待上一条范围/启动问题的明确回复。
+
 |服务器/物理GPU|顺序|训练seed|任务/组|状态|
 |---|---|---:|---|---|
 |sv3 / 1|先baseline，完整验收后PPD-KL|2|pendulum_swingup，两条|建议，未启动/未排队|
