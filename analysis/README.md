@@ -1,5 +1,9 @@
 # 实验分析
 
+## Pendulum失败链路与校正准备（2026-11-03）
+
+`diagnose_pendulum_v1.py collect/analyze/prefix`只读两条正式seed0原始replay/0步checkpoint/JSONL，核对百万动作、episode奖励累计与首次进入奖励区间、动作与下一行奖励对齐、初始参数及首次更新前输入差异，输出统计与六面板图。完整来源、命令和范围见`docs/ANALYSIS_PENDULUM_CORRECTION.md`；产物为`analysis/outputs/pendulum-diagnosis-20261103/`。CPU读取，不执行agent/环境/GPU。4项手算新测试与既有指标统计共24项通过；新seed方案待确认，用户“先不启动”仍有效。
+
 ## 新增15任务分析（2026-11-02，用户排除acrobot）
 
 `analyze_dmc15_v1.py collect --output NEW_DIR` 只读sv1/sv2/sv3正式索引，采集已逐条审计的非acrobot baseline/Dt原始评价/JSONL/配置和快照小证据，逐行复核收据及正式c；`analyze --output NEW_DIR` 从本机镜像复算15任务30条的AUC、末段均值和门控，导出CSV/JSON/PNG/SVG。使用普通Python（校验依赖assert，不用-O），绘图依赖同既有Matplotlib环境。完整命令、训练SHA及局限见 `docs/ANALYSIS_DMC15_V1.md`，实际产物 `analysis/outputs/dmc15-analysis-20261102-final/`。不修改原完整dmc16统计profile、不将15任务子集称全32条完成、不混算历史四任务或hopper补seed总体。

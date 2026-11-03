@@ -2,6 +2,13 @@
 
 更新日期：2026-11-03。
 
+## 05 最新：pendulum摆起失败链路复核，校正复验尚未启动（2026-11-03）
+
+- 两条seed0全replay独立复核：各100万动作/1008 reset/992完整episode；baseline零return 927、PPD-KL49。两组第一动作即获奖励的40episode中baseline均值902.25；其余952episode后来获奖仅25对903，更符合保持能力部分存在、普遍摆起未建立，不等于已证明代码故障。
+- 294初始数组/seed/10个关键文件一致，但首次更新前初始图像已有314个坐标相差1、2/16动作不同，不能把最终差值全归gate。原始评价32.5325/691.465 AUC、末段101.48/787.8不变；实际门控存在，保留日志聚合/因果/单seed限制。hopper补seed已有结果与mode修复证据已复核，无新增重跑理由。
+- 新代码analysis/diagnose_pendulum_v1.py，24项测试与真实产物验证通过；最终分析/测试SHA e90e972ee1f795c157581eef40da8847336e6a53。报告docs/ANALYSIS_PENDULUM_CORRECTION.md，完整输入/hash/脚本/表图/命令在analysis/outputs/pendulum-diagnosis-20261103/。只读CPU、本机分析代码/文档；无训练源码修改、GPU探针、服务器同步或推送。
+- 用户仍要求先不启动。23:07:19 sv3物理GPU1/4/5/6/7均空闲，/data349.47GB；新任务0、队列0。建议下一步待确认补pendulum seed2/3两组共4条，同seed同卡串行GPU1/4、其余保留；seed1复用既有vision20计划，不重复/迁移。新seed入口未实现、启动限制未解除，整体校正未完成；不自动建chat/发消息。
+
 ## 03合并窗口最新：Vision20 seed1，sv2七baseline已启动，sv1待空间（2026-11-03）
 
 - 用户授权20视觉任务×baseline/PPD-KL、原配置、seed1，明确复用已有hopper seed1一对，其他19任务新跑38条；资源sv1 GPU2—7、sv2 GPU0—5/7，不用sv2 GPU6。PPD-KL映射既有dt，baseline映射logging，原seed0/补seed结果不改。保持clean视觉/size50m/alpha20/free_nats1/原KL梯度/百万动作含prefill/21×10固定快照采样评价/JSONL+online PD_1/raw-return口径，独立scope/profile，不自动并seed0或加constant/shuffle。
