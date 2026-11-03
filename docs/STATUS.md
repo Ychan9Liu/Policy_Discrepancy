@@ -2,6 +2,12 @@
 
 更新日期：2026-11-04。
 
+## 05校正跟进：终点训练reward复核入口与原seed0实际回归通过（2026-11-04）
+
+- 新增pendulum_seeds23_analysis replay入口，严格等新权威四条全部accepted及终点镜像/源hash一致后，以CPU只读训练reward/action/边界，复用原seed0百万动作重建函数。输出零回报episode、首次获奖及首动作有/无奖励分层，用于判断摆起失败是否重复；不改变21点评价指标，不新增成功阈值、GPU执行或训练参数。
+- 实际分析/测试SHA3591c8d2f54b0558badb2c98641c87f5e6edb52b，34项相关离线测试通过（0.111秒）；另对sv3已完成seed0 Dt真实百万动作replay重读，逐chunk标量hash、992完整episode/16尾段、各阶段/prefill及汇总与旧诊断精确一致。此实际回归不代替新seed2/3终点验收；评价逐transition reward限制仍在。
+- 03:31:18四条真实进程/两监督器均匹配，baseline动作324376/324040、两Dt200000，末条invalid0，GPU1/4/5/6各17个本批C/G、7空闲，/data313.79GB，终点0/4。证据/命令在analysis/outputs/pendulum-seeds23-replay-preparation-20261104/，完整记录docs/PENDULUM_SEEDS23_PARALLEL.md。只改本机分析/测试/文档，无服务器Git同步或活动checkout变更；继续当前chat至终点collect/analyze/replay、图形验看和校正解释完成，目标保持进行中。
+
 ## 05校正跟进：baseline匹配窗口前缀核查通过，正式c待终点（2026-11-04）
 
 - 03:17:15仅CPU/标准库只读各baseline前74493条成功收据及30万点小快照证据，连续/单调/invalid0；[100000,300000)均含50000次成功更新（IDs24492…74491），上界300000动作的ID74492排除。seed2 S/N=7396141.760381699/8363327，seed3=7721404.809896469/8560619，N均>0。没有计算、写入或冻结正式c；仍须完整百万动作/21×10/全部收据终点审计，再冻结和独立复核。

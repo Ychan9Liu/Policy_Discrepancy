@@ -116,3 +116,13 @@ bundle SHA256 `e1b61d38c0f0f0f48d2ddbdbd53b7ae12dd55f2b056008c5a53f03c3dafdb425`
 两N均大于0；正式c仍由原监督器在完整百万动作/21×10/全部收据审计通过后冻结，并在终点独立复算再次比对本窗口S/N。当前检查不证明未来收据/全部终点评价完整，不代替其他快照的参数解码或评价逐reward重放。没有用部分窗口、工程c或默认值继续新对照，也未新增训练组。
 
 脚本analysis/outputs/pendulum-seeds23-parallel-20261104/matching-window-prefix-audit.py，只经SSH stdin执行Python标准库只读检查；脚本SHA256 `242a7ea0c0aee840e778a9941ffbf30effd3028bda2c5e7d70fed566f7d558d8`。结果monitor/matching-window-prefix-20261104T031757217.json，SHA256 `52719abfeb1dd137b0b66cfdeceb759595267d816d118714fd07bb30b9b963b0`，包含原目录、实际训练SHA、固定前缀/评价行/metadata hash和边界IDs。大文件留sv3，未修改训练源码、活动checkout、W&B或c文件；正式终点0/4，继续原协议等待。指标代码/测试仍以58f6ff6及原冻结return_metrics为准，本次只有运行记录更新。
+
+### 终点训练replay诊断入口与实际seed0回归（2026-11-04）
+
+为判断原baseline的摆起失败是否在新seed重复，新增`analysis.pendulum_seeds23_analysis replay --input <终点输入镜像> --output <新目录>`。它再次要求权威四条全部accepted、supervisor/completion一致和原始小产物hash匹配，再以CPU只读完整训练replay的reward/action/episode边界。重用从seed0诊断中抽出的原函数，保持reset排除、前一行action对应当前reward、完整episode与尾段总和闭合等口径；不运行agent/环境/GPU，不下载大replay或改正式评价指标。输出逐seed的零回报episode、前10万正奖励次数、首次获奖动作位置，以及首动作reward=0/1分层的后来获奖比例和平均return。没有引入成功回报阈值或把训练episode当作训练seed。
+
+实际分析/回归SHA **3591c8d2f54b0558badb2c98641c87f5e6edb52b**：10项seed2/3分析测试、4项原replay手算测试和20项既有指标/门控测试，共34项通过，unittest计时0.111秒。另对sv3已经完成的pendulum seed0 PPD-KL（训练d8997f64a301bfdcfe08758faeae8957a7395766）实际百万动作replay重新执行抽出函数：逐chunk标量hash、992个完整episode、16个尾段、全部汇总、20个5万区间、20个早期5千区间、prefill及初始标量hash与原inspection-entry/dt.json精确一致。正奖励动作699642、零回报完整episode49等均未改变。这是原seed0产物回归，不是新seed2/3终点验收。
+
+本机证据`analysis/outputs/pendulum-seeds23-replay-preparation-20261104/`包含tests.txt/tests.json、实际远端只读脚本、seed0-replay.json、verification.json及命令。原参考JSON SHA256 `18ca0872092e577db802442796b11395f64c13dd9fdf78c9bf4467bc01093273`；本次实际回归JSON SHA256 `bfaf9f21a116186c65d7ca0b0eb971cd349e6ab563f6e10a98e311502aafb547`。未解析或hash全部图像；各chunk仅核所读标量数组hash与ZIP CRC。训练reward独立求和不能替代评价逐transition reward核验，首动作reward不能当成测得的reset角度。
+
+03:31:18实时核查：原两baseline动作324376/324040，新两Dt均到200000动作、49493次成功更新，20万点评价当时尚未写出；两监督器及四agent真实身份/命令匹配、末条invalid0，四卡各17个本批C/G PID、GPU7无进程，/data余313.79GB。仍0/4终点验收，新replay入口尚未用于本批终点。只改本机分析代码/测试/文档，经stdin只读sv3，无服务器Git同步或训练/控制器checkout变更。下一步继续现有chat完成四条终点collect/analyze/replay及图形验看，再综合校正解释；整体目标保持进行中。
