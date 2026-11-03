@@ -2,6 +2,12 @@
 
 更新日期：2026-11-03。
 
+## 05 最新：PPD-KL无明显优势与参数强度解释（2026-11-03）
+
+- 已只读关联新增15任务seed0的return指标与门控统计，核对30条alpha20/rep系数0.1：finger_spin超额KL减弱45.90%但AUC差−3.17，walker_walk减弱29.81%但AUC差−1.25；pendulum减弱10.00%却AUC差+658.93。不能统一归为alpha太小，也未证明alpha20最优；loss减弱不等于总梯度范数减弱。
+- 报告docs/ANALYSIS_PPD_KL_STRENGTH.md区分高分空间、学习速度/末段、阶段作用不足、选择机制与单seed路径；首选先核对现有seed1重复趋势，新的双向alpha/匹配对照交02与用户确认，不自行选参数。修正DMC15旧报告pendulum前期为0的简写，原正式指标不变。
+- 核查脚本、源hash、未舍入表及版本在analysis/outputs/ppd-kl-strength-20261103/。本次仅文档和只读数据核查，无训练代码/协议变更、无新训练/GPU探针/资源核查或服务器源码同步；sv3 GPU1/4/5/6/7“先不启动”保持，不自动建chat/发消息。
+
 ## 05 最新：pendulum摆起失败链路复核，校正复验尚未启动（2026-11-03）
 
 - 两条seed0全replay独立复核：各100万动作/1008 reset/992完整episode；baseline零return 927、PPD-KL49。两组第一动作即获奖励的40episode中baseline均值902.25；其余952episode后来获奖仅25对903，更符合保持能力部分存在、普遍摆起未建立，不等于已证明代码故障。

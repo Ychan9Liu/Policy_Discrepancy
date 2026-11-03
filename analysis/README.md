@@ -1,5 +1,9 @@
 # 实验分析
 
+## PPD-KL作用强度与无明显优势的解释（2026-11-03）
+
+`docs/ANALYSIS_PPD_KL_STRENGTH.md`关联已有15任务return指标与门控统计，解释alpha、实际减弱、阶段/高分空间及单seed限制；不把无优势统一归为参数太小，不据已有曲线直接调参。核查脚本/输入hash/未舍入表在`analysis/outputs/ppd-kl-strength-20261103/`，无训练或协议变更。
+
 ## Pendulum失败链路与校正准备（2026-11-03）
 
 `diagnose_pendulum_v1.py collect/analyze/prefix`只读两条正式seed0原始replay/0步checkpoint/JSONL，核对百万动作、episode奖励累计与首次进入奖励区间、动作与下一行奖励对齐、初始参数及首次更新前输入差异，输出统计与六面板图。完整来源、命令和范围见`docs/ANALYSIS_PENDULUM_CORRECTION.md`；产物为`analysis/outputs/pendulum-diagnosis-20261103/`。CPU读取，不执行agent/环境/GPU。4项手算新测试与既有指标统计共24项通过；新seed方案待确认，用户“先不启动”仍有效。
