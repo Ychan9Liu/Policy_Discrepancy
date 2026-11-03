@@ -3,6 +3,7 @@
 python -m analysis.pendulum_seeds23_analysis collect --output NEW_INPUT
 python -m analysis.pendulum_seeds23_analysis analyze --input NEW_INPUT --output NEW_RESULT
 python -m analysis.pendulum_seeds23_analysis initial --output NEW_INITIAL_CHECK
+python -m analysis.pendulum_seeds23_analysis replay --input TERMINAL_INPUT --output NEW_REPLAY_CHECK
 
 Reads original JSONL and existing audits. Never trains, writes W&B, downloads
 checkpoint/replay payloads, or substitutes a partial curve for formal metrics.
@@ -303,6 +304,110 @@ def collect_initial(output):
         prefix_comparison=p['prefix_comparison']) for p in result['pairs']],indent=2))
 
 
+def reward_entry_summary(episodes):
+    """Describe entry/holding without classifying an arbitrary return as success."""
+    rows = []
+    for initial_positive in (False, True):
+        selected = [e for e in episodes if (e['first_action_reward'] > 0) == initial_positive]
+        count = len(selected)
+        ever = sum(e['positive_steps'] > 0 for e in selected)
+        rows.append(dict(first_action_has_reward=initial_positive, episodes=count,
+            ever_reward_episodes=ever, ever_reward_fraction=ever/count if count else None,
+            mean_return_raw=math.fsum(e['return_raw'] for e in selected)/count if count else None))
+    return rows
+
+
+def remote_training_rewards(specs, replay_reader):
+    """Read complete training replay after the same four-run terminal gate."""
+    require(sys.flags.optimize == 0, 'Replay checks require Python assertions enabled')
+    root = Path(ROOT)
+    rows = cohort(read(root/'actual-RUN_INDEX.json'), read(root/'final-audit-attempt01/completion.json'),
+                  read(root/'supervisor-final.json'))
+    require(len(specs) == 4 and [s['row'] for s in specs] == rows,
+            'Replay sources differ from the accepted terminal cohort')
+    result = dict(checked_utc=datetime.now(timezone.utc).isoformat(),
+        actual_training_sha=TRAIN_SHA, actual_audit_controller_sha=CONTROLLER_SHA,
+        read_only=True, source_kind='training replay, not fixed-snapshot evaluation', runs=[])
+    for spec in specs:
+        row = spec['row']; directory = Path(row['directory'])
+        def verify_sources():
+            for name, expected in spec['expected_hashes'].items():
+                require(sha(directory/name) == expected, 'Terminal source changed: '+name)
+        verify_sources()
+        manifest = read(directory/'protocol_manifest.json')
+        require(manifest['config'] == row['config'] and manifest['git_commit'] == TRAIN_SHA and
+                manifest['root_seed'] == row['seed'] and manifest['protocol'] == SCOPE,
+                'Replay manifest/config differs from terminal acceptance')
+        final = read(directory/'final_state.json')
+        require(final['train_action_steps'] == 1000000 and final['updates'] == 249493,
+                'Replay source is not a full terminal run')
+        def inventory():
+            return {str(p):(p.stat().st_size,p.stat().st_mtime_ns) for p in (directory/'replay').glob('*.npz')}
+        before = inventory()
+        evidence = replay_reader(directory, row['config'], final, prefix_images=False)
+        require(before == inventory(), 'Replay inventory changed during read')
+        verify_sources()
+        summary = evidence['replay_summary']
+        require(summary['actions'] == 1000000 and summary['complete_episodes'] == 992 and
+                summary['resets'] == 1008 and summary['terminals'] == 0 and
+                set(summary['reward_values']).issubset({0.,1.}) and
+                all(e['length'] == 1000 for e in evidence['training_episodes']),
+                'Pendulum raw reward or full replay counts differ')
+        result['runs'].append(dict(seed=row['seed'], group=row['group'], run_id=row['run_id'],
+            directory=row['directory'], source_hashes=spec['expected_hashes'],
+            reward_entry=reward_entry_summary(evidence['training_episodes']), **evidence))
+    print(json.dumps(result, allow_nan=False))
+
+
+def collect_training_rewards(source, output):
+    """Reuse terminal-mirror identities, read replay on sv3 CPU, retain scalar evidence."""
+    from analysis.analyze_m2_v1 import csv_write
+    source, output = source.resolve(), output.resolve()
+    proof = verify_mirror(source); mirror = source/'inputs'
+    locate = lambda remote: mirror.joinpath(*PurePosixPath(remote).parts[1:])
+    root = locate(ROOT)
+    rows = cohort(read(root/'actual-RUN_INDEX.json'), read(root/'final-audit-attempt01/completion.json'),
+                  read(root/'supervisor-final.json'))
+    names = ('protocol_manifest.json', 'final_state.json', 'evaluations.jsonl', 'update_receipts.jsonl')
+    specs = [dict(row=row, expected_hashes={name:proof['files'][
+        row['directory'].lstrip('/')+'/'+name]['sha256'] for name in names}) for row in rows]
+    code = Path(__file__).read_text(encoding='utf-8')
+    helper_path = Path(__file__).with_name('diagnose_pendulum_v1.py')
+    helper = helper_path.read_text(encoding='utf-8')
+    program = ("helper={'__name__':'readonly_replay_helper'}\nexec("+repr(helper)+",helper)\n"
+        "namespace={'__name__':'readonly_training_rewards'}\nexec("+repr(code)+",namespace)\n"
+        "namespace['remote_training_rewards']("+repr(specs)+",helper['training_replay'])\n")
+    output.mkdir(parents=True,exist_ok=False)
+    (output/'collector.py').write_text(program,encoding='utf-8')
+    with (output/'inspection.json').open('xb') as stream, (output/'stderr.txt').open('xb') as errors:
+        subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=20','sv3',
+            "CUDA_VISIBLE_DEVICES='' JAX_PLATFORMS=cpu OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /data/Policy_Discrepancy/envs/dreamer/bin/python -"],
+            input=program.encode(),stdout=stream,stderr=errors,check=True)
+    result = read(output/'inspection.json')
+    require([(r['seed'],r['group'],r['run_id']) for r in result['runs']] ==
+            [(r['seed'],r['group'],r['run_id']) for r in rows], 'Collected replay identities differ')
+    summary_rows, entry_rows = [], []
+    for run in result['runs']:
+        s = run['replay_summary']; identity = dict(seed=run['seed'],group=run['group'],run_id=run['run_id'])
+        summary_rows.append(dict(**identity, **{k:s[k] for k in ('actions','resets','complete_episodes',
+            'zero_return_episodes','positive_actions','first_positive_action','total_reward_sum')},
+            complete_episode_mean_return=s['episode_returns']['mean'],
+            first_100k_positive_actions=sum(p['positive_reward_count'] for p in run['early_5k'])))
+        entry_rows.extend(dict(**identity,**e) for e in run['reward_entry'])
+    csv_write(output/'training_reward_summary.csv',summary_rows)
+    csv_write(output/'training_reward_entry.csv',entry_rows)
+    dump(output/'verification.json',dict(collector_sha256=sha(output/'collector.py'),
+        inspection_sha256=sha(output/'inspection.json'),script_sha256=sha(Path(__file__)),
+        helper_sha256=sha(helper_path), input_archive_sha256=sha(source/'inputs.tar.gz'),
+        analysis_sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        training_actions=4000000, formal_evaluation_metrics_changed=False,
+        limitations=['Training replay reward sums checked independently; evaluation transition rewards not replayed.',
+                     'Array hashes/ZIP CRC for named scalar fields; not complete image/replay file hashes.',
+                     'First-action reward is after the first action, not a measured reset angle.',
+                     'Training episodes share a changing policy and are not independent training seeds.']))
+    print(json.dumps(summary_rows,indent=2))
+
+
 def summarize(rows):
     """Per-seed update-weighted summaries; quantiles remain means of batch quantiles."""
     from analysis.analyze_m2_v1 import FIELDS
@@ -429,12 +534,13 @@ def plots(output, tables, diagnostics):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=('collect','analyze','initial'))
+    parser.add_argument('mode', choices=('collect','analyze','initial','replay'))
     parser.add_argument('--input', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     if args.mode == 'collect': collect(args.output)
     elif args.mode == 'initial': collect_initial(args.output)
     else:
-        if args.input is None: parser.error('analyze requires --input')
-        analyze(args.input, args.output)
+        if args.input is None: parser.error(args.mode+' requires --input')
+        if args.mode == 'replay': collect_training_rewards(args.input,args.output)
+        else: analyze(args.input, args.output)

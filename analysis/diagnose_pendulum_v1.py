@@ -148,6 +148,24 @@ def inspect(spec):
         combined_array_sha256=hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest())
     del saved
     gc.collect()
+    result.update(training_replay(directory, config, result['final']))
+    dist = importlib.metadata.distribution('dm-control')
+    result['installed_source'] = {}
+    for name in ('suite/pendulum.py', 'suite/pendulum.xml', 'utils/rewards.py'):
+        source = Path(dist.locate_file('dm_control/' + name))
+        result['installed_source'][name] = dict(path=str(source), sha256=digest(source), source=source.read_text())
+    result['completed_utc'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    print(json.dumps(result, allow_nan=False))
+
+
+def training_replay(directory, config, final, *, prefix_images=True):
+    """Read scalar replay fields; require the full original million-action budget.
+
+    Callers validate the accepted cohort and immutable source hashes before use.
+    The historical seed0 inspection also hashes the initial image prefixes.
+    """
+    directory = Path(directory)
+    result = {}
     paths = {p.stem.split('-')[1]: p for p in (directory / 'replay').glob('*.npz')}
     successors = {p.stem.split('-')[2] for p in paths.values()}
     roots = sorted((p for key, p in paths.items() if key not in successors), key=lambda p: p.name)
@@ -166,7 +184,8 @@ def inspect(spec):
                 if not parts:
                     assert int(length) >= 128
                     prefix = {k: v[:128] for k, v in fields.items()}
-                    prefix['image'] = file['image'][:128]
+                    if prefix_images:
+                        prefix['image'] = file['image'][:128]
                     prefixes.append({k: array_digest(v) for k, v in prefix.items()})
                 with zipfile.ZipFile(path) as archive:
                     members = {k: dict(array_sha256=array_digest(v),
@@ -178,7 +197,6 @@ def inspect(spec):
             path = paths.get(successor)
         chains.append({k: np.concatenate([p[k] for p in parts]) for k in FIELDS})
     assert len(visited) == len(paths)
-    final = result['final']
     fields, stamps, chain_stamps = replay_order(chains, final['train_action_steps'], config['run.eval_every_actions'])
     assert final['train_action_steps'] == 1000000
     assert len(stamps) == 1000000 + final['train_resets']
@@ -208,13 +226,7 @@ def inspect(spec):
         phases=[phase(fields, stamps, lo, lo+50000) for lo in range(0, 1000000, 50000)],
         early_5k=[phase(fields, stamps, lo, lo+5000) for lo in range(0, 100000, 5000)],
         prefill_2032=phase(fields, stamps, 0, 2032))
-    dist = importlib.metadata.distribution('dm-control')
-    result['installed_source'] = {}
-    for name in ('suite/pendulum.py', 'suite/pendulum.xml', 'utils/rewards.py'):
-        source = Path(dist.locate_file('dm_control/' + name))
-        result['installed_source'][name] = dict(path=str(source), sha256=digest(source), source=source.read_text())
-    result['completed_utc'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    print(json.dumps(result, allow_nan=False))
+    return result
 
 
 def collect(source, output):

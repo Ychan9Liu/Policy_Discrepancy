@@ -13,12 +13,15 @@
 ```sh
 python -m analysis.pendulum_seeds23_analysis collect --output analysis/outputs/NEW_PENDULUM23_INPUT
 python -m analysis.pendulum_seeds23_analysis analyze --input analysis/outputs/NEW_PENDULUM23_INPUT --output analysis/outputs/NEW_PENDULUM23_RESULT
-python -m unittest tests.test_pendulum_seeds23_analysis tests.test_return_metrics tests.test_m2_analysis -v
+python -m analysis.pendulum_seeds23_analysis replay --input analysis/outputs/NEW_PENDULUM23_INPUT --output analysis/outputs/NEW_PENDULUM23_REPLAY
+python -m unittest tests.test_pendulum_seeds23_analysis tests.test_pendulum_diagnosis tests.test_return_metrics tests.test_m2_analysis -v
 ```
 
 2026-11-04准备时四条仍运行中；入口的范围拒绝、源hash和加权统计fixture验收不代表四条真实终点通过。命令/hash/测试和当前阶段记录在`analysis/outputs/pendulum-seeds23-analysis-preparation-20261104/`。正式采集、完整图表目视检查和校正结论待四条终点产物就绪；不移动活动训练/控制器checkout。
 
 同模块`initial --output NEW_INITIAL_DIR`可在训练期间以CPU只读四条已保存的0步可信checkpoint和16条replay链各前128行（16次reset、2032动作），核对首次成功更新边界、逐参数数组hash/有限性及同seed输入差异。读取严格限定原两baseline/新两Dt路径和训练SHA，大文件留sv3，保存checkpoint文件hash、前缀数组hash、逐字段差异和实际分析版本。它核查实际初始条件，不宣称整个训练逐位确定，也不替代终点验收；执行结果在`analysis/outputs/pendulum-seeds23-initial-20261104/`。
+
+`replay`只接受上述四条完成后的终点输入镜像，再核服务器四条accepted与原始小产物hash，调用从seed0诊断抽出的同一`diagnose_pendulum_v1.training_replay`函数。只读sv3上的reward/action/episode边界数组，不复制或解析完整图像，也不执行agent/环境/GPU；重建百万动作/reset/episode和reward总和，保留逐chunk标量数组hash与ZIP CRC，输出每seed两组的零回报episode、前10万正奖励次数、首次获奖时点，以及按首个动作reward=0/1分层的后来获奖比例/平均return。该分层沿用seed0定义，首动作奖励不能当成测得的reset角度；训练episode不能当独立训练seed。训练replay求和核对不补足评价逐transition reward缺口，不改变正式评价指标。此入口准备时四条仍训练中，真实复验数据须在终点后运行；代码/手算测试及原seed0实际回归证据另记，不以准备完成代替真实终点。
 
 ## PPD-KL作用强度与无明显优势的解释（2026-11-03）
 

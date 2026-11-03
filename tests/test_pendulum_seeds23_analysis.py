@@ -4,6 +4,7 @@ import hashlib
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest import mock
 
 from analysis import pendulum_seeds23_analysis as a
 from analysis.analyze_m2_v1 import FIELDS
@@ -107,6 +108,27 @@ class PendulumAnalysisTest(unittest.TestCase):
         self.assertEqual(result['unequal_elements'],0)
         self.assertIsNone(result['first_difference_callback_index'])
         with self.assertRaises(ValueError): a.compare_prefix_arrays(value,value.astype(np.float64))
+
+    def test_reward_entry_separates_holding_entry_and_no_reward(self):
+        episodes = [dict(first_action_reward=1,positive_steps=8,return_raw=8),
+                    dict(first_action_reward=0,positive_steps=2,return_raw=2),
+                    dict(first_action_reward=0,positive_steps=0,return_raw=0)]
+        absent, present = a.reward_entry_summary(episodes)
+        self.assertEqual((absent['episodes'],absent['ever_reward_episodes']), (2,1))
+        self.assertEqual((absent['ever_reward_fraction'],absent['mean_return_raw']), (.5,1.))
+        self.assertEqual((present['episodes'],present['mean_return_raw']), (1,8.))
+        empty = a.reward_entry_summary(episodes[1:])[1]
+        self.assertEqual(empty['episodes'],0)
+        self.assertIsNone(empty['ever_reward_fraction'])
+        self.assertIsNone(empty['mean_return_raw'])
+
+    def test_running_cohort_cannot_invoke_terminal_replay_reader(self):
+        index, completion, supervisor = self.accepted()
+        index['runs'][0]['state'] = 'running'
+        replay_reader = mock.Mock()
+        with mock.patch.object(a,'read',side_effect=[index,completion,supervisor]), self.assertRaises(ValueError):
+            a.remote_training_rewards([],replay_reader)
+        replay_reader.assert_not_called()
 
 
 if __name__ == '__main__':
