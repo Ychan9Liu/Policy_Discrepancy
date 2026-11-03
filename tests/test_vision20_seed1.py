@@ -51,6 +51,28 @@ class Vision20Seed1Test(unittest.TestCase):
         with self.assertRaises(FileExistsError):runner.run('fixture.json')
         guard.assert_not_called();spawn.assert_not_called()
 
+  def test_sv1_initial_capacity_exception_is_explicit_and_keeps_per_run_floor(self):
+    with TemporaryDirectory() as temp:
+      root=Path(temp);self.make_plan(root)
+      runner.split(root/'out/planned-run-index.json','sv1',root/'sv1.json')
+      p=json.loads((root/'sv1.json').read_text());p['authorized_to_train']=True
+      for r in p['runs']:
+        r.update(launch_argv=r['review_argv'],egl_index=r['physical_gpu'],state='queued',
+            verified_compute_and_graphics_same_gpu=True)
+        r['environment_template']['MUJOCO_EGL_DEVICE_ID']=str(r['egl_index'])
+      runner.validate(p)
+      for free,exception in ((340_000_000_000,False),(59_999_999_999,True)):
+        with patch.object(runner,'read',return_value=p),patch.object(runner,'validate'),patch.object(Path,'exists',return_value=False),patch.object(runner.platform,'node',return_value=p['host']),patch.object(runner,'clean_sha',return_value=p['code_sha']),patch.object(runner,'require_free',return_value={}),patch.object(runner.shutil,'disk_usage',return_value=MagicMock(free=free)),patch.object(Path,'mkdir') as mkdir,patch.object(runner.subprocess,'Popen') as spawn:
+          with self.assertRaises(RuntimeError):runner.run('fixture.json',exception)
+          mkdir.assert_not_called();spawn.assert_not_called()
+      proc=MagicMock(pid=123,returncode=0);proc.poll.return_value=0
+      with patch.object(runner,'read',return_value=p),patch.object(runner,'validate'),patch.object(Path,'exists',return_value=False),patch.object(Path,'mkdir'),patch.object(Path,'open',return_value=MagicMock()),patch.object(runner,'dump') as saved,patch.object(runner.platform,'node',return_value=p['host']),patch.object(runner,'clean_sha',return_value=p['code_sha']),patch.object(runner,'require_free',return_value={}),patch.object(runner.shutil,'disk_usage',return_value=MagicMock(free=340_000_000_000)),patch.object(runner.subprocess,'Popen',return_value=proc) as launched,patch.object(runner,'audit_run',return_value={}),patch.object(runner.time,'sleep'),patch.object(runner.subprocess,'run',return_value=MagicMock(returncode=0)):
+        runner.run('fixture.json',True)
+      self.assertEqual(launched.call_count,24)
+      record=next(c.args[1] for c in saved.call_args_list if c.args[0].name=='capacity-at-start.json')
+      self.assertFalse(record['reservation_satisfied']);self.assertTrue(record['explicit_sv1_capacity_exception'])
+      self.assertEqual(record['per_run_floor_bytes'],60_000_000_000)
+
   def test_queue_audits_baseline_before_dt_and_blocks_failed_predecessor(self):
     for exit_code in (0,1):
       with TemporaryDirectory() as temp:

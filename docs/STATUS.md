@@ -2,6 +2,13 @@
 
 更新日期：2026-11-04。
 
+## 03存储维护：Denoising replay已直接删除（2026-11-04）
+
+- 用户明确选择“仅sv1 Denoising训练和评价replay”“直接删除，保留模型/指标/配置/审计”。01:09—01:11删除62目录26143个NPZ、295.4288GB，未归档；01:15 /data余340.990GB/85%，Denoising余175.112GB。Policy_Discrepancy replay不在范围，未改训练代码/协议、未开新实验或核GPU。
+- 44614保留文件元数据、10516关键记录完整SHA256、1408链接检查通过；删除日志逐行/哈希核对，剩余目标NPZ=0、62个删除标记。模型/budget_snapshots、指标/config/原审计及其他媒体/运输包保留。清单不是payload备份，若无其他独立完整副本，原轨迹不能从模型/指标重建，不能据此声称原训练可无缝续接。
+- 当前报告docs/DENOISING_REPLAY_CLEANUP_20261104.md；本机analysis/outputs/denoising-replay-cleanup-20261104/保存授权/完整清单/保护基线/执行脚本与hash/日志/RESULTS/DELIVERY及继续prompt；服务器小收据在Policy_Discrepancy/runs/denoising-replay-cleanup-20261104/。前次清理报告已加后续索引；旧“先保留replay”建议仅本次范围被用户授权取代。
+- 首选当前03只读核对sv1待运行队列总容量与现场资源，再按既有有效授权推进；不因腾空间自动开跑，不扩展清理到模型、快照、PD replay或其他服务器。工程/存储核验不构成方法有效性结论，不自动建chat或发消息。
+
 ## 03存储维护：sv1清理完成，Denoising仅盘点（2026-11-04）
 
 - 11月3日23:04清两处pip下载缓存778文件/3.3266GB；11月4日00:13把20条已验收DMC8工程integration的80个agent.pkl完整归档后移除sv1原件/41.0292GB。合计44.3558GB，00:15 /data可用45.583GB、98%，项目占325.807GB。无新训练/推理/GPU作业或GPU占用核查。

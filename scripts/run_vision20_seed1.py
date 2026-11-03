@@ -97,16 +97,24 @@ def bind(plan_path,evidence,output):
   plan['authorized_to_train']=True;validate(plan);dump(output,plan)
 
 
-def run(plan_path):
+def run(plan_path, accept_initial_capacity_deficit=False):
   p=read(plan_path);validate(p);root=Path(p['root'])
+  if accept_initial_capacity_deficit and p['server']!='sv1':
+    raise ValueError('Initial capacity exception is approved only for sv1')
   if root.exists():raise FileExistsError('No overwrite/resume')
   if not p['authorized_to_train'] or platform.node()!=p['host'] or clean_sha()!=p['code_sha']:
     raise RuntimeError('Wrong authorization/host/clean pinned SHA')
   cards=sorted({r['physical_gpu'] for r in p['runs']})
   checks=[require_free(g,next(r['gpu_uuid'] for r in p['runs'] if r['physical_gpu']==g)) for g in cards]
-  if shutil.disk_usage(root.parent).free < len(cards)*60_000_000_000:
+  free=shutil.disk_usage(root.parent).free;required=len(cards)*60_000_000_000
+  deficit=free<required
+  if deficit and (not accept_initial_capacity_deficit or free<60_000_000_000):
     raise RuntimeError('Insufficient initial capacity; no deletion or protocol changes')
   root.mkdir();dump(root/'bound-plan.json',p);dump(root/'prelaunch.json',dict(utc=now(),checks=checks,supervisor_pid=os.getpid()))
+  dump(root/'capacity-at-start.json',dict(free_bytes=free,normal_reservation_bytes=required,
+      reservation_satisfied=not deficit,explicit_sv1_capacity_exception=accept_initial_capacity_deficit,
+      per_run_floor_bytes=60_000_000_000,
+      authorization='User 2026-11-04: start directly; I will continue cleaning' if accept_initial_capacity_deficit else None))
   handles=[]
   while True:
     for r,proc,log in handles:
@@ -153,6 +161,7 @@ if __name__=='__main__':
   a.add_argument('action',choices=('split','probe','logger','integration','bind','run'))
   for n in ('plan','evidence','output'):a.add_argument('--'+n,type=Path)
   a.add_argument('--server',choices=HOSTS);a.add_argument('--gpu',type=int);a.add_argument('--uuid')
+  a.add_argument('--accept-initial-capacity-deficit',action='store_true')
   x=a.parse_args()
   if x.action=='split':split(x.plan,x.server,x.output)
   elif x.action=='probe':probe(x.gpu,x.uuid,x.output,host=HOSTS[x.server],allowed_gpus=[g for s,g in CARDS if s==x.server])
@@ -160,4 +169,4 @@ if __name__=='__main__':
   elif x.action=='integration':
     p=read(x.plan);integration(x.plan,x.evidence,validator=validate,host=p['host'],new_session=True)
   elif x.action=='bind':bind(x.plan,x.evidence,x.output)
-  else:run(x.plan)
+  else:run(x.plan,x.accept_initial_capacity_deficit)
