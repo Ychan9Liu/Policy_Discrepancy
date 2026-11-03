@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-11-04 Pendulum并行安排获准**：用户允许使用其余已分配空闲GPU并行；保留sv3 GPU1/4原seed2/3 baseline，将尚未启动的两条Dt安排到GPU5/6，GPU7保留。训练继续固定c5f86ca1a16648f57db3c3abfa2584ac560495ca及原配置，新增控制器只调度/汇总；工程验收后启动，旧排队槽位须先防重复。完整安排和实际状态见`docs/PENDULUM_SEEDS23_PARALLEL.md`，不重复seed1或新增科学参数。
+
 **2026-11-04 Pendulum seed2/3启动验收完成**：实现/实测/实际训练固定SHA `c5f86ca1a16648f57db3c3abfa2584ac560495ca`；129项CPU、三变体完整agent隔离检查、两卡CUDA/EGL与在线logger、四条真实4098动作CUDA短程全部通过。11月3日23:56 sv3 GPU1 seed2 baseline、GPU4 seed3 baseline已启动，两条PPD-KL按各自baseline完整审计后串行；11月4日00:00:40各0点评价10完整episode、458/461成功更新、同卡独占及W&B配置/精确摘要回读通过。当前2运行/2排队，不是四条已完成；GPU5/6/7保留，seed1不重复。完整命令/配置/版本/产物与后续标准见`docs/PENDULUM_SEEDS23_RUNS.md`，不据启动验收作效果结论。
 
 **2026-11-03 Pendulum校正复验已授权**：用户确认原参数新跑pendulum_swingup seed2/3各logging baseline/PPD-KL四条；sv3物理GPU1对应seed2、GPU4对应seed3，每卡baseline完整审计后Dt，GPU5/6/7保留，不重复seed1或hopper。独立`M2-v1-pendulum-seeds23-baseline-dt`/`pendulum-seeds23` profile，百万动作/21×10/原始return口径及每seed自身baseline S/N冻结c不变；不混入seed0/1总体或新增科学干预。配置、工程/启动验收和实际版本见`docs/PENDULUM_SEEDS23_RUNS.md`；正式完成以四条实际产物审计为准。
