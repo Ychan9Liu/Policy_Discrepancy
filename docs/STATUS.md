@@ -2,6 +2,15 @@
 
 更新日期：2026-11-04。
 
+## 03执行/05校正最新：pendulum四条改为GPU1/4/5/6并行（2026-11-04）
+
+- 用户明确允许“刚分配的其他的空闲gpu也可以用，可以并行的测试可以尝试”。保留sv3 GPU1 seed2 baseline PID3690581、GPU4 seed3 baseline PID3690588及原监督器3690542；01:18新增GPU5 seed2 Dt PID3732084、GPU6 seed3 Dt PID3732097，新监督器3732048；GPU7保留。仅原四条，不增加任务/seed/参数、不重复seed1/hopper。
+- 四条实际训练继续固定干净c5f86ca1a16648f57db3c3abfa2584ac560495ca；新控制器/实测b7f42d46d16d4eda5cff5a798ec7b60cb27a3790放独立checkout，只调度/审计/汇总，训练子进程cwd仍原checkout。原clean视觉/size50m/repeat1/alpha20/free nats1/损失与梯度/百万动作/21×10/JSONL+PD_1不变。Dt不读取baseline c，可独立并行；各baseline仍完整窗口S/N冻结c，最终四条完整性仍须全部验收。
+- 本机9项新控制器测试、服务器34项相关回归、新卡5/6实际CUDA/EGL同卡和两条真实短程通过；每短程4098动作/517更新/3×1/2报告隔离，训练SHA仍c5f86ca。原129项训练验收/线上logger复用。部署辅助脚本预期hash手抄笔误曾被校验拒绝，保留记录并核实两端bundle一致后修正；没有动训练源码、放宽校验或造成失败训练。
+- 01:22:34启动审计四条存活、全配置与训练SHA一致、共68个C/G PID各自同卡独占；新Dt零点各10完整episode/固定0动作0更新快照/评价seed正确，625/634连续更新invalid0，线上四条running，新Dt精确startup JSON/hash读回通过。原baseline PID未变，更新31751/31716、开始动作129032/128892；10万点评价均值704/200仅阶段观察。/data余328.09GB，GPU1/4/5/6仍被本项目使用，GPU7保留。
+- 旧两个串行Dt槽位仅SUPERSEDED_BY_PARALLEL.json防重复marker，未发生训练；原监督器仍记录baseline退出码及终点审计，对旧槽位的预期blocked不算新Dt失败。新的canonical四条索引在/data/Policy_Discrepancy/runs/formal-m2-pendulum-seeds23-parallel-dt-20261104-sv3/actual-RUN_INDEX.json，包含原baseline目录与新Dt目录。当前4运行/0终点验收，正式c、完整AUC/末段指标和校正解释待结束；目标保持进行中。
+- 完整报告docs/PENDULUM_SEEDS23_PARALLEL.md；132份小证据/hash、命令、版本、DELIVERY和可复制prompt在analysis/outputs/pendulum-seeds23-parallel-20261104/。仅sv3部署控制器，原两个活动checkout不移动、无GitHub推送、无本批数据删除；本机其他chat草稿保留。首选继续当前chat监测四条、终点审计和05逐seed分析，科学干预交02/用户，不自动建chat或发消息。
+
 ## 03存储维护：Denoising replay已直接删除（2026-11-04）
 
 - 用户明确选择“仅sv1 Denoising训练和评价replay”“直接删除，保留模型/指标/配置/审计”。01:09—01:11删除62目录26143个NPZ、295.4288GB，未归档；01:15 /data余340.990GB/85%，Denoising余175.112GB。Policy_Discrepancy replay不在范围，未改训练代码/协议、未开新实验或核GPU。

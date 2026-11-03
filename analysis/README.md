@@ -2,7 +2,9 @@
 
 ## Pendulum seed2/3原参数复验已启动（2026-11-04）
 
-用户已于11月3日明确批准四条复验并启动，原“先不启动”已解除。sv3 GPU1=seed2、GPU4=seed3，各自baseline完整审计后PPD-KL（dt），当前两条baseline运行、两条Dt排队，GPU5/6/7保留；配置/实际SHA/工程与启动验收见`docs/PENDULUM_SEEDS23_RUNS.md`。没有新增alpha、损失、奖励或其他科学干预。
+用户已于11月3日明确批准四条复验并启动，11月4日又授权其余已分配空闲GPU并行。当前sv3 GPU1/4保留seed2/3 baseline，GPU5/6运行对应PPD-KL（dt），四条并行、GPU7保留；配置/实际SHA/工程与启动验收见`docs/PENDULUM_SEEDS23_PARALLEL.md`，原启动证据在`docs/PENDULUM_SEEDS23_RUNS.md`。没有新增alpha、损失、奖励或其他科学干预。四条都执行原训练SHA c5f86ca，控制器另记b7f42d4。
+
+统计索引改为`/data/Policy_Discrepancy/runs/formal-m2-pendulum-seeds23-parallel-dt-20261104-sv3/actual-RUN_INDEX.json`，它包含原两baseline及新两Dt。原串行Dt槽位只有替代marker，没有训练数据，不纳入比较；原监督器对旧槽位的预期拒绝不代表新Dt失败。
 
 正式统计命令为`python -m analysis.return_metrics --profile pendulum-seeds23 --index ACTUAL_RUN_INDEX.json --output NEW_DIR --require-complete`。此profile严格为pendulum、seed2/3、baseline/dt四条，沿用百万动作/21×10/原始return AUC及末段五点均值，输出逐seed指标和两条配对差值；缺seed/点不插值或重加权，不并入seed0/1、不把工程短程或评价episode当训练重复。完整批次指标需等四条结束验收。
 

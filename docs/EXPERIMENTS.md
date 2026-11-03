@@ -1,6 +1,6 @@
 # 实验协议与结果索引
 
-**2026-11-04 Pendulum并行安排获准**：用户允许使用其余已分配空闲GPU并行；保留sv3 GPU1/4原seed2/3 baseline，将尚未启动的两条Dt安排到GPU5/6，GPU7保留。训练继续固定c5f86ca1a16648f57db3c3abfa2584ac560495ca及原配置，新增控制器只调度/汇总；工程验收后启动，旧排队槽位须先防重复。完整安排和实际状态见`docs/PENDULUM_SEEDS23_PARALLEL.md`，不重复seed1或新增科学参数。
+**2026-11-04 Pendulum四条已并行**：用户允许使用其余已分配空闲GPU并行；保留sv3 GPU1/4原seed2/3 baseline，01:18在GPU5/6启动两条Dt，GPU7保留。四条训练继续固定c5f86ca1a16648f57db3c3abfa2584ac560495ca及原配置；控制器b7f42d46d16d4eda5cff5a798ec7b60cb27a3790经过34项相关CPU、两条新卡真实4098动作CUDA验收，01:22四条真实进程/68个同卡独占C/G PID/完整配置/线上running和新Dt启动摘要回读通过。旧排队Dt槽位已防重复，新parallel-dt根合并索引作为四条终点来源；当前4运行/0终点验收，完整指标待完成。完整安排和实际状态见`docs/PENDULUM_SEEDS23_PARALLEL.md`，不重复seed1或新增科学参数。
 
 **2026-11-04 Pendulum seed2/3启动验收完成**：实现/实测/实际训练固定SHA `c5f86ca1a16648f57db3c3abfa2584ac560495ca`；129项CPU、三变体完整agent隔离检查、两卡CUDA/EGL与在线logger、四条真实4098动作CUDA短程全部通过。11月3日23:56 sv3 GPU1 seed2 baseline、GPU4 seed3 baseline已启动，两条PPD-KL按各自baseline完整审计后串行；11月4日00:00:40各0点评价10完整episode、458/461成功更新、同卡独占及W&B配置/精确摘要回读通过。当前2运行/2排队，不是四条已完成；GPU5/6/7保留，seed1不重复。完整命令/配置/版本/产物与后续标准见`docs/PENDULUM_SEEDS23_RUNS.md`，不据启动验收作效果结论。
 
