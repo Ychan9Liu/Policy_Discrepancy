@@ -2,6 +2,15 @@
 
 更新日期：2026-11-03。
 
+## 03合并窗口最新：Vision20 seed1，sv2七baseline已启动，sv1待空间（2026-11-03）
+
+- 用户授权20视觉任务×baseline/PPD-KL、原配置、seed1，明确复用已有hopper seed1一对，其他19任务新跑38条；资源sv1 GPU2—7、sv2 GPU0—5/7，不用sv2 GPU6。PPD-KL映射既有dt，baseline映射logging，原seed0/补seed结果不改。保持clean视觉/size50m/alpha20/free_nats1/原KL梯度/百万动作含prefill/21×10固定快照采样评价/JSONL+online PD_1/raw-return口径，独立scope/profile，不自动并seed0或加constant/shuffle。
+- 22:42指定卡空闲，但sv1 /data余1.23GB；用户明确自己释放/扩容、sv2可先跑，23:01 sv1仍仅1,236,582,400字节，六卡24条不启动/不部署源码/不删旧数据。sv2七任务14条每卡baseline→终点审计→Dt：GPU0 balance_sparse、1 swingup、2 swingup_sparse、3 cheetah_run、4 finger_spin、5 finger_turn_easy、7 finger_turn_hard（均dmc前缀）。前驱失败/非法匹配或占用/容量不足阻断，不外来空闲重试、共享或换卡。
+- 实现/实际验收与运行SHA `77699380851701f7a03a9d13985c5cc0de5d0702`：独立20任务seed1入口、c审计范围、指标profile、38条准备/受限串行控制器，不改agent/rep probe/梯度/协议runner RNG。38配置与原hopper同组seed1逐字段只差script/task/logdir；原hopper两条源码743089f40662b031a5cf2b6bf988decb52ba0b28的百万动作/21×10/线上finished/config/精确摘要hash只读复核通过。本机39项回归和最终7项新模块通过；sv2同SHA121项CPU/三变体float32完整agent精确一致、七卡实际CUDA/EGL和seed1 online logger通过；14条真实size50m CUDA短程各4098动作/517更新/3×1/2报告，7238更新/42点评价/28报告只读隔离审计通过，工程不是正式c或收益。
+- 23:00 sv2实际启动监督器2504096，七baseline agent2505601/2505611/2505629/2505915/2506475/2506749/2506761。23:03:57启动审计各0点10完整episode/固定0动作快照、182—325连续成功更新invalid0；119个C/G归属/落卡一致、七条W&B running/full config和startup exact JSON/hash读回一致，/data余约603GB。七条Dt队列存在，依赖自身baseline审计，百万步/c/正式指标未完成；sv2七卡仍有本项目作业，无释放，GPU6未使用。
+- 当前40记录为2复用已完成/7运行/7排队/24待sv1空间；不称全部完成或方法有效。只向sv2以校验Git bundle部署独立干净worktree，未改canonical checkout，无sv1源码/GitHub推送、无依赖变更或放宽检查。本机用户及其他chat草稿保留。本轮最终提交自身仅文档；相对实测另含同期其他chat的pendulum CPU分析脚本/测试及sv3只读资源文档，本批训练/控制器/统计源码逐文件与实测一致、不移运行checkout，差异详见报告和DELIVERY。
+- 报告`docs/VISION20_SEED1_RUNS.md`；完整计划/复用来源/配置diff/测试/同步/工程与启动证据及DELIVERY/prompt在`analysis/outputs/vision20-seed1-preparation-20261103/`。首选继续当前03监测sv2 baseline→Dt，在用户解决空间后按原sv1六卡验收/启动24条；终点要求百万动作/21×10/收据/快照/合法c/raw-return/W&B及全40来源一致性，缺项不重加权。新科学选择仍交02与用户；不自动建chat/发消息，原科研/复现限制保留。
+
 ## 05 最新：sv3资源更正及只读校对，先不启动（2026-11-03）
 
 - 用户将分配更正为sv3物理GPU1/4/5/6/7，明确先不启动。22:50:46北京时间逐卡XML与pmon均无C/G进程、已用显存0MiB；五卡均A100-SXM4-80GB。本轮无训练/GPU探针/后台队列，本批占用0；GPU2不属于新分配，不再作为本批卡冲突。
