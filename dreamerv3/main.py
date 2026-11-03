@@ -85,7 +85,8 @@ def main(argv=None):
         bind(make_logger, config),
         args)
 
-  elif config.script in ('protocol_v1', 'protocol_hopper_seeds123', 'protocol_dmc16'):
+  elif config.script in ('protocol_v1', 'protocol_hopper_seeds123', 'protocol_dmc16',
+                         'protocol_vision20_seed1'):
     embodied.run.protocol_v1.run(
         bind(make_agent, config),
         bind(make_replay, config, 'replay', seed=(

@@ -222,6 +222,13 @@ m2_dmc16:
   task: dmc_acrobot_swingup
   seed: 0
 
+# User-approved visual20 seed1 extension; original scopes remain closed.
+m2_vision20_seed1:
+  <<: *m2_v1
+  script: protocol_vision20_seed1
+  task: dmc_quadruped_run
+  seed: 1
+
 bsuite:
   task: bsuite_mnist/0
   run: {envs: 1, save_every: -1, train_ratio: 1024}

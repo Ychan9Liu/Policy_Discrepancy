@@ -9,19 +9,20 @@ from pathlib import Path
 from embodied.run.protocol_v1 import ProtocolState
 from dreamerv3.protocol_scope import (
     V1, HOPPER_123, HOPPER_SCRIPT, DMC16, DMC16_SCRIPT, validate_scope,
-    tasks_for_protocol)
+    tasks_for_protocol, VISION20_SEED1, VISION20_SCRIPT)
 
 
 def freeze(baseline_dir, output, engineering_fixture=False):
   baseline_dir, output = Path(baseline_dir), Path(output)
   manifest = json.loads((baseline_dir / 'protocol_manifest.json').read_text())
   protocol = manifest['protocol']
-  if protocol not in (V1, HOPPER_123, DMC16):
+  if protocol not in (V1, HOPPER_123, DMC16, VISION20_SEED1):
     raise ValueError('Not an M2 v1 baseline')
   config = manifest['config']
   root_seed = manifest.get('root_seed', 0)
-  if protocol in (HOPPER_123, DMC16):
-    expected_script = HOPPER_SCRIPT if protocol == HOPPER_123 else DMC16_SCRIPT
+  if protocol in (HOPPER_123, DMC16, VISION20_SEED1):
+    expected_script = {HOPPER_123:HOPPER_SCRIPT, DMC16:DMC16_SCRIPT,
+                       VISION20_SEED1:VISION20_SCRIPT}[protocol]
     if (config.get('seed') != root_seed or
         config.get('script') != expected_script or engineering_fixture):
       raise ValueError('Extension baseline seed/script/fixture mismatch')

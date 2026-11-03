@@ -17,7 +17,9 @@ from pathlib import Path
 import subprocess
 
 from dreamerv3.return_stats import REWARD_SOURCE, RETURN_DEFINITION
-from dreamerv3.protocol_scope import HOPPER_123, DMC16, DMC16_TASKS, DMC8_FIRST, DMC8_REMAINING
+from dreamerv3.protocol_scope import (
+    HOPPER_123, DMC16, DMC16_TASKS, DMC8_FIRST, DMC8_REMAINING,
+    VISION20_SEED1, VISION20_TASKS)
 
 
 TASKS = ('dmc_hopper_hop', 'dmc_quadruped_run',
@@ -44,6 +46,12 @@ class MetricSpec:
   groups: tuple = GROUPS
 
   def __post_init__(self):
+    if self.scope == VISION20_SEED1 and (
+        self.budget != 1000000 or self.grid != tuple(range(0,1000001,50000)) or
+        self.tail != (800000,850000,900000,950000,1000000) or self.episodes != 10 or
+        self.seeds != (1,) or type(self.seeds[0]) is not int or
+        self.tasks != VISION20_TASKS or self.groups != ('baseline','dt')):
+      raise ValueError('Vision20 seed1 metric matrix differs')
     if (self.budget <= 0 or self.episodes <= 0 or not self.seeds or
         not self.tasks or not self.grid or self.grid[0] != 0 or
         self.grid[-1] != self.budget or tuple(sorted(set(self.grid))) != self.grid or
@@ -405,6 +413,13 @@ def analyze_run(entry, spec=MetricSpec()):
     parse_issues.append('hopper_repeat_protocol_or_seed_mismatch')
   if spec.scope == 'M2-v1-formal' and manifest.get('protocol') == HOPPER_123:
     parse_issues.append('hopper_repeat_requires_separate_metric_profile')
+  if spec.scope == VISION20_SEED1:
+    allowed = (VISION20_SEED1, HOPPER_123) if metadata['task']=='dmc_hopper_hop' else (VISION20_SEED1,)
+    if (manifest.get('protocol') not in allowed or type(metadata['seed']) is not int or
+        metadata['seed'] != 1 or type(config.get('seed')) is not int or config.get('seed') != 1):
+      parse_issues.append('vision20_seed1_protocol_or_seed_mismatch')
+  elif manifest.get('protocol') == VISION20_SEED1:
+    parse_issues.append('vision20_seed1_requires_separate_metric_profile')
   if spec.scope in (DMC16, DMC8_FIRST, DMC8_REMAINING) and (
       manifest.get('protocol') != DMC16 or metadata['seed'] != 0 or
       config.get('seed') != 0 or type(metadata['seed']) is not int or
@@ -476,9 +491,11 @@ def main():
   parser.add_argument('--index', type=Path, required=True)
   parser.add_argument('--output', type=Path, required=True)
   parser.add_argument('--require-complete', action='store_true')
-  parser.add_argument('--profile', choices=('v1', 'hopper-seeds123', 'dmc16', 'dmc8-first8', 'dmc8-remaining'), default='v1')
+  parser.add_argument('--profile', choices=('v1', 'hopper-seeds123', 'dmc16', 'dmc8-first8', 'dmc8-remaining', 'vision20-seed1'), default='v1')
   args = parser.parse_args()
   spec = {'v1': MetricSpec,
+      'vision20-seed1': lambda: MetricSpec(seeds=(1,),tasks=VISION20_TASKS,
+          groups=('baseline','dt'),scope=VISION20_SEED1),
       'hopper-seeds123': lambda: MetricSpec(seeds=(1, 2, 3),
           tasks=('dmc_hopper_hop',), groups=('baseline', 'dt'), scope=HOPPER_123),
       'dmc16': lambda: MetricSpec(tasks=DMC16_TASKS, groups=('baseline', 'dt'), scope=DMC16),
@@ -518,6 +535,7 @@ def main():
       mean_tolerance=dict(atol=MEAN_ATOL, rtol=MEAN_RTOL),
       formal_metrics_complete=all(row['auc_complete'] and row['tail_complete'] for row in overall),
       interpretation={
+          'vision20-seed1':'User-approved visual20 seed1 baseline/PPD-KL cohort; hopper seed1 reused from its original audited source; descriptive only, no automatic seed0 pooling or causal claim',
           'v1':'single-training-seed descriptive only; engineering rows are not formal M2 results',
           'dmc8-first8':'first eight selected tasks, serial baseline/dt seed0; no 16/20-task pooling or strong selective M2 attribution',
           'dmc8-remaining':'remaining eight tasks, serial baseline/dt seed0 on two hosts; missing host/task stays incomplete; no automatic 16/20-task pooling or strong selective M2 attribution',

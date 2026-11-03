@@ -5,6 +5,8 @@ HOPPER_123 = 'M2-v1-hopper-seeds123-baseline-dt'
 HOPPER_SCRIPT = 'protocol_hopper_seeds123'
 DMC16 = 'M2-v1-dmc16-seed0-baseline-dt'
 DMC16_SCRIPT = 'protocol_dmc16'
+VISION20_SEED1 = 'M2-v1-vision20-seed1-baseline-dt'
+VISION20_SCRIPT = 'protocol_vision20_seed1'
 DMC8_FIRST = 'M2-v1-dmc8-first8-seed0-baseline-dt-serial'
 DMC8_REMAINING = 'M2-v1-dmc8-remaining-seed0-baseline-dt-serial'
 V1_TASKS = ('dmc_hopper_hop', 'dmc_quadruped_run',
@@ -16,9 +18,12 @@ DMC16_TASKS = ('dmc_acrobot_swingup', 'dmc_cup_catch',
     'dmc_finger_spin', 'dmc_finger_turn_easy', 'dmc_finger_turn_hard',
     'dmc_hopper_stand', 'dmc_pendulum_swingup', 'dmc_reacher_easy',
     'dmc_walker_run', 'dmc_walker_stand', 'dmc_walker_walk')
+VISION20_TASKS = V1_TASKS + DMC16_TASKS
 
 
 def tasks_for_protocol(protocol):
+  if protocol == VISION20_SEED1:
+    return VISION20_TASKS
   if protocol == DMC16:
     return DMC16_TASKS
   if protocol in (V1, HOPPER_123):
@@ -27,6 +32,11 @@ def tasks_for_protocol(protocol):
 
 
 def validate_scope(script, task, seed, mode):
+  if script == VISION20_SCRIPT:
+    if (type(seed) is not int or seed != 1 or task not in VISION20_TASKS or
+        mode not in ('logging', 'dt')):
+      raise ValueError('Vision20 extension requires the visual20, seed1, logging or dt')
+    return VISION20_SEED1
   if script == 'protocol_v1':
     if seed != 0:
       raise ValueError('M2 v1 requires training seed 0')
