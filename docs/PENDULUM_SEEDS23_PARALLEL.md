@@ -216,3 +216,56 @@ seed3 Dt在20万点的10个0回报之后，25万点有5个0、5个正回报。�
 ```
 
 本轮仅本机小证据/辅助只读脚本和文档更新；无训练源码、科学配置、服务器Git同步、活动checkout、W&B或c写入变更。实际训练/指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca、控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790，以及终点分析/既有34项测试3591c8d2f54b0558badb2c98641c87f5e6edb52b保持。继续当前chat完成四条终点collect/analyze/replay、图形验看和完整校正解释，目标保持active，不自动建chat或发消息。
+
+### 07:56现有56点评价复算、门控日志与baseline低分复核
+
+07:56:34实查两监督器及四agent身份/命令匹配，baseline seed2/3最新更新开始动作726976/726096、PPD-KL600832/601256，末条invalid0；GPU1/4/5/6各17个本批C/G进程，GPU7无进程，/data283.70GB。四条仍运行中，终点0/4，无新训练失败或重跑。
+
+07:56:51在原c5f86ca冻结指标代码上复算baseline各0…70万15点、PPD-KL各0…60万13点，共56点/560完整episode；来源/协议、episode均值和固定快照小证据通过，无重复/均值冲突，旧48条记录精确保留。共同点两组环境seed一致、跨点集合不同。完整21点AUC与末段五点仍不齐，正式指标保持null，没有插值或替代预算。
+
+|训练seed|60万点baseline均值|60万点PPD-KL均值|该点PPD-KL−baseline|PPD-KL原始10episode return|
+|---:|---:|---:|---:|---|
+|2|800.3|810.2|+9.9|790, 940, 932, 870, 679, 730, 762, 531, 929, 939|
+|3|762.1|93.7|-668.4|0, 0, 0, 0, 0, 937, 0, 0, 0, 0|
+
+新增55万点PPD-KL seed2/3为769.3/180.9；baseline65万点842.4/631.7、70万点810.2/205.3，也纳入本次复算。seed3 PPD-KL60万点9个0、1个937；不因该点低回报删记录、改参数、重跑或判定最终优劣。它与下述baseline70万点的回报分布不同，不能把两者直接当成同一现象或同预算组间比较。
+
+07:34:51另行只读检查实际门控日志：baseline各至65万13个已完成区间、PPD-KL各至55万11个区间，共48区间；沿用既有FIELDS检查，所查门控及其他标量字段有限，invalid_D_frac和match_invalid_count均0，active_weight_available均1，区间更新均值与快照计数一致。baseline实际权重均值为1、超额损失减弱为0。Dt成功收据的匹配字段按实现固定写0，不能仅凭其invalid_count=0推断门控数值合法；本次直接核了真实诊断日志。这不是未来区间或完整终点验收。
+
+同预算50万—55万区间（每条12500次更新）的实际日志统计如下；完整未舍入值及原始日志行/hash保存在gate-500k-550k-summary.json和gate-health-prefix-20261104.json：
+
+|seed|组|Mean Dt|Dt精确零值比例|free-nats活跃比例|实际活跃权重均值|超额rep KL损失值减弱|
+|---:|---|---:|---:|---:|---:|---:|
+|2|baseline|0.074988|2.29%|9.61%|1.0000|0.00%|
+|2|PPD-KL|0.085391|2.06%|10.78%|0.8531|25.14%|
+|3|baseline|0.058801|2.77%|14.20%|1.0000|0.00%|
+|3|PPD-KL|0.003377|0.94%|4.90%|0.9486|6.40%|
+
+实际活跃权重是逐更新活跃位置均值再按更新取均值；超额rep KL损失值减弱为excess_reduction_mean/(weighted_excess_mean+excess_reduction_mean)，基于该区间累计均值之比。baseline权重日志的极小浮点偏差按表中精度显示为1，实际全位置权重严格为1。PPD-KL两个seed的本区间作用程度不同；这些值不是总梯度变化，也不能从不同轨迹/模型的统计反推回报变化原因、裁定强度足够或不足，或据此选择新的alpha。未新增效果阈值。
+
+07:42:00针对baseline seed3从65万631.7到70万205.3的变化，CPU只读复核两点评价/JSONL及两份实际checkpoint。两点各10完整1000动作episode，原始return数组、均值、计数和快照metadata/done一致；各294参数数组全部有限，294数组均发生变化，更新计数161993/174493正确。60—65万和65—70万所查标量日志无非有限值；梯度范数区间均值12.5186427/12.0142815，实际rep权重均1，rep loss调整前后相同。区间均值不排除有限的瞬时尖峰，参数数值有限也不证明优化或策略表现正常。
+
+baseline seed3的65万return为[689,840,759,763,88,657,657,940,124,800]；70万为[102,99,590,87,88,696,84,96,97,114]。两点均没有零回报episode；70万是8条84—114、另2条590/696。没有发现这些点的记录错误、快照停滞、非有限参数或门控组配置混用证据。两点环境seed集合不同，仍不能把均值下降全部归因于参数变化，也不能从累计return确定摆起/保持或reset角度；保留低分点并继续原协议。
+
+当前独立参数解码范围仅四条0步、seed3 PPD-KL15/20万、seed3 baseline65/70万；不扩大为全部快照已解码。评价逐transition reward仍未独立重放。四条完整训练replay、正式c冻结、全程门控和完整指标均待终点，终点收据仍须全部249493条连续通过。
+
+|本机相对并行输出目录的文件|SHA256|
+|---|---|
+|collect-observed-600k.py|b3db9aa65a1597a78db569c9e03b7f9cd7b850773948990b6b0ec93d373348e3|
+|monitor/partial-return-600k-20261104.json|d258d87afad83c401c725e977fa364855904533fed8343021c80743b92cec92e|
+|monitor/observed-record-consistency-600k.json|8776c139c4fcd0eb6b239b814cee09ffe009306d32a6c47de7800083bddae1fd|
+|inspect-gate-prefix.py|900b11dc63b12a95e98842137f393868d7c4c9fe9e0d48a2351fcafaa1fc0eea|
+|monitor/gate-health-prefix-20261104.json|80900db62951d574df152a898df041f00fdf00412049cd1c3b8a05f2d1447bbe|
+|monitor/gate-500k-550k-summary.json|0fd91c18a2b2b4d7e6108baa0cc7c7c4dbaa80752f0dac94a21432cb41c2c3df|
+|inspect-baseline-seed3-700k.py|48a0a4d5448986e43852eb06e79c26f40389f285fcf9ee22b885809054ac13fb|
+|monitor/baseline-seed3-700k-numerics.json|e4824445c8f5084135250f5f1914024f33669da4df4385efc7e00304c4eda25d|
+
+本机目录为analysis/outputs/pendulum-seeds23-parallel-20261104/。阶段采集执行命令如下，已经成功执行，脚本拒绝覆盖既有证据：
+
+```powershell
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-observed-600k.py'
+```
+
+两个补查脚本均由本机经SSH stdin传给sv3的/data/Policy_Discrepancy/envs/dreamer/bin/python -，环境CUDA_VISIBLE_DEVICES为空、JAX_PLATFORMS=cpu、OMP_NUM_THREADS=1、OPENBLAS_NUM_THREADS=1；仅读取既有日志或可信checkpoint，输出上述本机JSON/stderr，未执行agent/环境或新增GPU作业，大文件留服务器。后续复读使用新的输出文件，不覆盖本次证据。
+
+本次仅本机辅助只读脚本、小证据和文档；无训练源码/科学配置/服务器Git同步/活动checkout/W&B/c写入变更。训练及冻结指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca、控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790、终点分析和既有34项测试3591c8d2f54b0558badb2c98641c87f5e6edb52b保持，未因文档重复测试。继续当前chat至四条终点collect/analyze/replay、图形验看及完整校正解释完成，目标保持active，不自动建chat或发消息。
