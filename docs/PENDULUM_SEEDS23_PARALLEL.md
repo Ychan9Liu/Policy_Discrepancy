@@ -331,3 +331,51 @@ PPD-KL seed2/3的全位置实际权重均值另为0.9312643/0.9858510；表中�
 全部相对路径位于analysis/outputs/pendulum-seeds23-parallel-20261104/。使用原最小Python依次执行collect-observed-650k.py、collect-observed-700k.py、collect-gates-700k.py；均已成功执行且拒绝覆盖旧输出。前两者通过SSH stdin调用原只读partial-return-250k.py，后者调用原inspect-gate-prefix.py并隐藏CUDA、强制CPU/单线程读取日志；实际命令/源hash与逐行一致性保存在相应verification JSON。seed1队列补查同样仅SSH stdin/CPU读取，原脚本和结果已保留。
 
 本阶段仅本机只读采集辅助脚本、小证据和文档，无训练源码/科学配置/服务器Git同步/活动checkout/W&B/c写入变更。四条实际训练及冻结指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca，控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790，已准备终点分析和36项测试5ccbd8c533107823fba558dd092cac41655efd8d保持，未为文档重复测试。继续当前chat完成四条终点及完整collect/analyze/replay、图形验看和校正解释，目标active，不自动建chat或发消息。
+
+### 10:17现有72点评价与68个门控区间复核
+
+10:11:06在实际训练checkout的冻结c5f86ca指标代码上复算baseline各0…90万19点、PPD-KL各0…80万17点，共72点/720个完整1000动作episode。来源/协议、原始episode均值、固定快照小证据检查通过；原64条评价记录逐项精确保留。共同点两组评价环境seed一致、跨点集合不同。每条21点尚未齐，完整AUC和末段五点仍null，不插值，也不以部分预算结果替代正式指标。
+
+|动作点|seed|baseline|PPD-KL|PPD-KL−baseline|
+|---:|---:|---:|---:|---:|
+|75万|2|813.5|811.8|-1.7|
+|75万|3|523.4|193.6|-329.8|
+|80万|2|813.3|837.4|+24.1|
+|80万|3|893.7|292.6|-601.1|
+
+seed3 PPD-KL75万原始return为[0,0,0,0,0,0,936,0,1000,0]，80万为[926,0,0,0,1000,0,1000,0,0,0]，分别8/7个零回报episode。seed2 PPD-KL80万为[933,844,722,842,726,654,891,938,932,892]。新增baseline85/90万两点均值：seed2为778.8/806.2，seed3为795.2/786.1，四个点均无零回报episode。本次保留所有点；这些事实不能确定reset角度、摆起或保持机制、跨seed稳定性，不能把跨点变化仅归因于模型参数，也不据阶段差异调参、停训或重跑。
+
+10:11:06另读取实际门控JSONL，baseline各至90万18个区间、PPD-KL各至80万16个区间，共68个已完成区间；此前60区间的原始诊断、记录和行hash精确保留。所查FIELDS及其他数值标量有限，invalid_D_frac和match_invalid_count为0，active_weight_available为1，位置数1024，区间更新均值与快照更新计数一致。baseline全位置实际权重为1、超额减弱为0。Dt成功收据匹配字段按实现固定为0，门控合法性检查使用实际诊断字段，不仅依赖该收据字段。
+
+同预算75—80万区间，每条12500次更新：
+
+|seed|组|Mean Dt|Dt精确零比例|free-nats活跃比例|实际活跃权重均值|超额rep KL损失值减弱|
+|---:|---|---:|---:|---:|---:|---:|
+|2|baseline|0.058363|13.78%|8.34%|1.0000|0.00%|
+|2|PPD-KL|0.078488|5.92%|8.95%|0.8779|11.37%|
+|3|baseline|0.152580|15.55%|12.11%|1.0000|0.00%|
+|3|PPD-KL|0.006507|1.16%|4.41%|0.9296|7.17%|
+
+PPD-KL seed2/3的全位置权重均值为0.9218852/0.9780357。活跃权重是逐更新活跃位置均值再取更新均值；超额损失减弱仍为excess_reduction_mean/(weighted_excess_mean+excess_reduction_mean)，是区间累计均值之比，不是总梯度变化或回报差异的因果解释，也不能据此裁定强度足够/不足或选择alpha。所查区间均值不排除有限的瞬时梯度尖峰；全收据连续性、正式c和完整训练replay仍须终点检查。本次没有新增checkpoint参数解码或评价逐transition reward重放，既有八份参数检查范围保持。
+
+10:17:10 sv3实际核查两监督器及四agent身份/命令匹配：baseline seed2/3最新更新开始动作938000/938276，PPD-KL811956/811988，末条invalid0。GPU1/4/5/6各17个本批C/G进程，GPU7无进程，/data可用266.22GB。四条仍运行、终点0/4；无新增训练失败或重跑。实查快照monitor/20261104T101751214.json。
+
+|相对并行输出目录的文件|SHA256|
+|---|---|
+|collect-observed-800k.py|2f77266745218a840d1857299392d8cbb9c4a3d9fd4293b9aff5b5af3ce2d2a5|
+|monitor/partial-return-800k-20261104.json|1e657226f59ec29d3af4a7b9290047ddd71aab585595a54900e3ab0ede4d49a9|
+|monitor/observed-record-consistency-800k.json|ff1459bb2a89d47ab231abe9670631e3cd177e86f9095cc5d47a0766f4fbaae1|
+|collect-gates-800k.py|719ce19eb9e932568242a53fa9b9d6ac08a371cfe5eaee83aff73fbe570166e5|
+|monitor/gate-health-prefix-800k-20261104.json|12147b37fbac318ac995c66f422fe12a633216755bc762ec2ffa68aeae2315c4|
+|monitor/gate-prefix-consistency-800k.json|c5c714a69ed686edb0341a751450c6b8c46816a2cbb84d8062e18c609aee6bd8|
+|partial-return-250k.py|76f4f9a45d2a57ac90bf433ce4a07c23537f5b63f6ce5322ac0602dff41172fb|
+|inspect-gate-prefix.py|900b11dc63b12a95e98842137f393868d7c4c9fe9e0d48a2351fcafaa1fc0eea|
+
+文件位于analysis/outputs/pendulum-seeds23-parallel-20261104/。采集命令已执行成功；脚本拒绝覆盖旧证据，完整SSH命令、源hash、stdout/stderr和逐项一致性保存在上述文件：
+
+```powershell
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-observed-800k.py'
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-gates-800k.py'
+```
+
+本阶段仅本机只读辅助脚本、小证据与文档，无训练源码/科学配置/服务器Git同步/活动checkout/W&B/c写入变更。实际训练及阶段冻结指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca；控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790；准备终点分析及36项测试5ccbd8c533107823fba558dd092cac41655efd8d，均保持。文档变更不重复既有测试。继续当前chat完成四条终点collect/analyze/replay、真实图形验看和校正解释，目标active，不自动建chat或发消息。
