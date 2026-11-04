@@ -269,3 +269,17 @@ baseline seed3的65万return为[689,840,759,763,88,657,657,940,124,800]；70万�
 两个补查脚本均由本机经SSH stdin传给sv3的/data/Policy_Discrepancy/envs/dreamer/bin/python -，环境CUDA_VISIBLE_DEVICES为空、JAX_PLATFORMS=cpu、OMP_NUM_THREADS=1、OPENBLAS_NUM_THREADS=1；仅读取既有日志或可信checkpoint，输出上述本机JSON/stderr，未执行agent/环境或新增GPU作业，大文件留服务器。后续复读使用新的输出文件，不覆盖本次证据。
 
 本次仅本机辅助只读脚本、小证据和文档；无训练源码/科学配置/服务器Git同步/活动checkout/W&B/c写入变更。训练及冻结指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca、控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790、终点分析和既有34项测试3591c8d2f54b0558badb2c98641c87f5e6edb52b保持，未因文档重复测试。继续当前chat至四条终点collect/analyze/replay、图形验看及完整校正解释完成，目标保持active，不自动建chat或发消息。
+
+### 08:19终点训练过程诊断入口准备（四条仍在运行）
+
+为了在终点区分“固定快照评价低分”和“实际训练轨迹缺少奖励”，在现有replay入口补充20个5万动作区间的对齐输出。训练源、reward、配置、alpha、评价和正式指标均不变；该步骤只读取已通过终点范围/hash校验的镜像JSONL和标量replay结果。新增training_phases.json/csv，以及每seed的training_dynamics_seed2/3.png/svg；图中并列未平滑评价return、真实训练正奖励比例、想象奖励、Gaussian策略熵、优势幅度、实际活跃rep权重。
+
+区间边界、完整动作数、原始episode均值和更新计数均显式核对；按冻结loss scales重建总loss，容差沿用原seed0诊断rel_tol=1e-7/abs_tol=1e-6，不为通过调整。真实奖励是动作均值，想象/策略日志是更新均值，两者的采样分布不同，不能取比值当奖励模型误差，也不据相关曲线宣告因果根因或选新参数。输出中仍按真实训练seed分开，不新增阈值或正式指标。
+
+实际分析与测试SHA为5ccbd8c533107823fba558dd092cac41655efd8d，36项离线测试通过（含新增手算对齐，以及评价点缺失、乱序、计数、非有限值、均值冲突和损失系数的拒绝检查）。另对本机已保存、与原交付hash一致的seed0 baseline/PPD-KL两组实际数据回归，共40个区间，共有字段及动作/更新计数与既有分析完全一致；两组总loss重建最大误差5.565395433393405e-8/5.1054818150930714e-8，与原报告一致。这是历史真实数据回归，不是本批四条终点验收；本次没有再次远程读取历史replay。
+
+证据目录analysis/outputs/pendulum-seeds23-dynamics-preparation-20261104/：tests.txt/tests.json、verification.json、historical_phase_rows.json、verify-preparation.py、COMMANDS.md。verification SHA256为376102459b3db3dcfd1738945214a88a0d390183541af84cd001c486348f6c47；测试日志SHA256为7d1854963b0aa866524cde3acd6ffb17b9e547a10ae57621281f09200d34f6bf；历史区间输出SHA256为acb86d2f234f3ec874a20dda7df5328440f54a7ed20997d64ea4fb58d859d871。训练过程图还未用本批终点产物生成，需四条验收后运行并目视检查。
+
+08:19:02 sv3实查两监督器与四agent仍真实存活、身份/命令匹配；baseline seed2/3最新更新开始动作760156/759644，PPD-KL635792/636180，末条invalid0。GPU1/4/5/6各17个本批C/G、GPU7无进程，/data281.84GB，终点0/4。baseline新75万点原JSONL记录均值813.5/523.4尚未纳入本轮独立episode复算；不将这一点变化写成稳定恢复，先前56点评价验证范围保持。原始实查在并行输出目录monitor/20261104T081943171.json。
+
+本次只修改本机分析代码/测试/README及文档，无训练源码、协议、服务器Git同步、活动checkout、W&B/c写入或新增GPU任务。实际训练仍c5f86ca1a16648f57db3c3abfa2584ac560495ca，控制器/服务器验收/终点审计仍b7f42d46d16d4eda5cff5a798ec7b60cb27a3790；旧3591c8d准备和600k交付是历史记录，后续终点分析采用本次已测试入口。继续当前chat至四条完整终点、collect/analyze/replay、图形验看和校正解释完成，目标active，不自动建chat或发消息。
