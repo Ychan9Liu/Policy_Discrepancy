@@ -386,7 +386,7 @@ def collect_training_rewards(source, output):
     result = read(output/'inspection.json')
     require([(r['seed'],r['group'],r['run_id']) for r in result['runs']] ==
             [(r['seed'],r['group'],r['run_id']) for r in rows], 'Collected replay identities differ')
-    summary_rows, entry_rows = [], []
+    summary_rows, entry_rows, phase_rows = [], [], []
     for run in result['runs']:
         s = run['replay_summary']; identity = dict(seed=run['seed'],group=run['group'],run_id=run['run_id'])
         summary_rows.append(dict(**identity, **{k:s[k] for k in ('actions','resets','complete_episodes',
@@ -394,18 +394,120 @@ def collect_training_rewards(source, output):
             complete_episode_mean_return=s['episode_returns']['mean'],
             first_100k_positive_actions=sum(p['positive_reward_count'] for p in run['early_5k'])))
         entry_rows.extend(dict(**identity,**e) for e in run['reward_entry'])
+        row = next(r for r in rows if r['run_id'] == run['run_id'])
+        directory = locate(row['directory'])
+        evaluations = [json.loads(line) for line in (directory/'evaluations.jsonl').read_text().splitlines()]
+        metrics = [json.loads(line) for line in (directory/'metrics.jsonl').read_text().splitlines()]
+        phase_rows.extend(training_phase_diagnostics(identity, row['config'], evaluations, metrics, run['phases']))
     csv_write(output/'training_reward_summary.csv',summary_rows)
     csv_write(output/'training_reward_entry.csv',entry_rows)
+    dump(output/'training_phases.json',phase_rows)
+    csv_write(output/'training_phases.csv',phase_rows)
+    training_plots(output, phase_rows)
     dump(output/'verification.json',dict(collector_sha256=sha(output/'collector.py'),
         inspection_sha256=sha(output/'inspection.json'),script_sha256=sha(Path(__file__)),
         helper_sha256=sha(helper_path), input_archive_sha256=sha(source/'inputs.tar.gz'),
         analysis_sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         training_actions=4000000, formal_evaluation_metrics_changed=False,
+        training_phase_intervals=len(phase_rows), training_phases_sha256=sha(output/'training_phases.json'),
+        plot_sha256={p.name:sha(p) for p in sorted(output.glob('training_dynamics_seed*.*'))},
         limitations=['Training replay reward sums checked independently; evaluation transition rewards not replayed.',
                      'Array hashes/ZIP CRC for named scalar fields; not complete image/replay file hashes.',
                      'First-action reward is after the first action, not a measured reset angle.',
+                     'Replay action means and imagined-policy update means sample different distributions; their ratio is not model error.',
                      'Training episodes share a changing policy and are not independent training seeds.']))
     print(json.dumps(summary_rows,indent=2))
+
+
+def training_phase_diagnostics(identity, config, evaluations, metrics, phases):
+    """Align existing 50k replay bins, update-log means and endpoint evaluations.
+
+    The terminal caller verifies cohort and input hashes. This pure transformation
+    also permits historical-data regression; it is not a terminal acceptance gate.
+    Loss reconstruction uses the unchanged seed0 diagnostic tolerances.
+    """
+    fields = dict(imagined_reward='train/rew', imagined_normalized_return='train/ret',
+        advantage_magnitude='train/adv_mag', policy_entropy='train/ent/action',
+        reward_model_loss='train/loss/rew', image_loss='train/loss/image',
+        gradient_norm='train/opt/grad_norm', update_rms='train/opt/update_rms',
+        active_weight='train/dt/active_weight_mean', active_fraction='train/dt/rep_active_frac',
+        D_mean='train/dt/D_mean', mean_abs_actor_mean_diff='train/dt/mean_abs_diff',
+        mean_abs_actor_std_diff='train/dt/std_abs_diff')
+    grid = list(range(0,1000001,50000))
+    logs = [r for r in metrics if 'train/dt/D_mean' in r]
+    require([e['action_step'] for e in evaluations] == grid and
+            [p['start_action'] for p in phases] == grid[:-1] and
+            [p['end_action'] for p in phases] == [r['step'] for r in logs] == grid[1:],
+            'Training diagnostics need all ordered 20 intervals and 21 endpoint evaluations')
+    means = []
+    for e in evaluations:
+        episodes = e['episodes']
+        require(len(episodes) == 10 and all(p['complete'] and p['length'] == 1000 and
+                math.isfinite(p['return_raw']) for p in episodes), 'Incomplete diagnostic evaluation')
+        value = math.fsum(p['return_raw'] for p in episodes)/10
+        require(math.isclose(value,e['mean'],abs_tol=1e-10,rel_tol=0),
+                'Diagnostic evaluation mean conflicts with raw episodes')
+        means.append(value)
+    require(evaluations[0]['update_id'] == 0 and evaluations[-1]['update_id'] == 249493,
+            'Diagnostic update budget differs')
+    scales = {k.removeprefix('agent.loss_scales.'):v for k,v in config.items()
+              if k.startswith('agent.loss_scales.')}
+    require('rec' in scales, 'Missing frozen reconstruction loss scale')
+    scales['image'] = scales.pop('rec')
+    result = []
+    for i,(phase,log) in enumerate(zip(phases,logs)):
+        require(phase['action_count'] == 50000 and
+                0 <= phase['positive_reward_count'] <= 50000 and
+                phase['reward_sum'] == phase['positive_reward_count'],
+                'Training phase count or binary reward sum differs')
+        require(all(math.isfinite(v) for v in log.values() if isinstance(v,(int,float))),
+                'Non-finite diagnostic scalar')
+        before,after = evaluations[i]['update_id'],evaluations[i+1]['update_id']
+        require(after-before == (11993 if i == 0 else 12500) and
+                log['train/opt/updates'] == (before+after+1)/2,
+                'Diagnostic interval update counters differ')
+        total = math.fsum(log['train/loss/'+k]*v for k,v in scales.items())
+        require(math.isclose(total,log['train/opt/loss'],rel_tol=1e-7,abs_tol=1e-6),
+                'Frozen loss scales do not reconstruct the logged total')
+        result.append(dict(**identity, start_action=phase['start_action'],end_action=phase['end_action'],
+            training_actions=phase['action_count'],positive_reward_count=phase['positive_reward_count'],
+            reward_sum=phase['reward_sum'],positive_reward_fraction=phase['positive_reward_count']/50000,
+            updates=after-before,evaluation_start_return=means[i],evaluation_return=means[i+1],
+            loss_reconstruction_abs_error=abs(total-log['train/opt/loss']),
+            **{k:log[v] for k,v in fields.items()}))
+    return result
+
+
+def training_plots(output, rows):
+    """Descriptive curves only; no smoothing, new metrics or causal thresholds."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    styles = [('baseline','#475569','baseline'),('dt','#c2410c','PPD-KL')]
+    series = [('evaluation_return','Raw evaluation return','10 episodes / fixed snapshot'),
+        ('positive_reward_fraction','Real positive-reward fraction','50k training actions'),
+        ('imagined_reward','Imagined reward','Update mean'),
+        ('policy_entropy','Imagined Gaussian policy entropy','Update mean'),
+        ('advantage_magnitude','Imagined advantage magnitude','Update mean'),
+        ('active_weight','Actual active rep weight','Update mean')]
+    for seed in (2,3):
+        fig,axes = plt.subplots(2,3,figsize=(13,7.5),layout='constrained')
+        for ax,(field,title,ylabel) in zip(axes.flat,series):
+            for group,color,label in styles:
+                selected = [r for r in rows if (r['seed'],r['group']) == (seed,group)]
+                require(len(selected) == 20,'Plot needs a complete training history')
+                x,y = [r['end_action']/1e6 for r in selected],[r[field] for r in selected]
+                if field == 'evaluation_return':
+                    x,y = [0]+x,[selected[0]['evaluation_start_return']]+y
+                ax.plot(x,y,color=color,label=label,marker='o',ms=2.5)
+            ax.set(title=title,xlabel='Training actions (millions)',ylabel=ylabel)
+            ax.grid(alpha=.2)
+            if field == 'evaluation_return': ax.set_ylim(-10,1010)
+            if field in ('positive_reward_fraction','active_weight'): ax.set_ylim(-.02,1.02)
+        axes[0,0].legend()
+        fig.suptitle(f'Pendulum swingup | seed{seed} | unsmoothed evaluation + training diagnostics')
+        for suffix in ('png','svg'): fig.savefig(output/f'training_dynamics_seed{seed}.{suffix}',dpi=170)
+        plt.close(fig)
 
 
 def summarize(rows):
