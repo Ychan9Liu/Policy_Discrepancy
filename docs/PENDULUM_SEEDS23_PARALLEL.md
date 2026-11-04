@@ -283,3 +283,51 @@ baseline seed3的65万return为[689,840,759,763,88,657,657,940,124,800]；70万�
 08:19:02 sv3实查两监督器与四agent仍真实存活、身份/命令匹配；baseline seed2/3最新更新开始动作760156/759644，PPD-KL635792/636180，末条invalid0。GPU1/4/5/6各17个本批C/G、GPU7无进程，/data281.84GB，终点0/4。baseline新75万点原JSONL记录均值813.5/523.4尚未纳入本轮独立episode复算；不将这一点变化写成稳定恢复，先前56点评价验证范围保持。原始实查在并行输出目录monitor/20261104T081943171.json。
 
 本次只修改本机分析代码/测试/README及文档，无训练源码、协议、服务器Git同步、活动checkout、W&B/c写入或新增GPU任务。实际训练仍c5f86ca1a16648f57db3c3abfa2584ac560495ca，控制器/服务器验收/终点审计仍b7f42d46d16d4eda5cff5a798ec7b60cb27a3790；旧3591c8d准备和600k交付是历史记录，后续终点分析采用本次已测试入口。继续当前chat至四条完整终点、collect/analyze/replay、图形验看和校正解释完成，目标active，不自动建chat或发消息。
+
+### 09:06现有64点评价与60个门控区间复核
+
+08:30:23从原始episode记录复算60点/600完整episode，baseline各至75万、PPD-KL各至65万；此前56条记录精确保留。09:04:24再次复算64点/640完整episode，baseline各0…80万17点、PPD-KL各0…70万15点，前60条精确保留。两次来源/协议/均值及固定快照小证据检查通过，无重复或均值冲突；共同点两组环境seed一致、跨点集合不同。冻结指标代码仍为实际训练checkout的c5f86ca；每条21点尚未齐，完整AUC与末段五点均保持null，无插值或部分预算替代。
+
+|动作点|seed|baseline|PPD-KL|PPD-KL−baseline|
+|---:|---:|---:|---:|---:|
+|65万|2|842.4|860.8|+18.4|
+|65万|3|631.7|185.5|-446.2|
+|70万|2|810.2|827.2|+17.0|
+|70万|3|205.3|93.4|-111.9|
+
+seed3 PPD-KL65万点return为[0,0,0,0,0,0,0,930,925,0]，70万为[0,0,0,0,0,0,0,0,0,934]，分别8/9个零回报episode，全部保留。baseline75万点seed2/3=813.5/523.4，80万点=813.3/893.7，本次均已独立复算。baseline seed3的75万return为[889,795,0,0,805,0,939,806,1000,0]，80万为[970,711,940,940,1000,936,1000,672,886,882]；其75万也有4个零回报，80万没有。此前“65/70万没有零回报”的描述仅覆盖那两个点，不能扩大为baseline整条曲线没有零回报，或把两组各一个点的形态当成固定机制差异。跨点评价环境seed不同，回升/下降同时涉及快照与初始条件变化，不仅凭这些点认定稳定恢复、训练稳定性或唯一根因。
+
+09:05:09读取实际门控JSONL，baseline各至80万16区间、PPD-KL各至70万14区间，共60个已完成区间；原48条区间记录及日志行hash逐项一致保留。所查FIELDS及其他数值标量有限，invalid_D_frac和match_invalid_count均0，active_weight_available均1，位置数1024，日志更新均值与快照计数一致；baseline全位置实际权重1、超额减弱0。此证据来自实际诊断字段，不能仅用Dt匹配收据固定为0的invalid字段替代。
+
+同预算65—70万区间，每条12500次更新：
+
+|seed|组|Mean Dt|Dt精确零比例|free-nats活跃比例|实际活跃权重均值|超额rep KL损失值减弱|
+|---:|---|---:|---:|---:|---:|---:|
+|2|baseline|0.067441|4.51%|11.08%|1.0000|0.00%|
+|2|PPD-KL|0.067638|3.49%|9.28%|0.8846|11.17%|
+|3|baseline|0.130551|5.68%|13.10%|1.0000|0.00%|
+|3|PPD-KL|0.003440|1.31%|4.54%|0.9450|6.12%|
+
+PPD-KL seed2/3的全位置实际权重均值另为0.9312643/0.9858510；表中活跃权重是逐更新活跃位置均值再取更新均值。损失减弱仍为excess_reduction_mean/(weighted_excess_mean+excess_reduction_mean)，不是总梯度变化；这些不同轨迹/模型上的统计不足以解释回报差、裁定门控强度足够/不足或选择alpha。区间均值也不排除有限的瞬时尖峰。本次没有新增参数payload解码或评价逐transition reward重放；既有八份参数解码范围保持，完整训练replay/c/全收据/终点指标仍待验收。
+
+08:32:25另只读sv1既有Vision20 seed1索引：pendulum baseline/PPD-KL均queued、物理GPU3、实际计划SHA bef29480df12d07659c640b22218804dd1d69e63；已观察到监督器1609040存活，其cwd/argv与该checkout/计划相符。该卡先执行quadruped_walk一对，再到pendulum；本次没有重排、重复启动或把seed1纳入本批统计，也没有声称核查sv1 GPU空闲或完成其运行验收。
+
+09:06:05 sv3两监督器及四agent身份/命令匹配，baseline最新更新开始动作831756/831420，PPD-KL705548/706052，末条invalid0。GPU1/4/5/6各17个本批C/G、GPU7无进程，/data276.30GB，四条仍运行、终点0/4。实查快照monitor/20261104T090646846.json；没有训练失败或重跑。
+
+|相对并行输出目录的文件|SHA256|
+|---|---|
+|collect-observed-650k.py|ff1fc822b6458e7951055134c101e46b53acf247c380b1bd78ba8ef75465aaaf|
+|monitor/partial-return-650k-20261104.json|84f41d2a60d0cf6c94297e89afb651416f2202b3a3b6f0d5fae724ea279751a2|
+|monitor/observed-record-consistency-650k.json|a6b9ac0c552d2021b9222b3db1dbd0796ca08c72308a4d5a848d4c076799e3b7|
+|collect-observed-700k.py|46f4f682621a971ac07c1925433950c504769f11fff66375b7919944fcbd9498|
+|monitor/partial-return-700k-20261104.json|7a5a3c1894a53e284314e867f23dba509e60e35dd371b554bbed4b721305a34b|
+|monitor/observed-record-consistency-700k.json|a3df1c3c55fa14133eb3175c7debed34a8c8aaf4a472cd0997896425106385df|
+|collect-gates-700k.py|7fc91959758bae535fcaad15dd3c34bb07ca4a1c02bc0bb2fac781ef8c48b352|
+|monitor/gate-health-prefix-700k-20261104.json|fa8821ee33b2c44cc410e810f1b158bfee577e09d55ad2673ae14c47f04a657b|
+|monitor/gate-prefix-consistency-700k.json|243aba0cba7be07ad8c61a7564f4e66767cea4b15973ef0b3942030fc2ba7b1b|
+|inspect-seed1-queue-20261104.py|4a512505356f63159996948f91a9af503fa05339990385c8f2a93c8a0fc639ce|
+|monitor/seed1-queue-20261104.json|9e60a8598047f247845cb5cb5cdf879fef684928b1f6afa279ff339364825eee|
+
+全部相对路径位于analysis/outputs/pendulum-seeds23-parallel-20261104/。使用原最小Python依次执行collect-observed-650k.py、collect-observed-700k.py、collect-gates-700k.py；均已成功执行且拒绝覆盖旧输出。前两者通过SSH stdin调用原只读partial-return-250k.py，后者调用原inspect-gate-prefix.py并隐藏CUDA、强制CPU/单线程读取日志；实际命令/源hash与逐行一致性保存在相应verification JSON。seed1队列补查同样仅SSH stdin/CPU读取，原脚本和结果已保留。
+
+本阶段仅本机只读采集辅助脚本、小证据和文档，无训练源码/科学配置/服务器Git同步/活动checkout/W&B/c写入变更。四条实际训练及冻结指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca，控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790，已准备终点分析和36项测试5ccbd8c533107823fba558dd092cac41655efd8d保持，未为文档重复测试。继续当前chat完成四条终点及完整collect/analyze/replay、图形验看和校正解释，目标active，不自动建chat或发消息。
