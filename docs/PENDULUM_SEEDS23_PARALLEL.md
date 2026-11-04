@@ -379,3 +379,50 @@ PPD-KL seed2/3的全位置权重均值为0.9218852/0.9780357。活跃权重是�
 ```
 
 本阶段仅本机只读辅助脚本、小证据与文档，无训练源码/科学配置/服务器Git同步/活动checkout/W&B/c写入变更。实际训练及阶段冻结指标SHA c5f86ca1a16648f57db3c3abfa2584ac560495ca；控制器/服务器验收/终点审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790；准备终点分析及36项测试5ccbd8c533107823fba558dd092cac41655efd8d，均保持。文档变更不重复既有测试。继续当前chat完成四条终点collect/analyze/replay、真实图形验看和校正解释，目标active，不自动建chat或发消息。
+
+### 11:00两条baseline单条审计通过，PPD-KL仍运行
+
+10:42:55新增阶段复算76点/760个完整episode：baseline各至95万20点、PPD-KL各至85万18点，旧72条评价精确保留，来源/协议/固定快照小证据及均值通过。85万点baseline seed2/3为778.8/795.2，PPD-KL为742.4/193.4，差−36.4/−601.8；seed3 PPD-KL原始return为[0,0,0,0,0,0,0,0,1000,934]。同次实际门控72区间检查通过，原68区间及行hash精确保留。80—85万PPD-KL seed2/3活跃位置权重均值0.8819092/0.9225314，全位置均值0.9265134/0.9750039，超额rep KL损失值减弱10.73%/9.41%；口径与限制沿用前述区间统计，不是梯度减弱、强度阈值或回报差异的因果解释。
+
+10:59:51/10:59:54，baseline seed2/3以退出码0结束；原监督器完成单条产物审计并分别于10:59:54/10:59:57冻结c。11:00:50以CPU只读原始产物，使用冻结c5f86ca的analyze_run重新核对两条完整21点评价，共42点/420完整1000动作episode，旧40条记录精确保留。每条final_state均为1000000训练动作、1008 reset、210000评价动作、249493成功更新/训练batch key、21点评价；配置/实际训练SHA/seed与绑定记录一致，原单条审计为run_audited_pending_group_and_WB。各点来源、协议、均值与快照小证据检查通过，无重复/解析错误。
+
+|训练seed|baseline AUC / 100万|baseline末段五点均值|正式c|窗口S|窗口N|
+|---:|---:|---:|---:|---:|---:|
+|2|728.3500|792.38|0.8843540089227288|7396141.760381699|8363327|
+|3|607.6225|752.48|0.9019680480928387|7721404.809896469|8560619|
+
+上述AUC和末段指标只覆盖两条完整baseline；PPD-KL仍未完成，未生成完整四条比较或最终配对差值。与85万阶段的两条PPD-KL各18点合计，当前独立评价复核范围为78点/780episode，采集时间不同已分别记录。旧partial-return-250k.py及阶段collector的“全部正式指标null”前提在baseline完成后不再适用；本次新增严格只读baseline终点检查，不改原断言或四条终点collect门槛。
+
+baseline seed2百万点return为[887,760,938,804,872,887,841,643,725,687]，均值804.4，无零回报；seed3为[665,941,764,0,0,149,801,0,841,646]，均值480.7，有3个零回报。不能据此前85/90万没有零回报，就写成baseline整条曲线均无失败；跨点环境seed集合不同，末点下降也不单独证明优化故障或确定摆起/保持原因。
+
+两份正式c都来自本seed baseline的[100000,300000)窗口，50000条成功更新IDs24492…74491；S/N与03:17已经核对的窗口前缀完全一致。本次核了完整收据文件hash与c内receipt_sha256、c文件及旁路SHA256、匹配S/N与final_state、c=S/N、窗口/seed/非工程标记、原审计的c/hash。完整收据连续性此处复用原单条审计并绑定文件hash，四条终点分析仍将独立重建全部收据。seed2/3的c文件SHA256分别为2f98578bf9450d7ac115b6294c972b71cd6dfed311c074c2411ff142d6acf94b、f258d348677fde515d8b7f8072b6a23d217ec7d588eb69dcabd5662ca97278c2；本次只读取，未重写c或追加constant/shuffle。
+
+旧串行两个Dt槽位均按预期blocked，错误为FileExistsError(17, 'File exists')，目录中均只有SUPERSEDED_BY_PARALLEL.json，无训练manifest/收据/评价/final_state，未有训练PID。原监督器已退出、旧根complete=false；这是防重复槽位的预期收尾，不是新GPU5/6两条Dt的失败，也不是新四条索引的验收结论。guard保持原样，未启动旧槽位或重跑。
+
+10:46:42另外实查两个监督器PID/创建时间/cwd/argv及checkout HEAD/干净状态：原baseline单条审计在c5f86ca1a16648f57db3c3abfa2584ac560495ca，新Dt单条及四条最终合并审计由b7f42d46d16d4eda5cff5a798ec7b60cb27a3790承接。七个相关审计/协议/指标文件在两提交的Git blob一致，具体列表和实际进程证据保存在audit-version-provenance-20261104.json。合并finish会重新审计四条再完成W&B精确收尾；截至本段检查尚未执行，不能把b7的最终合并验收写成已经完成。
+
+11:00:51实查新监督器3732048及两个Dt agent3732084/3732097身份/命令匹配；PPD-KL seed2/3最新更新开始动作878240/878252、末条invalid0。baseline两PID及原监督器已退出，GPU1/4/7无C/G进程、GPU5/6各17个本批进程，/data259.29GB。当前两条baseline单条审计通过、两条PPD-KL运行中、整批accepted仍0/4；新根supervisor-final/completion尚未生成。
+
+|相对并行输出目录的文件|SHA256|
+|---|---|
+|collect-observed-850k.py|3bfff8af043f3aaedac5ea1fcb02943c3a246421e82c491ae39e24b28327d3b2|
+|monitor/partial-return-850k-20261104.json|ea3bf23dcbd6a70478c33b32b9ec9b3f110fbab3a8c9fed657aca5a51d086875|
+|monitor/observed-record-consistency-850k.json|a96b0b005aaf62744489bebf4d832e9c20dc16157deb23ae0e303401bb78a123|
+|collect-gates-850k.py|ac9fa10e5a4889c87776ba0f7646567fa9da4f7790d981070a038cc9aa65e8e3|
+|monitor/gate-health-prefix-850k-20261104.json|9a5405a4c81da17a27348f0a91be871da342c29fd62937fbb940535f90b0e848|
+|monitor/gate-prefix-consistency-850k.json|4dae430934ff2621786f0944a141d961f99be1e252486276003532382a6d51cf|
+|inspect-baseline-terminals.py|51f5d11e7c74750286ef8c9e6bf875fb68d52220dee462a3a5146542ff6592ea|
+|collect-baseline-terminals.py|2be76ad428ad6b818e042b07f31c8f3d0ac3de435b0aaabdd3bb87d30b3aa158|
+|monitor/baseline-terminals-20261104.json|e5ecf614f5c807f3890bb8d3f6b5d6cdc70c17b1612373d664d800044792ed5a|
+|monitor/baseline-terminals-consistency.json|fd3ec4c19249b7750713bce24d8d9a1d679fa3bbce7f0cfdc580582c33c45e19|
+|monitor/audit-version-provenance-20261104.json|0270335dabf04e043b10858921190d049b6a06cc8230e69b1634647790d453ca|
+
+上述文件位于analysis/outputs/pendulum-seeds23-parallel-20261104/。阶段采集/终点只读命令均已成功执行，拒绝覆盖旧证据；原始SHA、命令、stderr、逐记录一致性、完整baseline原始评价和c文件内容保存在相应JSON：
+
+```powershell
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-observed-850k.py'
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-gates-850k.py'
+& 'D:/program/PD/dmr3/analysis/outputs/dmc16-preparation-20261022/venv/Scripts/python.exe' 'D:/program/PD/dmr3/analysis/outputs/pendulum-seeds23-parallel-20261104/collect-baseline-terminals.py'
+```
+
+本次只读核查未修改训练源码或科学配置，未同步服务器Git、移动活动checkout、另写W&B或新增GPU实验；既有进程按原协议收尾。没有新增checkpoint参数解码、评价逐transition reward重放或百万训练replay读取。已准备终点分析及36项测试SHA5ccbd8c533107823fba558dd092cac41655efd8d保持，未为文档/只读封装重复既有测试。继续当前chat监测两条真实Dt进程，待新权威四条accepted及completion/supervisor通过后执行完整collect/analyze/replay、原始表图验看、校正解释和交02建议，目标active。
