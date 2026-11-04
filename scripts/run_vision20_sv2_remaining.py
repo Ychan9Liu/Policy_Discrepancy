@@ -43,7 +43,8 @@ def make_plan(source,proofs,controller_sha):
         egl_index=proof['egl_index'],directory=d,config=flat,review_argv=argv,launch_argv=argv,
         state='queued',source_run_id=old['run_id'],source_directory=old['directory'],
         run_id=old['run_id']+':moved-sv2-20261105',queue_position=1+sum(r['physical_gpu']==gpu for r in rows),
-        verified_compute_and_graphics_same_gpu=True)
+        verified_compute_and_graphics_same_gpu=True,
+        baseline_c_source=d if mode=='logging' else None)
     row['environment_template'].update(CUDA_VISIBLE_DEVICES=proof['gpu_uuid'],
         MUJOCO_EGL_DEVICE_ID=str(proof['egl_index']),TMPDIR=d+'/tmp',WANDB_DIR=d,
         WANDB_RUN_ID=old['environment_template']['WANDB_RUN_ID']+'-moved-sv2-20261105')

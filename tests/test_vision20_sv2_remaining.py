@@ -22,6 +22,7 @@ class RemainingTest(unittest.TestCase):
       self.assertEqual(b['config'],dict(a['config'],logdir=b['directory']))
       self.assertEqual(b['server'],'sv2');self.assertEqual(b['host'],'lyg0360')
       self.assertNotEqual(a['run_id'],b['run_id'])
+      self.assertEqual(b['baseline_c_source'],b['directory'] if b['mode']=='logging' else None)
 
   def test_source_live_missing_or_numeric_tampering_rejected(self):
     s,p=self.fixture()
