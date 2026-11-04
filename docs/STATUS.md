@@ -2,6 +2,14 @@
 
 更新日期：2026-11-04。
 
+## 03执行：Vision20 seed1六槽改配至sv1 GPU0/1/4（2026-11-04）
+
+- 用户更正资源为GPU0/1，并追加GPU4各两条；最终每卡串行两次训练，共六次。GPU0 quadruped_run Dt→reacher_hard Dt；GPU1 cup_catch Dt→reacher_easy baseline；GPU4 hopper_stand baseline→Dt。只替换原never-started blocked槽位，新reallocated01目录/线上身份及六份排他claim保留源身份，原持续写入索引不修改、不直接重复拼接；reacher_easy Dt及walker_stand两组仍未补调度。
+- 控制器实测d6b9604ddf860d451d74d3cf6513fb66973a9094，训练仍bef29480df12d07659c640b22218804dd1d69e63；全部dreamerv3/embodied及复用启动/审计源码逐Git diff相同。14项本机、126服务器CPU回归和三卡实际CUDA/EGL/真实size50m CUDA短程通过（各4098动作/517更新/3×1/2报告）；保留旧24任务CUDA及float32/算法隔离验收，不改变冻结科学配置/seed1/百万动作/21×10。
+- 14:43:54—58监督器2178932启动GPU0/1/4三个首条PID2179037/2179057/2179355，三个后继排队；14:46:46各零点10完整episode/固定0动作0更新快照、82/119/151连续更新invalid0、完整SHA/config、全部C/G同卡独占及线上running/精确startup JSON/hash读回通过。原GPU3/5/7 Dt继续，14:47:26原PID均存活，不干扰GPU2/6外来作业；本项目0/1/3/4/5/7仍占用、未释放。初始180GB/后继60GB保留、余191.034GB，无容量例外/删除。按六claim替代后的sv1唯一24槽为6单审待组级收尾/6运行/9排队/3阻塞；尚无本六槽百万步终点验收，不作方法有效性结论。
+- 仅sv1 Git bundle verify/fetch并增加独立控制器checkout，原训练checkout/canonical及sv2/sv3不移动、无GitHub推送或服务器源码手改。完整计划/commands/失败/收据和新实际索引在服务器engineering/formal-m2-vision20-seed1-reallocated-20261104-sv1独立根；本机analysis/outputs/vision20-reallocated-20261104/保存镜像/hash/版本，报告docs/VISION20_SEED1_REALLOCATION_20261104.md。其他chat草稿保留。
+- 首选继续当前03监测六槽与原队列的终点审计/容量，按claim去重替代统一全40来源及raw-return、c/21×10和W&B精确收尾；剩余三槽待后续资源调度，不自行加跑，不创建chat或向其他chat发消息。工程通过不能代替百万步终点或方法效果结论。
+
 ## 05校正完成：Pendulum四条终点与独立分析通过（2026-11-04）
 
 - 用户授权的sv3 seed2/3 × baseline/PPD-KL四条全部accepted，12:23:05整批completion=4、四份W&B精确核对通过；训练均c5f86ca1a16648f57db3c3abfa2584ac560495ca，baseline单审c5f86ca、两Dt/整批审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790。12:23:14监督器和训练PID退出，GPU1/4/5/6/7无C/G进程，/data253.31GB；旧串行Dt guard/blocked为防重复的历史槽位，未纳入比较。
