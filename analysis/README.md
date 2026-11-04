@@ -1,5 +1,11 @@
 # 实验分析
 
+## Pendulum seed2/3终点分析完成（2026-11-04）
+
+四条均accepted。实际分析/36项离线测试SHA `5ccbd8c533107823fba558dd092cac41655efd8d`，从独立固定工作树完成collect/analyze/replay：300小文件hash、84点/840评价episode、997972成功收据及两条c通过；四条完整训练标量回放400万动作与80区间对齐，四张真实PNG均已查看。PPD-KL−baseline AUC差seed2 +2.8850、seed3 −421.6675；两seed等权差−209.39125，不并入seed0/1。seed3 PPD-KL有820/992完整训练episode零回报，不能只解释为评价抽样波动，也不能据此裁决唯一因果或方法无效。
+
+报告 `docs/ANALYSIS_PENDULUM_SEEDS23.md`；原始小镜像/正式表图/replay分别在 `outputs/pendulum-seeds23-final-input-20261104/`、`outputs/pendulum-seeds23-final-20261104/`、`outputs/pendulum-seeds23-final-replay-20261104/`。固定环境、命令、旧80点评价/76门控区间精确保留、最终版本和02交接见 `outputs/pendulum-seeds23-terminal-preparation-20261104/`。无需重复训练；评价逐transition reward、全部参数payload解码、完全相同输入的因果控制仍不在已有证据范围内。下面保留启动和入口的历史说明。
+
 ## Pendulum seed2/3原参数复验已启动（2026-11-04）
 
 用户已于11月3日明确批准四条复验并启动，11月4日又授权其余已分配空闲GPU并行。当前sv3 GPU1/4保留seed2/3 baseline，GPU5/6运行对应PPD-KL（dt），四条并行、GPU7保留；配置/实际SHA/工程与启动验收见`docs/PENDULUM_SEEDS23_PARALLEL.md`，原启动证据在`docs/PENDULUM_SEEDS23_RUNS.md`。没有新增alpha、损失、奖励或其他科学干预。四条都执行原训练SHA c5f86ca，控制器另记b7f42d4。

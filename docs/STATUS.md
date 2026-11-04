@@ -2,6 +2,13 @@
 
 更新日期：2026-11-04。
 
+## 05校正完成：Pendulum四条终点与独立分析通过（2026-11-04）
+
+- 用户授权的sv3 seed2/3 × baseline/PPD-KL四条全部accepted，12:23:05整批completion=4、四份W&B精确核对通过；训练均c5f86ca1a16648f57db3c3abfa2584ac560495ca，baseline单审c5f86ca、两Dt/整批审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790。12:23:14监督器和训练PID退出，GPU1/4/5/6/7无C/G进程，/data253.31GB；旧串行Dt guard/blocked为防重复的历史槽位，未纳入比较。
+- 实际分析/36项测试SHA5ccbd8c533107823fba558dd092cac41655efd8d：300小文件hash、84点/840完整评价、997972成功收据/两正式c、400万训练动作标量回放及80区间通过，旧80点评价/76门控区间精确保留，四张真实PNG已查看。PPD-KL−baseline AUC差seed2 +2.8850、seed3 −421.6675，末段差+17.70/−636.82；本批两seed等权AUC差−209.39125、末段差−309.56，不混入seed0/1。
+- seed3 PPD-KL完整训练992episode中820零回报，首动作无奖励轨迹后来获奖135/955，baseline为820/954；不是仅评价波动，仍未裁决唯一根因。PPD-KL活跃权重0.88430/0.94815、超额KL损失减弱12.28%/12.66%，不能等同梯度作用或位置选择价值。未发现需按工程无效重跑的错误；评价逐transition reward未独立重放，全部84参数payload未解码，更新前输入不逐位相同，不能作显著性/稳定性或完全控制的因果结论。
+- 完整报告docs/ANALYSIS_PENDULUM_SEEDS23.md；终点输入/表图/replay分别位于analysis/outputs/pendulum-seeds23-final-input-20261104/、pendulum-seeds23-final-20261104/、pendulum-seeds23-final-replay-20261104/。固定环境、命令、最终SHA和可复制02交接在pendulum-seeds23-terminal-preparation-20261104/。已授权四条及分析收尾完成；首选现有02制定固定输入离线checkpoint诊断协议，任何新增GPU执行/训练/参数改变仍需明确，不自动实施。12:26 seed1仍在sv1 GPU3原队列，不重复；本次收尾仅本机文档/索引，不改训练源码、不同步服务器或推送，其他chat工作保留。
+
 ## 03存储维护：本机归档按用户要求删除（2026-11-04）
 
 - 用户明确要求“本机归档不要留”，已删除两轮完整归档39.4994GB、未完成gzip传输10.9387GB及113字节测试包，共4文件/50.4382GB。2026-11-04T11:35:09.9801381+08:00完成，收据success=true；四文件缺失、4行操作日志及删除阶段144个保留文件完整hash通过。

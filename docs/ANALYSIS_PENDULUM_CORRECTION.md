@@ -1,4 +1,6 @@
-# Pendulum / Hopper 实验校正：只读诊断与下一步方案
+# Pendulum / Hopper 实验校正：原参数复验与诊断
+
+**终点更新（2026-11-04）**：用户授权的pendulum seed2/3四条已全部accepted，完整评价、997972条更新收据及400万训练动作回放均复核完成。PPD-KL相对baseline的AUC差为seed2 **+2.8850**、seed3 **−421.6675**，末段差为+17.70/−636.82；本批不支持一致性能优势。seed3 PPD-KL的992个完整训练episode中820个零回报，低分不仅是评价波动；尚未找到可据以作废重跑的工程错误，唯一原因未裁决。完整指标、图形、门控/正式c、来源hash、实际版本与下一步见 [ANALYSIS_PENDULUM_SEEDS23.md](ANALYSIS_PENDULUM_SEEDS23.md)。本次四条及分析已完成，下方“未结束/待确认/先不启动”均为标明日期的历史阶段；最新可复制02交接在 `analysis/outputs/pendulum-seeds23-terminal-preparation-20261104/HANDOFF_02.txt`，不再使用文末历史启动prompt。
 
 **后续授权更新（2026-11-03/04）**：用户已明确确认“按此方案准备并启动四条复验”，随后允许其余已分配空闲GPU并行。本批启动限制已解除；原严格入口及启动记录见`docs/PENDULUM_SEEDS23_RUNS.md`，当前sv3 GPU1/4 baseline、GPU5/6 PPD-KL四条并行见`docs/PENDULUM_SEEDS23_PARALLEL.md`。下文的“待确认/先不启动”和同卡串行建议保留为历史，不再阻止已授权工作或覆盖当前资源安排；seed0诊断结果不变。
 

@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-11-04 Pendulum seed2/3四条终点与分析完成**：sv3 GPU1/4 baseline、GPU5/6 PPD-KL已全部accepted；实际训练c5f86ca1a16648f57db3c3abfa2584ac560495ca，baseline单审c5f86ca、两Dt/整批审计b7f42d46d16d4eda5cff5a798ec7b60cb27a3790，实际终点分析/36项测试5ccbd8c533107823fba558dd092cac41655efd8d。300小文件hash、84点/840评价、997972成功收据/c、400万训练动作回放/80区间和真实图形验看通过。PPD-KL−baseline AUC差seed2 +2.8850、seed3 −421.6675，末段差+17.70/−636.82；两seed等权AUC差−209.39125，不混入seed0/1。seed3 PPD-KL完整训练992episode中820零回报，不能当单纯评价噪声，也未定位唯一根因。12:23:14监督器和训练PID退出，GPU1/4/5/6/7无C/G进程。报告 `docs/ANALYSIS_PENDULUM_SEEDS23.md`，全运行/设备/失败保留记录 `docs/PENDULUM_SEEDS23_PARALLEL.md`；原协议保持，下一步由02定义固定输入的离线诊断，不据本报告自动新增训练。以下启动状态为对应时刻历史。
+
 **2026-11-04 Vision20 seed1 sv1续启**：用户明确接受初始容量缺口，原配置与GPU2—7不变；实测/实际运行bef29480df12d07659c640b22218804dd1d69e63，123 CPU回归、完整float32隔离及24条真实size50m CUDA短程通过，01:48启动六baseline/18排队。01:56六条零点各10完整episode、连续更新/同卡/在线W&B启动审计通过；01:57全40记录为2复用验收/13运行/25排队，sv2原七卡继续，百万步终点尚待验收。后继保留60GB底线，不保证现有容量足够全批。报告`docs/VISION20_SEED1_SV1_RUNS.md`，工程通过不作方法有效性结论，冻结科学协议不变。
 
 **2026-11-04 Pendulum四条已并行**：用户允许使用其余已分配空闲GPU并行；保留sv3 GPU1/4原seed2/3 baseline，01:18在GPU5/6启动两条Dt，GPU7保留。四条训练继续固定c5f86ca1a16648f57db3c3abfa2584ac560495ca及原配置；控制器b7f42d46d16d4eda5cff5a798ec7b60cb27a3790经过34项相关CPU、两条新卡真实4098动作CUDA验收，01:22四条真实进程/68个同卡独占C/G PID/完整配置/线上running和新Dt启动摘要回读通过。旧排队Dt槽位已防重复，新parallel-dt根合并索引作为四条终点来源；当前4运行/0终点验收，完整指标待完成。完整安排和实际状态见`docs/PENDULUM_SEEDS23_PARALLEL.md`，不重复seed1或新增科学参数。

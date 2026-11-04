@@ -1,5 +1,11 @@
 # Pendulum seed2/3：PPD-KL改为GPU5/6并行
 
+**最终收尾（2026-11-04）**：四条均以退出码0完成百万训练动作；12:23:05新合并根completion verified_run_count=4，supervisor complete=true，四条accepted且四份W&B精确核对通过。baseline的单条审计实际c5f86ca，两Dt与整批重审b7f42d4；训练固定c5f86ca。12:23:14监督器/训练PID均退出，sv3 GPU1/4/5/6/7无C/G进程，/data余253.31GB。旧串行Dt的guard/blocked保留，不是新批失败，也未重复启动。
+
+终点分析实际执行于固定 `5ccbd8c533107823fba558dd092cac41655efd8d`（已通过36项离线测试和旧seed0实际回归）：300小文件hash、84点/840完整评价、997972成功更新与两条正式c、400万训练动作标量replay/80区间全部核对通过，旧80点评价及76门控区间精确保留，四张真实PNG已查看。PPD-KL−baseline AUC差为seed2 +2.8850、seed3 −421.6675，末段差+17.70/−636.82；正式c为0.8843540089227288/0.9019680480928387。seed3 PPD-KL有820/992完整训练episode零回报，不仅是评价噪声；未发现需要按工程无效重跑的错误，不能由此确定唯一因果或位置选择价值。
+
+完整结果/限制/下一步见 [ANALYSIS_PENDULUM_SEEDS23.md](ANALYSIS_PENDULUM_SEEDS23.md)。原始镜像、指标图表和训练回放复核分别在 `analysis/outputs/pendulum-seeds23-final-input-20261104/`、`pendulum-seeds23-final-20261104/`、`pendulum-seeds23-final-replay-20261104/`；固定环境/命令、最终SHA与02交接见 `pendulum-seeds23-terminal-preparation-20261104/`。收尾不改训练源码/科学配置、不同步服务器、不重复seed1/hopper；后续协议建议交现有02，不自动建chat或发消息。下文保留各时间点的启动与进行中记录。
+
 2026-11-04，用户明确补充“刚分配的其他的空闲gpu也可以用，可以并行的测试可以尝试”。本chat据此在原sv3 GPU1/4/5/6/7资源范围内，将尚未启动的两条PPD-KL安排到物理GPU5/6，与既有两baseline并行；GPU7保留。不增加任务、seed、组或科学参数，不重复seed1/hopper。旧同卡串行安排仅对尚未启动的Dt被本记录替代；[原启动报告](PENDULUM_SEEDS23_RUNS.md)和证据保留。
 
 ## 资源、配置与版本边界
