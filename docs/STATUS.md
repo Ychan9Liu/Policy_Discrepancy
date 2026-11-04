@@ -1,6 +1,15 @@
 # 项目状态
 
-更新日期：2026-11-04。
+更新日期：2026-11-05。
+
+## 03执行：Vision20 seed1七阻塞槽位迁sv2，四原排队保留（2026-11-05）
+
+- 用户要求四排队继续等、七阻塞挂sv2。七个源槽位经sv1重新核实blocked/无PID/无目录，七份排他claim及完整源hash封存；不修改旧监督器持续写入索引，不覆盖训练、不新增原38训练/40记录数量。sv2 GPU0 pendulum baseline→Dt、GPU1 walker_walk baseline→Dt、GPU2 walker_stand baseline→Dt、GPU3 reacher_easy Dt，四卡初始240GB/后继60GB、不用GPU6；reacher_easy Dt不读取c，其baseline继续sv1原队列。
+- 控制器初版87975bb上的129 CPU（92.602秒）及四卡实际CUDA/EGL通过；发现克隆baseline_c_source旧目录标签后，仅来源标签/断言修复至666ce9031760f37e6f3fbd604f526621e9cffa43，本机六项和服务器六项（2.257秒）补测通过。训练始终bef29480df12d07659c640b22218804dd1d69e63、原科学配置/目标/梯度/RNG不变；四任务真实size50m CUDA短程各4098动作/517更新/3×1/2报告通过。暂停/关闭的只是本批CPU启动helper，工程GPU任务未停止/重跑，原证据保留。
+- 01:47:48—56正式监督器3005895启动sv2 GPU0/1/2/3首条PID3005949/3005966/3005983/3006270，三个Dt后继queued；01:51:53四条各0点10完整episode/固定0动作0更新快照、444/326/365/425连续更新invalid0、完整SHA/config、全部C/G同卡独占和PD_1 running/精确startup JSON/hash读回通过，余314.415GB。01:52:50 sv1原排队已自然接续reacher_hard Dt和reacher_easy baseline、walker_run Dt仍queued、hopper_stand Dt因GPU4外来占用blocked；三条当前active收据/21点前缀/10episode/配置/W&B/同卡独占全过，余69.323GB。用户资源答复未到时保留原位等待，不能称全部无阻塞。
+- 该快照全40为28训练结束（含2复用、26新运行已单审待整批收尾）/7运行/4排队/1资源阻塞；本次七迁移为4运行/3排队。122份小证据/hash验证通过，GPU0/1/5的sv1项目作业和sv2 GPU0—3继续；sv1 GPU4已释放项目baseline但外来作业仍在，需用户协调释放及清理sv1，不擅自迁移/共享启动。
+- 只向sv2部署确定控制器/训练Git工作树，canonical/旧7769938/所有活动源码不移动；sv1只做source claims/CPU只读收据、评价和W&B健康核查，无新代码部署、无依赖/协议修改、无sv3操作/GitHub推送。工程/正式根为/data/Policy_Discrepancy/runs/engineering及formal-m2-vision20-seed1-remaining-20261105-sv2/，本机analysis/outputs/vision20-sv2-remaining-20261105/保存完整来源、测试、Git包、证据镜像/DELIVERY；完整报告docs/VISION20_SEED1_SV2_REMAINING_20261105.md。
+- 首选继续当前03监测七条新队列及四条原排队的自然接续，完成全40唯一来源替代/原始return/正式c/21×10与线上精确终点；GPU4/磁盘限制先由用户协调，不停止外来作业/擅删产物/换卡。不创建chat或发消息，不将工程通过写成方法有效。
 
 ## 03执行：Vision20 seed1六槽改配至sv1 GPU0/1/4（2026-11-04）
 
