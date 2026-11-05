@@ -27,6 +27,7 @@ def main(argv=None):
   for name in parsed.configs:
     config = config.update(configs[name])
   config = elements.Flags(config).parse(other)
+  validate_environment_config(config)
   config = config.update(logdir=(
       config.logdir.format(timestamp=elements.timestamp())))
 
@@ -224,7 +225,18 @@ def make_replay(config, folder, mode='train', seed=None):
   return embodied.replay.Replay(**kwargs)
 
 
+def validate_environment_config(config):
+  mode = config.env.dmc.get('background', {}).get('mode', 'clean')
+  if mode not in ('clean', 'static', 'dynamic'):
+    raise ValueError('background.mode must be clean, static, or dynamic')
+  if mode != 'clean' and not config.task.startswith('dmc_'):
+    raise ValueError('DCS presets require an explicit dmc_ task')
+  if mode != 'clean' and config.script.startswith('protocol_'):
+    raise ValueError('Existing M2 protocols are clean-only; DCS needs a separate protocol')
+
+
 def make_env(config, index, seed_offset=0, **overrides):
+  validate_environment_config(config)
   suite, task = config.task.split('_', 1)
   if suite == 'memmaze':
     from embodied.envs import from_gym
@@ -254,6 +266,14 @@ def make_env(config, index, seed_offset=0, **overrides):
     ctor = getattr(module, cls)
   kwargs = config.env.get(suite, {})
   kwargs.update(overrides)
+  if suite == 'dmc':
+    background = kwargs.pop('background', {})
+    if background.get('mode', 'clean') != 'clean':
+      if config.script.startswith('protocol_'):
+        raise ValueError('Existing M2 protocols are clean-only')
+      from embodied.envs.dmc_background import DMCBackground
+      ctor = DMCBackground
+      kwargs['background'] = background
   if kwargs.pop('use_seed', False):
     kwargs['seed'] = kwargs.get(
         'seed', hash((config.seed, index + seed_offset)) % (2 ** 32 - 1))

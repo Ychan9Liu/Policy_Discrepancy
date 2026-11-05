@@ -51,6 +51,8 @@ def resolve(argv):
 
 
 def check(config):
+  if config.env.dmc.get('background', {}).get('mode', 'clean') != 'clean':
+    raise ValueError('Frozen M2 preparations are clean-only')
   expected = {
       'script': 'protocol_v1', 'seed': 0,
       'run.action_budget': 1000000, 'run.eval_every_actions': 50000,

@@ -1,0 +1,3 @@
+# Optional background environment support. No TensorFlow or algorithm dependency.
+-r requirements-dmc.txt
+pillow==12.3.0

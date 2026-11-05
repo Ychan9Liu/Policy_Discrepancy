@@ -33,7 +33,15 @@ defaults:
     atari100k: {size: [64, 64], repeat: 4, sticky: False, gray: False, actions: needed, lives: unused, noops: 30, autostart: False, resize: pillow, clip_reward: False}
     dmlab: {size: [64, 64], repeat: 4, episodic: True, use_seed: True}
     minecraft: {size: [64, 64], break_speed: 100.0, logs: False, length: 36000}
-    dmc: {size: [64, 64], repeat: 1, proprio: True, image: True, camera: -1, use_seed: False, engineering_trace_physics: False}
+    dmc:
+      size: [64, 64]
+      repeat: 1
+      proprio: True
+      image: True
+      camera: -1
+      use_seed: False
+      engineering_trace_physics: False
+      background: {mode: clean, dataset: '', videos: '', num_videos: -1, video_alpha: 1.0, ground_plane_alpha: -1.0, seed: -1, cache_size: 2}
     loconav: {size: [64, 64], repeat: 1, camera: -1}
 
   replay:
@@ -268,3 +276,13 @@ debug:
     .*\.hidden: 3
     .*\.blocks: 4
     .*\.depth: 2
+
+# Environment-only overlays. Dataset selection and experiment protocol are separate.
+dcs_clean:
+  env.dmc: {image: True, proprio: False, use_seed: True, background.mode: clean}
+
+dcs_static:
+  env.dmc: {image: True, proprio: False, use_seed: True, background.mode: static}
+
+dcs_dynamic:
+  env.dmc: {image: True, proprio: False, use_seed: True, background.mode: dynamic}
