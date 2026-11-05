@@ -2,6 +2,13 @@
 
 更新日期：2026-11-05。
 
+## 03执行更新，hopper_stand Dt 在sv2 GPU3启动（2026-11-05）
+
+- 用户指定最后一个阻塞槽位在sv2 GPU3重新跑。15:48核查GPU3空闲且余204.3GB。旧sv1尝试尚未启动，已排他预留源目录并写入两级迁移记录。15:57:45从第0步正式启动，训练PID 3326285。
+- 固定原seed1及百万动作配置，控制器 `a81b797348e03a3c1767afa50b523472995ceb85`，训练 `bef29480df12d07659c640b22218804dd1d69e63`。133项服务器回归、GPU3 CUDA/EGL探针和真实size50m短程通过。原baseline匹配窗口冻结c为0.7936804620168273，作为来源证据随记录归档。
+- 16:00:24启动验收通过，零点10完整episode，连续102次成功更新且非法计数0，实际GPU3同卡独占，W&B在线配置和启动摘要读回一致。16:01全40为35结束、5运行，sv2 GPU0至4继续运行且余200.06GB，sv1训练进程均已退出且余6.94GB。整批终点汇总待剩余五条训练结束。
+- 报告 `docs/VISION20_HOPPER_STAND_DT_SV2_20261105.md`。服务器独立工程及正式目录留存运行记录，本机 `analysis/outputs/vision20-hopper-stand-dt-sv2-20261105/` 镜像47份小证据。训练控制器仅部署到sv2。
+
 ## 03执行：四排队均归sv2，补迁walker_run Dt至GPU4（2026-11-05）
 
 - 用户要求“四排队的挂到sv2”：pendulum/walker_walk/walker_stand三个Dt已在sv2 GPU0/1/2队列，保留其完整baseline审计依赖；只将剩余sv1 queued walker_run Dt迁至sv2物理GPU4（10:22空闲、余256.350GB，不用6）。不新增训练次数/seed/组，不擅自把blocked的hopper_stand Dt作为第五条。
