@@ -2,6 +2,15 @@
 
 更新日期：2026-11-05。
 
+## 03执行：四排队均归sv2，补迁walker_run Dt至GPU4（2026-11-05）
+
+- 用户要求“四排队的挂到sv2”：pendulum/walker_walk/walker_stand三个Dt已在sv2 GPU0/1/2队列，保留其完整baseline审计依赖；只将剩余sv1 queued walker_run Dt迁至sv2物理GPU4（10:22空闲、余256.350GB，不用6）。不新增训练次数/seed/组，不擅自把blocked的hopper_stand Dt作为第五条。
+- 10:23:38重新核验源queued/无PID/旧目录不存在，原子mkdir占位MOVED_TO_SV2.json及排他claim先于任何启动；旧控制器d.mkdir在Popen前必失败，不因以后清理/卡空闲重复启动。原监督器1609040和baseline PID2433371均未停止/重开，旧索引不手改。新run/目录独立、source hash固定，原slot按claim从全40去重替代；不是训练恢复。
+- 实现4f3431a236aac8903b111ea1b7daf268eaeda3b0，控制器/实测2f7e6358fa45f125ac630aabb8b5d9f3ef3bfa2a，训练仍bef29480df12d07659c640b22218804dd1d69e63；全部训练/环境/复用启动与审计代码Git diff相同、完整config仅logdir变化。六项本机/真实旧监督器原子占位防重复测试通过，服务器132项（94.615秒）、GPU4实际CUDA/EGL和真实size50m短程4098动作/517更新/3×1/2报告通过；原科学配置/目标/梯度/RNG/百万动作/21×10不变。
+- 仅sv2 Git bundle verify/fetch增加独立控制器，训练和其他活动checkout/canonical不移动；sv1只写运行撤销标记/收据、无代码部署/依赖修改，无sv3/GitHub推送。报告docs/VISION20_WALKER_DT_SV2_20261105.md；服务器独立engineering/formal-m2-vision20-walker-dt-20261105-sv2根，本机analysis/outputs/vision20-walker-dt-sv2-20261105/保存来源/命令/测试/镜像和DELIVERY。实际正式PID/启动验收以报告后续段为准，不将Popen或短程写成百万步完成。
+- 10:31:58正式sv2 GPU4 walker_run Dt启动，监督器3186189、agent3186204；10:34:49零点10完整episode/固定0动作0更新快照、86连续更新invalid0、完整SHA/config、C/G同卡独占和PD_1 running/精确startup JSON/hash回读通过。10:35 sv2 GPU0—4运行/三Dt queued、余249.297GB；旧sv1 slot无PID/仅占位标记、baseline和原监督器仍存活，源撤销有效。全40为28结束/8运行/3排队/1阻塞，三个排队全在sv2；46小证据/hash通过。sv1余17.095GB、低于60GB，hopper_stand Dt仍不在本次范围，不声称容量/全批阻塞已解决。
+- 首选继续当前03监测sv2五卡及三个Dt依赖队列、原sv1三条训练/c和全40终点收尾。sv1仅约19GB、低于后继60GB门槛，hopper_stand Dt仍单列阻塞，不自动清理/迁移/开跑或宣称存储已解决。不创建chat或发消息，工程通过不构成方法有效。
+
 ## 03执行：Vision20 seed1七阻塞槽位迁sv2，四原排队保留（2026-11-05）
 
 - 用户要求四排队继续等、七阻塞挂sv2。七个源槽位经sv1重新核实blocked/无PID/无目录，七份排他claim及完整源hash封存；不修改旧监督器持续写入索引，不覆盖训练、不新增原38训练/40记录数量。sv2 GPU0 pendulum baseline→Dt、GPU1 walker_walk baseline→Dt、GPU2 walker_stand baseline→Dt、GPU3 reacher_easy Dt，四卡初始240GB/后继60GB、不用GPU6；reacher_easy Dt不读取c，其baseline继续sv1原队列。

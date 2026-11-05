@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-11-05四排队归sv2（10点后）**：用户将四条排队挂sv2，其中三个Dt原已在sv2；只新增迁移walker_run Dt至空闲物理GPU4，保留原三条baseline审计依赖，不用GPU6、不扩展至blocked的hopper_stand Dt。queued源通过原子目录占位/独立claim撤销旧启动资格，原监督器及运行baseline不停止；真实原监督器防重复测试、132 CPU、GPU4实际CUDA/EGL及size50m短程通过，正式训练继续bef29480df12d07659c640b22218804dd1d69e63，控制器2f7e6358fa45f125ac630aabb8b5d9f3ef3bfa2a。实际启动/评价/W&B证据、容量条件和完整版本见`docs/VISION20_WALKER_DT_SV2_20261105.md`，科学配置和原38次新训练数量保持。
+
 **2026-11-05 Vision20 seed1七条阻塞迁至sv2**：用户保留四条原排队、迁移七个never-started blocked槽位。sv2 GPU0 pendulum baseline→Dt、GPU1 walker_walk baseline→Dt、GPU2 walker_stand baseline→Dt、GPU3 reacher_easy Dt；四卡240GB初始门槛/60GB后继底线，不用GPU6。129项CPU（87975bb）、来源标签修复六项补测（666ce9031760f37e6f3fbd604f526621e9cffa43）、四卡CUDA/EGL及真实size50m短程通过，01:47四首条正式启动/三后继排队，训练固定bef29480df12d07659c640b22218804dd1d69e63。跨服务器claims、完整配置/启动审计、实际状态及sv1 GPU4外来占用和容量限制见`docs/VISION20_SEED1_SV2_REMAINING_20261105.md`；不将启动/工程通过当百万步或方法结论。
 
 **2026-11-04 Vision20 seed1六槽改配**：用户最终指定sv1 GPU0/1/4各串行两条，补原先从未启动的六个blocked槽位，不新增任务/seed/组；实际训练继续bef29480df12d07659c640b22218804dd1d69e63，控制器d6b9604ddf860d451d74d3cf6513fb66973a9094。126 CPU及三卡真实CUDA/EGL/size50m短程通过，14:43启动quadruped_run Dt、cup_catch Dt、hopper_stand baseline，后继reacher_hard Dt、reacher_easy baseline、hopper_stand Dt排队。完整分配、claim去重、原索引替代规则、启动审计及证据见`docs/VISION20_SEED1_REALLOCATION_20261104.md`；原配置/百万动作/21×10不变，工程验收不作方法结论。reacher_easy Dt、walker_stand两组仍未补调度。
