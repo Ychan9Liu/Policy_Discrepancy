@@ -1,5 +1,20 @@
 # 项目状态
 
+**2026-11-05 18:07：用户指定的三条 clean DtL 已启动，均在训练中。**
+sv2物理GPU5/6/7分别为 quadruped_run / quadruped_walk / finger_spin，seed0、size50m、
+alpha20/rho0.5、100万动作、21点评价各10完整episode，沿用现有DtLatch；没有新增baseline或DCS训练。
+实际训练和三任务CUDA验收SHA为 `f1f33bc9a74eb112f091a29f09307f81ba72513a`；
+补充测试SHA `cbd24b2f6c29fb3a772c8472754cf4b844ba16cb` 只改测试，训练代码相同。
+18:07已核三条成功更新566/599/576次、动作4292/4424/4332；0点评价10完整episode与训练隔离通过，
+实际CUDA/EGL同卡，W&B三条在线，尚未完成百万步或终点审计。训练根
+`/data/Policy_Discrepancy/runs/dtl-three-clean-seed0-20261105-f1f33bc`，监督PID3397966。
+CUDA三任务工程通过；Linux保留一项原DtL也存在的active-vs-baseline严格CPU等价断言失败，
+最大差2.98e-8，未改容差；原实现/本次模块固定输入每模式617数组逐位一致。
+用户允许当前容量不足180GB建议时先启动并继续清理；18:07余量约174GB，5GB停止保护仍在。
+完整配置、提交/同步、原失败、测试和后续监测入口见 [DtL三任务运行记录](DTL_THREE_SEED0.md)。
+当前03继续监测，终点审计完成后交05；工程通过不构成方法有效结论。
+
+
 更新日期：2026-11-05。
 
 ## 03环境准备，DCS三种背景条件可切换（2026-11-05）
