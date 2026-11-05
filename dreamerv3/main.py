@@ -87,8 +87,15 @@ def main(argv=None):
         args)
 
   elif config.script in ('protocol_v1', 'protocol_hopper_seeds123', 'protocol_dmc16',
-                         'protocol_vision20_seed1', 'protocol_pendulum_seeds23'):
-    embodied.run.protocol_v1.run(
+                         'protocol_vision20_seed1', 'protocol_pendulum_seeds23',
+                         'protocol_dtl_three'):
+    from .protocol_scope import validate_dtl_scope
+    validate_dtl_scope(config)
+    if config.script == 'protocol_dtl_three':
+      from embodied.run.dtl_three import run as protocol_run
+    else:
+      protocol_run = embodied.run.protocol_v1.run
+    protocol_run(
         bind(make_agent, config),
         bind(make_replay, config, 'replay', seed=(
             embodied.run.protocol_v1.seed32(
@@ -139,6 +146,8 @@ def main(argv=None):
 
 def make_agent(config):
   from .agent import Agent
+  if config.agent.get('dt_latch', {}).get('mode', 'off') != 'off':
+    from .dtl_agent import Agent
   env = make_env(config, 0)
   notlog = lambda k: not k.startswith('log/')
   obs_space = {k: v for k, v in env.obs_space.items() if notlog(k)}

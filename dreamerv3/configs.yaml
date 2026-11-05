@@ -102,6 +102,8 @@ defaults:
 
   agent:
     rep_probe: {mode: 'off', alpha: -1.0, c: -1.0}
+    # Existing DL-code-r1 implementation; opt-in, preserving original scopes.
+    dt_latch: {mode: 'off', alpha: 20.0, rho: 0.5, kappa: -1.0, kl_tolerance: 0.00001, d_bins: [-1.0], k_bins: [-1.0], normal_only: False}
     loss_scales: {rec: 1.0, rew: 1.0, con: 1.0, dyn: 1.0, rep: 0.1, policy: 1.0, value: 1.0, repval: 0.3}
     opt: {lr: 4e-5, agc: 0.3, eps: 1e-20, beta1: 0.9, beta2: 0.999, momentum: True, wd: 0.0, schedule: const, warmup: 1000, anneal: 0}
     ac_grads: False
@@ -215,6 +217,14 @@ m2_v1: &m2_v1
   env.dmc.use_seed: True
   run: {action_budget: 1000000, eval_every_actions: 50000, match_start: 100000, match_end: 300000, eval_envs: 1, eval_eps: 10, report_every_actions: 0, engineering_fixture: False, debug: False, train_ratio: 256}
   agent.rep_probe: {mode: logging, alpha: 20.0, c: -1.0}
+
+# User-authorized clean DtLatch cohort, separate from all M2 arms.
+dtl_three:
+  <<: *m2_v1
+  script: protocol_dtl_three
+  task: dmc_quadruped_run
+  agent.rep_probe.mode: off
+  agent.dt_latch.mode: dtlatch
 
 # Separate user-approved repeat scope; never relax the original seed0 preset.
 m2_hopper_seeds123:

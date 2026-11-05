@@ -1,6 +1,9 @@
 """Explicit experiment scopes; the original M2 v1 seed0 scope stays closed."""
 
 V1 = 'M2-v1'
+DTL_THREE = 'DtL-three-seed0-20261105'
+DTL_THREE_SCRIPT = 'protocol_dtl_three'
+DTL_THREE_TASKS = ('dmc_quadruped_run', 'dmc_quadruped_walk', 'dmc_finger_spin')
 HOPPER_123 = 'M2-v1-hopper-seeds123-baseline-dt'
 HOPPER_SCRIPT = 'protocol_hopper_seeds123'
 DMC16 = 'M2-v1-dmc16-seed0-baseline-dt'
@@ -24,6 +27,8 @@ VISION20_TASKS = V1_TASKS + DMC16_TASKS
 
 
 def tasks_for_protocol(protocol):
+  if protocol == DTL_THREE:
+    return DTL_THREE_TASKS
   if protocol == PENDULUM_23:
     return ('dmc_pendulum_swingup',)
   if protocol == VISION20_SEED1:
@@ -36,6 +41,11 @@ def tasks_for_protocol(protocol):
 
 
 def validate_scope(script, task, seed, mode):
+  if script == DTL_THREE_SCRIPT:
+    if (type(seed) is not int or seed != 0 or task not in DTL_THREE_TASKS or
+        mode != 'off'):
+      raise ValueError('DtL extension requires the declared three tasks, seed0, rep_probe off')
+    return DTL_THREE
   if script == PENDULUM_SCRIPT:
     if (type(seed) is not int or seed not in (2, 3) or
         task != 'dmc_pendulum_swingup' or mode not in ('logging', 'dt')):
@@ -61,3 +71,22 @@ def validate_scope(script, task, seed, mode):
       raise ValueError('DMC16 requires the remaining 16 tasks, seed0, logging or dt')
     return DMC16
   raise ValueError(f'Unknown protocol script: {script}')
+
+
+def validate_dtl_scope(config):
+  """Keep DtL opt-in and prevent mislabelling it as any frozen M2 arm."""
+  dl = config.agent.get('dt_latch', {})
+  if config.script != DTL_THREE_SCRIPT:
+    if dl.get('mode', 'off') != 'off':
+      raise ValueError('Existing M2 protocols do not authorize DtLatch')
+    return
+  expected = dict(mode='dtlatch', alpha=20.0, rho=0.5, normal_only=False,
+                  kappa=-1.0, kl_tolerance=1e-5, d_bins=(-1.0,), k_bins=(-1.0,))
+  for key, value in expected.items():
+    actual = dl.get(key)
+    if key.endswith('_bins') and actual is not None:
+      actual = tuple(actual)
+    if actual != value:
+      raise ValueError(f'DtL three-task setting differs: {key}')
+  if config.env.dmc.get('background', {}).get('mode', 'clean') != 'clean':
+    raise ValueError('DtL clean preparation does not authorize a DCS training protocol')
