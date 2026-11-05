@@ -2,6 +2,13 @@
 
 更新日期：2026-11-05。
 
+## 03环境准备，DCS三种背景条件可切换（2026-11-05）
+
+- 用户确认准备clean、静态背景、动态背景环境。代码与实测SHA为 `cdeddec66c7a5c3987c9ee54640391a4e8e52fcd`，通过独立适配器保留原DMC、训练算法和协议runner源码。新增配置 `dcs_clean/dcs_static/dcs_dynamic`，独立背景RNG、确定帧序及固定状态配对渲染；含噪条件不能进入原clean正式入口。
+- 本机56项回归全部通过，含两个CPU逻辑设备的全局shuffle跨shard检查。生产环境工厂的20任务三条件真实MuJoCo/CPU llvmpipe渲染通过，clean图像与父版本逐像素一致，固定动作下物理/奖励/边界/任务RNG完全一致；额外诊断不改后续图像或背景RNG。另完成cartpole真实终止/自动reset/repeat=2边界检查。尚未进行新完整agent/CUDA验收或含噪模型实验。
+- 官方DAVIS素材已在本机独立outputs目录准备并逐帧hash/解码，训练60视频4209帧、验证30视频1999帧。DCS地面默认规则覆盖14任务，其余6任务须显式声明透明度；本次0.3仅为工程fixture。新含噪科研任务/强度/素材划分/seed/预算及资源仍待声明，原clean协议保持。
+- 报告 `docs/DCS_BACKGROUND_ENV.md`，实现上游版本、Pillow缩放等移植差异、配置、命令和恢复限制均已记录。证据根 `analysis/outputs/dcs-background-preparation-20261105/`。本轮仅本机Git与CPU准备，无服务器连接/同步/资源核查，已有服务器运行状态未刷新。下一步继续当前03，在用户分配的资源上完成真实CUDA/EGL及完整agent短程验收，科研协议交02与用户确认。
+
 ## 03执行更新，hopper_stand Dt 在sv2 GPU3启动（2026-11-05）
 
 - 用户指定最后一个阻塞槽位在sv2 GPU3重新跑。15:48核查GPU3空闲且余204.3GB。旧sv1尝试尚未启动，已排他预留源目录并写入两级迁移记录。15:57:45从第0步正式启动，训练PID 3326285。
