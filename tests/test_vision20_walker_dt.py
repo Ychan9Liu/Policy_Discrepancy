@@ -41,3 +41,22 @@ class WalkerDtTest(unittest.TestCase):
       r.validate_seal(s,seal)
       for changes in ({'source_directory_reserved_before_spawn':False},{'source_sha256':'wrong'},{'reservation_contents':[]},{'source_run_id':'other'}):
         with self.assertRaises(ValueError):r.validate_seal(s,dict(seal,**changes))
+
+  def test_hopper_blocked_source_keeps_lineage_and_requires_gpu3(self):
+    source, proof = self.fixture()
+    old = source['runs'][0]
+    old.update(task='dmc_hopper_stand', state='blocked', error='GPU occupied',
+               source_run_id='original', run_id='reallocated')
+    old['review_argv'][old['review_argv'].index('--task') + 1] = old['task']
+    old['config'] = json.loads(json.dumps(dict(resolve(old['review_argv'][4:]).flat)))
+    with self.assertRaises(ValueError):
+      r.make_plan(source, proof, 'controller', r.HOPPER_STAND)
+    proof.update(physical_gpu=3, gpu_uuid='uuid3', egl_index=3)
+    row = r.make_plan(source, proof, 'controller', r.HOPPER_STAND)['runs'][0]
+    self.assertEqual(row['config'], dict(old['config'], logdir=row['directory']))
+    self.assertEqual((row['source_run_id'], row['original_run_id']), ('reallocated', 'original'))
+    self.assertNotIn('error', row)
+    self.assertIsNone(row['baseline_c_source'])
+    old['state'] = 'queued'
+    with self.assertRaises(ValueError):
+      r.make_plan(source, proof, 'controller', r.HOPPER_STAND)
