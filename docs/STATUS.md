@@ -17,6 +17,12 @@ CUDA三任务工程通过；Linux保留一项原DtL也存在的active-vs-baselin
 
 更新日期：2026-11-05。
 
+## 03存储维护：三台已完成工程短跑冗余已清理（2026-11-05）
+
+- 用户要求结合前几轮运行清理废弃冗余，沿用“不留本机归档”。按已通过验收的105条4098动作工程运行逐项删除356个agent.pkl和3360个replay NPZ，共186.472567GB分配块（sv1 56.994820GB、sv2 96.097247GB、sv3 33.380499GB）；无payload转存。正式实验、未解决失败/中断证据、活动工程/DTL、环境和其他项目数据保留。
+- 三台独立后查均通过，3716条操作日志/清单一致、无重复；sv2因短生命周期nvidia-smi句柄不可读三次按保护条件停止，保留失败收据并逐段核已删前缀后仅继续余项，没有放宽占用检查。7903个工程保留文件完整hash、36链接及118755个已完成正式payload的元数据保持。105个原运行已加payload不可用标记，不能从被删文件复开模型或重放轨迹；其他UID句柄可见性受限，完整边界见报告。
+- 报告docs/REDUNDANT_EXPERIMENT_CLEANUP_20261105.md；本机analysis/outputs/redundant-experiment-cleanup-20261105/及三台各自runs/redundant-experiment-cleanup-20261105/留有实际源码hash、授权、清单、日志与收据。无训练/科学协议/GPU执行或服务器repo同步；最终SHA及核验版本差异见DELIVERY。磁盘余量以报告各次后查时间为准，不视为新启动授权。
+
 ## 03环境准备，DCS三种背景条件可切换（2026-11-05）
 
 - 用户确认准备clean、静态背景、动态背景环境。代码与实测SHA为 `cdeddec66c7a5c3987c9ee54640391a4e8e52fcd`，通过独立适配器保留原DMC、训练算法和协议runner源码。新增配置 `dcs_clean/dcs_static/dcs_dynamic`，独立背景RNG、确定帧序及固定状态配对渲染；含噪条件不能进入原clean正式入口。
