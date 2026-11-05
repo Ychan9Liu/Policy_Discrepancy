@@ -204,7 +204,9 @@ class DcsBackgroundTest(unittest.TestCase):
     # Equal-size solid RGB fixtures avoid the deliberately different resizers.
     tensor = lambda x, shape: SimpleNamespace(numpy=lambda: np.reshape(x, shape))
     tf = SimpleNamespace(reshape=tensor, io=SimpleNamespace(gfile=SimpleNamespace(
-        listdir=lambda x: sorted(os.listdir(x)))))
+        # gfile returns Unicode names; os.listdir(np.str_) can return bytes on
+        # Linux/Python 3.11. Normalize the test double's input, not DCS behavior.
+        listdir=lambda x: sorted(os.listdir(str(x))))))
     spec = importlib.util.spec_from_file_location('dcs_reference_fixture', reference)
     module = importlib.util.module_from_spec(spec)
     with patch.dict(sys.modules, tensorflow=tf):
