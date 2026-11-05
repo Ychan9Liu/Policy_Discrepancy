@@ -150,12 +150,18 @@ W&B读取已确认三条state=running，task/seed0/DtL/alpha20/rho.5/1M与本地
 [quadruped_run](https://wandb.ai/ychan9liu-tsinghua-university/PD_1/runs/dtl-three-clean-seed0-20261105-f1f33bc-quadruped_run-dtl-01)、
 [quadruped_walk](https://wandb.ai/ychan9liu-tsinghua-university/PD_1/runs/dtl-three-clean-seed0-20261105-f1f33bc-quadruped_walk-dtl-01)、
 [finger_spin](https://wandb.ai/ychan9liu-tsinghua-university/PD_1/runs/dtl-three-clean-seed0-20261105-f1f33bc-finger_spin-dtl-01)。
+18:11 API复核仍为running且配置正确，但远端summary/history尚空；本地0点记录完整。
+安装环境的elements适配器调用 `wandb.log(metrics, step=step)`，未显式commit，
+SDK将其发送为partial history；首个0点需后续日志步或关闭时提交，尚不能声称远端曲线已验收。
+不为刷新面板改变训练或评价频率；下次50k点核实历史落盘与W&B同步。
 原配置的可选JAX profiler提示缺少TensorFlow trace，之后成功更新持续增加；未改依赖或关闭原配置。
 
 Git同步范围为本机与实际执行sv2；GitHub task分支首次push成功，随后独立ls-remote因连接reset失败，
 不能把该失败写成重新核实远端成功。服务器bundle均verify并与本机SHA256一致：
 生产f1f33bc bundle `3309ac9e4fecd1f092e91f9e4feb1116c9c773ea69376f03af5a6559c5ce90b4`；
 补测cbd24b2 bundle `557da94d57a071acb019852192878d27bb72c63cdea45771eb5c34ef16d2ea98`。
+后续报告提交推送同一GitHub任务分支再次因connection reset失败；最终交付仍经bundle同步至sv2，
+不移动实际训练checkout。最终完整HEAD、bundle校验和及同步回执另存本机证据根 `DELIVERY.json`。
 原实现0b5d5a6只部署CPU对照checkout，不启动GPU或重开其旧实验。
 小证据镜像 `analysis/outputs/dtl-three-20261105/evidence/`；完整小包
 `small-evidence-f1-cbd.tar.gz` 的SHA256为
