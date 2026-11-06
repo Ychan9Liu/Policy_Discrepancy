@@ -1,5 +1,11 @@
 # 实验分析
 
+## seed1全任务、两seed均值与DtL三任务（2026-11-06）
+
+`compare_seed01_dtl.py collect/analyze --include-acrobot`只读正式产物并复算本次用户明确要求的20任务seed1表现、seed0/1等权均值，以及三条DtL seed0与同seed baseline/Dt的对比。新读取40条seed1、3条DtL及acrobot seed0两条；其余38条seed0复用此前原始镜像。严格核对21点×10完整episode、固定快照、成功更新/c收据和DtL逐更新诊断；缺点或缺seed不插值、不重加权。输出逐任务指标、配对差值、门控表和五张未平滑PNG/SVG，淡线仅显示单个seed。默认不加参数仍支持旧19任务范围，不能混称全20任务。
+
+完整结果、完成状态与科学限制见[分析报告](../docs/ANALYSIS_SEED1_SEEDS01_DTL.md)，有效输出为`analysis/outputs/seed1-seeds01-dtl-20261106/result20-final/`，输入为`input20/`；旧19任务结果保留在独立目录，不作为本次最终表。实际全20任务采集/分析版本2e54499d96d8e5ab47235301469e6fd5de274b40。测试`python -m unittest tests.test_seed01_dtl_analysis -v`；复算`python -m analysis.compare_seed01_dtl analyze --include-acrobot --input analysis/outputs/seed1-seeds01-dtl-20261106/input20 --output analysis/outputs/NEW_SEED01_DTL_RESULT`。完整命令/哈希见报告及输出COMMANDS/DELIVERY。没有新训练或W&B写入，两个seed不作跨seed显著性结论。
+
 ## Pendulum seed2/3终点分析完成（2026-11-04）
 
 四条均accepted。实际分析/36项离线测试SHA `5ccbd8c533107823fba558dd092cac41655efd8d`，从独立固定工作树完成collect/analyze/replay：300小文件hash、84点/840评价episode、997972成功收据及两条c通过；四条完整训练标量回放400万动作与80区间对齐，四张真实PNG均已查看。PPD-KL−baseline AUC差seed2 +2.8850、seed3 −421.6675；两seed等权差−209.39125，不并入seed0/1。seed3 PPD-KL有820/992完整训练episode零回报，不能只解释为评价抽样波动，也不能据此裁决唯一因果或方法无效。
