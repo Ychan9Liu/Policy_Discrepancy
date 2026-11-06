@@ -223,6 +223,16 @@ def audit(row, engineering=False):
       matching_c=state.frozen_c() if row['mode']=='logging' else None)
 
 
+def validate_acceptance(proof, plan):
+  expected={(t,g) for t in INTEGRATION_TASKS for g in ('baseline','dt')}
+  if (proof['code_sha']!=plan['code_sha'] or not proof['passed'] or
+      not proof.get('engineering_only') or
+      proof.get('declaration_sha256')!=plan['declaration_sha256'] or
+      len(proof['runs'])!=8 or
+      {(r['task'],r['group']) for r in proof['runs']}!=expected):
+    raise ValueError('Same-SHA same-declaration real size50m CUDA acceptance is required')
+
+
 def execute(plan_path,evidence,engineering=False,accept_capacity_deficit=False):
   plan=read(plan_path)
   validate(plan)
@@ -234,10 +244,7 @@ def execute(plan_path,evidence,engineering=False,accept_capacity_deficit=False):
   if root.exists(): raise FileExistsError('Fresh attempt required: '+str(root))
   if not engineering:
     proof=read(evidence/'integration/acceptance.json')
-    expected={(t,g) for t in INTEGRATION_TASKS for g in ('baseline','dt')}
-    if (proof['code_sha']!=commit or not proof['passed'] or
-        {(r['task'],r['group']) for r in proof['runs']}!=expected):
-      raise ValueError('Same-SHA real size50m CUDA acceptance is required')
+    validate_acceptance(proof,plan)
   free=shutil.disk_usage('/data').free
   required=30_000_000_000 if engineering else 480_000_000_000
   if free<required and not (not engineering and accept_capacity_deficit):
@@ -327,6 +334,7 @@ def execute(plan_path,evidence,engineering=False,accept_capacity_deficit=False):
     passed=all(r['state']=='accepted' for r in rows if r['enabled'])
     dump(root/('acceptance.json' if engineering else 'supervisor-final.json'),
         dict(code_sha=commit,checked_utc=now(),passed=passed,
+            declaration_sha256=plan['declaration_sha256'],
             runs=[r['audit'] for r in rows if r['state']=='accepted'],
             states=[r['state'] for r in rows],engineering_only=engineering))
     if not passed: raise RuntimeError('Failed/blocked attempts retained; no silent restart')
