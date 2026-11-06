@@ -91,7 +91,7 @@ def main():
             physics=np.stack(states),rewards=np.asarray(rewards),
             immediate=np.asarray(immediate),after=np.asarray(restored))
       finally:
-        env.close()
+        env._dmenv.close()
   (args.output/'diagnostic.json').write_text(json.dumps(report,indent=2))
   print(json.dumps({name:{k:v for k,v in row.items() if k!='comparisons'}
       for name,row in report['cases'].items()},indent=2))
