@@ -8,7 +8,7 @@
 - 11:10:46只读W&B：40条seed1＋3条DtL＋2条acrobot seed0均finished，945个原始评价均值/网格及终点计数一致；未写summary。报告[ANALYSIS_SEED1_SEEDS01_DTL.md](ANALYSIS_SEED1_SEEDS01_DTL.md)，输入/hash、全任务表、五张PNG/SVG和命令在analysis/outputs/seed1-seeds01-dtl-20261106/；有效输入/表图为input20/result20-final，旧19任务草稿不作最终结果。实际分析2e54499d96d8e5ab47235301469e6fd5de274b40，四项手算/范围测试及83条真实输入检查通过。
 - 本次无新训练、调参、GPU探针或服务器源码同步；未核当前GPU占用，以上仅历史执行分配。既有CPU严格等价边界与跨版本/训练轨迹限制保留；后续科学验证由02和用户冻结，03继续原批收尾。不自动创建chat或发送消息。
 
-**2026-11-06 11:35 · Vision20 dynamic 正式启动待两项答复**：seed0及dynamic背景train60/val30、video_alpha1、地面规则已确认，sv2 GPU0–7；生产实测5245096ee52de5ba1ff6bcafb96d19298b74dcad，本机/服务器81项CPU、八卡设备绑定及四代表任务baseline/Dt共八条4098动作size50m CUDA完整agent全部通过。每条517更新、3点评价、报告与评价隔离通过；136实际C/G进程同卡。40条命令和RNG映射已准备，正式0运行/0排队，仍待rollout及容量答复；11:35八卡空闲，/data约128.6GB。额外渲染逐位检查未通过（少量RGB差1–2，物理/奖励/纹理/RNG相同），严格失败与两组对照保留，未改生产渲染或容差，不称全20任务CUDA逐位验收通过。详见 [本轮报告](DCS_DYNAMIC_VISION20.md)，工程不等于方法有效。
+**2026-11-06 11:35 · Vision20 dynamic 正式启动待容量处理**：seed0及dynamic背景train60/val30、video_alpha1、地面规则已确认，sv2 GPU0–7；生产实测5245096ee52de5ba1ff6bcafb96d19298b74dcad，本机/服务器81项CPU、八卡设备绑定及四代表任务baseline/Dt共八条4098动作size50m CUDA完整agent全部通过。每条517更新、3点评价、报告与评价隔离通过；136实际C/G进程同卡。40条命令和RNG映射已准备，正式0运行/0排队，按原40条目标准备自动补入，仍待容量处理；11:35八卡空闲，/data约128.6GB。额外渲染逐位检查未通过（少量RGB差1–2，物理/奖励/纹理/RNG相同），严格失败与两组对照保留，未改生产渲染或容差，不称全20任务CUDA逐位验收通过。详见 [本轮报告](DCS_DYNAMIC_VISION20.md)，工程不等于方法有效。
 
 **2026-11-05 18:07：用户指定的三条 clean DtL 已启动，均在训练中。**
 sv2物理GPU5/6/7分别为 quadruped_run / quadruped_walk / finger_spin，seed0、size50m、

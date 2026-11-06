@@ -1,6 +1,6 @@
 # Vision20 dynamic baseline / Dt：准备记录
 
-状态时间：2026-11-06 11:35（北京时间）。本轮目标为20任务各baseline、原Dt一条，共40条；资源为用户指定的sv2物理GPU0–7。当前**8条缩小预算完整agent工程验收通过，0条正式启动、0条正式排队**，没有创建正式训练控制器。补充的GPU额外渲染逐像素检查未通过，边界见下文；不称20任务全部CUDA验收通过。队列范围和首批容量安排仍待本轮答复。
+状态时间：2026-11-06 11:40（北京时间）。本轮目标为20任务各baseline、原Dt一条，共40条；资源为用户指定的sv2物理GPU0–7。当前**8条缩小预算完整agent工程验收通过，0条正式启动、0条正式排队**，没有创建正式训练控制器。补充的GPU额外渲染逐像素检查未通过，边界见下文；不称20任务全部CUDA逐位验收通过。按用户原40条总目标准备全40自动补入，首批容量安排仍待答复。
 
 ## 已确认与待补齐
 
@@ -8,10 +8,10 @@
 - Dt指原PPD-KL，`agent.rep_probe.mode=dt`，不是DtL；baseline为logging-only，实际训练权重1。DtLatch关闭。原clean批次和已完成结果不被覆盖或重新分类。
 - 共同继承项：size50m、64×64 RGB、仅视觉、每条100万实际训练动作、repeat=1；alpha20、free-nats1、dyn/rep=1/0.1、ac_grads=false、reward_grad/repval_grad/repval_loss=true；16训练环境、batch16×64、context1、train_ratio256、CUDA/bfloat16、prealloc=false；评价0至100万每5万一次、每点10完整episode、固定快照及采样动作；匹配窗口[100000,300000)，成功更新开始动作步归属、有效loss位置S/N。此轮不运行constant/shuffle，不把背景问题改写成新的算法定义。
 - 用户本轮答复已确认：训练seed0；DAVIS train 60视频训练、独立val 30视频评价，video_alpha=1，14任务上游地面规则，另6任务地面alpha=0.3。背景独立MT19937沿用现有派生实现，根标识-1、cache_size=2、num_videos=-1；物理环境/动作/agent RNG沿用原seed0映射。
-- 仍待用户答复：40条自动补入与仅先执行16条的范围；存储安排。正式控制器尚未启动。
-- 若选择自动补入，代码最多允许8条运行、8条就绪，其余24条初始为backlog；若只执行前16条，另外24条仅准备，不能自动启动。
+- 队列按用户原40条总目标解释为全40自动补入，最多8条运行、8条就绪，其余24条初始为backlog。关于“仅先执行16条”的偏好问题尚无答复；这是可覆盖的调度偏好，不另当作40条已授权范围的启动许可。若用户改选first16，切换到对应准备计划，另24条不得自动启动。
+- 仍待答复的是存储安排。正式控制器尚未启动；不将未回复或等待时间当作接受容量缺口。
 
-启动前的配置声明包含seed、全部背景字段、每任务地面alpha和视频划分，并以SHA256绑定到plan与实际config。科学配置已由本轮两项答复补齐，可以执行同配置工程验收；正式队列范围和容量仍按AGENTS第2节待答复，不是重新索取已授予的服务器启动权限。
+启动前的配置声明包含seed、全部背景字段、每任务地面alpha和视频划分，并以SHA256绑定到plan与实际config。科学配置已由本轮两项答复补齐，同配置工程验收已完成；现存储不足以承诺首八条跑完，仍待容量处理，不重新索取已授予的服务器/40条任务启动权限。
 
 ## 资源与准备产物
 
@@ -103,7 +103,7 @@ GPU0/1为hopper_hop baseline/Dt，GPU2/3 quadruped_run baseline/Dt，GPU4/5 fing
 | finger_spin | 0.9999287064 | 0.87075615 |
 | walker_walk | 0.9999250706 | 0.99769020 |
 
-实际声明`declaration.json`的SHA256为`c51f0760c481057571719c932c6d84e400c9122760b94e0e4f959ead816691a7`，本机与服务器字节一致。工程调用使用`integration-plan/plan.json`，其中临时rollout=first16不会被integration用来启动正式作业，不代表用户选择了正式16条范围。另准备`formal-plan-all40/plan.json`和20任务`rng-mapping.json`供完整40条方案复核，但尚未据此启动；最终rollout待答复。正式`run`要求同SHA、同声明hash的8条完整agent acceptance；此工程门槛现已满足，队列及容量条件仍未解除。
+实际声明`declaration.json`的SHA256为`c51f0760c481057571719c932c6d84e400c9122760b94e0e4f959ead816691a7`，本机与服务器字节一致。工程调用使用`integration-plan/plan.json`，其中临时rollout=first16不会被integration用来启动正式作业，不代表用户选择了正式16条范围。正式方案为`formal-plan-all40/plan.json`及20任务`rng-mapping.json`，尚未据此启动。正式`run`要求同SHA、同声明hash的8条完整agent acceptance；此工程门槛现已满足，容量条件仍未解除。
 
 ## 额外渲染的严格失败与适用边界
 
@@ -123,7 +123,7 @@ GPU0/1为hopper_hop baseline/Dt，GPU2/3 quadruped_run baseline/Dt，GPU4/5 fing
 
 GitHub首次推送因连接重置失败。确定代码已通过bundle及SHA256/前置提交校验同步sv2；保留`git-sync-{0dfbb5c,35dbfa0,5245096,ee272ab,eb724d8,d205bda}.json`。canonical repo的工作区仍干净、HEAD仍`d8997f64a301bfdcfe08758faeae8957a7395766`；实际准备/完整agent测试在独立checkout `/data/Policy_Discrepancy/checkouts/dcs-dynamic-5245096ee52d`；诊断测试使用自己的已提交checkout，显式导入5245096的生产环境。未在服务器修改项目源码，未同步sv1/sv3。最终推送/交付bundle结果以交付收据为准。
 
-首选下一步继续当前合并窗口（03），不新建chat：完整agent工程门槛已通过；收齐队列及容量答复后复核资源，按确认的rollout启动首八条和八条后继，并保留上述GPU辅助诊断边界。启动后核查0点评价、实际同卡和W&B在线记录。依赖未决项的工作不被本报告视为完成；后续完整产物再交05分析，工程通过不代表Dt有效。
+首选下一步继续当前合并窗口（03），不新建chat：完整agent工程门槛已通过；落实容量后复核资源，按全40自动补入方案启动首八条和八条后继（用户另改first16时从其最新指令），并保留上述GPU辅助诊断边界。启动后核查0点评价、实际同卡和W&B在线记录。当前不能以交接代替尚未完成的启动；后续完整产物再交05分析，工程通过不代表Dt有效。
 
 完成声明后使用已提交入口；以下占位项尚未绑定，不是已执行的启动命令：
 
