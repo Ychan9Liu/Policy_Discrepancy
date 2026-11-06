@@ -79,4 +79,3 @@ def check_config(config):
         'run.eval_eps': 10, 'run.match_start': 100000, 'run.match_end': 300000,
         'run.report_every_actions': 0})
   check(config.update(normalized))
-
