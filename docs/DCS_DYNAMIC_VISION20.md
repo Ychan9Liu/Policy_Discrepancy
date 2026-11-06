@@ -1,6 +1,6 @@
 # Vision20 dynamic baseline / Dt：准备记录
 
-状态时间：2026-11-06 11:10（北京时间）。本轮目标为20任务各baseline、原Dt一条，共40条；资源为用户指定的sv2物理GPU0–7。当前**8条缩小预算工程验收运行中，0条正式启动、0条正式排队**，没有创建正式训练控制器。
+状态时间：2026-11-06 11:35（北京时间）。本轮目标为20任务各baseline、原Dt一条，共40条；资源为用户指定的sv2物理GPU0–7。当前**8条缩小预算完整agent工程验收通过，0条正式启动、0条正式排队**，没有创建正式训练控制器。补充的GPU额外渲染逐像素检查未通过，边界见下文；不称20任务全部CUDA验收通过。队列范围和首批容量安排仍待本轮答复。
 
 ## 已确认与待补齐
 
@@ -20,6 +20,10 @@ sv2入口仍为既有SSH配置，hostname `lyg0360`。开始时SSH多次在认�
 10:41八卡均空闲，/data剩147,643,842,560字节。准备素材和测试后，服务器10:57:32 UTC+8（本机10:58）余量145,960,243,200字节，GPU0–7均0MiB、无C/G进程。零动作设备检查进程已结束，没有本轮GPU任务遗留。
 
 最终准备快照为服务器11:03:29，145,947,152,384字节可用，八卡仍均0MiB且无C/G进程；该时间和原始输出保存在`PREPARATION.json`。
+
+完整agent验收后11:16:11八卡均释放，无C/G进程，余量128,629,153,792字节，证据为`device-binding-5245096/integration/engineering-summary.json`。11:18:24重查GPU0空闲后补做20任务固定动作EGL环境检查，模型更新/正式训练动作均为0；其独立收据为`render-execution.json`，不占用其他卡。
+
+11:35:20最终资源快照：八卡均0MiB、无C/G进程，/data余量128,594,694,144字节。所有本轮工程进程已退出，证据`resources-final.json`。原始素材、成功及失败证据均保留，未删除已有产物。
 
 既有size50m每条产物约23–25GB，八条完整运行约200GB、40条累计约1TB；这是容量规划估计，不是本轮实测用量。控制器保留60GB/卡的保守首批门槛，八卡合计480GB；用户可以明确接受首批缺口，但该例外不自动删除历史产物，也不扩展至后继启动：后继不足60GB时继续等待，运行中余量低于5GB停止本控制器自己的子进程并保留失败证据。147GB不足以承诺八条完整跑完；旧DtL三条的容量例外没有自动套用本轮。
 
@@ -86,17 +90,40 @@ python -m scripts.prepare_dcs_background --dataset /data/Policy_Discrepancy/runs
 python -m scripts.run_dcs_dynamic probe --gpu <0至7> --output <新的gpuN-binding.json>
 ```
 
-**完整agent门槛正在执行，尚未通过**：11:09启动、11:10确认八条进程running，尚无完整验收。`integration`规定4098动作、间隔2049、每点1完整episode、匹配[2200,3600)、报告2049；GPU0/1为hopper_hop baseline/Dt，GPU2/3 quadruped_run baseline/Dt，GPU4/5 finger_spin baseline/Dt，GPU6/7 walker_walk baseline/Dt。科学设置采用本轮已确认seed0/background，只有预算、评价数量和窗口为工程fixture；日志仅JSONL。实际运行代码5245096，控制器收据为准备根`integration-controller.json`，运行/审计位于`device-binding-5245096/integration/`。尚未验证正式W&B远端可读；不能称本轮真实任务验收通过。
+**完整agent工程验收通过**：11:09启动、11:14:34八条全部accepted。每条4098训练动作、517成功更新，0/2049/4098三点各1个完整1000动作episode（评价动作3000另计），两次CUDA report的训练/回放/输入fingerprint不变、三次评价隔离检查通过。匹配窗口[2200,3600)，四baseline匹配S/N均有效，工程c不用于正式实验。
 
-实际声明`declaration.json`的SHA256为`c51f0760c481057571719c932c6d84e400c9122760b94e0e4f959ead816691a7`，本机与服务器字节一致。工程调用使用`integration-plan/plan.json`，其中临时rollout=first16不会被integration用来启动正式作业，不代表用户选择了正式16条范围。正式`run`要求同SHA、同声明hash的8条完整agent acceptance；当前没有该文件，不能启动。
+GPU0/1为hopper_hop baseline/Dt，GPU2/3 quadruped_run baseline/Dt，GPU4/5 finger_spin baseline/Dt，GPU6/7 walker_walk baseline/Dt。科学设置采用本轮已确认seed0/background，只有预算、评价数量和窗口为工程fixture；日志仅JSONL。实际运行代码5245096，控制器收据为准备根`integration-controller.json`，运行/审计位于`device-binding-5245096/integration/`；`acceptance.json`的code SHA和声明hash均匹配。`live-device-audit.json`将136个实际C/G进程沿父进程追溯到八条作业，全部位于各自指定物理卡，无未知归属或跨卡项。四代表任务完成不等于40条百万步任务验收，更不是方法效果结论；尚未验证正式W&B运行的远端记录。
+
+最后一个训练聚合段中，四baseline的实际权重均精确为1、active_effective_frac=0；四Dt的rep_active_frac均为1，实际活跃位置权重均小于1，不能误记为无作用。下表只是工程诊断，作用幅度很小，不解释收益或因果：
+
+| Dt工程任务 | 活跃位置实际平均权重 | active_effective_frac |
+| --- | --- | --- |
+| hopper_hop | 0.9999258259 | 0.90794945 |
+| quadruped_run | 0.9999214894 | 0.99726105 |
+| finger_spin | 0.9999287064 | 0.87075615 |
+| walker_walk | 0.9999250706 | 0.99769020 |
+
+实际声明`declaration.json`的SHA256为`c51f0760c481057571719c932c6d84e400c9122760b94e0e4f959ead816691a7`，本机与服务器字节一致。工程调用使用`integration-plan/plan.json`，其中临时rollout=first16不会被integration用来启动正式作业，不代表用户选择了正式16条范围。另准备`formal-plan-all40/plan.json`和20任务`rng-mapping.json`供完整40条方案复核，但尚未据此启动；最终rollout待答复。正式`run`要求同SHA、同声明hash的8条完整agent acceptance；此工程门槛现已满足，队列及容量条件仍未解除。
+
+## 额外渲染的严格失败与适用边界
+
+`scripts.probe_dcs_background`在同5245096、sv2 GPU0、NVIDIA A100-SXM4-80GB的EGL后端补测20任务时，首任务hopper的dynamic-diagnostics检查失败：恢复原纹理后的重新渲染，18/12288个颜色坐标与之前图像不同，最大绝对差1。输出`render-vision20-5245096/acceptance.json`保持`accepted=false`、tasks为空，不能写成全20通过；原始`render-vision20-5245096.log`保留。没有放宽精确相等要求，也没有删除失败或给现有严格probe增加跳过选项。
+
+新增只诊断、无agent的`scripts/diagnose_dcs_render.py`，测试代码`eb724d8889f8b6d473821d494bd25eba78316f36`，实际环境导入仍固定5245096。对同一任务固定动作/重置序列分别执行不额外渲染、额外渲染、不换内容重新上传纹理、临时替换再恢复。结果：dynamic仅多渲染时同样出现低位像素差，18帧未来图像有991/221184颜色坐标不同、最大差2；其物理状态、原始奖励、任务RNG、背景状态/RNG均精确相同。重新上传和替换恢复也有类似差异，texture字节检查均相同。因此不能把差异归因于frame_override恢复失败，也不能据此归因hopper学习失败。
+
+进一步的隔离对照代码`d205bdac6913d43c3e80dcd624f37fe718841755`只在诊断实例关闭GL_DITHER：该实例的GL状态确认为False，但像素差异未消除（obs→重复render累计1122坐标、相邻render累计595坐标，最大仍2）；该次clean-repeat也出现1个坐标差1。因此“dithering是唯一原因”不获支持。GL_DITHER作为颜色量化相关状态的背景依据见[Khronos OpenGL规范](https://registry.khronos.org/OpenGL/specs/gl/glspec30.pdf)，本结论依据实际对照，不把规范当作故障原因证明。
+
+所有对照NPZ、逐位置统计和精确状态检查保存在`render-controls-eb724d8/`、`render-dither-control-d205bda/`。生产渲染代码/GL设置未修改，未改变视频、alpha、地面规则或训练协议。GPU低位像素非确定性的具体底层原因仍未定位；此前CPU逐位证据仅限CPU，不能推广到该GPU。`render_background_frame`的纹理/物理/RNG恢复有证据，但**不承诺此GPU上的图像逐位恢复或额外render之后未来图像逐位相同**。
+
+这条辅助配对渲染接口未在本轮训练/评价/report路径使用。原report是对已保存batch的模型报告，八条完整agent中的参数/回放/输入和评价训练状态隔离检查仍已通过；不将上述辅助检查改标通过，也不宣称额外渲染与没有额外渲染的GPU训练轨迹严格一致。未来需要逐像素配对的机制研究应由02/用户先处理此边界，不能直接用该接口宣称控制了全部输入。
 
 ## Git与下一步
 
-开始HEAD为34c7a85，已有AGENTS/CHATS/RESEARCH/STATUS草稿及论文文件均保留。工作期间main新增并行分析提交`ba59fc981f2621da176744346e32020b66c925b3`和`9a57256717359c8b30c5fc89cfe7918575ab9e23`。先核查后保留，以merge db8f5eb及`1f5d218fdc89cf7cbd2f7d32324cc25fb0bd7577`合入本轮代码，没有reset。后一merge相对实测5245096只新增`analysis/compare_seed01_dtl.py`及其测试；补跑3项通过，不影响本轮训练核心。之后本报告/STATUS/EXPERIMENTS的变更仅文档；最终完整SHA和同步范围另记交付收据及回复。
+开始HEAD为34c7a85，已有AGENTS/CHATS/RESEARCH/STATUS草稿及论文文件均保留。工作期间main新增并行分析提交ba59fc9、9a57256、2e54499及7d5ee9b，均先核查后保留，没有reset。代码及后续诊断脚本通过merge合入main（至`9f48911303c603f1adcc74a09404e87b6ec36a51`）。相对完整agent实测5245096，增加了只诊断脚本、并行分析及其4项已补跑通过的测试、相关文档；训练/环境生产代码没有继续变化。最终完整SHA和同步范围另记交付收据及回复。
 
-GitHub推送因连接重置失败，不宣称远端分支已更新。确定代码已通过三个bundle及SHA256/前置提交校验同步sv2；保留`git-sync-{0dfbb5c,35dbfa0,5245096}.json`。canonical repo的工作区仍干净、HEAD仍`d8997f64a301bfdcfe08758faeae8957a7395766`；实际准备测试在独立checkout `/data/Policy_Discrepancy/checkouts/dcs-dynamic-5245096ee52d`。未在服务器修改项目源码，未同步sv1/sv3。
+GitHub首次推送因连接重置失败。确定代码已通过bundle及SHA256/前置提交校验同步sv2；保留`git-sync-{0dfbb5c,35dbfa0,5245096,ee272ab,eb724d8,d205bda}.json`。canonical repo的工作区仍干净、HEAD仍`d8997f64a301bfdcfe08758faeae8957a7395766`；实际准备/完整agent测试在独立checkout `/data/Policy_Discrepancy/checkouts/dcs-dynamic-5245096ee52d`；诊断测试使用自己的已提交checkout，显式导入5245096的生产环境。未在服务器修改项目源码，未同步sv1/sv3。最终推送/交付bundle结果以交付收据为准。
 
-首选下一步继续当前合并窗口（03），不新建chat：先按已确认seed0和背景配置执行同声明/同提交完整agent CUDA验收；收齐队列及容量答复后复核资源，按确认的rollout启动首八条和八条后继。启动后核查0点评价、实际同卡和W&B在线记录。依赖未决项的工作不被本报告视为完成；后续完整产物再交05分析，工程通过不代表Dt有效。
+首选下一步继续当前合并窗口（03），不新建chat：完整agent工程门槛已通过；收齐队列及容量答复后复核资源，按确认的rollout启动首八条和八条后继，并保留上述GPU辅助诊断边界。启动后核查0点评价、实际同卡和W&B在线记录。依赖未决项的工作不被本报告视为完成；后续完整产物再交05分析，工程通过不代表Dt有效。
 
 完成声明后使用已提交入口；以下占位项尚未绑定，不是已执行的启动命令：
 
