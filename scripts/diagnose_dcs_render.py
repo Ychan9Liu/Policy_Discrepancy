@@ -20,6 +20,7 @@ def main():
   sys.path.insert(0,str(runtime))
   os.environ.update(MUJOCO_GL='egl',JAX_PLATFORMS='cpu')
   import numpy as np
+  from OpenGL import GL
   from dreamerv3.main import make_env
   from scripts.prepare_m2_v1 import resolve
   from embodied.envs.dcs_background import GROUND_ALPHA
@@ -41,19 +42,25 @@ def main():
   def rng(r):
     a=r.get_state();return [a[0],a[1].tolist(),int(a[2]),int(a[3]),float(a[4])]
   for mode in ('clean','dynamic'):
-    arms=('none','repeat') if mode=='clean' else ('none','repeat','reupload','override')
+    arms=('none','repeat') if mode=='clean' else ('none','repeat','reupload','override','no-dither')
     for arm in arms:
       config=resolve(['--configs','dcs_'+mode,'--task',args.task])
       config=config.update({'env.dmc.background.dataset':args.dataset,
           'env.dmc.background.videos':'train','env.dmc.background.seed':-1,
           'env.dmc.background.ground_plane_alpha':ground})
       env=make_env(config,0,seed=args.seed)
+      dither=[]
+      if arm=='no-dither':
+        with env._dmenv.physics.contexts.gl.make_current() as context:
+          context.call(GL.glDisable,GL.GL_DITHER)
       actions=np.random.default_rng(103).uniform(-.3,.3,(18,)+env.act_space['action'].shape).astype(np.float32)
       frames=[]; states=[]; rewards=[]; task_rng=[]; backgrounds=[]; comparisons=[]
       immediate=[]; restored=[]
       try:
         for index,action in enumerate(actions):
           obs=env.step(dict(action=action,reset=index in (0,9)))
+          with env._dmenv.physics.contexts.gl.make_current() as context:
+            dither.append(bool(context.call(GL.glIsEnabled,GL.GL_DITHER)))
           frames.append(obs['image'].copy())
           physics=env._dmenv.physics
           states.append(physics.get_state().copy())
@@ -78,7 +85,7 @@ def main():
               background_rng_equal=(bg==env.background_state()) if mode=='dynamic' else True))
         results[mode,arm]=dict(images=np.stack(frames),physics=np.stack(states),
             rewards=np.asarray(rewards),task_rng=task_rng,background=backgrounds)
-        record=dict(comparisons=comparisons)
+        record=dict(comparisons=comparisons,dither=dither)
         if arm!='none':
           reference=results[mode,'none']
           record.update(future_images=diff(reference['images'],results[mode,arm]['images']),
