@@ -6,6 +6,7 @@ defaults:
   method: name
   task: dummy_disc
   seed: 0
+  dcs_protocol: {declaration_file: '', declaration_sha256: ''}
   script: train
   batch_size: 16
   batch_length: 64
@@ -217,6 +218,13 @@ m2_v1: &m2_v1
   env.dmc.use_seed: True
   run: {action_budget: 1000000, eval_every_actions: 50000, match_start: 100000, match_end: 300000, eval_envs: 1, eval_eps: 10, report_every_actions: 0, engineering_fixture: False, debug: False, train_ratio: 256}
   agent.rep_probe: {mode: logging, alpha: 20.0, c: -1.0}
+
+# DCS requires a separately hashed declaration; no implicit seed or video split.
+m2_dcs_dynamic:
+  <<: *m2_v1
+  script: protocol_dcs_dynamic
+  seed: -1
+  env.dmc.background.mode: dynamic
 
 # User-authorized clean DtLatch cohort, separate from all M2 arms.
 dtl_three:

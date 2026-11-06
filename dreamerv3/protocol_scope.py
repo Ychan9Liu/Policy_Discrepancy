@@ -1,6 +1,8 @@
 """Explicit experiment scopes; the original M2 v1 seed0 scope stays closed."""
 
 V1 = 'M2-v1'
+DCS_DYNAMIC = 'M2-DCS-dynamic-vision20'
+DCS_SCRIPT = 'protocol_dcs_dynamic'
 DTL_THREE = 'DtL-three-seed0-20261105'
 DTL_THREE_SCRIPT = 'protocol_dtl_three'
 DTL_THREE_TASKS = ('dmc_quadruped_run', 'dmc_quadruped_walk', 'dmc_finger_spin')
@@ -27,6 +29,8 @@ VISION20_TASKS = V1_TASKS + DMC16_TASKS
 
 
 def tasks_for_protocol(protocol):
+  if protocol == DCS_DYNAMIC:
+    return VISION20_TASKS
   if protocol == DTL_THREE:
     return DTL_THREE_TASKS
   if protocol == PENDULUM_23:
@@ -41,6 +45,11 @@ def tasks_for_protocol(protocol):
 
 
 def validate_scope(script, task, seed, mode):
+  if script == DCS_SCRIPT:
+    if (type(seed) is not int or not 0 <= seed < 2 ** 32 or
+        task not in VISION20_TASKS or mode not in ('logging', 'dt')):
+      raise ValueError('DCS dynamic requires Vision20, an explicit seed, baseline or Dt')
+    return DCS_DYNAMIC
   if script == DTL_THREE_SCRIPT:
     if (type(seed) is not int or seed != 0 or task not in DTL_THREE_TASKS or
         mode != 'off'):
