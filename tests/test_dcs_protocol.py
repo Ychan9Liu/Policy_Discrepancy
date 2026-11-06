@@ -80,6 +80,8 @@ class DcsProtocolTest(unittest.TestCase):
         validate_environment_config(config.update(script=script))
     with self.assertRaisesRegex(ValueError,'override differs'):
       make_env(config,0,seed=0,background=dict(backgrounds(config)['eval'],video_alpha=.5))
+    with self.assertRaisesRegex(ValueError,'override differs'):
+      make_env(config,0,seed=0,background={'mode':'clean'})
 
   def test_factory_exact_train_eval_seeds_and_no_random_draws(self):
     config = self.config()

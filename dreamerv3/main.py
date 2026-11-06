@@ -282,11 +282,11 @@ def make_env(config, index, seed_offset=0, **overrides):
   kwargs.update(overrides)
   if suite == 'dmc':
     background = kwargs.pop('background', {})
+    if config.script == 'protocol_dcs_dynamic':
+      from dreamerv3.dcs_protocol import validate_background
+      validate_background(config, background)
     if background.get('mode', 'clean') != 'clean':
-      if config.script == 'protocol_dcs_dynamic':
-        from dreamerv3.dcs_protocol import validate_background
-        validate_background(config, background)
-      elif config.script.startswith('protocol_'):
+      if config.script.startswith('protocol_') and config.script != 'protocol_dcs_dynamic':
         raise ValueError('Existing M2 protocols are clean-only')
       from embodied.envs.dmc_background import DMCBackground
       ctor = DMCBackground
