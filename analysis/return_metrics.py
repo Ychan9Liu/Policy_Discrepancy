@@ -411,6 +411,9 @@ def analyze_run(entry, spec=MetricSpec()):
   metadata['source_final_state_present'] = final_path.exists()
   records, source_lines = [], []
   parse_issues = [] if evaluation_path.exists() else ['missing_evaluations_file']
+  # Dynamic backgrounds belong to a separate cohort, never a clean-v1 profile.
+  if manifest.get('protocol') == 'M2-DCS-dynamic-vision20':
+    parse_issues.append('dcs_dynamic_requires_separate_metric_profile')
   if metadata['task'] not in spec.tasks or metadata['group'] not in spec.groups:
     parse_issues.append('outside_declared_task_or_group')
   if spec.scope == PENDULUM_23:

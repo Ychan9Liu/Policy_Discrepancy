@@ -88,11 +88,13 @@ def main(argv=None):
 
   elif config.script in ('protocol_v1', 'protocol_hopper_seeds123', 'protocol_dmc16',
                          'protocol_vision20_seed1', 'protocol_pendulum_seeds23',
-                         'protocol_dtl_three'):
+                         'protocol_dtl_three', 'protocol_dcs_dynamic'):
     from .protocol_scope import validate_dtl_scope
     validate_dtl_scope(config)
     if config.script == 'protocol_dtl_three':
       from embodied.run.dtl_three import run as protocol_run
+    elif config.script == 'protocol_dcs_dynamic':
+      from embodied.run.dcs_dynamic import run as protocol_run
     else:
       protocol_run = embodied.run.protocol_v1.run
     protocol_run(
@@ -240,7 +242,10 @@ def validate_environment_config(config):
     raise ValueError('background.mode must be clean, static, or dynamic')
   if mode != 'clean' and not config.task.startswith('dmc_'):
     raise ValueError('DCS presets require an explicit dmc_ task')
-  if mode != 'clean' and config.script.startswith('protocol_'):
+  if config.script == 'protocol_dcs_dynamic':
+    from dreamerv3.dcs_protocol import validate_settings
+    validate_settings(config)
+  elif mode != 'clean' and config.script.startswith('protocol_'):
     raise ValueError('Existing M2 protocols are clean-only; DCS needs a separate protocol')
 
 
@@ -277,8 +282,11 @@ def make_env(config, index, seed_offset=0, **overrides):
   kwargs.update(overrides)
   if suite == 'dmc':
     background = kwargs.pop('background', {})
+    if config.script == 'protocol_dcs_dynamic':
+      from dreamerv3.dcs_protocol import validate_background
+      validate_background(config, background)
     if background.get('mode', 'clean') != 'clean':
-      if config.script.startswith('protocol_'):
+      if config.script.startswith('protocol_') and config.script != 'protocol_dcs_dynamic':
         raise ValueError('Existing M2 protocols are clean-only')
       from embodied.envs.dmc_background import DMCBackground
       ctor = DMCBackground
