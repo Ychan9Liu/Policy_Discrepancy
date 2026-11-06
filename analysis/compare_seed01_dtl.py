@@ -296,6 +296,13 @@ def analyze(source, output):
     metrics, curves, phases, manifest = [], [], [], []
     for r in runs:
         row = r['row']; group = row['group'].lower(); c = r['manifest']['config']
+        environment = row.get('environment') or row.get('environment_template', {})
+        wandb_url = row.get('wandb_url')
+        if not wandb_url:
+            require(all(environment.get(k) for k in ('WANDB_ENTITY','WANDB_PROJECT','WANDB_RUN_ID')),
+                    'Missing original W&B identity')
+            wandb_url = ('https://wandb.ai/'+environment['WANDB_ENTITY']+'/'+
+                         environment['WANDB_PROJECT']+'/runs/'+environment['WANDB_RUN_ID'])
         require(c['seed'] == row['seed'] and c['env.dmc.repeat'] == 1 and c['run.action_budget'] == 1000000,
                 'Nonmatching scientific configuration')
         result = evaluation_metrics(r['evaluations'])
@@ -310,7 +317,11 @@ def analyze(source, output):
             physical_gpu=row.get('physical_gpu'),directory=row['directory'],run_id=row['run_id'],
             training_sha=r['manifest']['git_commit'],state=row['state'],
             audit=row.get('run_audit',row.get('audit')),source_hashes=r['hashes'],
-            wandb_url=row.get('wandb_url') or ('https://wandb.ai/'+row.get('environment',{}).get('WANDB_ENTITY','ychan9liu-tsinghua-university')+'/PD_1/runs/'+row.get('environment',{}).get('WANDB_RUN_ID','')),
+            wandb_url=wandb_url, config=c, gpu_uuid=row.get('gpu_uuid'),
+            cuda_visible_devices=environment.get('CUDA_VISIBLE_DEVICES'),
+            egl_device_id=environment.get('MUJOCO_EGL_DEVICE_ID'),
+            source_index=r.get('index_path'), source_index_sha256=r.get('index_sha256'),
+            prior_input=r.get('local_input'), prior_input_sha256=r.get('local_input_sha256'),
             source_kind='prior raw input mirror' if row['seed'] == 0 and group != 'dtl' else '2026-11-06 original server collection'))
     pure = [r for r in metrics if r['group'] != 'dtl']
     paired = paired_means(pure, tasks)
