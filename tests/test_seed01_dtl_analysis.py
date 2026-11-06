@@ -1,5 +1,5 @@
 import unittest
-from analysis.compare_seed01_dtl import GRID, evaluation_metrics, paired_means
+from analysis.compare_seed01_dtl import GRID, analysis_tasks, evaluation_metrics, paired_means
 
 
 class SeedAnalysisTest(unittest.TestCase):
@@ -27,6 +27,15 @@ class SeedAnalysisTest(unittest.TestCase):
         self.assertEqual((r['seed0_delta_auc'],r['seed1_delta_auc']),(20,-20))
         with self.assertRaises(ValueError):paired_means(rows[:-1],['a'])
         with self.assertRaises(ValueError):paired_means(rows+[rows[0]],['a'])
+
+    def test_requested_scope_cannot_drop_acrobot(self):
+        keys=[(str(t),s,g) for t in range(19) for s in (0,1) for g in ('baseline','dt')]
+        keys += [(str(t),0,'dtl') for t in range(3)]
+        self.assertEqual(len(analysis_tasks(keys)),19)
+        with self.assertRaises(ValueError):analysis_tasks(keys,True)
+        keys += [('dmc_acrobot_swingup',s,g) for s in (0,1) for g in ('baseline','dt')]
+        self.assertEqual(len(analysis_tasks(keys,True)),20)
+        with self.assertRaises(ValueError):analysis_tasks(keys)
 
 
 if __name__=='__main__':unittest.main()

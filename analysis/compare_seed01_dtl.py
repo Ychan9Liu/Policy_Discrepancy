@@ -2,7 +2,8 @@
 
 collect --inventory INVENTORY_DIR --output NEW_INPUT
 analyze --input NEW_INPUT --output NEW_RESULT
-Acrobot remains excluded, following the user's explicit analysis scope.
+Acrobot is excluded by default for the earlier analysis; --include-acrobot
+selects the user's subsequent full 20-task request without dropping old inputs.
 No agent, environment, GPU, W&B writes or server source changes.
 """
 import argparse
@@ -160,13 +161,13 @@ def inspect_one(spec):
     return result
 
 
-def select_runs(inventory):
+def select_runs(inventory, include_acrobot=False):
     selected, excluded = {}, []
     for server in ('sv1','sv2','sv3'):
         for index in read(inventory/(server+'-inventory.json'))['indices']:
             by_dir = {p['directory']:p for p in index['probes']}
             for row in index['data']['runs']:
-                if row['task'] == 'dmc_acrobot_swingup' or row['seed'] not in (0,1):
+                if (row['task'] == 'dmc_acrobot_swingup' and not include_acrobot) or row['seed'] not in (0,1):
                     continue
                 is_dtl = row['group'].lower() == 'dtl'
                 if not is_dtl and row['seed'] != 1:
@@ -182,16 +183,27 @@ def select_runs(inventory):
                     require(selected[key]['row']['directory'] == row['directory'], 'Multiple completed attempts for same slot')
                     continue
                 selected[key] = dict(server=server, index_path=index['path'], index_sha256=index['sha256'], row=row)
-    require(len(selected) == 41, 'Expected 38 seed1 sources plus three seed0 DtL')
+    require(len(selected) == (43 if include_acrobot else 41), 'Incomplete seed1/DtL source set')
     require({k[0] for k in selected if k[1] == 0} == set(DTL_TASKS), 'Unexpected DtL tasks')
     return list(selected.values()), excluded
 
 
-def collect(inventory, output):
+def collect(inventory, output, include_acrobot=False):
     output.mkdir(parents=True, exist_ok=False)
-    selected, excluded = select_runs(inventory)
+    selected, excluded = select_runs(inventory, include_acrobot)
+    inventory_hashes = {s:sha(inventory/(s+'-inventory.json')) for s in ('sv1','sv2','sv3')}
+    if include_acrobot:
+        extra_path = inventory/'acrobot-seed0-inventory.json'
+        extra = read(extra_path)['runs']
+        require(len(extra) == 2 and
+                {(r['row']['task'],r['row']['seed'],r['row']['group']) for r in extra} ==
+                {('dmc_acrobot_swingup',0,g) for g in ('baseline','dt')}, 'Incomplete acrobot seed0 sources')
+        require(all(r['row'].get('run_audit') and r['row']['state'] in
+                    ('accepted','run_audited_pending_group_and_WB') for r in extra), 'Unaudited acrobot seed0')
+        selected += extra
+        inventory_hashes[extra_path.name] = sha(extra_path)
     dump(output/'selection.json', dict(runs=selected, excluded=excluded,
-        inventory_hashes={s:sha(inventory/(s+'-inventory.json')) for s in ('sv1','sv2','sv3')}))
+        inventory_hashes=inventory_hashes,include_acrobot=include_acrobot))
     code = Path(__file__).read_text(encoding='utf-8')
     def one(server):
         specs = [r for r in selected if r['server'] == server]
@@ -284,15 +296,21 @@ def paired_means(per_seed, tasks):
     return result
 
 
-def analyze(source, output):
+def analysis_tasks(keys, include_acrobot=False):
+    count = 20 if include_acrobot else 19
+    require(len(keys) == len(set(keys)) == 4*count+3, 'Wrong task/two-seed/DtL analysis scope')
+    tasks = sorted({t for t,s,g in keys if g != 'dtl'})
+    require(len(tasks) == count and ('dmc_acrobot_swingup' in tasks) == include_acrobot, 'Wrong acrobot scope')
+    return tasks
+
+
+def analyze(source, output, include_acrobot=False):
     output.mkdir(parents=True, exist_ok=False)
     runs = read(source/'seed0.json')
     for server in ('sv1','sv2','sv3'):
         runs += read(source/(server+'.json'))
     keys = [(r['row']['task'],r['row']['seed'],r['row']['group'].lower()) for r in runs]
-    require(len(keys) == len(set(keys)) == 79, 'Wrong 19-task/two-seed/DtL analysis scope')
-    tasks = sorted({t for t,s,g in keys if g != 'dtl'})
-    require(len(tasks) == 19 and 'dmc_acrobot_swingup' not in tasks, 'Wrong task scope')
+    tasks = analysis_tasks(keys, include_acrobot)
     metrics, curves, phases, manifest = [], [], [], []
     for r in runs:
         row = r['row']; group = row['group'].lower(); c = r['manifest']['config']
@@ -322,7 +340,7 @@ def analyze(source, output):
             egl_device_id=environment.get('MUJOCO_EGL_DEVICE_ID'),
             source_index=r.get('index_path'), source_index_sha256=r.get('index_sha256'),
             prior_input=r.get('local_input'), prior_input_sha256=r.get('local_input_sha256'),
-            source_kind='prior raw input mirror' if row['seed'] == 0 and group != 'dtl' else '2026-11-06 original server collection'))
+            source_kind='prior raw input mirror' if r.get('local_input') or r.get('local_directory') else '2026-11-06 original server collection'))
     pure = [r for r in metrics if r['group'] != 'dtl']
     paired = paired_means(pure, tasks)
     summaries, seed1, dtl = [], [], []
@@ -379,7 +397,8 @@ def analyze(source, output):
     dump(output/'config_differences.json',config_diff)
     dump(output/'verification.json',dict(input_hashes={p.name:sha(p) for p in source.glob('*.json')},
         run_count=len(runs),evaluation_points=len(curves),evaluation_episodes=len(curves)*10,
-        old_seed0_inputs_reused=True,mean_basis='equal mean of seed0 and seed1 within task then equal mean of 19 tasks',
+        old_seed0_inputs_reused=True,include_acrobot=include_acrobot,
+        mean_basis=f'equal mean of seed0 and seed1 within task then equal mean of {len(tasks)} tasks',
         normalized_scores=False,significance_claims=False,missing_points_imputed=False))
     plots(output,tasks,curves,paired,dtl,phases)
     print(json.dumps(dict(overall=summaries,dtl=dtl),ensure_ascii=False,indent=2))
@@ -402,7 +421,8 @@ def plots(output,tasks,curves,paired,dtl,phases):
                 members=[sum(r['mean'] for r in curves if r['task']==task and r['group']==group and r['step']==step and (mean or r['seed']==1))/(2 if mean else 1) for step in GRID]
                 ax.plot([s/1e6 for s in GRID],members,color=colors[group],label=labels[group],lw=1.7)
             ax.set(title=task.removeprefix('dmc_'),xlabel='Training actions (millions)',ylabel='Raw return');ax.grid(alpha=.18)
-        axes.flat[-1].axis('off');axes.flat[0].legend()
+        for ax in list(axes.flat)[len(tasks):]: ax.axis('off')
+        axes.flat[0].legend()
         fig.suptitle('Equal mean of seed0 and seed1 (faint: individual seeds)' if mean else 'Seed1 | unsmoothed evaluation returns')
         fig.savefig(output/(name+'.png'),dpi=160);fig.savefig(output/(name+'.svg'));plt.close(fig)
     fig,axes=plt.subplots(1,2,figsize=(13,8),layout='constrained')
@@ -439,9 +459,10 @@ def main():
     parser.add_argument('--inventory',type=Path)
     parser.add_argument('--input',type=Path)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--include-acrobot',action='store_true')
     args=parser.parse_args()
-    if args.mode=='collect':collect(args.inventory,args.output)
-    else:analyze(args.input,args.output)
+    if args.mode=='collect':collect(args.inventory,args.output,args.include_acrobot)
+    else:analyze(args.input,args.output,args.include_acrobot)
 
 
 if __name__=='__main__':main()
