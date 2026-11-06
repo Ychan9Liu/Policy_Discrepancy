@@ -203,6 +203,17 @@ class DcsProtocolTest(unittest.TestCase):
       altered['runs'][16][key]=value
       with self.assertRaises(ValueError): queue.validate(altered)
 
+  def test_formal_launch_requires_same_declaration_and_eight_cuda_acceptances(self):
+    from scripts import run_dcs_dynamic as queue
+    plan=dict(code_sha='fixture-code',declaration_sha256='fixture-declaration')
+    proof=dict(plan,passed=True,engineering_only=True,
+        runs=[dict(task=t,group=g) for t in queue.INTEGRATION_TASKS for g in ('baseline','dt')])
+    queue.validate_acceptance(proof,plan)
+    for field,value in (('code_sha','other'),('declaration_sha256','changed-strength'),
+        ('engineering_only',False),('passed',False),('runs',proof['runs'][:-1])):
+      with self.assertRaises(ValueError):
+        queue.validate_acceptance(dict(proof,**{field:value}),plan)
+
 
 if __name__ == '__main__':
   unittest.main()
