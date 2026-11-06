@@ -1,5 +1,7 @@
 # 项目状态
 
+**2026-11-06 11:10 · Vision20 dynamic 准备与验收进行中**：用户指定sv2 GPU0–7、20任务baseline/原Dt共40条，已确认seed0、DAVIS train60/val30、video_alpha1及上游地面规则（六个未覆盖任务0.3）。代码实测5245096ee52de5ba1ff6bcafb96d19298b74dcad，本机/服务器81项CPU和八卡零动作CUDA/EGL检查通过；11:09起四代表任务各两组的八条size50m缩小预算CUDA验收运行中。正式0运行/0排队，rollout与容量答复仍待补齐；/data约146GB，未删除旧产物。配置、队列、Git bundle、证据与未完成门槛见 [本轮报告](DCS_DYNAMIC_VISION20.md)。工程通过不代表方法有效。
+
 **2026-11-05 18:07：用户指定的三条 clean DtL 已启动，均在训练中。**
 sv2物理GPU5/6/7分别为 quadruped_run / quadruped_walk / finger_spin，seed0、size50m、
 alpha20/rho0.5、100万动作、21点评价各10完整episode，沿用现有DtLatch；没有新增baseline或DCS训练。

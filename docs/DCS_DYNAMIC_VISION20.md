@@ -1,6 +1,6 @@
 # Vision20 dynamic baseline / Dt：准备记录
 
-状态时间：2026-11-06 11:04（北京时间）。本轮目标为20任务各baseline、原Dt一条，共40条；资源为用户指定的sv2物理GPU0–7。当前**0条正式启动、0条实际排队**，没有创建正式训练控制器。下面的队列矩阵和缩小预算均为已测试的准备能力，不是已启动记录。
+状态时间：2026-11-06 11:10（北京时间）。本轮目标为20任务各baseline、原Dt一条，共40条；资源为用户指定的sv2物理GPU0–7。当前**8条缩小预算工程验收运行中，0条正式启动、0条正式排队**，没有创建正式训练控制器。
 
 ## 已确认与待补齐
 
@@ -86,7 +86,9 @@ python -m scripts.prepare_dcs_background --dataset /data/Policy_Discrepancy/runs
 python -m scripts.run_dcs_dynamic probe --gpu <0至7> --output <新的gpuN-binding.json>
 ```
 
-**未通过/未执行的门槛**：未执行本轮dynamic真实size50m完整agent CUDA训练、CUDA报告及评价隔离验收，也未验证正式W&B配置远端可读；不能称本轮真实任务验收通过。准备代码的`integration`入口规定4098动作、间隔2049、每点1完整episode、匹配[2200,3600)、报告2049；四代表任务hopper_hop/quadruped_run/finger_spin/walker_walk各baseline/Dt共8条。所有缩小预算与测试seed/背景仅为工程fixture。正式`run`要求同SHA、同声明hash的8条完整agent acceptance；当前没有该文件，不能启动。
+**完整agent门槛正在执行，尚未通过**：11:09启动、11:10确认八条进程running，尚无完整验收。`integration`规定4098动作、间隔2049、每点1完整episode、匹配[2200,3600)、报告2049；GPU0/1为hopper_hop baseline/Dt，GPU2/3 quadruped_run baseline/Dt，GPU4/5 finger_spin baseline/Dt，GPU6/7 walker_walk baseline/Dt。科学设置采用本轮已确认seed0/background，只有预算、评价数量和窗口为工程fixture；日志仅JSONL。实际运行代码5245096，控制器收据为准备根`integration-controller.json`，运行/审计位于`device-binding-5245096/integration/`。尚未验证正式W&B远端可读；不能称本轮真实任务验收通过。
+
+实际声明`declaration.json`的SHA256为`c51f0760c481057571719c932c6d84e400c9122760b94e0e4f959ead816691a7`，本机与服务器字节一致。工程调用使用`integration-plan/plan.json`，其中临时rollout=first16不会被integration用来启动正式作业，不代表用户选择了正式16条范围。正式`run`要求同SHA、同声明hash的8条完整agent acceptance；当前没有该文件，不能启动。
 
 ## Git与下一步
 

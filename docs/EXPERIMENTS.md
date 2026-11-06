@@ -1,5 +1,7 @@
 # 实验协议与结果索引
 
+**2026-11-06 Vision20 dynamic 新批次声明**：用户指定sv2全部八卡、20任务baseline/原Dt共40条，确认seed0、DAVIS train60视频训练/独立val30评价、video_alpha1、14任务上游地面规则/另6任务0.3。其余继承size50m、alpha20、百万动作和21×10评价等原配置；与clean结果分开。当前只启动八条4098动作完整agent工程验收，正式队列的自动补入范围和容量安排仍待答复，不能称40条已启动。实现、声明hash、完整配置、测试和资源记录见 [DCS动态运行准备](DCS_DYNAMIC_VISION20.md)。
+
 **2026-11-05 hopper_stand Dt**。用户指定sv2 GPU3接续最后一个阻塞槽位，15:57:45从第0步正式启动。固定seed1和原百万动作协议，控制器 `a81b797348e03a3c1767afa50b523472995ceb85`，训练 `bef29480df12d07659c640b22218804dd1d69e63`。两级来源映射、133项回归、GPU3 CUDA/EGL短程、零点评价及W&B启动读回记录见 [运行报告](VISION20_HOPPER_STAND_DT_SV2_20261105.md)。16:01全40为35结束及5运行。
 
 **2026-11-05四排队归sv2（10点后）**：用户将四条排队挂sv2，其中三个Dt原已在sv2；只新增迁移walker_run Dt至空闲物理GPU4，保留原三条baseline审计依赖，不用GPU6、不扩展至blocked的hopper_stand Dt。queued源通过原子目录占位/独立claim撤销旧启动资格，原监督器及运行baseline不停止；真实原监督器防重复测试、132 CPU、GPU4实际CUDA/EGL及size50m短程通过，正式训练继续bef29480df12d07659c640b22218804dd1d69e63，控制器2f7e6358fa45f125ac630aabb8b5d9f3ef3bfa2a。实际启动/评价/W&B证据、容量条件和完整版本见`docs/VISION20_WALKER_DT_SV2_20261105.md`，科学配置和原38次新训练数量保持。
