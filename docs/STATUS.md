@@ -28,7 +28,7 @@
 - 11:10:46只读W&B：40条seed1＋3条DtL＋2条acrobot seed0均finished，945个原始评价均值/网格及终点计数一致；未写summary。报告[ANALYSIS_SEED1_SEEDS01_DTL.md](ANALYSIS_SEED1_SEEDS01_DTL.md)，输入/hash、全任务表、五张PNG/SVG和命令在analysis/outputs/seed1-seeds01-dtl-20261106/；有效输入/表图为input20/result20-final，旧19任务草稿不作最终结果。实际分析2e54499d96d8e5ab47235301469e6fd5de274b40，四项手算/范围测试及83条真实输入检查通过。
 - 本次无新训练、调参、GPU探针或服务器源码同步；未核当前GPU占用，以上仅历史执行分配。既有CPU严格等价边界与跨版本/训练轨迹限制保留；后续科学验证由02和用户冻结，03继续原批收尾。不自动创建chat或发送消息。
 
-**2026-11-07 · Vision20 dynamic已按原计划启动**：sv2 GPU0–7、seed0，20任务baseline/原Dt共40条；先启动七条，按用户指令等待GPU2外部作业退出后于20:05:58补上quadruped_walk baseline。合并状态8运行/8就绪/24backlog/0阻塞，八条零点各10完整episode、连续更新、同卡C/G及W&B配置/启动回读通过；百万动作终点尚未验收。训练及原完整agent实测5245096ee52de5ba1ff6bcafb96d19298b74dcad；GPU2接续控制器及服务器18项CPU实测e04b1e8f517e946fed0e554b064f02c21299165e，原34槽和补接6槽合并去重，原七条PID未重启。启动/data414.38GB，按清理后启动指令采用首批容量例外，后继60GB及运行中5GB保护保持；不保证现有空间覆盖40条。GPU低位额外渲染限制保留，工程不等于方法有效。实际配置、时间、两个索引的合并/终点语义与证据见 [启动报告](DCS_DYNAMIC_LAUNCH_20261107.md)。
+**2026-11-07 · Vision20 dynamic跨服务器串行已落实**：按用户追加资源，从原40条后备队列迁出六对至sv3 GPU1、3–7，各卡baseline→同任务原Dt；sv2 GPU0–7保留28槽，sv3执行12槽，总数仍40。21:19:53合并状态14运行/14就绪/12backlog、0失败/阻塞、0终点完成；sv3六条零点各10完整episode、连续更新、同卡C/G及W&B配置回读通过。sv2八条原训练PID和已有收据前缀不变且更新继续；只暂停两个旧监督器，不得恢复旧队列。当前状态只合并新S28/T12索引，旧R/C保留历史。训练及12条真实size50m CUDA工程实测5245096ee52de5ba1ff6bcafb96d19298b74dcad；新双端监督器及各27项CPU实测0b222ea905ad0bcfe45ff6315ba7655435d25de4。dynamic/seed0/size50m/alpha20/百万动作/21×10及原背景声明保持；sv3启动/data419.14GB、后继60GB/紧急5GB保护，累计空间仍须监测。工程不等于方法有效。分配、接管边界、完整配置/索引、证据与后续prompt见 [sv3六对串行报告](DCS_DYNAMIC_SV3_SIX_20261107.md)。
 
 **2026-11-05 18:07：用户指定的三条 clean DtL 已启动，均在训练中。**
 sv2物理GPU5/6/7分别为 quadruped_run / quadruped_walk / finger_spin，seed0、size50m、

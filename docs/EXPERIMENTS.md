@@ -1,6 +1,6 @@
 # 实验协议与结果索引
 
-**2026-11-07 Vision20 dynamic正式启动**：已确认seed0、size50m、alpha20、百万动作、21×10评价；DAVIS train60/val30、video_alpha1、14任务上游地面规则/另6任务0.3，baseline/原Dt共40条、sv2 GPU0–7，DtLatch关闭。当前8运行/8就绪/24backlog、0阻塞；GPU2外部作业退出后以e04b1e8接续六个未启动槽位，所有训练仍固定5245096，七条原PID不变。八条零点评价/更新/设备/W&B启动核查通过，原工程和GPU辅助渲染严格失败证据均保留；未作终点或方法结论。完整配置、40槽合并索引、容量条件、测试与SHA见 [11月7日启动报告](DCS_DYNAMIC_LAUNCH_20261107.md)，背景协议与clean结果分开。
+**2026-11-07 Vision20 dynamic跨服务器启动**：原20任务baseline/原Dt共40条、seed0、size50m、alpha20、百万动作、21×10评价，dynamic DAVIS train60/val30、video_alpha1和地面规则保持。sv2保留28槽（GPU0–7），六对12槽迁至sv3 GPU1、3–7，同任务串行。21:19:53合并14运行/14就绪/12backlog，sv3六条正式启动验收通过；未作终点或方法结论。原八条训练未重启，旧监督器已暂停，后续用新S28/T12索引合并40唯一ID。训练/真实CUDA5245096ee52de5ba1ff6bcafb96d19298b74dcad，控制/CPU27项0b222ea905ad0bcfe45ff6315ba7655435d25de4；12条工程、来源连续性、W&B及原失败边界保留。详见 [sv3六对串行报告](DCS_DYNAMIC_SV3_SIX_20261107.md)；[原启动报告](DCS_DYNAMIC_LAUNCH_20261107.md)保留历史。
 
 **2026-11-05 hopper_stand Dt**。用户指定sv2 GPU3接续最后一个阻塞槽位，15:57:45从第0步正式启动。固定seed1和原百万动作协议，控制器 `a81b797348e03a3c1767afa50b523472995ceb85`，训练 `bef29480df12d07659c640b22218804dd1d69e63`。两级来源映射、133项回归、GPU3 CUDA/EGL短程、零点评价及W&B启动读回记录见 [运行报告](VISION20_HOPPER_STAND_DT_SV2_20261105.md)。16:01全40为35结束及5运行。
 
