@@ -1,5 +1,11 @@
 # 项目状态
 
+## 03存储维护：sv3四项清理与校准去重完成（2026-11-07）
+
+- 用户在四项候选报告后要求“全部清理”。仅删旧Denoising派生replay8960个、重复incoming1280个、pip-cache 81个，共87.382462GB；128对同字节校准数组经XFS写时复制共享块，释放原目标独占extent 19.095093GB，合计106.477556GB。两次失败目录和256个数组原路径/独立inode/mtime/内容均保持，无payload归档。
+- 独立后查2026-11-07T20:38:18.299983+08:00通过，/data可用447.157506GB；全部删除路径缺失、9标记/日志一致无重复、stage认证通过，128对FIEMAP共享与256个hash通过。其余78461常规文件/91链接元数据保持，其中41981文件完整hash通过；正式PD模型/快照/replay保留，其他UID进程可见性边界仍在。
+- 报告 [SV3_STORAGE_CLEANUP_20261107.md](SV3_STORAGE_CLEANUP_20261107.md)；本机analysis/outputs/sv3-storage-cleanup-20261107与sv3 runs/sv3-storage-cleanup-20261107保存源码、清单、fixture、操作和后查收据。无训练/协议/依赖变更，无GPU查询/执行、服务器repo同步或GitHub推送。四项授权已完成，未扩大到其他失败材料或新实验。
+
 ## 05分析更新：DtL奖励支持诊断与建议（2026-11-07）
 
 - 基于11月6日已审计的quadruped_run/walk/finger_spin三条clean DtL seed0，仅重新核验本机冻结输入hash并分解原日志。实际分析`1ae54b517021bd739eea81a881db19447429d18b`，实际训练仍为`f1f33bc9a74eb112f091a29f09307f81ba72513a`；未重抓服务器、运行模型或训练，也未核当前GPU占用。
