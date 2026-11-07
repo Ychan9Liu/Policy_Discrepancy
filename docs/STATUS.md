@@ -1,5 +1,12 @@
 # 项目状态
 
+## 05分析更新：DtL奖励支持诊断与建议（2026-11-07）
+
+- 基于11月6日已审计的quadruped_run/walk/finger_spin三条clean DtL seed0，仅重新核验本机冻结输入hash并分解原日志。实际分析`1ae54b517021bd739eea81a881db19447429d18b`，实际训练仍为`f1f33bc9a74eb112f091a29f09307f81ba72513a`；未重抓服务器、运行模型或训练，也未核当前GPU占用。
+- 奖励支持e的均值仅0.00185/0.00376/0.00190；实际超额KL削弱0.3058%/0.3003%/0.0662%。同模型、同数据、同mask/rho，仅在公式中去掉e时为7.4912%/5.6775%/12.6265%，说明e显著压低作用，但不能判断该过滤正确或预测重训收益。固定信号下增加alpha仍受e上限约束。
+- 建议先核查信号辨别能力与既有active-v=1严格CPU数值差异，再保持alpha20/rho0.5补DtL seed1，预算紧优先finger_spin与quadruped_walk，随后由02确认强度匹配/位置置换控制。现有单seed正负回报不能裁决机制有效性；没有参数变更或新实验启动授权。
+- 报告[ANALYSIS_DTL_DIAGNOSIS.md](ANALYSIS_DTL_DIAGNOSIS.md)，输出`analysis/outputs/dtl-diagnosis-20261107/`含20区间×三任务分解、来源hash、独立手算检查及复算命令。三条真实日志检查与公式手算通过，未修改训练源码、正式指标或原验收容差。
+
 ## 03存储维护：sv2 Denoising replay已直接清理（2026-11-07）
 
 - 按用户本次明确授权，仅删除 `/data/Policy_Discrepancy/denoising_sv2_formal_20261012` 下8条运行、16个训练/评价replay目录的16,720个NPZ，共297.201504GB分配块，不留payload归档。19:42:49北京时间独立后查全部缺失、16个说明标记存在；sv2 `/data` 可用413.900GB。

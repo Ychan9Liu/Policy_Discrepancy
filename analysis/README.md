@@ -1,5 +1,11 @@
 # 实验分析
 
+## DtL奖励支持诊断（2026-11-07）
+
+`diagnose_dtl_v1.py`只读并核验11月6日20任务分析的冻结输入hash，分解三条DtL seed0的奖励支持e、实际权重和超额KL削弱。使用同一模型/数据的校准统计计算仅在公式中移除e的结果，以及固定信号下增大alpha的平均权重下降上界；这些不是重训结果或参数建议。沿用成功更新数加权，不以分别平均的量相乘代替联合统计，不读取服务器或执行模型。
+
+报告见[DtL诊断与建议](../docs/ANALYSIS_DTL_DIAGNOSIS.md)，实际分析版本`1ae54b517021bd739eea81a881db19447429d18b`，输出在`analysis/outputs/dtl-diagnosis-20261107/`。复算命令：`python -m analysis.diagnose_dtl_v1 --source analysis/outputs/seed1-seeds01-dtl-20261106 --output analysis/outputs/NEW_DTL_DIAGNOSIS`。三条真实日志、来源hash、公式边界和独立小数组手算检查通过；原CPU严格等价边界、单训练seed与逐位置诊断缺口保留，不新增实验或修改冻结协议。
+
 ## seed1全任务、两seed均值与DtL三任务（2026-11-06）
 
 `compare_seed01_dtl.py collect/analyze --include-acrobot`只读正式产物并复算本次用户明确要求的20任务seed1表现、seed0/1等权均值，以及三条DtL seed0与同seed baseline/Dt的对比。新读取40条seed1、3条DtL及acrobot seed0两条；其余38条seed0复用此前原始镜像。严格核对21点×10完整episode、固定快照、成功更新/c收据和DtL逐更新诊断；缺点或缺seed不插值、不重加权。输出逐任务指标、配对差值、门控表和五张未平滑PNG/SVG，淡线仅显示单个seed。默认不加参数仍支持旧19任务范围，不能混称全20任务。
