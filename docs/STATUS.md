@@ -1,5 +1,12 @@
 # 项目状态
 
+## 03存储维护：sv2 Denoising replay已直接清理（2026-11-07）
+
+- 按用户本次明确授权，仅删除 `/data/Policy_Discrepancy/denoising_sv2_formal_20261012` 下8条运行、16个训练/评价replay目录的16,720个NPZ，共297.201504GB分配块，不留payload归档。19:42:49北京时间独立后查全部缺失、16个说明标记存在；sv2 `/data` 可用413.900GB。
+- Denoising保留的118个模型/原指标/配置/日志/辅助状态文件完整SHA256和元数据均不变；54个PD正式replay目录的69,120文件元数据保持，未删PD replay。16,720行删除日志与清单逐项一致、无重复，23次过程占用检查无目标使用或未分类同UID进程；其他UID句柄可见性限制保留。
+- 报告 [SV2_DENOISING_REPLAY_CLEANUP_20261107.md](SV2_DENOISING_REPLAY_CLEANUP_20261107.md)，本机 `analysis/outputs/sv2-denoising-replay-cleanup-20261107/` 与sv2 `runs/denoising-replay-cleanup-20261107-sv2/` 保存实际源码hash、清单、日志及收据。无算法/实验/环境变更，无GPU核查、服务器repo同步或GitHub推送。被删轨迹没有本次备份，保留模型/日志不构成无缝恢复能力。
+- 本次删除已完成；413.90GB仍低于原八卡批次480GB初始门槛，不因腾出空间修改门槛或启动实验。当前03可继续只读核对容量和队列条件，未扩展清理授权。
+
 ## 05分析更新：全20任务seed1、两seed均值及DtL三任务（2026-11-06）
 
 - 用户本次明确纳入acrobot。10:38–10:40北京时间查正式索引，11:08–11:09按20任务重读45条完整原产物；seed1有38条新训练终点/逐条审计及2条复用hopper。纳入20任务×两组×seed0/1共80条，再加3条DtL seed0，共83条、1743点评价、17430完整episode。其余38条seed0复用原始镜像；45条新读收据/快照/评价通过。seed1新来源仍为run_audited_pending_group_and_WB，整批合并/精确收尾待03。
