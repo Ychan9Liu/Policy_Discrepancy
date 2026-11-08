@@ -1,5 +1,7 @@
 # 项目状态
 
+**2026-11-08 · dynamic sv2八条Dt因磁盘保护中断**：08:42–09:03接续启动的hopper_hop、quadruped_run/walk、reacher_hard、acrobot_swingup、cup_catch、cartpole_balance/sparse八条Dt，在18:48因/data降至4.654GB触发既有5GB保护，最后成功更新约77.26万–80.22万动作。22:42复核八条及监督器PID退出、W&B均crashed；原S索引仍running是finally停止新worker后未更新状态的缺陷，不能当作运行中。当前实际40槽为14 baseline accepted、8 Dt中断、sv3六Dt继续运行、其余12未启动阻塞；sv2余4.339GB，sv3余402.197GB。对应baseline已完成，不把中断Dt算正式完整结果。原因/原始证据/容量门槛不足及恢复限制见 [中断核查](DCS_DYNAMIC_INTERRUPTION_20261108.md)。本轮仅读服务器并更新本机报告，无训练/代码变更、删除或重启；先处理容量与异常退出记录，再按现有资源重新核卡准备新尝试，不声称无缝恢复。
+
 ## 03存储维护：sv3旧正式replay及历史评价模型已退役（2026-11-07）
 
 - 用户在16条旧正式运行盘点后要求“清理这两项”。精确删除20480个训练replay NPZ（142.936666GB）和336个历史评价agent.pkl（172.328509GB），共315.265176GB原分配块；不留payload归档。16最终ckpt及其余原日志/配置/指标/审计均保留；新DCS运行不在范围，未干预作业。
