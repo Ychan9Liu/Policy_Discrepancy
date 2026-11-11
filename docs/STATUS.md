@@ -1,5 +1,11 @@
 # 项目状态
 
+## 03只读核查：sv3十二条dynamic完成，磁盘与驱动需处理（2026-11-11）
+
+- 14:44–14:46北京时间检查sv3：六任务cartpole_swingup/sparse、cheetah_run、finger_spin/turn_easy/turn_hard的baseline/Dt共12条均exit0、原监督器accepted，11月9日00:01整批passed。真实终点各100万动作/249493更新，252点评价及2520条完整episode记录、原始均值/AUC/指定五点及六baseline S/N复核通过；不是重新执行全部更新收据/模型/W&B终点审计，不作方法效果结论。
+- /data仅余15.896GB，df显示100%；PD du473.155GB，其中本批dynamic342.609GB、DCS六任务工程26.026GB。全盘其他目录扫描受权限和时限限制，未完整归属，不据此删除。8张GPU的PCI设备仍可见但无驱动绑定，nvidia-smi两次退出9，无/dev/nvidia*或NVIDIA版本节点、nouveau已加载；系统约13:56启动，原因未判明。12个旧训练PID均不在，可读进程未见PD；不能把驱动不可用报告为GPU空闲。
+- 实际训练5245096ee52de5ba1ff6bcafb96d19298b74dcad、监督器0b222ea905ad0bcfe45ff6315ba7655435d25de4保持；本次无代码/协议/训练/删除/系统维护/服务器写入或同步，未连接sv1/sv2。报告 [SV3_STATUS_20261111.md](SV3_STATUS_20261111.md)，只读证据和核验在analysis/outputs/sv3-status-20261111/。首选当前03协调驱动与容量处理，05可并行只读分析已完成日志；本次检查不新增启动或数据退役授权。
+
 **2026-11-08 · dynamic sv2八条Dt因磁盘保护中断**：08:42–09:03接续启动的hopper_hop、quadruped_run/walk、reacher_hard、acrobot_swingup、cup_catch、cartpole_balance/sparse八条Dt，在18:48因/data降至4.654GB触发既有5GB保护，最后成功更新约77.26万–80.22万动作。22:42复核八条及监督器PID退出、W&B均crashed；原S索引仍running是finally停止新worker后未更新状态的缺陷，不能当作运行中。当前实际40槽为14 baseline accepted、8 Dt中断、sv3六Dt继续运行、其余12未启动阻塞；sv2余4.339GB，sv3余402.197GB。对应baseline已完成，不把中断Dt算正式完整结果。原因/原始证据/容量门槛不足及恢复限制见 [中断核查](DCS_DYNAMIC_INTERRUPTION_20261108.md)。本轮仅读服务器并更新本机报告，无训练/代码变更、删除或重启；先处理容量与异常退出记录，再按现有资源重新核卡准备新尝试，不声称无缝恢复。
 
 ## 03存储维护：sv3旧正式replay及历史评价模型已退役（2026-11-07）
