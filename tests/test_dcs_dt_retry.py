@@ -141,6 +141,17 @@ class CapacityAndCleanupTest(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 retry.archive_attempt(root, Path(folder)/'saved.tar.gz')
 
+    @unittest.skipUnless(sys.platform == 'linux', 'Linux UID access boundaries')
+    def test_same_account_inaccessible_fds_fail_other_account_is_explicit_limit(self):
+        p = Mock(pid=1234, info=dict(cwd='/unrelated', cmdline=['system-service'], uids=Mock(real=os.getuid()+1)))
+        p.open_files.side_effect = retry.psutil.AccessDenied(1234)
+        with patch.object(retry.psutil, 'process_iter', return_value=[p]):
+            proof = retry.no_users([Path('/fixture')])
+            self.assertEqual(proof['other_account_fds_inaccessible'], [1234])
+            p.info['uids'] = Mock(real=os.getuid())
+            with self.assertRaises(retry.psutil.AccessDenied):
+                retry.no_users([Path('/fixture')])
+
     def test_cleanup_final_index_contains_exit_and_keeps_accepted(self):
         rows = [dict(run_id='done', state='accepted', exit_code=0),
                 dict(run_id='live', state='running'), dict(run_id='wait', state='queued')]

@@ -76,21 +76,36 @@ def retry_rows(original, engineering=False):
 
 
 def no_users(paths):
-    """Refuse live command, cwd or open-file references; never signal them."""
+    """Check visible commands plus all same-account fds; record visibility limits."""
     prefixes = tuple(str(p) for p in paths)
+    inaccessible = []
+    checked = 0
     def refers(value):
         return any(value == p or value.startswith(p+'/') for p in prefixes)
-    for proc in psutil.process_iter(['pid', 'cmdline', 'cwd']):
+    for proc in psutil.process_iter(['pid', 'cmdline', 'cwd', 'uids']):
         if proc.pid == os.getpid():
             continue
         try:
             values = [proc.info['cwd'] or '', *(proc.info['cmdline'] or [])]
-            values += [f.path for f in proc.open_files()]
             if any(refers(value) for value in values):
                 raise RuntimeError(f'Protected attempt in use by PID {proc.pid}')
+            try:
+                files = proc.open_files()
+            except psutil.AccessDenied:
+                # The project uses this account. System/other-user descriptors
+                # are normally hidden by Linux; do not claim they were inspected.
+                uids = proc.info['uids']
+                if uids is None or uids.real == os.getuid():
+                    raise
+                inaccessible.append(proc.pid)
+                continue
+            if any(refers(f.path) for f in files):
+                raise RuntimeError(f'Protected attempt open by PID {proc.pid}')
+            checked += 1
         except (psutil.NoSuchProcess, psutil.ZombieProcess):
             pass
-        # AccessDenied is intentionally fatal: absence could not be verified.
+    return dict(utc=now(), same_account_fds_checked=True, fd_processes_checked=checked,
+        other_account_fds_inaccessible=inaccessible, limitation='Other-account hidden cwd/fds not inspectable')
 
 
 def old_target(task):
@@ -163,7 +178,7 @@ def prepare():
     if failure['error'] != "RuntimeError('Disk below 5GB; stopping only this campaign workers')":
         raise ValueError('Unexpected source failure')
     paths = [old_target(task) for task in TASKS]
-    no_users(paths)
+    process_check = no_users(paths)
     baselines = {}
     for row in rows:
         old = next(r for r in index['runs'] if r['run_id'] == row['source_run_id'])
@@ -190,6 +205,7 @@ def prepare():
     dump(PREP/'plan.json', dict(controller_sha=clean_sha(), code_sha=TRAIN_SHA,
         original_plan=original, runs=rows, created_utc=now(),
         source_error_sha256=sha(OLD_MANAGER/'supervisor-error.json'),
+        process_check=process_check,
         deletion_authorization='User 2026-11-12: delete only eight failed Dt directories; keep W&B',
         baselines=baselines, reservation_per_run=RESERVE, headroom=HEADROOM,
         emergency_bytes=EMERGENCY, root=str(ROOT)))
@@ -214,9 +230,10 @@ def cleanup():
     if receipt.exists():
         raise FileExistsError('No repeated deletion or silent partial retry')
     paths = [old_target(task) for task in TASKS]
-    no_users(paths)
+    process_check = no_users(paths)
     proof = dict(controller_sha=clean_sha(), started_utc=now(), free_before=shutil.disk_usage('/data').free,
-        wandb_operation='none; all eight failed cloud runs retained', completed=False, runs=[])
+        wandb_operation='none; all eight failed cloud runs retained', completed=False, runs=[],
+        process_check=process_check)
     dump(receipt, proof)
     for task, path in zip(TASKS, paths):
         before = inventory(path)
@@ -224,9 +241,10 @@ def cleanup():
         dump(PREP/'failure-evidence'/f'{task}-inventory.json', before)
         if path != old_target(task) or inventory(path) != before:
             raise RuntimeError('Deletion target changed during evidence preservation')
-        no_users([path])
+        process_check = no_users([path])
         shutil.rmtree(path)
-        proof['runs'].append(dict(task=task, path=str(path), absent=not path.exists(), evidence=saved))
+        proof['runs'].append(dict(task=task, path=str(path), absent=not path.exists(), evidence=saved,
+            process_check=process_check))
         dump(receipt, proof)
     for baseline in plan['baselines'].values():
         path = Path(baseline['path'])
