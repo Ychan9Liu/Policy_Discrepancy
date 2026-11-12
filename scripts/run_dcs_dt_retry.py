@@ -96,7 +96,7 @@ def no_users(paths):
                 # The project uses this account. System/other-user descriptors
                 # are normally hidden by Linux; do not claim they were inspected.
                 uids = proc.info['uids']
-                argv = proc.info['cmdline'] or []
+                argv = [arg for arg in proc.info['cmdline'] or [] if arg]
                 login_helper = argv == ['(sd-pam)'] or (
                     proc.info.get('name') == 'sshd' and len(argv) == 1
                     and argv[0].startswith('sshd: ') and '@' in argv[0])

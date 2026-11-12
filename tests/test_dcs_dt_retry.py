@@ -154,7 +154,7 @@ class CapacityAndCleanupTest(unittest.TestCase):
             p.info['cmdline'] = ['(sd-pam)']
             proof = retry.no_users([Path('/fixture')])
             self.assertEqual(proof['login_helpers_inaccessible'], [1234])
-            p.info.update(name='sshd', cmdline=['sshd: fixture@notty'])
+            p.info.update(name='sshd', cmdline=['sshd: fixture@notty', '', '', ''])
             proof = retry.no_users([Path('/fixture')])
             self.assertEqual(proof['login_helpers_inaccessible'], [1234])
             p.info.update(name='python', cmdline=['sshd: fixture@notty'])
