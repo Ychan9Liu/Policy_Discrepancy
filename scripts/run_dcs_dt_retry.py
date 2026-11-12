@@ -79,6 +79,7 @@ def no_users(paths):
     """Check visible commands plus all same-account fds; record visibility limits."""
     prefixes = tuple(str(p) for p in paths)
     inaccessible = []
+    login_helpers = []
     checked = 0
     def refers(value):
         return any(value == p or value.startswith(p+'/') for p in prefixes)
@@ -95,6 +96,11 @@ def no_users(paths):
                 # The project uses this account. System/other-user descriptors
                 # are normally hidden by Linux; do not claim they were inspected.
                 uids = proc.info['uids']
+                if uids is not None and uids.real == os.getuid() and proc.info['cmdline'] == ['(sd-pam)']:
+                    # systemd's nondumpable PAM session helper uses our UID but
+                    # is not a user-launched worker. Preserve this exact exception.
+                    login_helpers.append(proc.pid)
+                    continue
                 if uids is None or uids.real == os.getuid():
                     raise
                 inaccessible.append(proc.pid)
@@ -104,8 +110,9 @@ def no_users(paths):
             checked += 1
         except (psutil.NoSuchProcess, psutil.ZombieProcess):
             pass
-    return dict(utc=now(), same_account_fds_checked=True, fd_processes_checked=checked,
-        other_account_fds_inaccessible=inaccessible, limitation='Other-account hidden cwd/fds not inspectable')
+    return dict(utc=now(), same_account_worker_fds_checked=True, fd_processes_checked=checked,
+        other_account_fds_inaccessible=inaccessible, systemd_pam_helpers_inaccessible=login_helpers,
+        limitation='Other-account and nondumpable systemd PAM helper cwd/fds not inspectable')
 
 
 def old_target(task):

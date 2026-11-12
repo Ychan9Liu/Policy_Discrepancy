@@ -151,6 +151,12 @@ class CapacityAndCleanupTest(unittest.TestCase):
             p.info['uids'] = Mock(real=os.getuid())
             with self.assertRaises(retry.psutil.AccessDenied):
                 retry.no_users([Path('/fixture')])
+            p.info['cmdline'] = ['(sd-pam)']
+            proof = retry.no_users([Path('/fixture')])
+            self.assertEqual(proof['systemd_pam_helpers_inaccessible'], [1234])
+            p.info['cmdline'] = ['(sd-pam)', '/fixture']
+            with self.assertRaises(RuntimeError):
+                retry.no_users([Path('/fixture')])
 
     def test_cleanup_final_index_contains_exit_and_keeps_accepted(self):
         rows = [dict(run_id='done', state='accepted', exit_code=0),
