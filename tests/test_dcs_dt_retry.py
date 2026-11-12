@@ -153,7 +153,13 @@ class CapacityAndCleanupTest(unittest.TestCase):
                 retry.no_users([Path('/fixture')])
             p.info['cmdline'] = ['(sd-pam)']
             proof = retry.no_users([Path('/fixture')])
-            self.assertEqual(proof['systemd_pam_helpers_inaccessible'], [1234])
+            self.assertEqual(proof['login_helpers_inaccessible'], [1234])
+            p.info.update(name='sshd', cmdline=['sshd: fixture@notty'])
+            proof = retry.no_users([Path('/fixture')])
+            self.assertEqual(proof['login_helpers_inaccessible'], [1234])
+            p.info.update(name='python', cmdline=['sshd: fixture@notty'])
+            with self.assertRaises(retry.psutil.AccessDenied):
+                retry.no_users([Path('/fixture')])
             p.info['cmdline'] = ['(sd-pam)', '/fixture']
             with self.assertRaises(RuntimeError):
                 retry.no_users([Path('/fixture')])

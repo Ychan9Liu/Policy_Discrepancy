@@ -83,7 +83,7 @@ def no_users(paths):
     checked = 0
     def refers(value):
         return any(value == p or value.startswith(p+'/') for p in prefixes)
-    for proc in psutil.process_iter(['pid', 'cmdline', 'cwd', 'uids']):
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'cwd', 'uids']):
         if proc.pid == os.getpid():
             continue
         try:
@@ -96,9 +96,13 @@ def no_users(paths):
                 # The project uses this account. System/other-user descriptors
                 # are normally hidden by Linux; do not claim they were inspected.
                 uids = proc.info['uids']
-                if uids is not None and uids.real == os.getuid() and proc.info['cmdline'] == ['(sd-pam)']:
-                    # systemd's nondumpable PAM session helper uses our UID but
-                    # is not a user-launched worker. Preserve this exact exception.
+                argv = proc.info['cmdline'] or []
+                login_helper = argv == ['(sd-pam)'] or (
+                    proc.info.get('name') == 'sshd' and len(argv) == 1
+                    and argv[0].startswith('sshd: ') and '@' in argv[0])
+                if uids is not None and uids.real == os.getuid() and login_helper:
+                    # Nondumpable PAM/SSH session helpers use our UID, but are
+                    # not user-launched workers. Preserve the exact exceptions.
                     login_helpers.append(proc.pid)
                     continue
                 if uids is None or uids.real == os.getuid():
@@ -111,8 +115,8 @@ def no_users(paths):
         except (psutil.NoSuchProcess, psutil.ZombieProcess):
             pass
     return dict(utc=now(), same_account_worker_fds_checked=True, fd_processes_checked=checked,
-        other_account_fds_inaccessible=inaccessible, systemd_pam_helpers_inaccessible=login_helpers,
-        limitation='Other-account and nondumpable systemd PAM helper cwd/fds not inspectable')
+        other_account_fds_inaccessible=inaccessible, login_helpers_inaccessible=login_helpers,
+        limitation='Other-account and nondumpable PAM/SSH session helper cwd/fds not inspectable')
 
 
 def old_target(task):
