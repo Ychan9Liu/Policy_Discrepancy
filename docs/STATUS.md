@@ -1,5 +1,19 @@
 # 项目状态
 
+## 03实验：sv2重跑遇存储维护，等待用户恢复通知（2026-11-13）
+
+- 用户已确认“正在维护，恢复后通知”。八条dynamic Dt attempt02已于11月12日按原配置成功启动；11月13日10:52–10:55复核时，八原进程均D/disk-sleep（七条balance_dirty_pages，一条wait_on_page_bit_common），当前不是正常推进或验收完成。保留进程与新产物，不重启、不继续删除、不新开尝试；维护结束后在当前03继续核查，无需新chat。
+- 六条可读收据停在800000动作，quadruped_walk停在150000；acrobot尾部读取超时，精确进度未知。/data仍余799.411GB，I/O pressure约98.56%、Dirty约126GiB，rbd0有9个待写请求且5秒统计不变；不是旧5GB容量保护。内核日志权限不足，不猜测具体后端故障或GPU驱动原因；用户确认维护中。
+- 当前40槽口径为历史20 accepted、8维护阻塞、12未启动；此前启动/派生索引是带日期的历史快照。更新 [DCS_DT_RETRY_20261112.md](DCS_DT_RETRY_20261112.md)；最新证据为本机analysis/outputs/dcs-dt-retry-20261112/io-block-20261113.json和blocked-runs-20261113.json。本次维护说明仅本机/GitHub，避免对阻塞存储继续同步写入；sv2实测控制器8d74cf9、训练5245096保持，最终文档与代码差异见DELIVERY。
+
+## 03实验：sv2八条dynamic Dt已从零重跑（2026-11-12）
+
+- 用户要求删除旧记录重跑，并明确只删除八条失败Dt目录、保留W&B。16:46完成精确删除，旧payload约179.228GB；206份原始故障日志/元数据另存约11MB，八条baseline文件清单及终点hash保持；W&B原八条仍crashed。旧索引中的running为历史状态，不可恢复旧监督器。
+- 容量预留及异常收尾已修复：八条正式并发门槛530GB，保留5GB紧急线；停止后逐条落盘退出码/状态。最终控制器/CPU实测8d74cf9576ed736161a09bfe6cd9a3ea33927bfc：40项Linux回归全通过；八任务真实size50m CUDA/bfloat16短跑各4098动作/517更新、3×1评价、报告/评价隔离全部exit0/accepted。训练固定原5245096ee52de5ba1ff6bcafb96d19298b74dcad，算法/协议/RNG配置未改。
+- 16:53:34–38核sv2 GPU0–7全部空闲、/data965.105GB；16:53:53–57八条Dt attempt02从零启动。按GPU0–7依次为hopper_hop、quadruped_run、quadruped_walk、reacher_hard、acrobot_swingup、cup_catch、cartpole_balance、cartpole_balance_sparse；dynamic/seed0/size50m/alpha20、百万动作/repeat1、21×10评价不变。16:59:50启动审计通过：八条实际存活更新、80个完整零点评价episode、W&B新ID配置回读和CUDA/EGL归属一致，所有卡仍有本项目作业。
+- 全40逻辑槽位为历史20 accepted（sv3状态沿11月11日核查）、8正在重跑、12尚未启动。本次只重跑八条，后12条不在新控制器队列；不把启动/工程通过算成正式完成或方法有效。继续当前合并03监测和终点审计，完整结果再交05；无需新建chat，无自动消息。
+- 报告 [DCS_DT_RETRY_20261112.md](DCS_DT_RETRY_20261112.md)。新正式根sv2 `runs/dcs-dynamic-dt-retry-20261112-5245096`；工程/删除/启动证据`runs/engineering-dcs-dt-retry-20261112`，本机`analysis/outputs/dcs-dt-retry-20261112/`有249文件哈希镜像和40槽派生索引。Git bundle同步至sv2、代码已推送GitHub；sv1/sv3未同步。最终文档提交与测试版本差异/同步收据见交付记录；用户原有未提交修改保留。
+
 ## 磁盘维护：sv2已完成运行replay清理（2026-11-11）
 
 - 用户在sv2核查后要求“已完成任务，replay全部删除”。93条达到各自预算及评价网格的运行（63条百万动作、30条工程短跑）81,248个NPZ已精确删除，原分配块663.608717312GB，无payload归档；模型、评价快照、指标、配置和原审计保留，未扩大到sv1/sv3。
